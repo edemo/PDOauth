@@ -6,19 +6,11 @@ from pdoauth.models.Application import Application
 class Test(unittest.TestCase):
 
 
-    def setUp(self):
-        pass
-
-
-    def tearDown(self):
-        pass
-
-
     def testCreateNew(self):
         Application()
 
     def testFind(self):
-        Application.query.all()
+        Application.query.all()  # @UndefinedVariable
 
 
 if __name__ == "__main__":
