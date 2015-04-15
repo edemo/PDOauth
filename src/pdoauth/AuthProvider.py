@@ -1,6 +1,7 @@
 
 from pyoauth2_shift.provider import AuthorizationProvider
 from pdoauth.models.Application import Application
+from flask.globals import session
 
 class AuthProvider(AuthorizationProvider):
 
@@ -21,3 +22,9 @@ class AuthProvider(AuthorizationProvider):
             return False
         app = Application.find(client_id)
         return app.redirect_uri == redirect_uri.split("?")[0]
+    
+    def validate_scope(self,client_id, scope):
+        return scope == ""
+    
+    def validate_access(self):
+        return getattr(session, 'user', None) is not None

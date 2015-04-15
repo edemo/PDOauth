@@ -2,9 +2,10 @@
 from twatson.unittest_annotations import Fixture, test, main
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.models.Application import Application
-from pdoauth.app import db
+from pdoauth.app import db, app
+from flask.globals import session
 
-class Test(Fixture):
+class AuthProviderTest(Fixture):
 
 
     def setUp(self):
@@ -68,6 +69,35 @@ class Test(Fixture):
     @test
     def validate_redirect_uri_returns_True_for_good_uri_with_paraeters(self):
         self.assertTrue(self.ap.validate_redirect_uri(self.app.id, "https://test.app/redirecturi?param=value"))
+
+    @test
+    def validate_scope_returns_True_for_empty(self):
+        self.assertTrue(self.ap.validate_scope(self.app.id, ""))
+        
+    @test
+    def validate_scope_returns_False_for_nonempty(self):
+        self.assertFalse(self.ap.validate_scope(self.app.id, "crap"))
+
+    @test
+    def validate_scope_returns_False_for_None(self):
+        self.assertFalse(self.ap.validate_scope(self.app.id, "crap"))
+
+    @test
+    def validate_access_works_only_if_user_have_logged_in(self):
+        with app.test_request_context('/'):
+            session.user="pali"
+            self.assertTrue(self.ap.validate_access())
+
+    @test
+    def validate_access_false_with_no_login(self):
+        with app.test_request_context('/'):
+            self.assertFalse(self.ap.validate_access())
+
+    @test
+    def validate_access_false_with_null_user(self):
+        with app.test_request_context('/'):
+            session.user=None
+            self.assertFalse(self.ap.validate_access())
 
 if __name__ == "__main__":
     main()
