@@ -2,7 +2,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
 from pdoauth.app import app, db
-from pdoauth.models.Application import Application  # @UnusedImport to have database schema
+from pdoauth.models import *  # @UnusedImport to have database schema
 
 migrate = Migrate(app, db)
 manager = Manager(app)
