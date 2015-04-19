@@ -12,12 +12,12 @@ class TokenInfo(db.Model):
         session.commit()
 
     @classmethod
-    def getExisting(klass, refresh_key):
+    def find(klass, refresh_key):
         return klass.query.filter_by(refresh_key=refresh_key).first()
         
     @classmethod
     def new(cls, refresh_key):
-        tokeninfo=cls.getExisting(refresh_key)
+        tokeninfo=cls.find(refresh_key)
         if tokeninfo is None:
             tokeninfo = cls(refresh_key)
             tokeninfo.save()

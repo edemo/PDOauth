@@ -38,6 +38,3 @@ class AuthorisatonTest(Fixture):
     @test
     def Authorisation_code_can_be_retrieved_before_configured_expiry(self):
         self.assertEqual(self.auth, Authorisation.get('client id', 'code', _called_at = self.now+ expiry - 1))
-
-if __name__ == "__main__":
-    main()

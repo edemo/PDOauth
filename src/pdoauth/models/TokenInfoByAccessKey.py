@@ -29,7 +29,7 @@ class TokenInfoByAccessKey(db.Model):
         session.commit()
         
     @classmethod
-    def getExisting(klass, access_key, _called_at = None):
+    def find(klass, access_key, _called_at = None):
         if _called_at is None:
             _called_at = time.time()
         ret = klass.query.filter_by(access_key=access_key).first()
@@ -41,7 +41,7 @@ class TokenInfoByAccessKey(db.Model):
         
     @classmethod
     def new(cls, access_key, tokeninfo, expires_in):
-        if cls.getExisting(access_key):
+        if cls.find(access_key):
             raise DuplicateAccessKey()
         tiba = cls(access_key, tokeninfo, expires_in)
         tiba.save()

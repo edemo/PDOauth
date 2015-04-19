@@ -13,6 +13,3 @@ class Test(Fixture):
     def NoRootUri(self):
         resp = self.app.get("/")
         self.assertEquals(resp.status_code, 404,)
-
-if __name__ == "__main__":
-    main()

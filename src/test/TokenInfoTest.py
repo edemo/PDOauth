@@ -4,6 +4,7 @@ from pdoauth.models.TokenInfo import TokenInfo
 class TokenInfoTest(Fixture):
 
     def setUp(self):
+        TokenInfo.query.delete()  # @UndefinedVariable
         self.tokeninfo = self.TokenInfo_can_be_created_with_refresh_key()
         
     def TokenInfo_can_be_created_with_refresh_key(self):
@@ -23,11 +24,8 @@ class TokenInfoTest(Fixture):
 
     @test
     def TokenInfo_can_be_retrieved_by_refresh_key(self):
-        self.assertEquals(self.tokeninfo, TokenInfo.getExisting('refresh_key'))
+        self.assertEquals(self.tokeninfo, TokenInfo.find('refresh_key'))
 
     @test
-    def getExisting_returns_None_for_nonexisting_refresh_key(self):
-        self.assertEquals(None, TokenInfo.getExisting('nonexisting'))
-
-if __name__ == "__main__":
-    main()
+    def find_returns_None_for_nonexisting_refresh_key(self):
+        self.assertEquals(None, TokenInfo.find('nonexisting'))

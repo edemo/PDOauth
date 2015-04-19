@@ -9,6 +9,7 @@ class AuthProviderTest(Fixture):
 
 
     def setUp(self):
+        Application.query.delete()  # @UndefinedVariable
         self.ap = AuthProvider()
         self.session = db.session
         self.app = Application.new("test app 5", "secret5", "https://test.app/redirecturi")
@@ -45,6 +46,10 @@ class AuthProviderTest(Fixture):
     @test
     def validate_client_secret_returns_False_for_wrong_secret(self):
         self.assertFalse(self.ap.validate_client_secret(self.app.id, "different"))
+        
+    @test
+    def validate_client_secret_returns_False_for_None_id(self):
+        self.assertFalse(self.ap.validate_client_secret(None, None))
         
     @test
     def validate_client_secret_returns_True_for_good_secret(self):
@@ -98,6 +103,3 @@ class AuthProviderTest(Fixture):
         with app.test_request_context('/'):
             session.user=None
             self.assertFalse(self.ap.validate_access())
-
-if __name__ == "__main__":
-    main()
