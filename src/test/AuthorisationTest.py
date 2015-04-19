@@ -1,4 +1,4 @@
-from twatson.unittest_annotations import Fixture, test, main
+from twatson.unittest_annotations import Fixture, test
 
 from pdoauth.Authorisation import Authorisation, OnlyEmptyScopeIsAllowed
 import time

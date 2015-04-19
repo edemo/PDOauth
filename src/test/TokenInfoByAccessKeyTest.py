@@ -1,4 +1,4 @@
-from twatson.unittest_annotations import Fixture, main, test
+from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.TokenInfo import TokenInfo
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 import time

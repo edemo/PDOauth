@@ -1,12 +1,12 @@
 
-from twatson.unittest_annotations import Fixture, test, main
+from twatson.unittest_annotations import Fixture, test
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.models.Application import Application
 from pdoauth.app import db, app
 from flask.globals import session
 
-class AuthProviderTest(Fixture):
 
+class AuthProviderTest(Fixture):
 
     def setUp(self):
         Application.query.delete()  # @UndefinedVariable

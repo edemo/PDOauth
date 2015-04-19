@@ -1,5 +1,5 @@
 
-from twatson.unittest_annotations import Fixture, test, main
+from twatson.unittest_annotations import Fixture, test
 
 from pdoauth.app import app
 
