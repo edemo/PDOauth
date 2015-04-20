@@ -4,13 +4,14 @@ from pdoauth.models.TokenInfo import TokenInfo
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 import time
+from pdoauth.ModelUtils import ModelUtils
 
 
 class DuplicateAccessKey(Exception):
     pass
 
 
-class TokenInfoByAccessKey(db.Model):
+class TokenInfoByAccessKey(db.Model, ModelUtils):
     __tablename__ = 'tokeninfo_by_access_key'
     id = Column(Integer,primary_key=True)
     tokeninfo_id = Column(Integer, ForeignKey('tokeninfo.id'))
@@ -18,16 +19,6 @@ class TokenInfoByAccessKey(db.Model):
     access_key = Column(String, unique=True)
     expire_time = Column(Integer)
 
-    def save(self):
-        session = db.session
-        session.add(self)
-        session.commit()
-
-    def rm(self):
-        session = db.session
-        session.delete(self)
-        session.commit()
-        
     @classmethod
     def find(klass, access_key, _called_at = None):
         if _called_at is None:
