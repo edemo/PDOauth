@@ -1,10 +1,10 @@
 from sqlalchemy import Column, Integer, String
 from pdoauth.app import db
-from pdoauth.models.TokenInfo import TokenInfo
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 import time
 from pdoauth.ModelUtils import ModelUtils
+from pdoauth.models.KeyData import KeyData
 
 
 class DuplicateAccessKey(Exception):
@@ -14,8 +14,8 @@ class DuplicateAccessKey(Exception):
 class TokenInfoByAccessKey(db.Model, ModelUtils):
     __tablename__ = 'tokeninfo_by_access_key'
     id = Column(Integer,primary_key=True)
-    tokeninfo_id = Column(Integer, ForeignKey('tokeninfo.id'))
-    tokeninfo = relationship(TokenInfo)
+    tokeninfo_id = Column(Integer, ForeignKey('key_data.id'))
+    tokeninfo = relationship(KeyData)
     access_key = Column(String, unique=True)
     expire_time = Column(Integer)
 
@@ -39,7 +39,6 @@ class TokenInfoByAccessKey(db.Model, ModelUtils):
         return tiba
     
     def __init__(self, access_key, tokeninfo, expires_in):
-        print "creating TIBA({0},{1}".format(access_key, tokeninfo)
         self.access_key = access_key
         self.tokeninfo = tokeninfo
         self.expire_time = time.time() + expires_in

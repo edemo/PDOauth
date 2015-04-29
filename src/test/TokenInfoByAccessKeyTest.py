@@ -1,7 +1,7 @@
 from twatson.unittest_annotations import Fixture, test
-from pdoauth.models.TokenInfo import TokenInfo
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 import time
+from pdoauth.models.KeyData import KeyData
 
 class TokenInfoByAccessKeyTest(Fixture):
 
@@ -10,13 +10,13 @@ class TokenInfoByAccessKeyTest(Fixture):
         self.TokenInfo_can_be_stored_by_access_key()
 
     def TokenInfo_can_be_stored_by_access_key(self):
-        self.tokeninfo = TokenInfo.new("refresh_key")
-        self.tiba = TokenInfoByAccessKey.new('access key', self.tokeninfo, 20)
+        self.keydata = KeyData.new('client_id', 'user_id', 'access_key', 'refresh_key')
+        self.tiba = TokenInfoByAccessKey.new('access key', self.keydata, 20)
         
     @test
     def TokenInfo_can_be_retrieved_by_access_key(self):
         self.assertEquals(self.tiba,TokenInfoByAccessKey.find('access key'))
-        self.assertEquals(self.tokeninfo,TokenInfoByAccessKey.find('access key').tokeninfo)
+        self.assertEquals(self.keydata,TokenInfoByAccessKey.find('access key').tokeninfo)
         
     @test
     def find_returns_None_for_nonexisting_refresh_key(self):
@@ -30,4 +30,4 @@ class TokenInfoByAccessKeyTest(Fixture):
         
     @test
     def there_should_not_be_two_records_with_same_access_key(self):
-        self.assertRaises(Exception, TokenInfoByAccessKey.new,'access key', self.tokeninfo, 20)
+        self.assertRaises(Exception, TokenInfoByAccessKey.new,'access key', self.keydata, 20)

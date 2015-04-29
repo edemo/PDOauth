@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.User import User
 from pdoauth.CredentialManager import CredentialManager
@@ -44,7 +45,7 @@ class UserTest(Fixture):
 
     @classmethod
     def create_user_with_credentials(self):
-        return CredentialManager.create_user_with_creds('password', 'userid', 'password')
+        return CredentialManager.create_user_with_creds('password', 'userid', 'password', name=u'Béla')
 
     @test
     def User_can_be_created_with_credentials(self):

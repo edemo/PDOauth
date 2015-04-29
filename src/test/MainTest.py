@@ -1,4 +1,4 @@
-
+# -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
 
 from pdoauth.app import app
@@ -9,6 +9,7 @@ from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 from HTMLParser import HTMLParser
 import json
+from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 
 class MyHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
@@ -149,11 +150,7 @@ class MainTest(Fixture):
             'redirect_uri':'https://test.app/redirecturi'}
         with app.test_client() as serverside:
             resp = serverside.post("https://localhost.local/v1/oauth2/token", data=data)
-            text = ""
-            for i in resp.response:
-                text += i
-            
-            data = json.loads(text)
+            data = json.loads(self.getResponseText(resp))
             self.assertTrue(data.has_key('access_token'))
             self.assertTrue(data.has_key('refresh_token'))
             self.assertEquals(data['token_type'], 'Bearer')
@@ -171,5 +168,7 @@ class MainTest(Fixture):
         data = self.doServerSideRequest(code)
         with app.test_client() as serverside:
             resp = serverside.get("https://localhost.local/v1/users/me", headers=[('Authorization', '{0} {1}'.format(data['token_type'], data['access_token']))])
-            print "code = {0.status_code}\n headers:\n{0.headers}\ntext={1}".format(resp, self.getResponseText(resp))
-            self.fail()
+            data = json.loads(self.getResponseText(resp))
+            self.assertEquals(resp.status_code, 200)
+            self.assertTrue(data.has_key('userid'))
+            self.assertEquals(u'Béla',data['name'])

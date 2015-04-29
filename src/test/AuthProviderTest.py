@@ -8,6 +8,7 @@ from pdoauth.models.KeyData import KeyData
 from pyoauth2_shift.provider import utils
 from flask_login import current_user, login_user
 from test.UserTest import UserTest
+from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 
 class AuthenticatedSessionMixin(object):
     def makeSessionAuthenticated(self):
@@ -29,6 +30,7 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
     def setUp(self):
         Application.query.delete()  # @UndefinedVariable
         KeyData.query.delete()  # @UndefinedVariable
+        TokenInfoByAccessKey.query.delete()  # @UndefinedVariable
         self.ap = AuthProvider()
         self.session = db.session
         self.app = Application.new("test app 5", "secret5", "https://test.app/redirecturi")

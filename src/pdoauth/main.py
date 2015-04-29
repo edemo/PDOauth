@@ -4,6 +4,8 @@ from flask_login import login_required
 from pdoauth.auth import do_login
 from flask.globals import request
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
+from pdoauth.models.User import User
+from flask import json
 
 @app.route("/v1/oauth2/auth", methods=["GET"])
 @login_required
@@ -21,13 +23,16 @@ def token():
 @app.route("/v1/users/<userid>", methods=["GET"])
 def showUser(userid):
     authHeader = request.headers.get('Authorization')
-    print "header:{0}".format(authHeader)
     if authHeader:
         token = authHeader.split(" ")[1]
-        print "token:{0}".format(token)
         data = TokenInfoByAccessKey.find(token)
-        print "data:{0}".format(data)
-        return token
+        user_id = data.tokeninfo.user_id
+        user = User.get(user_id)
+        data = {
+            'userid': user.id,
+            'name': user.username
+            }
+        return json.dumps(data)
     
 
 if __name__ == '__main__':
