@@ -6,3 +6,4 @@ class Config(object):
     SECRET_KEY = 'test secret'
     SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/pdoauth.db"
     AUTHCODE_EXPIRY = 60
+    WTF_CSRF_ENABLED = True

@@ -1,16 +1,12 @@
 from sqlalchemy import Column, Integer, String
 from pdoauth.app import db
+from pdoauth.ModelUtils import ModelUtils
 
-class TokenInfo(db.Model):
+class TokenInfo(db.Model, ModelUtils):
     __tablename__ = 'tokeninfo'
     id = Column(Integer, primary_key=True)
     refresh_key = Column(String, unique=True)
     
-    def save(self):
-        session = db.session
-        session.add(self)
-        session.commit()
-
     @classmethod
     def find(klass, refresh_key):
         return klass.query.filter_by(refresh_key=refresh_key).first()

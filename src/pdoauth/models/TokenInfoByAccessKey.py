@@ -39,6 +39,7 @@ class TokenInfoByAccessKey(db.Model, ModelUtils):
         return tiba
     
     def __init__(self, access_key, tokeninfo, expires_in):
+        print "creating TIBA({0},{1}".format(access_key, tokeninfo)
         self.access_key = access_key
         self.tokeninfo = tokeninfo
         self.expire_time = time.time() + expires_in

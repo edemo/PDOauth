@@ -2,6 +2,7 @@ from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Integer, String
 from pdoauth.app import db
 from pdoauth.ModelUtils import ModelUtils
+from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 
 class KeyData(db.Model, ModelUtils):
     __tablename__ = 'key_data'

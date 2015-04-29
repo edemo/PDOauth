@@ -15,6 +15,8 @@ class KeyDataTest(Fixture):
         clientData = KeyData.find('client_id', 'user_id')
         self.assertEquals(clientData.access_key,'access_key')
         self.assertEquals(clientData.refresh_key,'refresh_key')
+        self.assertEquals("KeyData(client_id=client_id, user_id=user_id, access_key=access_key, refresh_key=refresh_key, authorization_code=None)",
+                          "{0}".format(clientData))
     
     @test
     def None_is_returned_for_nonexistent_client_id(self):
