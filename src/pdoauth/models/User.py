@@ -8,17 +8,26 @@ class User(db.Model, ModelUtils):
     __tablename__ = 'user'
     id = Column(String,primary_key=True)
     username = Column(String)
+    email = Column(String)
+    hash = Column(String)
     active = Column(BOOLEAN)
     authenticated = Column(BOOLEAN)
 
     
     @classmethod
-    def new(cls):
-        user = cls()
+    def new(cls, name=None, email=None, digest=None):
+        user = cls(name, email,digest)
         user.save()
         return user
 
-    def __init__(self):
+    def __init__(self, name=None, email=None, digest=None):
+        if name is not None:
+            self.username = name
+        if email is not None:
+            self.email = email
+        if digest is not None:
+            self.hash = digest
+
         self.id=unicode(uuid.uuid4())
         self.active = False
         self.authenticated = False

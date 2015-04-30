@@ -54,6 +54,11 @@ class UserTest(Fixture):
         self.assertEqual(self.user, User.get(self.user.id))
     
     @test
-    def User_email_is_stored(self):
+    def User_email_can_be_stored(self):
         user = CredentialManager.create_user_with_creds('password', 'userid', 'password', name=u'Béla', email="testuser@nowhere.example.com")
+        self.assertEquals(user.email, "testuser@nowhere.example.com")
+    
+    @test
+    def User_hash_can_be_stored(self):
+        user = CredentialManager.create_user_with_creds('password', 'userid', 'password', name=u'Béla', email="testuser@nowhere.example.com", digest="xxxxxxxxx")
         self.assertEquals(user.email, "testuser@nowhere.example.com")
