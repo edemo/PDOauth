@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.AuthProvider import AuthProvider, DiscardingNonexistingToken,\
@@ -6,18 +7,9 @@ from pdoauth.models.Application import Application
 from pdoauth.app import db, app
 from pdoauth.models.KeyData import KeyData
 from pyoauth2_shift.provider import utils
-from flask_login import current_user, login_user
-from test.UserTest import UserTest
+from flask_login import current_user
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-
-class AuthenticatedSessionMixin(object):
-    def makeSessionAuthenticated(self):
-        user = UserTest.create_user_with_credentials()
-        user.activate()
-        user.set_authenticated()
-        user.save()
-        login_user(user)
-        self.userid = user.id
+from test.TestUtil import AuthenticatedSessionMixin
 
 class FakeData(object):
     

@@ -2,6 +2,8 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.User import User
 from pdoauth.CredentialManager import CredentialManager
+from test.AuthProviderTest import AuthenticatedSessionMixin
+from test.TestUtil import UserCreation
 
 class UserTest(Fixture):
 
@@ -43,14 +45,15 @@ class UserTest(Fixture):
         self.user.set_authenticated()
         self.assertEqual(True, self.user.is_authenticated())
 
-    @classmethod
-    def create_user_with_credentials(self):
-        return CredentialManager.create_user_with_creds('password', 'userid', 'password', name=u'Béla')
-
     @test
     def User_can_be_created_with_credentials(self):
-        self.create_user_with_credentials()
+        UserCreation.create_user_with_credentials()
     
     @test
     def User_can_be_retrieved_by_id(self):
         self.assertEqual(self.user, User.get(self.user.id))
+    
+    @test
+    def User_email_is_stored(self):
+        user = CredentialManager.create_user_with_creds('password', 'userid', 'password', name=u'Béla', email="testuser@nowhere.example.com")
+        self.assertEquals(user.email, "testuser@nowhere.example.com")

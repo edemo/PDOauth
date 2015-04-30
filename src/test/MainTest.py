@@ -4,12 +4,11 @@ from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.Application import Application
 from pdoauth import main  # @UnusedImport
-from test.UserTest import UserTest
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 from HTMLParser import HTMLParser
 import json
-from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
+from test.TestUtil import UserCreation
 
 class MyHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
@@ -49,7 +48,7 @@ class MainTest(Fixture):
 
     @test
     def User_can_authenticate_on_login_page(self):
-        UserTest.create_user_with_credentials()
+        UserCreation.create_user_with_credentials()
         data = {
                 'username': 'userid',
                 'password': 'password',
@@ -67,7 +66,7 @@ class MainTest(Fixture):
 
     @test
     def Authentication_with_bad_userid_is_rejected(self):
-        UserTest.create_user_with_credentials()
+        UserCreation.create_user_with_credentials()
         data = {
                 'username': 'baduser',
                 'password': 'password',
@@ -86,7 +85,7 @@ class MainTest(Fixture):
 
     @test
     def Authentication_with_bad_password_is_rejected(self):
-        UserTest.create_user_with_credentials()
+        UserCreation.create_user_with_credentials()
         data = {
                 'username': 'userid',
                 'password': 'badpassword',
@@ -106,7 +105,7 @@ class MainTest(Fixture):
 
 
     def login(self, c):
-        user = UserTest.create_user_with_credentials()
+        user = UserCreation.create_user_with_credentials()
         user.activate()
         data = {'username':'userid', 'password':'password', 
             'next':'/v1/oauth2/auth'}

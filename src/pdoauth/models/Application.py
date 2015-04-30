@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String
 from pdoauth.app import db
 from pdoauth.ModelUtils import ModelUtils
 import uuid
