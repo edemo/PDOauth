@@ -22,4 +22,57 @@
       </p>
       <p><input type="submit" value="Log In"></p>
   </form>
+  <h1>Register</h1>
+  <form action="/v1/register" method="post" name="register">
+      {{ regform.hidden_tag() }}
+      <p>
+          name:<br>
+          {{ regform.name(size=80) }}<br>
+          name:<br>
+          {% for error in regform.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}<br>
+      </p>
+      <p>
+          credentialtype:<br>
+          {{ regform.credentialtype(size=80) }}<br>
+          credentialtype:<br>
+          {% for error in regform.credentialtype.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}<br>
+      </p>
+      <p>
+          identifier:<br>
+          {{ regform.identifier(size=80) }}<br>
+          identifier:<br>
+          {% for error in regform.identifier.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}<br>
+      </p>
+      <p>
+          secret:<br>
+          {{ regform.secret(size=80) }}<br>
+          secret:<br>
+          {% for error in regform.secret.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}<br>
+      </p>
+      <p>
+          digest:<br>
+          {{ regform.digest(size=80) }}<br>
+          digest:<br>
+          {% for error in regform.digest.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}<br>
+      </p>
+      <p>
+          email:<br>
+          {{ regform.email(size=80) }}<br>
+          email:<br>
+          {% for error in regform.email.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}<br>
+      </p>
+      <p><input type="submit" value="Register"></p>
+  </form>
 {% endblock %}

@@ -16,6 +16,10 @@ class User(db.Model, ModelUtils):
     
     @classmethod
     def new(cls, name=None, email=None, digest=None):
+        if(name is not None):
+            u = cls.query.filter_by(username=name).first()
+            if u is not None:
+                return u
         user = cls(name, email,digest)
         user.save()
         return user

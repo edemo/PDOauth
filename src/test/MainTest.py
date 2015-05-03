@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
-
 from pdoauth.app import app
 from pdoauth.models.Application import Application
 from pdoauth import main  # @UnusedImport
@@ -48,7 +47,8 @@ class MainTest(Fixture):
 
     @test
     def User_can_authenticate_on_login_page(self):
-        UserCreation.create_user_with_credentials()
+        user = UserCreation.create_user_with_credentials()
+        user.activate()
         data = {
                 'username': 'userid',
                 'password': 'password',
@@ -104,16 +104,21 @@ class MainTest(Fixture):
 
 
 
+
+    def goToLoginPageAndGetCSRF(self, testClient):
+        resp = testClient.get('http://localhost.local/login')
+        text = self.getResponseText(resp)
+        parser = MyHTMLParser()
+        parser.feed(text)
+        csrf = parser.csrf
+        return csrf
+
     def login(self, c):
         user = UserCreation.create_user_with_credentials()
         user.activate()
         data = {'username':'userid', 'password':'password', 
             'next':'/v1/oauth2/auth'}
-        resp = c.get('http://localhost.local/login')
-        text = self.getResponseText(resp)
-        parser = MyHTMLParser()
-        parser.feed(text)
-        data['csrf_token'] = parser.csrf
+        data['csrf_token'] = self.goToLoginPageAndGetCSRF(c)
         resp = c.post('http://localhost.local/login', data=data)
         self.assertEqual(302, resp.status_code)
         self.assertEqual('http://localhost.local/v1/oauth2/auth', resp.headers['Location'])
@@ -167,7 +172,51 @@ class MainTest(Fixture):
         data = self.doServerSideRequest(code)
         with app.test_client() as serverside:
             resp = serverside.get("https://localhost.local/v1/users/me", headers=[('Authorization', '{0} {1}'.format(data['token_type'], data['access_token']))])
-            data = json.loads(self.getResponseText(resp))
             self.assertEquals(resp.status_code, 200)
+            data = json.loads(self.getResponseText(resp))
+            self.assertTrue(data.has_key('userid'))
+            self.assertEquals(u'Béla',data['name'])
+
+    def register(self, c, csrf):
+        data = {'name':'Dr. Árvíztűrő Tükörfúrógépné Phd. Med. Szőrösfülű Vénsírásóúr', 
+            'credentialtype':'password', 
+            'identifier':'arvizturogepne', 
+            'secret':'Th3 passWord ez unencriptid hir', 
+            'csrf':csrf, 
+            'email':'kukac@example.com', 
+            'digest':'DEADBEEFBAD1FEED'}
+        c.post('https://localhost.local/v1/register', data=data)
+
+
+    @test
+    def register_with_real_name_and_password_and_get_our_info(self):
+        with app.test_client() as c:
+            csrf = self.goToLoginPageAndGetCSRF(c)
+            self.register(c, csrf)
+            data = {
+                'username':'arvizturogepne', 
+                'password':'Th3 passWord ez unencriptid hir', 
+                'next':'/v1/users/me', 
+                'csrf_token':csrf}
+            resp = c.post('http://localhost.local/login', data=data)
+            self.assertEqual(302, resp.status_code)
+            location = resp.headers['Location']
+            self.assertEquals(location, 'http://localhost.local/v1/users/me')
+            
+            resp = c.get('http://localhost.local/v1/users/me')
+            text = self.getResponseText(resp)
+            self.assertEquals(resp.status_code, 200)
+            data = json.loads(text)
+            self.assertTrue(data.has_key('userid'))
+            self.assertEquals(u'Dr. Árvíztűrő Tükörfúrógépné Phd. Med. Szőrösfülű Vénsírásóúr',data['name'])
+
+    @test
+    def logged_in_user_can_get_its_info(self):
+        with app.test_client() as c:
+            self.login(c)
+            resp = c.get('http://localhost.local/v1/users/me')
+            text = self.getResponseText(resp)
+            self.assertEquals(resp.status_code, 200)
+            data = json.loads(text)
             self.assertTrue(data.has_key('userid'))
             self.assertEquals(u'Béla',data['name'])

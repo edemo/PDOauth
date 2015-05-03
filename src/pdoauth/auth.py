@@ -8,6 +8,7 @@ from flask.templating import render_template
 from flask_login import login_user
 from werkzeug.utils import redirect
 from flask.globals import request
+from pdoauth.forms.RegistrationForm import RegistrationForm
 
 @login_manager.unauthorized_handler
 def unauthorized():
@@ -25,10 +26,10 @@ def do_login():
         user = CredentialManager.validate_from_form(form)
         if user is None:
             flash("Bad username or password")
-            return render_template("login.html", form=form)
+            return render_template("login.html", form=form, regform=RegistrationForm())
         user.set_authenticated()
-        login_user(user)
-        flash("Logged in successfully.")
-        return redirect(request.form.get("next") or "/")
-    return render_template("login.html", form=form)
+        r = login_user(user)
+        if r:
+            return redirect(request.form.get("next") or "/")
+    return render_template("login.html", form=form, regform=RegistrationForm())
 

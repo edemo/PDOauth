@@ -24,6 +24,19 @@ class CredentialManager(object):
         if cred.secret == hashed:
             return cred.user
         return None
+
+    
+    @classmethod
+    def create_from_form(cls, form):
+        return cls.create_user_with_creds(
+            form.credentialtype.data,
+            form.identifier.data,
+            form.secret.data,
+            form.name.data,
+            form.email.data,
+            form.digest.data)
+    
+    
     
     
     
