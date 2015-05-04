@@ -8,8 +8,8 @@ class CredentialManager(object):
         return SHA256Hash(secret).hexdigest()
 
     @classmethod
-    def create_user_with_creds(cls, credtype, identifier, secret, name=None, email=None, digest=None):
-        user = User.new(name, email, digest)
+    def create_user_with_creds(cls, credtype, identifier, secret, email=None, digest=None):
+        user = User.new(email, digest)
         protected = cls.protect_secret(credtype, identifier, secret)
         Credential.new(user, credtype, identifier, protected)
         return user
@@ -32,7 +32,6 @@ class CredentialManager(object):
             form.credentialtype.data,
             form.identifier.data,
             form.secret.data,
-            form.name.data,
             form.email.data,
             form.digest.data)
     

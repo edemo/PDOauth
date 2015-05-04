@@ -33,3 +33,16 @@ def do_login():
             return redirect(request.form.get("next") or "/")
     return render_template("login.html", form=form, regform=RegistrationForm())
 
+def do_registration():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = CredentialManager.create_from_form(form)
+        if user is None:
+            return render_template("login.html", regform=form, form=LoginForm())
+        user.set_authenticated()
+        user.activate()
+        r = login_user(user)
+        if r:
+            flash("registeread and logged in successfully.")
+            return redirect(request.form.get("next") or "/")
+    return render_template("login.html", regform=form, form=LoginForm())

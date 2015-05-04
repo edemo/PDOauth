@@ -7,7 +7,6 @@ import uuid
 class User(db.Model, ModelUtils):
     __tablename__ = 'user'
     id = Column(String,primary_key=True)
-    username = Column(String)
     email = Column(String)
     hash = Column(String)
     active = Column(BOOLEAN)
@@ -15,18 +14,16 @@ class User(db.Model, ModelUtils):
 
     
     @classmethod
-    def new(cls, name=None, email=None, digest=None):
-        if(name is not None):
-            u = cls.query.filter_by(username=name).first()
+    def new(cls, email=None, digest=None):
+        if(email is not None):
+            u = cls.query.filter_by(email=email).first()
             if u is not None:
                 return u
-        user = cls(name, email,digest)
+        user = cls( email,digest)
         user.save()
         return user
 
-    def __init__(self, name=None, email=None, digest=None):
-        if name is not None:
-            self.username = name
+    def __init__(self, email=None, digest=None):
         if email is not None:
             self.email = email
         if digest is not None:

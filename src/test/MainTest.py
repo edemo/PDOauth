@@ -175,7 +175,6 @@ class MainTest(Fixture):
             self.assertEquals(resp.status_code, 200)
             data = json.loads(self.getResponseText(resp))
             self.assertTrue(data.has_key('userid'))
-            self.assertEquals(u'Béla',data['name'])
 
     def register(self, c, csrf):
         data = {'name':'Dr. Árvíztűrő Tükörfúrógépné Phd. Med. Szőrösfülű Vénsírásóúr', 
@@ -208,7 +207,7 @@ class MainTest(Fixture):
             self.assertEquals(resp.status_code, 200)
             data = json.loads(text)
             self.assertTrue(data.has_key('userid'))
-            self.assertEquals(u'Dr. Árvíztűrő Tükörfúrógépné Phd. Med. Szőrösfülű Vénsírásóúr',data['name'])
+            self.assertEquals(u'kukac@example.com',data['email'])
 
     @test
     def logged_in_user_can_get_its_info(self):
@@ -219,4 +218,3 @@ class MainTest(Fixture):
             self.assertEquals(resp.status_code, 200)
             data = json.loads(text)
             self.assertTrue(data.has_key('userid'))
-            self.assertEquals(u'Béla',data['name'])

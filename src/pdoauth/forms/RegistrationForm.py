@@ -2,7 +2,6 @@ from flask_wtf.form import Form
 from wtforms import TextField
 
 class RegistrationForm(Form):
-    name = TextField('name')
     credentialtype = TextField('password')
     identifier = TextField('identifier')
     secret = TextField('secret')

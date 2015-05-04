@@ -26,14 +26,6 @@
   <form action="/v1/register" method="post" name="register">
       {{ regform.hidden_tag() }}
       <p>
-          name:<br>
-          {{ regform.name(size=80) }}<br>
-          name:<br>
-          {% for error in regform.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-          {% endfor %}<br>
-      </p>
-      <p>
           credentialtype:<br>
           {{ regform.credentialtype(size=80) }}<br>
           credentialtype:<br>

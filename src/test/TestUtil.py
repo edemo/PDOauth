@@ -5,7 +5,7 @@ from flask_login import login_user
 class UserCreation(object):
     @classmethod
     def create_user_with_credentials(self):
-        return CredentialManager.create_user_with_creds('password', 'userid', 'password', name=u'Béla')
+        return CredentialManager.create_user_with_creds('password', 'userid', 'password')
 
 class AuthenticatedSessionMixin(UserCreation):
     def makeSessionAuthenticated(self):

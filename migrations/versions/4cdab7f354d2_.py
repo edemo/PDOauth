@@ -27,7 +27,6 @@ def upgrade():
     )
     op.create_table('user',
     sa.Column('id', sa.String(), nullable=False),
-    sa.Column('username', sa.String(), nullable=True),
     sa.Column('active', sa.BOOLEAN(), nullable=True),
     sa.Column('authenticated', sa.BOOLEAN(), nullable=True),
     sa.PrimaryKeyConstraint('id')
