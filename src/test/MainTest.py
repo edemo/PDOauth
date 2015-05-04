@@ -8,6 +8,7 @@ from pdoauth.models.User import User
 from HTMLParser import HTMLParser
 import json
 from test.TestUtil import UserCreation
+from flask_login import logout_user
 
 class MyHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
@@ -183,8 +184,9 @@ class MainTest(Fixture):
             'secret':'Th3 passWord ez unencriptid hir', 
             'csrf':csrf, 
             'email':'kukac@example.com', 
-            'digest':'DEADBEEFBAD1FEED'}
-        c.post('https://localhost.local/v1/register', data=data)
+            'digest':'DEADBEEFBAD1FEED',
+            'next': '/registered'}
+        return c.post('https://localhost.local/v1/register', data=data)
 
 
     @test
@@ -218,3 +220,19 @@ class MainTest(Fixture):
             self.assertEquals(resp.status_code, 200)
             data = json.loads(text)
             self.assertTrue(data.has_key('userid'))
+
+    @test
+    def user_cannot_register_twice(self):
+        with app.test_client() as c:
+            csrf = self.goToLoginPageAndGetCSRF(c)
+            resp = self.register(c, csrf)
+            logout_user()
+            self.assertEquals(302, resp.status_code)
+            self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
+        with app.test_client() as c:
+            csrf = self.goToLoginPageAndGetCSRF(c)
+            resp = self.register(c, csrf)
+            logout_user()
+            text = self.getResponseText(resp)
+            self.assertEquals(200, resp.status_code)
+            self.assertTrue("There is already a user" in text)

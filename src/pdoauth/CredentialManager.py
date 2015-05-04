@@ -28,6 +28,9 @@ class CredentialManager(object):
     
     @classmethod
     def create_from_form(cls, form):
+        existingUser = User.getByEmail(form.email.data)
+        if existingUser:
+            return None
         return cls.create_user_with_creds(
             form.credentialtype.data,
             form.identifier.data,

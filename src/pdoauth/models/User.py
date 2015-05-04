@@ -14,8 +14,13 @@ class User(db.Model, ModelUtils):
 
     
     @classmethod
+    def getByEmail(cls, email):
+        u= cls.query.filter_by(email=email).first()
+        return u
+
+    @classmethod
     def new(cls, email, digest=None):
-        u = cls.query.filter_by(email=email).first()
+        u = cls.getByEmail(email)
         if u is not None:
             return u
         user = cls( email,digest)
@@ -48,6 +53,9 @@ class User(db.Model, ModelUtils):
         self.authenticated = True
         self.save()
 
+    def is_anonymous(self):
+        return False
+    
     @classmethod
     def get(cls, userid):
         return User.query.filter_by(id=userid).first()

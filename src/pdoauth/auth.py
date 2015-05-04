@@ -38,6 +38,7 @@ def do_registration():
     if form.validate_on_submit():
         user = CredentialManager.create_from_form(form)
         if user is None:
+            flash("There is already a user with that email: {0.email.data}".format(form))
             return render_template("login.html", regform=form, form=LoginForm())
         user.set_authenticated()
         user.activate()

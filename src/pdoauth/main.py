@@ -49,7 +49,7 @@ def showUser(userid):
 
 @app.route("/v1/register", methods=["POST"])
 def register():
-    do_registration()
+    return do_registration()
 
 if __name__ == '__main__':
     app.run("localhost", 8888, True)
