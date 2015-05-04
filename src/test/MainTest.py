@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
-from pdoauth.app import app
+from pdoauth.app import app, mail
 from pdoauth.models.Application import Application
 from pdoauth import main  # @UnusedImport
 from pdoauth.models.Credential import Credential
@@ -10,13 +10,15 @@ import json
 from test.TestUtil import UserCreation
 from flask_login import logout_user
 
-class MyHTMLParser(HTMLParser):
+app.extensions["mail"].suppress = True
+        
+class CSRFParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if tag=="input":
             a = dict(attrs)
             if a.has_key('name') and a['name']=='csrf_token':
                 self.csrf = a['value']
-        
+
 class MainTest(Fixture):
 
     def setUp(self):
@@ -24,6 +26,7 @@ class MainTest(Fixture):
         User.query.delete()  # @UndefinedVariable
         Application.query.delete()  # @UndefinedVariable
         self.app = app.test_client()
+
 
     @test
     def NoRootUri(self):
@@ -36,9 +39,10 @@ class MainTest(Fixture):
         Application.new('app','secret',redirectUri)
         uri = "v1/oauth2/auth?response_type=code&client_id=app&redirect_uri=https%3A%2F%2Fclient.example.com%2Foauth%2Fredirect"
         resp = self.app.get(uri)
+        #print "{0.status_code}\n{0.headers}\n{1}".format(resp,self.getResponseText(resp))
         self.assertEquals(302,resp.status_code)
         self.assertTrue(resp.headers.has_key('Content-Length'))
-        self.assertTrue(resp.headers['Location'].startswith("http://localhost/login"))
+        self.assertTrue(resp.headers['Location'].startswith("http://localhost.local/login"))
         
     def getResponseText(self, resp):
         text = ""
@@ -58,7 +62,7 @@ class MainTest(Fixture):
         with app.test_client() as c:
             resp=c.get('http://localhost.local/login')
             text = self.getResponseText(resp)
-            parser = MyHTMLParser()
+            parser = CSRFParser()
             parser.feed(text)
             data['csrf_token']=parser.csrf
             resp = c.post('http://localhost.local/login', data=data)
@@ -76,7 +80,7 @@ class MainTest(Fixture):
         with app.test_client() as c:
             resp=c.get('http://localhost.local/login')
             text = self.getResponseText(resp)
-            parser = MyHTMLParser()
+            parser = CSRFParser()
             parser.feed(text)
             data['csrf_token']=parser.csrf
             resp = c.post('http://localhost.local/login', data=data)
@@ -95,7 +99,7 @@ class MainTest(Fixture):
         with app.test_client() as c:
             resp=c.get('http://localhost.local/login')
             text = self.getResponseText(resp)
-            parser = MyHTMLParser()
+            parser = CSRFParser()
             parser.feed(text)
             data['csrf_token']=parser.csrf
             resp = c.post('http://localhost.local/login', data=data)
@@ -109,7 +113,7 @@ class MainTest(Fixture):
     def goToLoginPageAndGetCSRF(self, testClient):
         resp = testClient.get('http://localhost.local/login')
         text = self.getResponseText(resp)
-        parser = MyHTMLParser()
+        parser = CSRFParser()
         parser.feed(text)
         csrf = parser.csrf
         return csrf
@@ -193,7 +197,9 @@ class MainTest(Fixture):
     def register_with_real_name_and_password_and_get_our_info(self):
         with app.test_client() as c:
             csrf = self.goToLoginPageAndGetCSRF(c)
-            self.register(c, csrf)
+            with mail.record_messages() as outbox:
+                self.register(c, csrf)
+                self.assertEquals(outbox[0].subject,"verification")
             data = {
                 'username':'arvizturogepne', 
                 'password':'Th3 passWord ez unencriptid hir', 
