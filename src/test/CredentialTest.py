@@ -9,7 +9,7 @@ class CredentialTest(Fixture):
         self.Credential_can_be_created_with_user__credential_type__identifier_and_secret()
         
     def Credential_can_be_created_with_user__credential_type__identifier_and_secret(self):
-        self.user = User.new()
+        self.user = User.new("emailtest@example.com")
         self.cred = Credential.new(self.user,'password','username','password')
         
     @test

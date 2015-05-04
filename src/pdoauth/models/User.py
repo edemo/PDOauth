@@ -7,25 +7,23 @@ import uuid
 class User(db.Model, ModelUtils):
     __tablename__ = 'user'
     id = Column(String,primary_key=True)
-    email = Column(String)
+    email = Column(String, nullable=False, unique=True)
     hash = Column(String)
     active = Column(BOOLEAN)
     authenticated = Column(BOOLEAN)
 
     
     @classmethod
-    def new(cls, email=None, digest=None):
-        if(email is not None):
-            u = cls.query.filter_by(email=email).first()
-            if u is not None:
-                return u
+    def new(cls, email, digest=None):
+        u = cls.query.filter_by(email=email).first()
+        if u is not None:
+            return u
         user = cls( email,digest)
         user.save()
         return user
 
-    def __init__(self, email=None, digest=None):
-        if email is not None:
-            self.email = email
+    def __init__(self, email, digest=None):
+        self.email = email
         if digest is not None:
             self.hash = digest
 

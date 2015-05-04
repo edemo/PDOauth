@@ -11,7 +11,7 @@ class UserTest(Fixture):
         self.User_can_be_created()
 
     def User_can_be_created(self):
-        self.user = User.new()
+        self.user = User.new("testemail@example.com")
 
     @test
     def User_id_is_returned_by_get_id(self):
