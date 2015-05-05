@@ -13,7 +13,6 @@ class AuthTest(Fixture):
     def unauthorized_response_is_redirecting_to_login_page(self):
         with app.test_request_context('/'):
             resp = auth.unauthorized()
-            print "{0.status_code}\n{0.headers}\n".format(resp)
             self.assertEquals(resp.status_code, 302)
             self.assertEquals(resp.headers['Location'], "/login")
 
@@ -40,7 +39,6 @@ class LoginTest(Fixture,CSRFMixin):
             resp = auth.do_login()
             soup = BeautifulSoup(resp)
             div = unicode(soup.find(id="flashed").li)
-            print div
             self.assertTrue(u"<li>Error in the Csrf Token field - CSRF token missing </li>" in div)
 
     @test
@@ -60,7 +58,6 @@ class LoginTest(Fixture,CSRFMixin):
             resp = auth.do_login()
             soup = BeautifulSoup(resp)
             div = unicode(soup.find(id="flashed").li)
-            print div
             self.assertTrue(u"Error in the username field"  in div)
             self.assertEquals(
                 u'<div id="usernameerrors">\n<span style="color: red;">[Field must be between 4 and 25 characters long.]</span>\n</div>',
@@ -89,7 +86,6 @@ class LoginTest(Fixture,CSRFMixin):
             resp = auth.do_login()
             soup = BeautifulSoup(resp)
             div = unicode(soup.find(id="flashed").li)
-            print div
             self.assertTrue(u"Bad username or password" in div)
 
     @test

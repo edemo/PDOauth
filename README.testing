@@ -1,14 +1,12 @@
-To setup testing, you should do the following:
-rm /tmp/pdoauth.db
-touch /tmp/pdoauth.db
-make dbupgrade
+To setup (and reset) testing environment, type
+make testsetup
 
 to run test, just type
 
 make
 
-If you can rework the test harness to use in-memory sqlite (and initialize it!) I will thank you.
+The test harness uses an sqlite database file at /tmp/pdoauth.db
+If you can rework it to use in-memory sqlite (and initialize it!) I will be thankful.
 
 Please look for FIXMEs for known areas with deficient testing.
 And of course more input validation tests are always welcome!
-
