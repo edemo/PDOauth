@@ -1,0 +1,14 @@
+To setup testing, you should do the following:
+rm /tmp/pdoauth.db
+touch /tmp/pdoauth.db
+make dbupgrade
+
+to run test, just type
+
+make
+
+If you can rework the test harness to use in-memory sqlite (and initialize it!) I will thank you.
+
+Please look for FIXMEs for known areas with deficient testing.
+And of course more input validation tests are always welcome!
+

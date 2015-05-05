@@ -5,28 +5,21 @@ from pdoauth.models.Application import Application
 from pdoauth import main  # @UnusedImport
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
-from HTMLParser import HTMLParser
 import json
-from test.TestUtil import UserCreation
+from test.TestUtil import UserCreation, CSRFMixin
 from flask_login import logout_user
+import re
+import random
+import string
+from pdoauth.models.Assurance import Assurance
 
 app.extensions["mail"].suppress = True
-        
-class CSRFParser(HTMLParser):
-    def handle_starttag(self, tag, attrs):
-        if tag=="input":
-            a = dict(attrs)
-            if a.has_key('name') and a['name']=='csrf_token':
-                self.csrf = a['value']
 
-class MainTest(Fixture):
+class MainTest(Fixture, CSRFMixin):
 
     def setUp(self):
-        Credential.query.delete()  # @UndefinedVariable
-        User.query.delete()  # @UndefinedVariable
-        Application.query.delete()  # @UndefinedVariable
+        self.randString = ''.join(random.choice(string.ascii_letters) for _ in range(6))
         self.app = app.test_client()
-
 
     @test
     def NoRootUri(self):
@@ -39,18 +32,12 @@ class MainTest(Fixture):
         Application.new('app','secret',redirectUri)
         uri = "v1/oauth2/auth?response_type=code&client_id=app&redirect_uri=https%3A%2F%2Fclient.example.com%2Foauth%2Fredirect"
         resp = self.app.get(uri)
-        #print "{0.status_code}\n{0.headers}\n{1}".format(resp,self.getResponseText(resp))
         self.assertEquals(302,resp.status_code)
         self.assertTrue(resp.headers.has_key('Content-Length'))
         self.assertTrue(resp.headers['Location'].startswith("http://localhost.local/login"))
-        
-    def getResponseText(self, resp):
-        text = ""
-        for i in resp.response:
-            text += i
-        return text
 
     @test
+
     def User_can_authenticate_on_login_page(self):
         user = UserCreation.create_user_with_credentials()
         user.activate()
@@ -60,11 +47,8 @@ class MainTest(Fixture):
                 'next': '/foo'
         }
         with app.test_client() as c:
-            resp=c.get('http://localhost.local/login')
-            text = self.getResponseText(resp)
-            parser = CSRFParser()
-            parser.feed(text)
-            data['csrf_token']=parser.csrf
+            csrf = self.getCSRF(c)
+            data['csrf_token']=csrf
             resp = c.post('http://localhost.local/login', data=data)
             self.assertEqual(302, resp.status_code)
             self.assertEqual('http://localhost.local/foo',resp.headers['Location'])
@@ -78,11 +62,8 @@ class MainTest(Fixture):
                 'next': '/foo'
         }
         with app.test_client() as c:
-            resp=c.get('http://localhost.local/login')
-            text = self.getResponseText(resp)
-            parser = CSRFParser()
-            parser.feed(text)
-            data['csrf_token']=parser.csrf
+            csrf=self.getCSRF(c)
+            data['csrf_token']=csrf
             resp = c.post('http://localhost.local/login', data=data)
             text = self.getResponseText(resp)
             self.assertEqual(200, resp.status_code)
@@ -97,33 +78,20 @@ class MainTest(Fixture):
                 'next': '/foo'
         }
         with app.test_client() as c:
-            resp=c.get('http://localhost.local/login')
-            text = self.getResponseText(resp)
-            parser = CSRFParser()
-            parser.feed(text)
-            data['csrf_token']=parser.csrf
+            csrf=self.getCSRF(c)
+            data['csrf_token']=csrf
             resp = c.post('http://localhost.local/login', data=data)
             text = self.getResponseText(resp)
             self.assertEqual(200, resp.status_code)
             self.assertTrue("Bad username or password" in text)
 
 
-
-
-    def goToLoginPageAndGetCSRF(self, testClient):
-        resp = testClient.get('http://localhost.local/login')
-        text = self.getResponseText(resp)
-        parser = CSRFParser()
-        parser.feed(text)
-        csrf = parser.csrf
-        return csrf
-
     def login(self, c):
         user = UserCreation.create_user_with_credentials()
         user.activate()
         data = {'username':'userid', 'password':'password', 
             'next':'/v1/oauth2/auth'}
-        data['csrf_token'] = self.goToLoginPageAndGetCSRF(c)
+        data['csrf_token'] = self.getCSRF(c)
         resp = c.post('http://localhost.local/login', data=data)
         self.assertEqual(302, resp.status_code)
         self.assertEqual('http://localhost.local/v1/oauth2/auth', resp.headers['Location'])
@@ -132,7 +100,9 @@ class MainTest(Fixture):
 
     def getCode(self, c):
         redirect_uri = 'https://test.app/redirecturi'
-        application = Application.new("test app 7", "secret7", redirect_uri)
+        appid = "app-{0}".format(self.randString)
+        self.appsecret = "secret-{0}".format(self.randString)
+        application = Application.new(appid, self.appsecret, redirect_uri)
         self.appid = application.id
         uri = 'https://localhost.local/v1/oauth2/auth'
         query_string = 'response_type=code&client_id={0}&redirect_uri={1}'.format(self.appid, 
@@ -155,7 +125,7 @@ class MainTest(Fixture):
         data = {'code':code, 
             'grant_type':'authorization_code', 
             'client_id':self.appid, 
-            'client_secret':'secret7', 
+            'client_secret':self.appsecret, 
             'redirect_uri':'https://test.app/redirecturi'}
         with app.test_client() as serverside:
             resp = serverside.post("https://localhost.local/v1/oauth2/token", data=data)
@@ -181,28 +151,35 @@ class MainTest(Fixture):
             data = json.loads(self.getResponseText(resp))
             self.assertTrue(data.has_key('userid'))
 
-    def register(self, c, csrf):
-        data = {'name':'Dr. Árvíztűrő Tükörfúrógépné Phd. Med. Szőrösfülű Vénsírásóúr', 
-            'credentialtype':'password', 
-            'identifier':'arvizturogepne', 
-            'secret':'Th3 passWord ez unencriptid hir', 
-            'csrf':csrf, 
-            'email':'kukac@example.com', 
-            'digest':'DEADBEEFBAD1FEED',
-            'next': '/registered'}
-        return c.post('https://localhost.local/v1/register', data=data)
+    def register(self, c, csrf, email = None):
+        with mail.record_messages() as outbox:
+            if email is None:
+                email = "{0}@example.com".format(self.randString)
+            data = {
+                'credentialtype':'password', 
+                'identifier': "id_{0}".format(self.randString), 
+                'secret':"password_{0}".format(self.randString), 
+                'csrf':csrf, 
+                'email': email, 
+                'digest': self.randString,
+                'next': '/registered'}
+            resp = c.post('https://localhost.local/v1/register', data=data)
+            return resp, outbox
+
 
 
     @test
     def register_with_real_name_and_password_and_get_our_info(self):
         with app.test_client() as c:
-            csrf = self.goToLoginPageAndGetCSRF(c)
-            with mail.record_messages() as outbox:
-                self.register(c, csrf)
-                self.assertEquals(outbox[0].subject,"verification")
+            csrf = self.getCSRF(c)
+            resp, outbox = self.register(c, csrf)
+            logout_user()
+            self.assertEquals(302, resp.status_code)
+            self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
+            self.assertEquals(outbox[0].subject,"verification")
             data = {
-                'username':'arvizturogepne', 
-                'password':'Th3 passWord ez unencriptid hir', 
+                'username': "id_{0}".format(self.randString), 
+                'password':"password_{0}".format(self.randString), 
                 'next':'/v1/users/me', 
                 'csrf_token':csrf}
             resp = c.post('http://localhost.local/login', data=data)
@@ -215,7 +192,7 @@ class MainTest(Fixture):
             self.assertEquals(resp.status_code, 200)
             data = json.loads(text)
             self.assertTrue(data.has_key('userid'))
-            self.assertEquals(u'kukac@example.com',data['email'])
+            self.assertTrue(u'@example.com' in data['email'])
 
     @test
     def logged_in_user_can_get_its_info(self):
@@ -228,17 +205,42 @@ class MainTest(Fixture):
             self.assertTrue(data.has_key('userid'))
 
     @test
-    def user_cannot_register_twice(self):
+    def user_cannot_register_twice_with_same_email(self):
         with app.test_client() as c:
-            csrf = self.goToLoginPageAndGetCSRF(c)
-            resp = self.register(c, csrf)
+            csrf = self.getCSRF(c)
+            resp, outbox = self.register(c, csrf, email="kuki@example.com")
             logout_user()
             self.assertEquals(302, resp.status_code)
             self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
+            self.assertEquals(outbox[0].subject,"verification")
+
         with app.test_client() as c:
-            csrf = self.goToLoginPageAndGetCSRF(c)
-            resp = self.register(c, csrf)
+            csrf = self.getCSRF(c)
+            resp, outbox = self.register(c, csrf, email="kuki@example.com")
             logout_user()
             text = self.getResponseText(resp)
             self.assertEquals(200, resp.status_code)
             self.assertTrue("There is already a user" in text)
+
+    @test
+    def email_validation_gives_emailverification_assurance(self):
+        with app.test_client() as c:
+            csrf = self.getCSRF(c)
+            resp, outbox = self.register(c, csrf, email="kukac1@example.com")
+            logout_user()
+            self.assertEquals(302, resp.status_code)
+            self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
+            self.assertEquals(outbox[0].subject,"verification")
+            self.validateUri=re.search('href="([^"]*)',outbox[0].body).group(1)
+            self.assertTrue(self.validateUri.startswith("https://localhost.local/v1/verify_email/"))
+        with app.test_client() as c:
+            user = User.getByEmail(u'kukac1@example.com')
+            creds = Credential.getByUser(user)
+            resp = c.get(self.validateUri)
+            self.assertEqual(user.email, u'kukac1@example.com')
+            newcreds = Credential.getByUser(user)
+            self.assertEquals(len(creds) - 1 , len(newcreds))
+            assurances = Assurance.getByUser(user)
+            self.assertTrue(assurances['emailverification'] is not None)
+            user.rm()
+        

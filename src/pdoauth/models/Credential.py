@@ -24,9 +24,15 @@ class Credential(db.Model, ModelUtils):
     def get(cls, credentialType, identifier):
         return Credential.query.filter_by(credentialType = credentialType, identifier = identifier).first()
 
+    @classmethod
+    def getByUser(cls, user):
+        return Credential.query.filter_by(user=user).all()
     
     @classmethod
     def new(cls, user, credentialType, identifier, secret):
         cred = cls(user, credentialType, identifier, secret)
         cred.save()
         return cred
+    
+    def __repr__(self, *args, **kwargs):
+        return "Credential(user={0.user.email},credentialType={0.credentialType},secret={0.secret})".format(self)

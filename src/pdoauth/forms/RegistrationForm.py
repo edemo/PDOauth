@@ -10,3 +10,4 @@ class RegistrationForm(Form):
 
     def validate(self):
         return True
+#FIXME: this is clearly wrong! Please see auth.py, main.py, MainTest.py and login.html for bits and pieces

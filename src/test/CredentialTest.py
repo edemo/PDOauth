@@ -11,6 +11,7 @@ class CredentialTest(Fixture):
     def Credential_can_be_created_with_user__credential_type__identifier_and_secret(self):
         self.user = User.new("emailtest@example.com")
         self.cred = Credential.new(self.user,'password','username','password')
+        self.assertEquals("{0}".format(self.cred),"Credential(user=emailtest@example.com,credentialType=password,secret=password)")
         
     @test
     def Credential_can_be_retrieved_by_type_and_identifier(self):

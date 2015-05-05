@@ -4,10 +4,10 @@
   </head>
   <body>
     <div><a href="/index">Home</a></div>
-    <hr>
+    <hr/>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul>
+        <ul id="flashed">
         {% for message in messages %}
             <li>{{ message }} </li>
         {% endfor %}

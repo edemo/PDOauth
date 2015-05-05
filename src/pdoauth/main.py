@@ -7,6 +7,9 @@ from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from pdoauth.models.User import User
 from flask import json
 import flask
+from pdoauth import auth
+from pdoauth.models.Credential import Credential
+import time
 
 @app.route("/v1/oauth2/auth", methods=["GET"])
 @login_required
@@ -21,24 +24,9 @@ def login():
 def token():
     return AuthProvider.token_interface()
 
-def isAllowedToGetUser(userid):
-    allowed = False
-    authuser = None
-    authHeader = request.headers.get('Authorization')
-    if current_user.is_authenticated():
-        if userid == 'me':
-            return (True,current_user)
-    if authHeader:
-        token = authHeader.split(" ")[1]
-        data = TokenInfoByAccessKey.find(token)
-        targetuserid = data.tokeninfo.user_id
-        authuser = User.get(targetuserid)
-        allowed = authuser.id == userid or userid == 'me'
-    return allowed, authuser
-
 @app.route("/v1/users/<userid>", methods=["GET"])
 def showUser(userid):
-    allowed, targetuser = isAllowedToGetUser(userid)
+    allowed, targetuser = auth.isAllowedToGetUser(userid)
     if allowed:
         data = {
                 'email': targetuser.email,
@@ -50,6 +38,15 @@ def showUser(userid):
 @app.route("/v1/register", methods=["POST"])
 def register():
     return do_registration()
+
+@app.route("/v1/verify_email/<token>", methods=["GET"])
+def verifyEmail(token):
+    cred = Credential.get('emailcheck', token)
+    #assurance = Assurance.new(cred.user,'automatic', time.time())
+    cred.rm()
+    if cred is not None:
+        return flask.make_response("email verified OK", 200)
+    return flask.make_response("unknown token", 404)
 
 if __name__ == '__main__':
     app.run("localhost", 8888, True)
