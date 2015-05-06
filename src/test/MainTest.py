@@ -174,7 +174,8 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
     def email_validation_gives_emailverification_assurance(self):
         with app.test_client() as c:
             csrf = self.getCSRF(c)
-            resp, outbox = self.register(c, csrf, email="kukac1@example.com")
+            resp, outbox = self.register(c, csrf)
+            email = self.registered_email
             logout_user()
             self.assertEquals(302, resp.status_code)
             self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
@@ -182,10 +183,12 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             self.validateUri=re.search('href="([^"]*)',outbox[0].body).group(1)
             self.assertTrue(self.validateUri.startswith("https://localhost.local/v1/verify_email/"))
         with app.test_client() as c:
-            user = User.getByEmail(u'kukac1@example.com')
+            user = User.getByEmail(email)
             creds = Credential.getByUser(user)
+            assurances = Assurance.getByUser(user)
+            self.assertTrue(assurances.has_key('emailverification') is False)
             resp = c.get(self.validateUri)
-            self.assertEqual(user.email, u'kukac1@example.com')
+            self.assertEqual(user.email, email)
             newcreds = Credential.getByUser(user)
             self.assertEquals(len(creds) - 1 , len(newcreds))
             assurances = Assurance.getByUser(user)

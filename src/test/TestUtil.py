@@ -67,6 +67,7 @@ class UserTesting(object):
         with mail.record_messages() as outbox:
             if email is None:
                 email = "{0}@example.com".format(self.randString)
+            self.registered_email = email
             data = {
                 'credentialtype':'password', 
                 'identifier': "id_{0}".format(self.randString), 

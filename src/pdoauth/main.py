@@ -41,7 +41,8 @@ def register():
 @app.route("/v1/verify_email/<token>", methods=["GET"])
 def verifyEmail(token):
     cred = Credential.get('emailcheck', token)
-    #assurance = Assurance.new(cred.user,'automatic', time.time())
+    user = cred.user
+    Assurance.new(user,'emailverification',user)
     cred.rm()
     if cred is not None:
         return flask.make_response("email verified OK", 200)
