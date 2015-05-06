@@ -2,13 +2,14 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.User import User
 from pdoauth.CredentialManager import CredentialManager
-from test.TestUtil import UserCreation
+from test.TestUtil import UserTesting
 
-class UserTest(Fixture):
+class UserTest(Fixture, UserTesting):
 
     def setUp(self):
         User.query.delete()  # @UndefinedVariable
         self.User_can_be_created()
+        self.setupRandom()
 
     def User_can_be_created(self):
         self.user = User.new("testemail@example.com")
@@ -46,7 +47,7 @@ class UserTest(Fixture):
 
     @test
     def User_can_be_created_with_credentials(self):
-        UserCreation.create_user_with_credentials()
+        self.create_user_with_credentials()
     
     @test
     def User_can_be_retrieved_by_id(self):

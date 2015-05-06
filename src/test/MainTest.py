@@ -1,24 +1,23 @@
 # -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
-from pdoauth.app import app, mail
+from pdoauth.app import app
 from pdoauth.models.Application import Application
 from pdoauth import main  # @UnusedImport
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 import json
-from test.TestUtil import UserCreation, CSRFMixin
-from flask_login import logout_user
+from test.TestUtil import UserTesting, CSRFMixin, ServerSide
+from flask_login import logout_user, current_user
 import re
-import random
-import string
 from pdoauth.models.Assurance import Assurance
+import time
 
 app.extensions["mail"].suppress = True
 
-class MainTest(Fixture, CSRFMixin):
+class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
 
     def setUp(self):
-        self.randString = ''.join(random.choice(string.ascii_letters) for _ in range(6))
+        self.setupRandom()
         self.app = app.test_client()
 
     @test
@@ -29,36 +28,25 @@ class MainTest(Fixture, CSRFMixin):
     @test
     def Unauthenticated_user_is_redirected_to_login_page_when_tries_to_do_oauth_with_us(self):
         redirectUri = 'https://client.example.com/oauth/redirect'
-        Application.new('app','secret',redirectUri)
-        uri = "v1/oauth2/auth?response_type=code&client_id=app&redirect_uri=https%3A%2F%2Fclient.example.com%2Foauth%2Fredirect"
+        appid = "app2-{0}".format(self.randString)
+        self.appsecret = "secret2-{0}".format(self.randString)
+        Application.new(appid, self.appsecret, redirectUri)
+        uri = "v1/oauth2/auth?response_type=code&client_id={0}&redirect_uri=https%3A%2F%2Fclient.example.com%2Foauth%2Fredirect".format(appid)
         resp = self.app.get(uri)
         self.assertEquals(302,resp.status_code)
         self.assertTrue(resp.headers.has_key('Content-Length'))
         self.assertTrue(resp.headers['Location'].startswith("http://localhost.local/login"))
 
     @test
-
     def User_can_authenticate_on_login_page(self):
-        user = UserCreation.create_user_with_credentials()
-        user.activate()
-        data = {
-                'username': 'userid',
-                'password': 'password',
-                'next': '/foo'
-        }
         with app.test_client() as c:
-            csrf = self.getCSRF(c)
-            data['csrf_token']=csrf
-            resp = c.post('http://localhost.local/login', data=data)
-            self.assertEqual(302, resp.status_code)
-            self.assertEqual('http://localhost.local/foo',resp.headers['Location'])
-
+            self.login(c)
     @test
     def Authentication_with_bad_userid_is_rejected(self):
-        UserCreation.create_user_with_credentials()
+        self.create_user_with_credentials()
         data = {
                 'username': 'baduser',
-                'password': 'password',
+                'password': self.usercreation_password,
                 'next': '/foo'
         }
         with app.test_client() as c:
@@ -71,9 +59,9 @@ class MainTest(Fixture, CSRFMixin):
 
     @test
     def Authentication_with_bad_password_is_rejected(self):
-        UserCreation.create_user_with_credentials()
+        self.create_user_with_credentials()
         data = {
-                'username': 'userid',
+                'username': self.usercreation_userid,
                 'password': 'badpassword',
                 'next': '/foo'
         }
@@ -86,55 +74,9 @@ class MainTest(Fixture, CSRFMixin):
             self.assertTrue("Bad username or password" in text)
 
 
-    def login(self, c):
-        user = UserCreation.create_user_with_credentials()
-        user.activate()
-        data = {'username':'userid', 'password':'password', 
-            'next':'/v1/oauth2/auth'}
-        data['csrf_token'] = self.getCSRF(c)
-        resp = c.post('http://localhost.local/login', data=data)
-        self.assertEqual(302, resp.status_code)
-        self.assertEqual('http://localhost.local/v1/oauth2/auth', resp.headers['Location'])
-        return resp
-
-
-    def getCode(self, c):
-        redirect_uri = 'https://test.app/redirecturi'
-        appid = "app-{0}".format(self.randString)
-        self.appsecret = "secret-{0}".format(self.randString)
-        application = Application.new(appid, self.appsecret, redirect_uri)
-        self.appid = application.id
-        uri = 'https://localhost.local/v1/oauth2/auth'
-        query_string = 'response_type=code&client_id={0}&redirect_uri={1}'.format(self.appid, 
-            redirect_uri)
-        resp = c.get(uri, query_string=query_string)
-        self.assertEqual(302, resp.status_code)
-        location = resp.headers['Location']
-        self.assertTrue(location.startswith('https://test.app/redirecturi?code='))
-        return location.split('=')[1]
-
-    def loginAndGetCode(self):
-        with app.test_client() as c:
-            self.login(c)
-            return self.getCode(c)
     @test
     def authorization_code_can_be_obtained_by_an_authenticated_user_using_correct_client_id_and_redirect_uri(self):
         self.loginAndGetCode()
-
-    def doServerSideRequest(self, code):
-        data = {'code':code, 
-            'grant_type':'authorization_code', 
-            'client_id':self.appid, 
-            'client_secret':self.appsecret, 
-            'redirect_uri':'https://test.app/redirecturi'}
-        with app.test_client() as serverside:
-            resp = serverside.post("https://localhost.local/v1/oauth2/token", data=data)
-            data = json.loads(self.getResponseText(resp))
-            self.assertTrue(data.has_key('access_token'))
-            self.assertTrue(data.has_key('refresh_token'))
-            self.assertEquals(data['token_type'], 'Bearer')
-            self.assertEquals(data['expires_in'], 3600)
-            return data
 
     @test
     def server_side_request(self):
@@ -150,23 +92,6 @@ class MainTest(Fixture, CSRFMixin):
             self.assertEquals(resp.status_code, 200)
             data = json.loads(self.getResponseText(resp))
             self.assertTrue(data.has_key('userid'))
-
-    def register(self, c, csrf, email = None):
-        with mail.record_messages() as outbox:
-            if email is None:
-                email = "{0}@example.com".format(self.randString)
-            data = {
-                'credentialtype':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString), 
-                'csrf':csrf, 
-                'email': email, 
-                'digest': self.randString,
-                'next': '/registered'}
-            resp = c.post('https://localhost.local/v1/register', data=data)
-            return resp, outbox
-
-
 
     @test
     def register_with_real_name_and_password_and_get_our_info(self):
@@ -205,10 +130,37 @@ class MainTest(Fixture, CSRFMixin):
             self.assertTrue(data.has_key('userid'))
 
     @test
+    def user_info_contains_assurance(self):
+        with app.test_client() as c:
+            self.login(c)
+            myEmail = current_user.email
+            now = time.time()
+            for ass in Assurance.query.filter_by(user=current_user, name = 'test'):  # @UndefinedVariable
+                ass.rm()
+            for ass in Assurance.query.filter_by(user=current_user, name = 'test2'):  # @UndefinedVariable
+                ass.rm()
+            Assurance.new(current_user, 'test', current_user, now)
+            Assurance.new(current_user, 'test2', current_user, now)
+            Assurance.new(current_user, 'test2', current_user, now)
+            resp = c.get('http://localhost.local/v1/users/me')
+            text = self.getResponseText(resp)
+            self.assertEquals(resp.status_code, 200)
+            data = json.loads(text)
+            self.assertTrue(data.has_key('assurances'))
+            assurances = data['assurances']
+            assurance = assurances['test'][0]
+            self.assertEqual(assurance['assurer'], myEmail)
+            self.assertEqual(assurance['user'], myEmail)
+            self.assertEqual(assurance['timestamp'], now)
+            self.assertEqual(assurance['readable_time'], time.asctime(time.gmtime(now)))
+            self.assertEqual(len(assurances['test2']),2)
+
+    @test
     def user_cannot_register_twice_with_same_email(self):
+        email = "k-{0}@example.com".format(self.randString)
         with app.test_client() as c:
             csrf = self.getCSRF(c)
-            resp, outbox = self.register(c, csrf, email="kuki@example.com")
+            resp, outbox = self.register(c, csrf, email=email)
             logout_user()
             self.assertEquals(302, resp.status_code)
             self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
@@ -216,7 +168,7 @@ class MainTest(Fixture, CSRFMixin):
 
         with app.test_client() as c:
             csrf = self.getCSRF(c)
-            resp, outbox = self.register(c, csrf, email="kuki@example.com")
+            resp, outbox = self.register(c, csrf, email=email)
             logout_user()
             text = self.getResponseText(resp)
             self.assertEquals(200, resp.status_code)
@@ -243,4 +195,21 @@ class MainTest(Fixture, CSRFMixin):
             assurances = Assurance.getByUser(user)
             self.assertTrue(assurances['emailverification'] is not None)
             user.rm()
-        
+
+    @test
+    def users_with_assurer_assurance_can_get_email_and_digest_for_anyone(self):
+        with app.test_client() as c:
+            self.login(c)
+            now = time.time()
+            Assurance.new(current_user, 'assurer', current_user, now)
+            genemail = "{0}+assured@example.com".format(self.randString)
+            targetuser=self.create_user_with_credentials(email=genemail)
+            Assurance.new(targetuser,'test',current_user)
+            target = User.getByEmail(genemail)
+            resp = c.get('http://localhost.local/v1/users/{0}'.format(target.id))
+            text = self.getResponseText(resp)
+            self.assertEquals(resp.status_code, 200)
+            data = json.loads(text)
+            self.assertTrue(data.has_key('assurances'))
+            assurances = data['assurances']
+            self.assertEquals(assurances['test'][0]['assurer'], current_user.email)

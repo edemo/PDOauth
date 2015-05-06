@@ -20,6 +20,7 @@ class FakeData(object):
 class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
 
     def setUp(self):
+        self.setupRandom()
         Application.query.delete()  # @UndefinedVariable
         KeyData.query.delete()  # @UndefinedVariable
         TokenInfoByAccessKey.query.delete()  # @UndefinedVariable

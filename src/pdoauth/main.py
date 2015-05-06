@@ -1,15 +1,12 @@
 from app import app
 from pdoauth.AuthProvider import AuthProvider
-from flask_login import login_required, current_user
+from flask_login import login_required
 from pdoauth.auth import do_login, do_registration
-from flask.globals import request
-from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from pdoauth.models.User import User
 from flask import json
 import flask
 from pdoauth import auth
 from pdoauth.models.Credential import Credential
-import time
+from pdoauth.models.Assurance import Assurance
 
 @app.route("/v1/oauth2/auth", methods=["GET"])
 @login_required
@@ -30,7 +27,8 @@ def showUser(userid):
     if allowed:
         data = {
                 'email': targetuser.email,
-                'userid': targetuser.id
+                'userid': targetuser.id,
+                'assurances': Assurance.getByUser(targetuser)
                 }
         return json.dumps(data)
     return flask.make_response("no authorization", 403)

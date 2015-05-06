@@ -22,12 +22,22 @@ class Assurance(db.Model, ModelUtils):
         self.assurer = assurer
         self.timestamp = timestamp
         
+    def as_dict(self):
+        return dict(
+            user=self.user.email,
+            name = self.name,
+            assurer = self.assurer.email,
+            timestamp = self.timestamp,
+            readable_time = time.asctime(time.gmtime(self.timestamp)))
+        
     @classmethod
     def getByUser(cls, user):
         assurances = Assurance.query.filter_by(user=user).all()
         r = {}
         for ass in assurances:
-            r[ass.name] = ass
+            if not r.has_key(ass.name):
+                r[ass.name] = []
+            r[ass.name].append(ass.as_dict())
         return r
 
     @classmethod

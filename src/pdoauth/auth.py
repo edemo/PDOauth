@@ -82,6 +82,9 @@ def isAllowedToGetUser(userid):
     if current_user.is_authenticated():
         if userid == 'me':
             return (True,current_user)
+        if Assurance.getByUser(current_user).has_key('assurer'):
+            authuser = User.get(userid)
+            return (True, authuser)
     if authHeader:
         token = authHeader.split(" ")[1]
         data = TokenInfoByAccessKey.find(token)
