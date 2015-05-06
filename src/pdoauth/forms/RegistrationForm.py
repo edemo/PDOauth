@@ -7,7 +7,5 @@ class RegistrationForm(Form):
     secret = TextField('secret')
     email = TextField('email')
     digest = TextField('digest')
-
-    def validate(self):
-        return True
-#FIXME: this is clearly wrong! Please see auth.py, main.py, MainTest.py and login.html for bits and pieces
+    
+    

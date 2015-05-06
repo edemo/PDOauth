@@ -40,7 +40,18 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
     @test
     def User_can_authenticate_on_login_page(self):
         with app.test_client() as c:
-            self.login(c)
+            resp = self.login(c)
+            self.assertEqual(200, resp.status_code)
+            self.assertUserResponse(resp)
+
+    @test
+    def inactive_user_cannot_authenticate(self):
+        with app.test_client() as c:
+            resp = self.login(c, activate=False)
+            text = self.getResponseText(resp)
+            self.assertEqual(403, resp.status_code)
+            self.assertEquals(text,'{"errors": "Inactive or disabled user"}')
+
     @test
     def Authentication_with_bad_userid_is_rejected(self):
         self.create_user_with_credentials()
@@ -50,11 +61,9 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
                 'next': '/foo'
         }
         with app.test_client() as c:
-            csrf=self.getCSRF(c)
-            data['csrf_token']=csrf
             resp = c.post('http://localhost.local/login', data=data)
             text = self.getResponseText(resp)
-            self.assertEqual(200, resp.status_code)
+            self.assertEqual(403, resp.status_code)
             self.assertTrue("Bad username or password" in text)
 
     @test
@@ -66,11 +75,9 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
                 'next': '/foo'
         }
         with app.test_client() as c:
-            csrf=self.getCSRF(c)
-            data['csrf_token']=csrf
             resp = c.post('http://localhost.local/login', data=data)
             text = self.getResponseText(resp)
-            self.assertEqual(200, resp.status_code)
+            self.assertEqual(403, resp.status_code)
             self.assertTrue("Bad username or password" in text)
 
 
@@ -94,23 +101,19 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             self.assertTrue(data.has_key('userid'))
 
     @test
-    def register_with_real_name_and_password_and_get_our_info(self):
+    def register_and_get_our_info(self):
         with app.test_client() as c:
-            csrf = self.getCSRF(c)
-            resp, outbox = self.register(c, csrf)
+            resp, outbox = self.register(c)
             logout_user()
-            self.assertEquals(302, resp.status_code)
-            self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
+            self.assertUserResponse(resp)
             self.assertEquals(outbox[0].subject,"verification")
             data = {
                 'username': "id_{0}".format(self.randString), 
                 'password':"password_{0}".format(self.randString), 
-                'next':'/v1/users/me', 
-                'csrf_token':csrf}
+                'next':'/v1/users/me'
+            }
             resp = c.post('http://localhost.local/login', data=data)
-            self.assertEqual(302, resp.status_code)
-            location = resp.headers['Location']
-            self.assertEquals(location, 'http://localhost.local/v1/users/me')
+            self.assertUserResponse(resp)
             
             resp = c.get('http://localhost.local/v1/users/me')
             text = self.getResponseText(resp)
@@ -155,31 +158,23 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
     def user_cannot_register_twice_with_same_email(self):
         email = "k-{0}@example.com".format(self.randString)
         with app.test_client() as c:
-            csrf = self.getCSRF(c)
-            resp, outbox = self.register(c, csrf, email=email)
+            resp , outbox = self.register(c,email=email)  # @UnusedVariable
             logout_user()
-            self.assertEquals(302, resp.status_code)
-            self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
-            self.assertEquals(outbox[0].subject,"verification")
-
+            self.assertUserResponse(resp)
         with app.test_client() as c:
-            csrf = self.getCSRF(c)
-            resp, outbox = self.register(c, csrf, email=email)
+            resp, outbox  = self.register(c, email=email)  # @UnusedVariable
             logout_user()
+            self.assertEquals(400, resp.status_code)
             text = self.getResponseText(resp)
-            self.assertEquals(200, resp.status_code)
-            self.assertTrue("There is already a user" in text)
+            self.assertTrue(text.startswith('{"errors": ["There is already a user with that email", "'))
 
     @test
     def email_validation_gives_emailverification_assurance(self):
         with app.test_client() as c:
-            csrf = self.getCSRF(c)
-            resp, outbox = self.register(c, csrf)
+            resp, outbox = self.register(c)
             email = self.registered_email
             logout_user()
-            self.assertEquals(302, resp.status_code)
-            self.assertEquals('http://localhost.local/registered', resp.headers['Location'])
-            self.assertEquals(outbox[0].subject,"verification")
+            self.assertUserResponse(resp)
             self.validateUri=re.search('href="([^"]*)',outbox[0].body).group(1)
             self.assertTrue(self.validateUri.startswith("https://localhost.local/v1/verify_email/"))
         with app.test_client() as c:
@@ -224,11 +219,11 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
         with app.test_client() as c:
             self.login(c)
             Assurance.new(current_user, 'assurer', current_user)
+            self.setupRandom()
             self.create_user_with_credentials()
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
-            self.assertEquals(resp.status_code,302)
-            self.assertEquals(resp.headers['Location'],"http://localhost.local/v1/users/{0}".format(target.id))
+            self.assertUserResponse(resp)
 
     @test
     def users_without_assurer_assurance_cannot_get_user_by_email(self):
@@ -249,6 +244,19 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             self.assertEquals(resp.headers['Location'],"http://localhost.local/login")
 
     @test
+    def assurance_form_needs_csrf(self):
+        with app.test_client() as c:
+            self.login(c)
+            data = dict(
+                digest = "unimportant",
+                assurance = "test",
+                email = "unimportant",
+                csrf_token = "")
+            resp = c.post('http://localhost.local/v1/add_assurance', data = data)
+            self.assertEquals(400, resp.status_code)
+            self.assertEquals(self.getResponseText(resp),'{"errors": {"csrf_token": ["csrf validation error"]}}')
+
+    @test
     def assurers_with_appropriate_credential_can_add_assurance_to_user(self):
         """
         the appropriate credential is an assurance in the form "assurer.<assurance_name>"
@@ -265,7 +273,7 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
                 digest = target.hash,
                 assurance = "test",
                 email = target.email,
-                csrf_token = self.getCSRF(c, 'http://localhost.local/v1/add_assurance'))
+                csrf_token = self.getCSRF(c))
             self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
             resp = c.post('http://localhost.local/v1/add_assurance', data = data)
             self.assertEquals(200, resp.status_code)
@@ -284,7 +292,7 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
                 digest = target.hash,
                 assurance = "test",
                 email = target.email,
-                csrf_token = self.getCSRF(c, 'http://localhost.local/v1/add_assurance'))
+                csrf_token = self.getCSRF(c))
             self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
             resp = c.post('http://localhost.local/v1/add_assurance', data = data)
             self.assertEquals(403, resp.status_code)

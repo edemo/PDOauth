@@ -3,10 +3,7 @@ import flask
 from pdoauth.models.User import User
 from pdoauth.forms.LoginForm import LoginForm
 from pdoauth.CredentialManager import CredentialManager
-from flask.helpers import flash
-from flask.templating import render_template
 from flask_login import login_user, current_user
-from werkzeug.utils import redirect
 from flask.globals import request
 from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.models.Credential import Credential
@@ -15,6 +12,7 @@ import time
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from pdoauth.models.Assurance import Assurance
 from pdoauth.forms.AssuranceForm import AssuranceForm
+from flask import json
 
 @login_manager.unauthorized_handler
 def unauthorized():
@@ -26,29 +24,34 @@ def unauthorized():
 def load_user(userid):
     return User.get(userid)
 
-def flash_errors(form):
+def errors_to_json(form):
+    errs = {}
     for field, errors in form.errors.items():
         for error in errors:
-            flash(u"Error in the %s field - %s" % (
-                getattr(form, field).label.text,
-                error
-            ))
+            fieldname = getattr(form, field).label.text
+            if not errs.has_key(fieldname):
+                errs[fieldname] = []
+            errs[fieldname].append(error)
+    return errs
 
-def do_login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = CredentialManager.validate_from_form(form)
-        if user is None:
-            flash("Bad username or password")
-            return render_template("login.html", form=form, regform=RegistrationForm())
-        user.set_authenticated()
-        r = login_user(user)
-        if r:
-            return redirect(request.form.get("next") or "/")
-        flash("Inactive or disabled user")
-    flash_errors(form)
-    return render_template("login.html", form=form, regform=RegistrationForm())
+def make_response(descriptor,status=200):
+    ret = json.dumps(dict(errors=descriptor))
+    return flask.make_response(ret, status)
 
+def error_response(errorDescriptor, status=400):
+    return make_response(errorDescriptor, status)
+
+def form_validation_error_response(form, status=400):
+    errdict = errors_to_json(form)
+    return error_response(errdict, status)
+
+    
+def as_dict(user):
+    data = {'email':user.email, 
+        'userid':user.id, 
+        'assurances':Assurance.getByUser(user)}
+    ret = json.dumps(data)
+    return ret
 
 def email_verification(user):
     secret=unicode(uuid4())
@@ -58,22 +61,6 @@ def email_verification(user):
     uri = "https://{0}/v1/verify_email/{1}".format(app.config.get('SERVER_NAME'),secret)
     text = """Hi, click on <a href="{0}">{0}</a> until {1} to verify your email""".format(uri, timeText)
     mail.send_message(subject="verification", body=text, recipients=[user.email], sender="FIXME@FIXME.FIXME")
-
-def do_registration():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = CredentialManager.create_from_form(form)
-        if user is None:
-            flash("There is already a user with that email: {0.email.data}".format(form))
-            return render_template("login.html", regform=form, form=LoginForm())
-        email_verification(user)
-        user.set_authenticated()
-        user.activate()
-        r = login_user(user)
-        if r:
-            flash("registeread and logged in successfully.")
-            return redirect(request.form.get("next") or "/")
-    return render_template("login.html", regform=form, form=LoginForm())
 
 def isAllowedToGetUser(userid):
     allowed = False
@@ -93,13 +80,42 @@ def isAllowedToGetUser(userid):
         allowed = authuser.id == userid or userid == 'me'
     return allowed, authuser
 
+
+def do_login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = CredentialManager.validate_from_form(form)
+        if user is None:
+            return error_response("Bad username or password", status=403)
+        user.set_authenticated()
+        r = login_user(user)
+        if r:
+            return as_dict(user)
+        return error_response("Inactive or disabled user", status=403)
+    return form_validation_error_response(form, status=403)
+
+
+
+def do_registration():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = CredentialManager.create_from_form(form)
+        if user is None:
+            return error_response(["There is already a user with that email", form.email.data])
+        email_verification(user)
+        user.set_authenticated()
+        user.activate()
+        r = login_user(user)
+        if r:
+            return as_dict(user)
+    return form_validation_error_response(form)
+
 def do_get_by_email(email):
     assurances = Assurance.getByUser(current_user)
     if assurances.has_key('assurer'):
         user = User.getByEmail(email)
-        return redirect("/v1/users/{0}".format(user.id))
-    return flask.make_response("no authorization", 403)
-
+        return as_dict(user)
+    return error_response("no authorization", status=403)
 
 def do_add_assurance():
     form = AssuranceForm()
@@ -110,8 +126,22 @@ def do_add_assurance():
         if assurances.has_key('assurer') and assurances.has_key(assurerAssurance):
             user = User.getByEmail(form.email.data)
             Assurance.new(user, neededAssurance, current_user)
-            responseText = "added assurance {0} to user {1}".format(neededAssurance, user.email)
-            return flask.make_response(responseText, 200)
-        return flask.make_response("no authorization", 403)
-    flash_errors(form)
-    return render_template("add_assurance.html", form=form)
+            return make_response(["added assurance ",neededAssurance, user.email], 200)
+        return error_response("no authorization", 403)
+    return form_validation_error_response(form)
+
+
+def do_show_user(userid):
+    allowed, targetuser = isAllowedToGetUser(userid)
+    if allowed:
+        return as_dict(targetuser)
+    return error_response("no authorization", status=403)
+
+def do_verify_email(token):
+    cred = Credential.get('emailcheck', token)
+    user = cred.user
+    Assurance.new(user,'emailverification',user)
+    cred.rm()
+    if cred is not None:
+        return make_response("email verified OK", 200)
+    return error_response("unknown token", 404)

@@ -3,13 +3,22 @@ from pdoauth.CredentialManager import CredentialManager
 from flask_login import login_user
 from pdoauth.app import app, mail
 import pdoauth.main  # @UnusedImport
-from bs4 import BeautifulSoup
 import random
 import string
 from pdoauth.models.Application import Application
 from flask import json
 
-class UserTesting(object):
+class ResponseInfo(object):
+    def getResponseText(self, resp):
+        text = ""
+        for i in resp.response:
+            text += i
+        return text
+
+    def printResponse(self, resp):
+        print "{0.status_code}\n{0.headers}\n{1}".format(resp,self.getResponseText(resp))
+
+class UserTesting(ResponseInfo):
 
     def setupRandom(self):
         self.randString = ''.join(random.choice(string.ascii_letters) for _ in range(6))
@@ -27,20 +36,17 @@ class UserTesting(object):
         self.usercreation_password = password
         return CredentialManager.create_user_with_creds(credType, userid, password, email)
     
-    def login(self, c):
+    def login(self, c, activate = True):
         self.setupRandom()
         user = self.create_user_with_credentials()
-        user.activate()
+        if activate:
+            user.activate()
         data = {
                 'username': self.usercreation_userid,
                 'password': self.usercreation_password,
                 'next': '/v1/oauth2/auth'
         }
-        csrf = self.getCSRF(c)
-        data['csrf_token']=csrf
         resp = c.post('http://localhost.local/login', data=data)
-        self.assertEqual(302, resp.status_code)
-        self.assertEqual('http://localhost.local/v1/oauth2/auth', resp.headers['Location'])
         return resp
 
     def getCode(self, c):
@@ -63,7 +69,7 @@ class UserTesting(object):
             self.login(c)
             return self.getCode(c)
 
-    def register(self, c, csrf, email = None):
+    def register(self, c, email = None):
         with mail.record_messages() as outbox:
             if email is None:
                 email = "{0}@example.com".format(self.randString)
@@ -71,15 +77,24 @@ class UserTesting(object):
             data = {
                 'credentialtype':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString), 
-                'csrf':csrf, 
+                'secret':"password_{0}".format(self.randString),
                 'email': email, 
                 'digest': self.randString,
                 'next': '/registered'}
             resp = c.post('https://localhost.local/v1/register', data=data)
             return resp, outbox
 
-class ServerSide(object):
+    def assertUserResponse(self, resp):
+        self.assertEquals(resp.status_code, 200)
+        text = self.getResponseText(resp)
+        data = json.loads(text)
+        self.assertEquals(data['assurances'], {})
+        self.assertTrue("@example.com" in data['email'])
+        self.assertTrue(data.has_key('userid'))
+        return data, text
+
+
+class ServerSide(ResponseInfo):
     def doServerSideRequest(self, code):
         data = {'code':code, 
             'grant_type':'authorization_code', 
@@ -96,43 +111,15 @@ class ServerSide(object):
             return data
 
 
-class CSRFParser(object):
-    def feed(self,text):
-            soup = BeautifulSoup(text)
-            csrf = unicode(soup.find(id="csrf_token").attrs['value'])
-            self.csrf = csrf
-
 class CSRFMixin(object):
+    def getSessionCookieFromJar(self, cookieJar):
+        for cookie in cookieJar:
+            if cookie.name == 'session':
+                return cookie.value
 
-    def getResponseText(self, resp):
-        text = ""
-        for i in resp.response:
-            text += i
-        return text
-
-    def parseCSRF(self, text):
-        parser = CSRFParser()
-        parser.feed(text)
-        csrf = parser.csrf
-        return csrf
-
-    def getCSRF(self, c=None, uri=None):
-        if c is None:
-            with app.test_client() as c:
-                return self._getCSRF(c)
-        else:
-            return self._getCSRF(c)
-
-    def _getCSRF(self, c, uri=None):
-        if uri is None:
-            uri = 'http://localhost.local/login'
-        resp = c.get(uri)
-        text = self.getResponseText(resp)
-        csrf = self.parseCSRF(text)
-        return csrf
-
-    def printResponse(self, resp):
-        print "{0.status_code}\n{0.headers}\n{1}".format(resp,self.getResponseText(resp))
+    def getCSRF(self, c, uri=None):
+        cookieJar = c.cookie_jar
+        return self.getSessionCookieFromJar(cookieJar)
 
 class AuthenticatedSessionMixin(UserTesting):
     def makeSessionAuthenticated(self):
