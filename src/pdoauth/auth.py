@@ -14,6 +14,7 @@ from uuid import uuid4
 import time
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from pdoauth.models.Assurance import Assurance
+from pdoauth.forms.AssuranceForm import AssuranceForm
 
 @login_manager.unauthorized_handler
 def unauthorized():
@@ -92,3 +93,26 @@ def isAllowedToGetUser(userid):
         authuser = User.get(targetuserid)
         allowed = authuser.id == userid or userid == 'me'
     return allowed, authuser
+
+def do_get_by_email(email):
+    assurances = Assurance.getByUser(current_user)
+    if assurances.has_key('assurer'):
+        user = User.getByEmail(email)
+        return redirect("/v1/users/{0}".format(user.id))
+    return flask.make_response("no authorization", 403)
+
+
+def do_add_assurance():
+    form = AssuranceForm()
+    if form.validate_on_submit():
+        assurances = Assurance.getByUser(current_user)
+        neededAssurance = form.assurance.data
+        assurerAssurance = "assurer.{0}".format(neededAssurance)
+        if assurances.has_key('assurer') and assurances.has_key(assurerAssurance):
+            user = User.getByEmail(form.email.data)
+            Assurance.new(user, neededAssurance, current_user)
+            responseText = "added assurance {0} to user {1}".format(neededAssurance, user.email)
+            return flask.make_response(responseText, 200)
+        return flask.make_response("no authorization", 403)
+    flash_errors(form)
+    return render_template("add_assurance.html", form=form)

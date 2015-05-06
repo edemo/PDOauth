@@ -135,10 +135,6 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             self.login(c)
             myEmail = current_user.email
             now = time.time()
-            for ass in Assurance.query.filter_by(user=current_user, name = 'test'):  # @UndefinedVariable
-                ass.rm()
-            for ass in Assurance.query.filter_by(user=current_user, name = 'test2'):  # @UndefinedVariable
-                ass.rm()
             Assurance.new(current_user, 'test', current_user, now)
             Assurance.new(current_user, 'test2', current_user, now)
             Assurance.new(current_user, 'test2', current_user, now)
@@ -200,16 +196,92 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
     def users_with_assurer_assurance_can_get_email_and_digest_for_anyone(self):
         with app.test_client() as c:
             self.login(c)
-            now = time.time()
-            Assurance.new(current_user, 'assurer', current_user, now)
-            genemail = "{0}+assured@example.com".format(self.randString)
-            targetuser=self.create_user_with_credentials(email=genemail)
+            Assurance.new(current_user, 'assurer', current_user)
+            targetuser=self.create_user_with_credentials()
             Assurance.new(targetuser,'test',current_user)
-            target = User.getByEmail(genemail)
+            target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/users/{0}'.format(target.id))
             text = self.getResponseText(resp)
-            self.assertEquals(resp.status_code, 200)
             data = json.loads(text)
-            self.assertTrue(data.has_key('assurances'))
             assurances = data['assurances']
             self.assertEquals(assurances['test'][0]['assurer'], current_user.email)
+
+    @test
+    def users_without_assurer_assurance_cannot_get_email_and_digest_for_anyone(self):
+        with app.test_client() as c:
+            self.login(c)
+            targetuser=self.create_user_with_credentials()
+            Assurance.new(targetuser,'test',current_user)
+            target = User.getByEmail(self.usercreation_email)
+            resp = c.get('http://localhost.local/v1/users/{0}'.format(target.id))
+            self.assertEqual(403, resp.status_code)
+
+    @test
+    def users_with_assurer_assurance_can_get_user_by_email(self):
+        with app.test_client() as c:
+            self.login(c)
+            Assurance.new(current_user, 'assurer', current_user)
+            self.create_user_with_credentials()
+            target = User.getByEmail(self.usercreation_email)
+            resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
+            self.assertEquals(resp.status_code,302)
+            self.assertEquals(resp.headers['Location'],"http://localhost.local/v1/users/{0}".format(target.id))
+
+    @test
+    def users_without_assurer_assurance_cannot_get_user_by_email(self):
+        with app.test_client() as c:
+            self.login(c)
+            self.create_user_with_credentials()
+            target = User.getByEmail(self.usercreation_email)
+            resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
+            self.assertEquals(resp.status_code,403)
+
+    @test
+    def users_without_login_cannot_get_user_by_email(self):
+        with app.test_client() as c:
+            self.create_user_with_credentials()
+            target = User.getByEmail(self.usercreation_email)
+            resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
+            self.assertEquals(resp.status_code,302)
+            self.assertEquals(resp.headers['Location'],"http://localhost.local/login")
+
+    @test
+    def assurers_with_appropriate_credential_can_add_assurance_to_user(self):
+        """
+        the appropriate credential is an assurance in the form "assurer.<assurance_name>"
+        where assurance_name is the assurance to be added
+        """
+        with app.test_client() as c:
+            self.login(c)
+            Assurance.new(current_user, 'assurer', current_user)
+            Assurance.new(current_user, 'assurer.test', current_user)
+            self.create_user_with_credentials()
+            target = User.getByEmail(self.usercreation_email)
+            target.hash="lkajsdlsajkhvdsknjdsflkjhfsaldkjslak"
+            data = dict(
+                digest = target.hash,
+                assurance = "test",
+                email = target.email,
+                csrf_token = self.getCSRF(c, 'http://localhost.local/v1/add_assurance'))
+            self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
+            resp = c.post('http://localhost.local/v1/add_assurance', data = data)
+            self.assertEquals(200, resp.status_code)
+            self.assertEquals(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
+
+    @test
+    def assurers_without_appropriate_credential_cannot_add_assurance_to_user(self):
+        with app.test_client() as c:
+            self.login(c)
+            Assurance.new(current_user, 'assurer', current_user)
+            Assurance.new(current_user, 'assurer.testno', current_user)
+            self.create_user_with_credentials()
+            target = User.getByEmail(self.usercreation_email)
+            target.hash="lkajsdlsajkhvdsknjdsflkjhfsaldkjslak"
+            data = dict(
+                digest = target.hash,
+                assurance = "test",
+                email = target.email,
+                csrf_token = self.getCSRF(c, 'http://localhost.local/v1/add_assurance'))
+            self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
+            resp = c.post('http://localhost.local/v1/add_assurance', data = data)
+            self.assertEquals(403, resp.status_code)

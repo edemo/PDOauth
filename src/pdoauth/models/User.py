@@ -59,5 +59,3 @@ class User(db.Model, ModelUtils):
     @classmethod
     def get(cls, userid):
         return User.query.filter_by(id=userid).first()
-    
-    

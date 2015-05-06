@@ -39,7 +39,6 @@ class UserTesting(object):
         csrf = self.getCSRF(c)
         data['csrf_token']=csrf
         resp = c.post('http://localhost.local/login', data=data)
-        print self.getResponseText(resp)
         self.assertEqual(302, resp.status_code)
         self.assertEqual('http://localhost.local/v1/oauth2/auth', resp.headers['Location'])
         return resp
@@ -116,18 +115,23 @@ class CSRFMixin(object):
         csrf = parser.csrf
         return csrf
 
-    def getCSRF(self, c=None):
+    def getCSRF(self, c=None, uri=None):
         if c is None:
             with app.test_client() as c:
                 return self._getCSRF(c)
         else:
             return self._getCSRF(c)
 
-    def _getCSRF(self, c):
-        resp = c.get('http://localhost.local/login')
+    def _getCSRF(self, c, uri=None):
+        if uri is None:
+            uri = 'http://localhost.local/login'
+        resp = c.get(uri)
         text = self.getResponseText(resp)
         csrf = self.parseCSRF(text)
         return csrf
+
+    def printResponse(self, resp):
+        print "{0.status_code}\n{0.headers}\n{1}".format(resp,self.getResponseText(resp))
 
 class AuthenticatedSessionMixin(UserTesting):
     def makeSessionAuthenticated(self):

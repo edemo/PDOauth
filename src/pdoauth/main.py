@@ -1,12 +1,13 @@
 from app import app
 from pdoauth.AuthProvider import AuthProvider
-from flask_login import login_required
-from pdoauth.auth import do_login, do_registration
+from pdoauth.auth import do_login, do_registration, do_get_by_email,\
+    do_add_assurance
 from flask import json
 import flask
 from pdoauth import auth
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance
+from flask_login import login_required
 
 @app.route("/v1/oauth2/auth", methods=["GET"])
 @login_required
@@ -46,6 +47,16 @@ def verifyEmail(token):
         return flask.make_response("email verified OK", 200)
     return flask.make_response("unknown token", 404)
 
+@app.route('/v1/user_by_email/<email>', methods=["GET"])
+@login_required
+def get_by_email(email):
+    return do_get_by_email(email)
+
+@app.route('/v1/add_assurance', methods=["POST"])
+@login_required
+def add_assurance():
+    return do_add_assurance()
+    
 if __name__ == '__main__':
     app.run("localhost", 8888, True)
 
