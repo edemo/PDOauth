@@ -32,7 +32,7 @@ class CredentialManager(object):
         if existingUser:
             return None
         return cls.create_user_with_creds(
-            form.credentialtype.data,
+            form.credentialType.data,
             form.identifier.data,
             form.secret.data,
             form.email.data,

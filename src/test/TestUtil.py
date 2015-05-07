@@ -15,8 +15,10 @@ class ResponseInfo(object):
             text += i
         return text
 
-    def printResponse(self, resp):
-        print "{0.status_code}\n{0.headers}\n{1}".format(resp,self.getResponseText(resp))
+    def printResponse(self, resp, text=None):
+        if text is None:
+            text = self.getResponseText(resp)
+        print "{0.status_code}\n{0.headers}\n{1}".format(resp,text)
 
 class UserTesting(ResponseInfo):
 
@@ -43,8 +45,7 @@ class UserTesting(ResponseInfo):
             user.activate()
         data = {
                 'username': self.usercreation_userid,
-                'password': self.usercreation_password,
-                'next': '/v1/oauth2/auth'
+                'password': self.usercreation_password
         }
         resp = c.post('http://localhost.local/login', data=data)
         return resp
@@ -75,12 +76,12 @@ class UserTesting(ResponseInfo):
                 email = "{0}@example.com".format(self.randString)
             self.registered_email = email
             data = {
-                'credentialtype':'password', 
+                'credentialType':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString),
+                'secret':"password_{0}".format(self.randString+self.randString),
                 'email': email, 
-                'digest': self.randString,
-                'next': '/registered'}
+                'digest': self.randString
+            }
             resp = c.post('https://localhost.local/v1/register', data=data)
             return resp, outbox
 

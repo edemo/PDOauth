@@ -3,7 +3,7 @@ from twatson.unittest_annotations import Fixture, test
 from pdoauth import auth
 from pdoauth.app import app
 from pdoauth.models.User import User
-from test.TestUtil import ResponseInfo, UserTesting
+from test.TestUtil import UserTesting
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Credential import Credential
 
@@ -74,8 +74,3 @@ class LoginTest(Fixture, UserTesting):
             data = dict(username="userid", password="passwordka")
             resp = c.post('http://localhost.local/login', data=data)
             self.assertUserResponse(resp)
-
-#FIXME: test auth.email_verification(user)
-#FIXME: test auth.do_registration()
-#FIXME:test auth.isAllowedToGetUser()
-#FIXME: test auth.flash_errors(form)

@@ -100,27 +100,6 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             data = json.loads(self.getResponseText(resp))
             self.assertTrue(data.has_key('userid'))
 
-    @test
-    def register_and_get_our_info(self):
-        with app.test_client() as c:
-            resp, outbox = self.register(c)
-            logout_user()
-            self.assertUserResponse(resp)
-            self.assertEquals(outbox[0].subject,"verification")
-            data = {
-                'username': "id_{0}".format(self.randString), 
-                'password':"password_{0}".format(self.randString), 
-                'next':'/v1/users/me'
-            }
-            resp = c.post('http://localhost.local/login', data=data)
-            self.assertUserResponse(resp)
-            
-            resp = c.get('http://localhost.local/v1/users/me')
-            text = self.getResponseText(resp)
-            self.assertEquals(resp.status_code, 200)
-            data = json.loads(text)
-            self.assertTrue(data.has_key('userid'))
-            self.assertTrue(u'@example.com' in data['email'])
 
     @test
     def logged_in_user_can_get_its_info(self):
@@ -155,20 +134,6 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             self.assertEqual(len(assurances['test2']),2)
 
     @test
-    def user_cannot_register_twice_with_same_email(self):
-        email = "k-{0}@example.com".format(self.randString)
-        with app.test_client() as c:
-            resp , outbox = self.register(c,email=email)  # @UnusedVariable
-            logout_user()
-            self.assertUserResponse(resp)
-        with app.test_client() as c:
-            resp, outbox  = self.register(c, email=email)  # @UnusedVariable
-            logout_user()
-            self.assertEquals(400, resp.status_code)
-            text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["There is already a user with that email", "'))
-
-    @test
     def email_validation_gives_emailverification_assurance(self):
         with app.test_client() as c:
             resp, outbox = self.register(c)
@@ -189,6 +154,13 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             assurances = Assurance.getByUser(user)
             self.assertTrue(assurances['emailverification'] is not None)
             user.rm()
+
+    @test
+    def bad_email_uri_signals_error(self):
+        with app.test_client() as c:
+            resp = c.get("https://localhost.local/v1/verify_email/badkey")
+            self.assertEquals(resp.status_code, 404)
+            self.assertEquals(self.getResponseText(resp),'{"errors": "unknown token"}')
 
     @test
     def users_with_assurer_assurance_can_get_email_and_digest_for_anyone(self):

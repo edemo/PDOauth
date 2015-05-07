@@ -2,11 +2,6 @@ from app import app
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.auth import do_login, do_registration, do_get_by_email,\
     do_add_assurance, do_show_user, do_verify_email
-from flask import json
-import flask
-from pdoauth import auth
-from pdoauth.models.Credential import Credential
-from pdoauth.models.Assurance import Assurance
 from flask_login import login_required
 
 @app.route("/v1/oauth2/auth", methods=["GET"])

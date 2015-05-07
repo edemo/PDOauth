@@ -139,9 +139,10 @@ def do_show_user(userid):
 
 def do_verify_email(token):
     cred = Credential.get('emailcheck', token)
+    if cred is None:
+        return error_response("unknown token", 404)
     user = cred.user
     Assurance.new(user,'emailverification',user)
     cred.rm()
-    if cred is not None:
-        return make_response("email verified OK", 200)
-    return error_response("unknown token", 404)
+    return make_response("email verified OK", 200)
+ 
