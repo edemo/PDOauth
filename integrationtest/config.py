@@ -8,3 +8,4 @@ class Config(object):
     AUTHCODE_EXPIRY = 60
     WTF_CSRF_ENABLED = False
     MAIL_PORT = 1025
+    SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"

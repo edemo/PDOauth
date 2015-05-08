@@ -1,10 +1,9 @@
-from app import app
+from app import app, login_manager
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.auth import do_login, do_registration, do_get_by_email,\
     do_add_assurance, do_show_user, do_verify_email, error_response
 from flask_login import login_required
 from flask.helpers import send_from_directory
-from pdoauth.app import login_manager
 from pdoauth.models.User import User
 import os
 
