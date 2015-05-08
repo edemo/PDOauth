@@ -9,3 +9,4 @@ class Config(object):
     WTF_CSRF_ENABLED = False
     MAIL_PORT = 1025
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
+    SERVER_NAME="127.0.0.1:8888"
