@@ -6,6 +6,7 @@ from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.app import login_manager
 from pdoauth.models.User import User
+import os
 
 
 @login_manager.unauthorized_handler
@@ -53,9 +54,15 @@ def get_by_email(email):
 def add_assurance():
     return do_add_assurance()
 
+def getStaticPath():
+    mainpath = os.path.abspath(__file__)
+    up = os.path.dirname
+    ret = os.path.join(up(up(up(mainpath))), 'static')
+    return ret
+
 @app.route('/static/<path:path>')
 def send_static(path):
-    return send_from_directory('/project/mag/pdoauth/static', path)
+    return send_from_directory(getStaticPath(), path)
 
 if __name__ == '__main__':
     app.run("localhost", 8888)

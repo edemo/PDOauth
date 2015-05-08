@@ -11,6 +11,7 @@ from flask_login import logout_user, current_user
 import re
 from pdoauth.models.Assurance import Assurance
 import time
+import os
 
 app.extensions["mail"].suppress = True
 
