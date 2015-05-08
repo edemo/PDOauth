@@ -5,6 +5,7 @@ from sqlalchemy.sql.sqltypes import Integer, String
 from sqlalchemy.orm import relationship
 from pdoauth.models.User import User
 
+
 class Credential(db.Model, ModelUtils):
     __tablename__ = 'credential'
     id = Column(Integer,primary_key=True)
@@ -30,6 +31,9 @@ class Credential(db.Model, ModelUtils):
     
     @classmethod
     def new(cls, user, credentialType, identifier, secret):
+        oldcred = cls.get(credentialType, identifier)
+        if oldcred is not None:
+            return None
         cred = cls(user, credentialType, identifier, secret)
         cred.save()
         return cred

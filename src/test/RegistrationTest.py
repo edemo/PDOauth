@@ -48,7 +48,7 @@ class RegistrationTest(Fixture, UserTesting):
             logout_user()
             self.assertEquals(400, resp.status_code)
             text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["There is already a user with that email", "'))
+            self.assertTrue(text.startswith('{"errors": ["There is already a user with that username or email", "'))
 
     @test
     def registration_is_impossible_without_email(self):
@@ -102,3 +102,21 @@ class RegistrationTest(Fixture, UserTesting):
             self.assertEquals(resp.status_code, 400)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["identifier: '))
+
+    @test
+    def password_registration_is_impossible_with_already_used_username(self):
+        email = "k0-{0}@example.com".format(self.randString)
+        with app.test_client() as c:
+            data = {
+                'identifier': "id_{0}".format(self.randString), 
+                'credentialType':'password', 
+                'secret':"password_{0}".format(self.randString),
+                'email': email,
+            }
+            resp = c.post('https://localhost.local/v1/register', data=data)
+            self.assertEquals(resp.status_code, 200)
+            data['email'] = "k1-{0}@example.com".format(self.randString)
+            resp = c.post('https://localhost.local/v1/register', data=data)
+            self.assertEquals(resp.status_code, 400)
+            text = self.getResponseText(resp)
+            self.assertTrue(text.startswith('{"errors": ["There is already a user with that username or email", "'))

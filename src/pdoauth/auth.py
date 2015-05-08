@@ -1,4 +1,4 @@
-from pdoauth.app import login_manager, mail, app
+from pdoauth.app import mail, app
 import flask
 from pdoauth.models.User import User
 from pdoauth.forms.LoginForm import LoginForm
@@ -27,6 +27,9 @@ def make_response(descriptor,status=200):
     ret = json.dumps(descriptor)
     return flask.make_response(ret, status)
 
+def simple_response(text):
+    return make_response(dict(message=text))
+
 def error_response(descriptor, status=400):
     return make_response(dict(errors=descriptor), status)
 
@@ -40,7 +43,7 @@ def as_dict(user):
         'userid':user.id, 
         'assurances':Assurance.getByUser(user)}
     ret = json.dumps(data)
-    return ret
+    return flask.make_response(ret,200)
 
 def email_verification(user):
     secret=unicode(uuid4())
@@ -78,7 +81,9 @@ def do_login():
         user.set_authenticated()
         r = login_user(user)
         if r:
-            return as_dict(user)
+            resp = as_dict(user)
+            resp.set_cookie("csrf",unicode(uuid4()))
+            return resp
         return error_response(["Inactive or disabled user"], status=403)
     return form_validation_error_response(form, status=403)
 
@@ -89,7 +94,7 @@ def do_registration():
     if form.validate_on_submit():
         user = CredentialManager.create_from_form(form)
         if user is None:
-            return error_response(["There is already a user with that email", form.email.data])
+            return error_response(["There is already a user with that username or email", form.email.data])
         email_verification(user)
         user.set_authenticated()
         user.activate()
@@ -114,7 +119,7 @@ def do_add_assurance():
         if assurances.has_key('assurer') and assurances.has_key(assurerAssurance):
             user = User.getByEmail(form.email.data)
             Assurance.new(user, neededAssurance, current_user)
-            return make_response(["added assurance ",neededAssurance, user.email], 200)
+            return simple_response("added assurance {0} for {1}".format(neededAssurance, user.email))
         return error_response(["no authorization"], 403)
     return form_validation_error_response(form)
 
@@ -132,5 +137,5 @@ def do_verify_email(token):
     user = cred.user
     Assurance.new(user,'emailverification',user)
     cred.rm()
-    return make_response("email verified OK", 200)
+    return simple_response("email verified OK")
  

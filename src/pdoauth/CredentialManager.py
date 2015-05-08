@@ -11,7 +11,10 @@ class CredentialManager(object):
     def create_user_with_creds(cls, credtype, identifier, secret, email, digest=None):
         user = User.new(email, digest)
         protected = cls.protect_secret(credtype, identifier, secret)
-        Credential.new(user, credtype, identifier, protected)
+        cred = Credential.new(user, credtype, identifier, protected)
+        if cred is None:
+            user.rm()
+            return None
         return user
 
     

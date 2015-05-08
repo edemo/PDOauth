@@ -26,6 +26,7 @@ class UserTesting(ResponseInfo):
         self.randString = ''.join(random.choice(string.ascii_letters) for _ in range(6))
 
     def create_user_with_credentials(self, credType='password', userid=None, password=None, email=None):
+        self.setupRandom()
         if email is None:
             email = "email{0}@example.com".format(self.randString)
         if userid is None:
@@ -113,14 +114,14 @@ class ServerSide(ResponseInfo):
 
 
 class CSRFMixin(object):
-    def getSessionCookieFromJar(self, cookieJar):
+    def getCSRFCookieFromJar(self, cookieJar):
         for cookie in cookieJar:
-            if cookie.name == 'session':
+            if cookie.name == 'csrf':
                 return cookie.value
 
     def getCSRF(self, c, uri=None):
         cookieJar = c.cookie_jar
-        return self.getSessionCookieFromJar(cookieJar)
+        return self.getCSRFCookieFromJar(cookieJar)
 
 class AuthenticatedSessionMixin(UserTesting):
     def makeSessionAuthenticated(self):

@@ -55,10 +55,21 @@ class UserTest(Fixture, UserTesting):
     
     @test
     def User_email_can_be_stored(self):
-        user = CredentialManager.create_user_with_creds('password', 'userid', 'password', email="testuser@nowhere.example.com")
-        self.assertEquals(user.email, "testuser@nowhere.example.com")
+        self.setupRandom()
+        email = "email{0}@example.com".format(self.randString)
+        userid = "aaa_{0}".format(self.randString)
+        password = "bbb_{0}".format(self.randString)
+
+        user = CredentialManager.create_user_with_creds('password', userid, password, email)
+        self.assertEquals(user.email, email)
     
     @test
     def User_hash_can_be_stored(self):
-        user = CredentialManager.create_user_with_creds('password', 'userid', 'password', email="testuser@nowhere.example.com", digest="xxxxxxxxx")
-        self.assertEquals(user.email, "testuser@nowhere.example.com")
+        self.setupRandom()
+        email = "email{0}@example.com".format(self.randString)
+        userid = "aaa_{0}".format(self.randString)
+        password = "bbb_{0}".format(self.randString)
+        digest = "digest_{0}".format(self.randString)
+        user = CredentialManager.create_user_with_creds('password', userid, password, email, digest)
+        self.assertEquals(user.email, email)
+        self.assertEquals(user.hash, digest)

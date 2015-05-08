@@ -47,9 +47,44 @@ function ajaxpost(uri,data,callback)
 	xmlhttp.send(data);
 }
 
+function ajaxget(uri,callback)
+{
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4)
+	    {
+	    	callback(xmlhttp.status,xmlhttp.responseText);
+	    }
+	  }
+	xmlhttp.open("GET",uri,true);
+	xmlhttp.send();
+}
+
 function processErrors(data) {
 		t = "<ul>"
-		errs = data['errors']
+		if (data.message) {
+			document.getElementById("message").innerHTML=data.message
+		}
+		if (data.assurances) {
+			userdata = "email: "+data.email
+			userdata +="<br/>userid: "+data.userid
+			userdata +="<ul>"
+			for(ass in data.assurances) {
+				userdata += "<li>"+ass+"</li>"
+			}
+			userdata +="</ul>"
+			document.getElementById("userdata").innerHTML=userdata			
+		}
+		errs = data.errors
 		for ( err in errs ) {
 			t += "<li>"+ errs[err] +"</li>"
 		}
@@ -61,7 +96,9 @@ function myCallback(status, text) {
 	document.getElementById("errorMsg").innerHTML=text
 	var data = JSON.parse(text);
 	if (status == 200) {
-		window.location = QueryString.next
+		if(QueryString.next) {
+			window.location = QueryString.next
+		}
 	}
 	processErrors(data)
 }
@@ -70,6 +107,11 @@ function login() {
     username = document.getElementById("LoginForm_username_input").value;
     password = document.getElementById("LoginForm_password_input").value;
     ajaxpost("/login", "username="+username+"&password="+password, myCallback)
+}
+
+function byEmail() {
+    email = document.getElementById("ByEmailForm_email_input").value;
+    ajaxget("/v1/user_by_email/"+email, myCallback)
 }
 
 function register() {
@@ -87,10 +129,37 @@ function register() {
     ajaxpost("/v1/register", text, myCallback)
 }
 
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+} 
+
+function addAssurance() {
+    digest = document.getElementById("AddAssuranceForm_digest_input").value;
+    assurance = document.getElementById("AddAssuranceForm_assurance_input").value;
+    email = document.getElementById("AddAssuranceForm_email_input").value;
+    csrf_token = getCookie('csrf');
+    console.log("csrf_tokenn:"+csrf_token)
+    text= 
+    	"digest=" + digest +
+    	"&assurance=" + assurance +
+    	"&email=" + email +
+    	"&csrf_token=" + csrf_token;
+    ajaxpost("/v1/add_assurance", text, myCallback)
+}
+
 </script>
 </head>
 <body>
   <div id="errorMsg"></div>
+  <div id="message"></div>
+  <div id="userdata"></div>
   <form id="loginform" action="javascript:login()" method="post" name="login">
   	<div class="formrow">
   		<div class="label" id="LoginForm_username_label">
@@ -144,6 +213,43 @@ function register() {
   	</div>
   	<div class="formrow">
   	 <input type="submit" value="Register" id="RegistrationForm_submitButton">
+  	</div>
+  </form>
+  <form id="ByEmailForm" action="javascript:byEmail()" method="post" name="byEmail">
+  	<div class="formrow">
+  		<div class="label" id="ByEmailForm_email_label">
+  			email:
+  		</div>
+  		<input name="email" type="text" id="ByEmailForm_email_input"/>
+  	<div class="formrow">
+  	 <input type="submit" value="Show" id="ByEmailForm_submitButton">
+  	</div>
+  	</div>
+  </form>
+  	<div class="formrow">
+  	 <a href="javascript:ajaxget('/v1/users/me',myCallback)">Me</a>
+  	</div>
+  <form id="AddAssuranceForm" action="javascript:addAssurance()" method="post" name="addAssurance">
+  	<div class="formrow">
+  		<div class="label" id="AddAssuranceForm_digest_label">
+  			digest:
+  		</div>
+  		<input name="digest" type="text" id="AddAssuranceForm_digest_input"/>
+  	</div>
+  	<div class="formrow">
+  		<div class="label" id="AddAssuranceForm_assurance_label">
+  			assurance:
+  		</div>
+  		<input name="assurance" type="text" id="AddAssuranceForm_assurance_input"/>
+  	</div>
+  	<div class="formrow">
+  		<div class="label" id="AddAssuranceForm_email_label">
+  			email:
+  		</div>
+  		<input name="email" type="text" id="AddAssuranceForm_email_input"/>
+  	</div>
+  	<div class="formrow">
+  	 <input type="submit" value="Add Assurance" id="AddAssuranceForm_submitButton">
   	</div>
   </form>
 

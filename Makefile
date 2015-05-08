@@ -28,6 +28,8 @@ dbmigrate:
 dbupgrade:
 	PYTHONPATH=src:src/test python src/manage.py db upgrade
 
+handtest: testsetup runemail runserver
+
 sql:
 	sqlite3 /tmp/pdoauth.db
 

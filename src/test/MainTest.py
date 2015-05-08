@@ -45,6 +45,12 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             self.assertUserResponse(resp)
 
     @test
+    def login_sets_the_csrf_cookie(self):
+        with app.test_client() as c:
+            resp = self.login(c)
+            self.assertTrue("csrf=" in unicode(resp.headers['Set-Cookie']))
+
+    @test
     def inactive_user_cannot_authenticate(self):
         with app.test_client() as c:
             resp = self.login(c, activate=False)
@@ -202,7 +208,8 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
     def users_without_assurer_assurance_cannot_get_user_by_email(self):
         with app.test_client() as c:
             self.login(c)
-            self.create_user_with_credentials()
+            user = self.create_user_with_credentials()
+            self.assertTrue(user is not None)
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
             self.assertEquals(resp.status_code,403)
