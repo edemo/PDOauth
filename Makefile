@@ -1,8 +1,9 @@
 alltests: tests integrationtest
 
-integrationtest: runserver runemail testsetup
-	python -m unittest discover -s integrationtest -p '*.py'
-	make killall
+onlyintegrationtest: testsetup runserver runemail testsetup
+	PYTHONPATH=src python -m unittest discover -s integrationtest -p '*.py'
+
+integrationtest: onlyintegrationtest killall
 
 runserver:
 	PYTHONPATH=src:integrationtest python src/pdoauth/main.py&

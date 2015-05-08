@@ -11,6 +11,7 @@ from flask_login import logout_user, current_user
 import re
 from pdoauth.models.Assurance import Assurance
 import time
+from uuid import uuid4
 
 app.extensions["mail"].suppress = True
 
@@ -205,6 +206,17 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             self.assertUserResponse(resp)
 
     @test
+    def no_by_email_with_wrong_email(self):
+        with app.test_client() as c:
+            self.login(c)
+            Assurance.new(current_user, 'assurer', current_user)
+            self.setupRandom()
+            self.create_user_with_credentials()
+            target = User.getByEmail(self.usercreation_email)
+            resp = c.get('http://localhost.local/v1/user_by_email/u{0}'.format(target.email))
+            self.assertEquals(resp.status_code,404)
+
+    @test
     def users_without_assurer_assurance_cannot_get_user_by_email(self):
         with app.test_client() as c:
             self.login(c)
@@ -258,6 +270,27 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             resp = c.post('http://localhost.local/v1/add_assurance', data = data)
             self.assertEquals(200, resp.status_code)
             self.assertEquals(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
+
+    @test
+    def no_madeup_csrf_cookie(self):
+        with app.test_client() as c:
+            self.login(c)
+            Assurance.new(current_user, 'assurer', current_user)
+            Assurance.new(current_user, 'assurer.test', current_user)
+            self.create_user_with_credentials()
+            target = User.getByEmail(self.usercreation_email)
+            target.hash="lkajsdlsajkhvdsknjdsflkjhfsaldkjslak"
+            false_cookie=unicode(uuid4())
+            data = dict(
+                digest = target.hash,
+                assurance = "test",
+                email = target.email,
+                csrf_token = false_cookie)
+            self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
+            c.set_cookie("localhost.localdomain","csrf",false_cookie)
+            resp = c.post('http://localhost.local/v1/add_assurance', data = data)
+            self.assertEquals(400, resp.status_code)
+            self.assertEquals('{"errors": ["csrf_token: csrf validation error"]}',self.getResponseText(resp))
 
     @test
     def assurers_without_appropriate_credential_cannot_add_assurance_to_user(self):

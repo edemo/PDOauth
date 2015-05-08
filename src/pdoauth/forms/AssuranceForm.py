@@ -1,11 +1,11 @@
 
 from flask_wtf.form import Form
 from wtforms import TextField, validators
-from flask.globals import request
+from flask.globals import session
 from wtforms.validators import ValidationError
 
 def csrf_check(form, field):
-    sessionid = request.cookies.get('csrf')
+    sessionid = session['csrf_token']
     if not sessionid == field.data:
         raise ValidationError('csrf validation error')
 

@@ -4,7 +4,7 @@ from pdoauth.models.User import User
 from pdoauth.forms.LoginForm import LoginForm
 from pdoauth.CredentialManager import CredentialManager
 from flask_login import login_user, current_user
-from flask.globals import request
+from flask.globals import request, session
 from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.models.Credential import Credential
 from uuid import uuid4
@@ -82,7 +82,9 @@ def do_login():
         r = login_user(user)
         if r:
             resp = as_dict(user)
-            resp.set_cookie("csrf",unicode(uuid4()))
+            token = unicode(uuid4())
+            session['csrf_token'] = token
+            resp.set_cookie("csrf",token)
             return resp
         return error_response(["Inactive or disabled user"], status=403)
     return form_validation_error_response(form, status=403)
@@ -107,6 +109,8 @@ def do_get_by_email(email):
     assurances = Assurance.getByUser(current_user)
     if assurances.has_key('assurer'):
         user = User.getByEmail(email)
+        if user is None:
+            return error_response(["no such user"], status=404)
         return as_dict(user)
     return error_response(["no authorization"], status=403)
 
