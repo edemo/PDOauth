@@ -49,7 +49,7 @@ def email_verification(user):
     timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
     uri = "https://{0}/v1/verify_email/{1}".format(app.config.get('SERVER_NAME'),secret)
     text = """Hi, click on <a href="{0}">{0}</a> until {1} to verify your email""".format(uri, timeText)
-    mail.send_message(subject="verification", body=text, recipients=[user.email], sender="FIXME@FIXME.FIXME")
+    mail.send_message(subject="verification", body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
 
 def isAllowedToGetUser(userid):
     allowed = False

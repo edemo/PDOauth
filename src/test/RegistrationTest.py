@@ -20,6 +20,7 @@ class RegistrationTest(Fixture, UserTesting):
             logout_user()
             self.assertUserResponse(resp)
             self.assertEquals(outbox[0].subject,"verification")
+            self.assertEquals(outbox[0].sender,"test@edemokraciagep.org")
             data = {
                 'username': "id_{0}".format(self.randString), 
                 'password':"password_{0}".format(self.randString+self.randString), 
