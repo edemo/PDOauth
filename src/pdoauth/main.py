@@ -1,8 +1,22 @@
 from app import app
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.auth import do_login, do_registration, do_get_by_email,\
-    do_add_assurance, do_show_user, do_verify_email
+    do_add_assurance, do_show_user, do_verify_email, error_response
 from flask_login import login_required
+from flask.helpers import send_from_directory
+from pdoauth.app import login_manager
+from pdoauth.models.User import User
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    resp = error_response(["authentication needed"], 302)
+    resp.headers['Location'] = '/login'
+    return resp
+
+@login_manager.user_loader
+def load_user(userid):
+    return User.get(userid)
 
 @app.route("/v1/oauth2/auth", methods=["GET"])
 @login_required
@@ -38,8 +52,10 @@ def get_by_email(email):
 @login_required
 def add_assurance():
     return do_add_assurance()
-    
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('/project/mag/pdoauth/static', path)
+
 if __name__ == '__main__':
-    app.run("localhost", 8888, True)
-
-
+    app.run("localhost", 8888)

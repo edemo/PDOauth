@@ -7,4 +7,4 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/pdoauth.db"
     AUTHCODE_EXPIRY = 60
     WTF_CSRF_ENABLED = False
-    SERVER_NAME = "localhost.local"
+    MAIL_PORT = 1025

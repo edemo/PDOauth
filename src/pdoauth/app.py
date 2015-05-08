@@ -6,10 +6,9 @@ from flask_mail import Mail
 
 logging.basicConfig()
 login_manager = LoginManager()
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_url_path='')
 app.config.from_object("config.Config")
 mail = Mail(app)
 login_manager.init_app(app)
 db = SQLAlchemy(app)
 session = db.session
-

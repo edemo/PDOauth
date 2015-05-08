@@ -14,32 +14,21 @@ from pdoauth.models.Assurance import Assurance
 from pdoauth.forms.AssuranceForm import AssuranceForm
 from flask import json
 
-@login_manager.unauthorized_handler
-def unauthorized():
-    resp = flask.make_response("authentication needed", 302)
-    resp.headers['Location'] = '/login'
-    return resp
-
-@login_manager.user_loader
-def load_user(userid):
-    return User.get(userid)
 
 def errors_to_json(form):
-    errs = {}
+    errs = []
     for field, errors in form.errors.items():
         for error in errors:
             fieldname = getattr(form, field).label.text
-            if not errs.has_key(fieldname):
-                errs[fieldname] = []
-            errs[fieldname].append(error)
+            errs.append("{0}: {1}".format(fieldname,error))
     return errs
 
 def make_response(descriptor,status=200):
-    ret = json.dumps(dict(errors=descriptor))
+    ret = json.dumps(descriptor)
     return flask.make_response(ret, status)
 
-def error_response(errorDescriptor, status=400):
-    return make_response(errorDescriptor, status)
+def error_response(descriptor, status=400):
+    return make_response(dict(errors=descriptor), status)
 
 def form_validation_error_response(form, status=400):
     errdict = errors_to_json(form)
@@ -80,18 +69,17 @@ def isAllowedToGetUser(userid):
         allowed = authuser.id == userid or userid == 'me'
     return allowed, authuser
 
-
 def do_login():
     form = LoginForm()
     if form.validate_on_submit():
         user = CredentialManager.validate_from_form(form)
         if user is None:
-            return error_response("Bad username or password", status=403)
+            return error_response(["Bad username or password"], status=403)
         user.set_authenticated()
         r = login_user(user)
         if r:
             return as_dict(user)
-        return error_response("Inactive or disabled user", status=403)
+        return error_response(["Inactive or disabled user"], status=403)
     return form_validation_error_response(form, status=403)
 
 
@@ -115,7 +103,7 @@ def do_get_by_email(email):
     if assurances.has_key('assurer'):
         user = User.getByEmail(email)
         return as_dict(user)
-    return error_response("no authorization", status=403)
+    return error_response(["no authorization"], status=403)
 
 def do_add_assurance():
     form = AssuranceForm()
@@ -127,7 +115,7 @@ def do_add_assurance():
             user = User.getByEmail(form.email.data)
             Assurance.new(user, neededAssurance, current_user)
             return make_response(["added assurance ",neededAssurance, user.email], 200)
-        return error_response("no authorization", 403)
+        return error_response(["no authorization"], 403)
     return form_validation_error_response(form)
 
 
@@ -135,12 +123,12 @@ def do_show_user(userid):
     allowed, targetuser = isAllowedToGetUser(userid)
     if allowed:
         return as_dict(targetuser)
-    return error_response("no authorization", status=403)
+    return error_response(["no authorization"], status=403)
 
 def do_verify_email(token):
     cred = Credential.get('emailcheck', token)
     if cred is None:
-        return error_response("unknown token", 404)
+        return error_response(["unknown token"], 404)
     user = cred.user
     Assurance.new(user,'emailverification',user)
     cred.rm()

@@ -59,7 +59,7 @@ class RegistrationTest(Fixture, UserTesting):
             }
             resp = c.post('https://localhost.local/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
-            self.assertEquals(self.getResponseText(resp),'{"errors": {"email": ["Invalid email address."]}}')
+            self.assertEquals(self.getResponseText(resp),'{"errors": ["email: Invalid email address."]}')
 
     @test
     def password_registration_needs_good_password(self):
@@ -73,7 +73,7 @@ class RegistrationTest(Fixture, UserTesting):
             }
             resp = c.post('https://localhost.local/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
-            self.assertTrue(self.getResponseText(resp).startswith('{"errors": {"secret": ["'))
+            self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["secret: '))
 
     @test
     def registration_should_give_a_credential_type(self):
@@ -86,7 +86,7 @@ class RegistrationTest(Fixture, UserTesting):
             }
             resp = c.post('https://localhost.local/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
-            self.assertTrue(self.getResponseText(resp).startswith('{"errors": {"credentialType": ["'))
+            self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["credentialType: '))
 
     @test
     def registration_should_give_an_identifier(self):
@@ -100,4 +100,4 @@ class RegistrationTest(Fixture, UserTesting):
             resp = c.post('https://localhost.local/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": {"identifier": ["'))
+            self.assertTrue(text.startswith('{"errors": ["identifier: '))

@@ -1,5 +1,21 @@
+alltests: tests integrationtest killall
 
-tests:
+integrationtest: runserver runemail testsetup
+	python -m unittest discover -s integrationtest -p '*.py'
+
+runserver:
+	PYTHONPATH=src:integrationtest python src/pdoauth/main.py&
+
+killserver:
+	ps ax |grep pdoauth/main.py |grep -v grep |awk '{print $$1}' |xargs kill
+
+runemail:
+	python -m smtpd -n -c DebuggingServer localhost:1025&
+
+killemail:
+	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
+
+tests: testsetup
 	PYTHONPATH=src python -m unittest discover -s src/test -p '*.py'
 
 testsetup:
@@ -13,3 +29,5 @@ dbupgrade:
 
 sql:
 	sqlite3 /tmp/pdoauth.db
+
+killall: killserver killemail

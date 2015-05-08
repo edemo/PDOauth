@@ -9,3 +9,5 @@ Flask-WTF==0.11
 SQLAlchemy==0.9.9
 beautifulsoup4==4.2.1
 pyoauth2-shift==0.0.1
+selenium==2.45.0
+

@@ -50,7 +50,7 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             resp = self.login(c, activate=False)
             text = self.getResponseText(resp)
             self.assertEqual(403, resp.status_code)
-            self.assertEquals(text,'{"errors": "Inactive or disabled user"}')
+            self.assertEquals(text,'{"errors": ["Inactive or disabled user"]}')
 
     @test
     def Authentication_with_bad_userid_is_rejected(self):
@@ -97,7 +97,8 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
         with app.test_client() as serverside:
             resp = serverside.get("https://localhost.local/v1/users/me", headers=[('Authorization', '{0} {1}'.format(data['token_type'], data['access_token']))])
             self.assertEquals(resp.status_code, 200)
-            data = json.loads(self.getResponseText(resp))
+            text = self.getResponseText(resp)
+            data = json.loads(text)
             self.assertTrue(data.has_key('userid'))
 
 
@@ -160,7 +161,7 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
         with app.test_client() as c:
             resp = c.get("https://localhost.local/v1/verify_email/badkey")
             self.assertEquals(resp.status_code, 404)
-            self.assertEquals(self.getResponseText(resp),'{"errors": "unknown token"}')
+            self.assertEquals(self.getResponseText(resp),'{"errors": ["unknown token"]}')
 
     @test
     def users_with_assurer_assurance_can_get_email_and_digest_for_anyone(self):
@@ -226,7 +227,7 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
                 csrf_token = "")
             resp = c.post('http://localhost.local/v1/add_assurance', data = data)
             self.assertEquals(400, resp.status_code)
-            self.assertEquals(self.getResponseText(resp),'{"errors": {"csrf_token": ["csrf validation error"]}}')
+            self.assertEquals(self.getResponseText(resp),'{"errors": ["csrf_token: csrf validation error"]}')
 
     @test
     def assurers_with_appropriate_credential_can_add_assurance_to_user(self):
@@ -268,3 +269,9 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
             resp = c.post('http://localhost.local/v1/add_assurance', data = data)
             self.assertEquals(403, resp.status_code)
+
+    @test
+    def static_files_are_served(self):
+        with app.test_client() as c:
+            resp = c.get("http://localhost.local/static/index.html")
+            self.assertEqual(resp.status_code,200)

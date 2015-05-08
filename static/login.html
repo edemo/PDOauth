@@ -1,0 +1,153 @@
+<html>
+<head>
+<script>
+var QueryString = function () { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
+  // This function is anonymous, is executed immediately and 
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = pair[1];
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]], pair[1] ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(pair[1]);
+    }
+  } 
+    return query_string;
+} ();
+
+function ajaxpost(uri,data,callback)
+{
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	  xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4)
+	    {
+	    	callback(xmlhttp.status,xmlhttp.responseText);
+	    }
+	  }
+	xmlhttp.open("POST",uri,true);
+	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlhttp.send(data);
+}
+
+function processErrors(data) {
+		t = "<ul>"
+		errs = data['errors']
+		for ( err in errs ) {
+			t += "<li>"+ errs[err] +"</li>"
+		}
+		t += "</ul>"
+		document.getElementById("errorMsg").innerHTML=t
+}
+
+function myCallback(status, text) {
+	document.getElementById("errorMsg").innerHTML=text
+	var data = JSON.parse(text);
+	if (status == 200) {
+		window.location = QueryString.next
+	}
+	processErrors(data)
+}
+
+function login() {
+    username = document.getElementById("LoginForm_username_input").value;
+    password = document.getElementById("LoginForm_password_input").value;
+    ajaxpost("/login", "username="+username+"&password="+password, myCallback)
+}
+
+function register() {
+    credentialType = document.getElementById("RegistrationForm_credentialType_input").value;
+    identifier = document.getElementById("RegistrationForm_identifier_input").value;
+    secret = document.getElementById("RegistrationForm_secret_input").value;
+    email = document.getElementById("RegistrationForm_email_input").value;
+    digest = document.getElementById("RegistrationForm_digest_input").value;
+    text= 
+    	"credentialType=" + credentialType +
+    	"&identifier=" + identifier +
+    	"&secret=" + secret +
+    	"&email=" + email +
+    	"&digest=" + digest;
+    ajaxpost("/v1/register", text, myCallback)
+}
+
+</script>
+</head>
+<body>
+  <div id="errorMsg"></div>
+  <form id="loginform" action="javascript:login()" method="post" name="login">
+  	<div class="formrow">
+  		<div class="label" id="LoginForm_username_label">
+  			username:
+  		</div>
+  		<input name="username" type="text" id="LoginForm_username_input"/>
+  	</div>
+  	<div class="formrow">
+  		<div class="label" id="LoginForm_password_label">
+  			password:
+  		</div>
+  		<input name="username" type="password" id="LoginForm_password_input"/>
+  	</div>
+  	<div class="formrow">
+  	 <input type="submit" value="Login" id="LoginForm_submitButton">
+  	</div>
+  </form>
+
+  <form id="RegistrationForm" action="javascript:register()" method="post" name="register">
+  	<div class="formrow">
+  		<div class="label" id="RegistrationForm_credentialType_label">
+  			credentialType:
+  		</div>
+  		<select name="credentialType" type="text" id="RegistrationForm_credentialType_input">
+  			<option>password</option>
+  		</select>
+  	</div>
+  	<div class="formrow">
+  		<div class="label" id="RegistrationForm_identifier_label">
+  			identifier:
+  		</div>
+  		<input name="identifier" type="text" id="RegistrationForm_identifier_input"/>
+  	</div>
+  	<div class="formrow">
+  		<div class="label" id="RegistrationForm_email_label">
+  			email:
+  		</div>
+  		<input name="email" type="text" id="RegistrationForm_email_input"/>
+  	</div>
+  	<div class="formrow">
+  		<div class="label" id="RegistrationForm_digest_label">
+  			digest:
+  		</div>
+  		<input name="digest" type="text" id="RegistrationForm_digest_input"/>
+  	</div>
+  	<div class="formrow">
+  		<div class="label" id="RegistrationForm_secret_label">
+  			secret:
+  		</div>
+  		<input name="secret" type="password" id="RegistrationForm_secret_input"/>
+  	</div>
+  	<div class="formrow">
+  	 <input type="submit" value="Register" id="RegistrationForm_submitButton">
+  	</div>
+  </form>
+
+<form>
+</form>
+</body>
+</html>
