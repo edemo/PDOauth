@@ -11,7 +11,7 @@ import os
 @login_manager.unauthorized_handler
 def unauthorized():
     resp = error_response(["authentication needed"], 302)
-    resp.headers['Location'] = '/login'
+    resp.headers['Location'] = '/static/login.html'
     return resp
 
 @login_manager.user_loader

@@ -13,7 +13,7 @@ class AuthTest(Fixture):
         with app.test_request_context('/'):
             resp = unauthorized()
             self.assertEquals(resp.status_code, 302)
-            self.assertEquals(resp.headers['Location'], "/login")
+            self.assertEquals(resp.headers['Location'], "/static/login.html")
 
     @test
     def load_user_loads_the_user_by_id(self):

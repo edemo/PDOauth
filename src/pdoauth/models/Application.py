@@ -22,12 +22,12 @@ class Application(db.Model, ModelUtils):
                          
 
     @classmethod
-    def find(klass, name, secret, redirect_uri):
+    def find(klass, name):
         return klass.query.filter_by(name=name).first()
 
     @classmethod
     def new(klass, name, secret, redirect_uri):
-        existing = klass.find(name,secret, redirect_uri)
+        existing = klass.find(name)
         if existing:
             raise NotUnique("already existing application")
         ret = klass(name,secret,redirect_uri)

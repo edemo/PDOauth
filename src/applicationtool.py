@@ -1,9 +1,9 @@
 #!/usr/local/bin/python2.7
 # encoding: utf-8
 '''
-assurancetool -- a tool to handle assurances
+applicationtool -- a tool to handle applications
 
-you can add assurance to users with it
+you can register applications with it
 
 @author:     Magosányi Árpád
 
@@ -20,9 +20,7 @@ import os
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
-from pdoauth.models.User import User
-from pdoauth.models.Assurance import Assurance
-import time
+from pdoauth.models.Application import Application
 
 __all__ = []
 __version__ = 0.1
@@ -55,7 +53,7 @@ def main(argv=None): # IGNORE:C0111
     program_version = "v%s" % __version__
     program_build_date = str(__updated__)
     program_version_message = '%%(prog)s %s (%s)' % (program_version, program_build_date)
-    program_shortdesc = "assurancetool -- a tool to handle assurances"
+    program_shortdesc = "applicationtool -- a tool to handle applications"
     program_license = '''%s
 
   Created by Árpád Magosányi on %s.
@@ -75,21 +73,21 @@ USAGE
         parser.add_argument("-v", "--verbose",dest="verbose", action="count",
             help="set verbosity level [default: %(default)s]")
         parser.add_argument('-V', '--version', action='version', version=program_version_message)
-        parser.add_argument(dest="email",
-            help="email address of the user", metavar="email", nargs=1)
-        parser.add_argument(dest="assurer",
-            help="email address of the assurer, or 'self' for the user", metavar="assurer", nargs=1)
-        parser.add_argument(dest="assurance",
-            help="assurance to add", metavar="assurance", nargs='+')
+        parser.add_argument(dest="name",
+            help="name of the application", metavar="name", nargs=1)
+        parser.add_argument(dest="secret",
+            help="application secret", metavar="secret", nargs=1)
+        parser.add_argument(dest="redirectUri",
+            help="the oauth2 redirect uri for the application", metavar="redirectUri", nargs=1)
 
         # Process arguments
         args = parser.parse_args()
 
         verbose = args.verbose
-        email = args.email[0]
-        assurer_email = args.assurer[0]
-        assurances = args.assurance
-        return do_main(verbose, email, assurer_email, assurances)
+        name = args.name[0]
+        secret = args.secret[0]
+        redirectUri = args.redirectUri[0]
+        return do_main(verbose, name, secret, redirectUri)
 
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###
@@ -102,24 +100,14 @@ USAGE
         sys.stderr.write(indent + "  for help use --help")
         return 2
 
-def do_main(verbose, email, assurer_email, assurances):
+def do_main(verbose, name, secret, redirectUri):
         if verbose > 0:
-            print("Setting assurances {0} for user {1} by {2}".format(assurances, email, assurer_email))
-        user = User.getByEmail(email)
-        if user is None:
-            print "no such user: {0}".format(email)
+            print("registering application {0} with secret {1} at {2}".format(name, secret, redirectUri))
+        app = Application.new(name, secret, redirectUri)
+        if app is None:
+            print "already existing app with this name: {0}".format(name)
             return 2
-        if assurer_email == 'self':
-            assurer = user
-        else:
-            assurer = User.getByEmail(assurer_email)
-        if user is None:
-            print "no such assurer: {0}".format(assurer_email)
-            return 2
-        for ass in assurances:
-            if verbose > 1:
-                print("Setting assurance {0} for user {1} by {2}".format(ass, email, assurer_email))
-            Assurance.new(user, ass, assurer, time.time())
+        print "id of the app is: {0}".format(app.id)
         return 0
 
 if __name__ == "__main__":

@@ -36,7 +36,7 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
         resp = self.app.get(uri)
         self.assertEquals(302,resp.status_code)
         self.assertTrue(resp.headers.has_key('Content-Length'))
-        self.assertTrue(resp.headers['Location'].startswith("http://localhost.local/login"))
+        self.assertTrue(resp.headers['Location'].startswith("http://localhost.local/static/login.html"))
 
     @test
     def User_can_authenticate_on_login_page(self):
@@ -233,7 +233,7 @@ class MainTest(Fixture, CSRFMixin, UserTesting, ServerSide):
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
             self.assertEquals(resp.status_code,302)
-            self.assertEquals(resp.headers['Location'],"http://localhost.local/login")
+            self.assertEquals(resp.headers['Location'],"http://localhost.local/static/login.html")
 
     @test
     def assurance_form_needs_csrf(self):
