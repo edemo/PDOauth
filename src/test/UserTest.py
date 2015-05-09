@@ -7,12 +7,11 @@ from test.TestUtil import UserTesting
 class UserTest(Fixture, UserTesting):
 
     def setUp(self):
-        User.query.delete()  # @UndefinedVariable
         self.User_can_be_created()
-        self.setupRandom()
 
     def User_can_be_created(self):
-        self.user = User.new("testemail@example.com")
+        self.setupRandom()
+        self.user = User.new("testemail-{0}@example.com".format(self.randString))
 
     @test
     def User_id_is_returned_by_get_id(self):
