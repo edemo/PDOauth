@@ -134,13 +134,24 @@ class Registration(unittest.TestCase):
                 client_id=self.appid, 
                 client_secret=self.appsecret, 
                 redirect_uri=self.redirect_uri))
-        print resp.data
         self.assertEquals(resp.status, 200)
         answer = json.loads(resp.data)
         self.assertEqual(answer['token_type'], "Bearer")
         self.assertEqual(answer['expires_in'], 3600)
         self.access_token = answer['access_token']
         self.refresh_token = answer['refresh_token']
+
+
+    def weAreTheServerFromNow(self):
+        self.http = urllib3.PoolManager()
+
+
+    def getUserInfoWithAccessToken(self):
+        headers = dict(Authorization='Bearer {0}'.format(self.access_token))
+        resp = self.http.request("get", self.base_url + "v1/users/me", headers=headers)
+        answer = json.loads(resp.data)
+        self.assertEqual(answer['email'], self.assurer_email)
+        self.assertTrue(answer['assurances']['assurer'][0]['assurer'], self.assurer_email)
 
     def test_registration(self):
         driver = self.driver
@@ -154,15 +165,9 @@ class Registration(unittest.TestCase):
         self.check_by_email(driver, time)
         self.register_application()
         self.do_oauth_auth(driver, time)
-        #from now on we emulate the server
-        self.http = urllib3.PoolManager()
+        self.weAreTheServerFromNow()
         self.get_token()
-        headers = dict(Authorization='Bearer {0}'.format(self.access_token))
-        resp = self.http.request("get", self.base_url + "v1/users/me", headers=headers)
-        print resp.data
-        answer = json.loads(resp.data)
-        self.assertEqual(answer['email'], self.assurer_email)
-        self.assertTrue(answer['assurances']['assurer'][0]['assurer'],self.assurer_email)
+        self.getUserInfoWithAccessToken()
         
     
     def is_element_present(self, how, what):
