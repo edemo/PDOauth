@@ -2,9 +2,6 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.User import User
-from test.TestUtil import UserTesting
-from pdoauth.CredentialManager import CredentialManager
-from pdoauth.models.Credential import Credential
 from pdoauth.main import unauthorized, load_user
 
 class AuthTest(Fixture):
@@ -25,52 +22,3 @@ class AuthTest(Fixture):
     def load_user_returns_None_for_nonexisting_id(self):
         loaded = load_user("nonexisting")
         self.assertEquals(None,loaded)
-
-
-
-class LoginTest(Fixture, UserTesting):
-    def setUp(self):
-        Credential.query.delete()  # @UndefinedVariable
-        User.query.delete()  # @UndefinedVariable
-
-    @test
-    def login_does_not_accept_get(self):
-        with app.test_client() as c:
-            resp = c.get("/v1/login")
-            self.assertEquals(resp.status_code, 404)
-
-    @test
-    def password_login_needs_username(self):
-        with app.test_client() as c:
-            data = dict(password="password")
-            resp = c.post('http://localhost.local/login', data=data)
-            self.assertEquals(resp.status_code, 403)
-            text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["username: '))
-
-    @test
-    def password_login_needs_password(self):
-        with app.test_client() as c:
-            data = dict(username="userid")
-            resp = c.post('http://localhost.local/login', data=data)
-            self.assertEquals(resp.status_code, 403)
-            text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["password: '))
-
-    @test
-    def password_login_needs_correct_username_and_password(self):
-        with app.test_client() as c:
-            data = dict(username="userid", password="password")
-            resp = c.post('http://localhost.local/login', data=data)
-            self.assertEquals(resp.status_code, 403)
-            text = self.getResponseText(resp)
-            self.assertEquals(text,'{"errors": ["Bad username or password"]}')
-
-    @test
-    def password_login_works_with_correct_username_and_password(self):
-        user = CredentialManager.create_user_with_creds("password", "userid", "passwordka", "kukac@example.com")
-        user.activate()
-        with app.test_client() as c:
-            data = dict(username="userid", password="passwordka")
-            resp = c.post('http://localhost.local/login', data=data)
-            self.assertUserResponse(resp)
