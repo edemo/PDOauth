@@ -4,13 +4,14 @@ from pdoauth.models.Credential import Credential
 
 class CredentialManager(object):
     @classmethod
-    def protect_secret(cls, credtype, identifier, secret):
-        return SHA256Hash(secret).hexdigest()
+    def protect_secret(cls, secret):
+        protected = SHA256Hash(secret).hexdigest()
+        return protected
 
     @classmethod
     def create_user_with_creds(cls, credtype, identifier, secret, email, digest=None):
         user = User.new(email, digest)
-        protected = cls.protect_secret(credtype, identifier, secret)
+        protected = cls.protect_secret(secret)
         cred = Credential.new(user, credtype, identifier, protected)
         if cred is None:
             user.rm()
@@ -23,7 +24,7 @@ class CredentialManager(object):
         cred = Credential.get('password', form.username.data)
         if cred is None:
             return None
-        hashed = cls.protect_secret('password', form.username.data, form.password.data)
+        hashed = cls.protect_secret(form.password.data)
         if cred.secret == hashed:
             return cred.user
         return None

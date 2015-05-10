@@ -5,14 +5,11 @@ import pdoauth.main  # @UnusedImport
 from flask_login import logout_user
 from flask import json
 
-app.extensions["mail"].suppress = True
-
 class RegistrationTest(Fixture, UserTesting):
 
     def setUp(self):
         self.setupRandom()
-        self.app = app.test_client()
-
+ 
     @test
     def register_and_get_our_info(self):
         with app.test_client() as c:

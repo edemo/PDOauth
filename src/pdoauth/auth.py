@@ -13,6 +13,7 @@ from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from pdoauth.models.Assurance import Assurance
 from pdoauth.forms.AssuranceForm import AssuranceForm
 from flask import json
+from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
 
 
 def errors_to_json(form):
@@ -23,15 +24,15 @@ def errors_to_json(form):
             errs.append("{0}: {1}".format(fieldname,error))
     return errs
 
-def make_response(descriptor,status=200):
+def _make_response(descriptor,status=200):
     ret = json.dumps(descriptor)
     return flask.make_response(ret, status)
 
 def simple_response(text):
-    return make_response(dict(message=text))
+    return _make_response(dict(message=text))
 
 def error_response(descriptor, status=400):
-    return make_response(dict(errors=descriptor), status)
+    return _make_response(dict(errors=descriptor), status)
 
 def form_validation_error_response(form, status=400):
     errdict = errors_to_json(form)
@@ -90,7 +91,6 @@ def do_login():
     return form_validation_error_response(form, status=403)
 
 
-
 def do_registration():
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -103,6 +103,23 @@ def do_registration():
         r = login_user(user)
         if r:
             return as_dict(user)
+    return form_validation_error_response(form)
+
+def do_change_password(userid):
+    form = PasswordChangeForm()
+    if form.validate_on_submit():
+        if userid == 'me':
+            user = current_user
+        else:
+            user = User.get(userid)
+        cred = Credential.getByUser(user, 'password')
+        oldSecret = CredentialManager.protect_secret(form.oldPassword.data)
+        if cred.secret != oldSecret:
+            return error_response(["old password does not match"])
+        secret = CredentialManager.protect_secret(form.newPassword.data)
+        cred.secret = secret
+        cred.save()
+        return simple_response('pasword changed succesfully')
     return form_validation_error_response(form)
 
 def do_get_by_email(email):

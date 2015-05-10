@@ -26,8 +26,10 @@ class Credential(db.Model, ModelUtils):
         return Credential.query.filter_by(credentialType = credentialType, identifier = identifier).first()
 
     @classmethod
-    def getByUser(cls, user):
-        return Credential.query.filter_by(user=user).all()
+    def getByUser(cls, user, credentialType=None):
+        if credentialType is None:
+            return Credential.query.filter_by(user=user).all()
+        return Credential.query.filter_by(user=user, credentialType=credentialType).first()
     
     @classmethod
     def new(cls, user, credentialType, identifier, secret):

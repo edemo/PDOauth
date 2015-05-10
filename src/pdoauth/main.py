@@ -1,7 +1,8 @@
 from pdoauth.app import app, login_manager
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.auth import do_login, do_registration, do_get_by_email,\
-    do_add_assurance, do_show_user, do_verify_email, error_response
+    do_add_assurance, do_show_user, do_verify_email, error_response,\
+    do_change_password
 from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
@@ -34,6 +35,10 @@ def token():
 @app.route("/v1/users/<userid>", methods=["GET"])
 def showUser(userid):
     return do_show_user(userid)
+
+@app.route("/v1/users/<userid>/change_password", methods=["POST"])
+def changePassword(userid):
+    return do_change_password(userid)
 
 @app.route("/v1/register", methods=["POST"])
 def register():

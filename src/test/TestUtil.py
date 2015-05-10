@@ -7,6 +7,10 @@ import random
 import string
 from pdoauth.models.Application import Application
 from flask import json
+from pdoauth.models.Credential import Credential
+from pdoauth.models.User import User
+
+app.extensions["mail"].suppress = True
 
 class ResponseInfo(object):
     def getResponseText(self, resp):
@@ -32,16 +36,19 @@ class UserTesting(ResponseInfo):
         if userid is None:
             userid = "aaa_{0}".format(self.randString)
         if password is None:
-            password = "bbb_{0}".format(self.randString)
+            password = "password_{0}".format(self.randString)
 
         self.usercreation_email = email
         self.usercreation_userid = userid
         self.usercreation_password = password
         return CredentialManager.create_user_with_creds(credType, userid, password, email)
     
-    def login(self, c, activate = True):
+    def login(self, c, activate = True, createUser = True):
         self.setupRandom()
-        user = self.create_user_with_credentials()
+        if createUser:
+            user = self.create_user_with_credentials()
+        else:
+            user = User.getByEmail(self.usercreation_email)
         if activate:
             user.activate()
         data = {

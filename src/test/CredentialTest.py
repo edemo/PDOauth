@@ -7,7 +7,6 @@ class CredentialTest(Fixture, UserTesting):
     def setUp(self):
         self.setupRandom()
         self.user = self.create_user_with_credentials()
-        print self.usercreation_email, self.usercreation_userid, self.usercreation_password
         self.cred=Credential.get('password', self.usercreation_userid)
 
     @test
