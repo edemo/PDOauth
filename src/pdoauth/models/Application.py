@@ -2,6 +2,7 @@ from sqlalchemy import Column, String
 from pdoauth.app import db
 from pdoauth.ModelUtils import ModelUtils
 import uuid
+from sqlalchemy.sql.sqltypes import Integer
 
 class NotUnique(Exception):
     pass
@@ -11,14 +12,15 @@ class NonHttpsRedirectUri(Exception):
 
 class Application(db.Model, ModelUtils):
     __tablename__ = 'application'
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    appid = Column(String, unique=True, nullable=False)
     name = Column(String, unique=True)
     secret = Column(String(14))
     redirect_uri = Column(String)
 
     @classmethod
     def get(klass, client_id):
-        return klass.query.get(client_id)
+        return klass.query.filter_by(appid=client_id).first()
                          
 
     @classmethod
@@ -35,7 +37,7 @@ class Application(db.Model, ModelUtils):
         return ret
 
     def __init__(self, name, secret, redirect_uri):
-        self.id=unicode(uuid.uuid4())
+        self.appid=unicode(uuid.uuid4())
         self.name = name
         self.secret = secret
         if not redirect_uri.startswith("https://"):

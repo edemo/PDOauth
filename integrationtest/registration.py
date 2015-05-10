@@ -115,7 +115,7 @@ class Registration(unittest.TestCase):
         self.redirect_uri = 'https://demokracia.rulez.org/'
         applicationtool.do_main(2, appname, self.appsecret, self.redirect_uri)
         app = Application.find(appname)
-        self.appid = app.id
+        self.appid = app.appid
 
 
     def do_oauth_auth(self, driver, time):

@@ -18,9 +18,9 @@ class ApplicationTest(Fixture):
         session = db.session
         session.add(self.app)
         session.commit()
-        b = Application.get(self.app.id)
+        b = Application.get(self.app.appid)
         self.assertEquals(self.app.name,b.name)
-        self.assertEquals(self.app.id,b.id)
+        self.assertEquals(self.app.appid,b.appid)
         session.close()
        
     @test 

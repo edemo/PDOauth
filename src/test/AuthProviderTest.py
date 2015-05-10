@@ -47,19 +47,19 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
         
     @test
     def validate_client_id_returns_True_for_good_id(self):
-        self.assertTrue(self.ap.validate_client_id(self.app.id))
+        self.assertTrue(self.ap.validate_client_id(self.app.appid))
         
     @test
     def validate_client_secret_returns_False_for_None(self):
-        self.assertFalse(self.ap.validate_client_secret(self.app.id, None))
+        self.assertFalse(self.ap.validate_client_secret(self.app.appid, None))
 
     @test
     def validate_client_secret_returns_False_for_empty_string(self):
-        self.assertFalse(self.ap.validate_client_secret(self.app.id, ""))
+        self.assertFalse(self.ap.validate_client_secret(self.app.appid, ""))
 
     @test
     def validate_client_secret_returns_False_for_wrong_secret(self):
-        self.assertFalse(self.ap.validate_client_secret(self.app.id, "different"))
+        self.assertFalse(self.ap.validate_client_secret(self.app.appid, "different"))
         
     @test
     def validate_client_secret_returns_False_for_None_id(self):
@@ -67,11 +67,11 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
         
     @test
     def validate_client_secret_returns_True_for_good_secret(self):
-        self.assertTrue(self.ap.validate_client_secret(self.app.id, self.app.secret))
+        self.assertTrue(self.ap.validate_client_secret(self.app.appid, self.app.secret))
 
     @test
     def validate_redirect_uri_returns_False_for_None(self):
-        self.assertFalse(self.ap.validate_redirect_uri(self.app.id, None))
+        self.assertFalse(self.ap.validate_redirect_uri(self.app.appid, None))
 
     @test
     def validate_redirect_uri_returns_False_for_bad_app(self):
@@ -79,31 +79,31 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
         
     @test
     def validate_redirect_uri_returns_False_for_empty(self):
-        self.assertFalse(self.ap.validate_redirect_uri(self.app.id, ""))
+        self.assertFalse(self.ap.validate_redirect_uri(self.app.appid, ""))
 
     @test
     def validate_redirect_uri_returns_False_for_wrong_uri(self):
-        self.assertFalse(self.ap.validate_redirect_uri(self.app.id, "some crap"))
+        self.assertFalse(self.ap.validate_redirect_uri(self.app.appid, "some crap"))
 
     @test
     def validate_redirect_uri_returns_True_for_good_uri(self):
-        self.assertTrue(self.ap.validate_redirect_uri(self.app.id, "https://test.app/redirecturi"))
+        self.assertTrue(self.ap.validate_redirect_uri(self.app.appid, "https://test.app/redirecturi"))
 
     @test
     def validate_redirect_uri_returns_True_for_good_uri_with_parameters(self):
-        self.assertTrue(self.ap.validate_redirect_uri(self.app.id, "https://test.app/redirecturi?param=value"))
+        self.assertTrue(self.ap.validate_redirect_uri(self.app.appid, "https://test.app/redirecturi?param=value"))
 
     @test
     def validate_scope_returns_True_for_empty(self):
-        self.assertTrue(self.ap.validate_scope(self.app.id, ""))
+        self.assertTrue(self.ap.validate_scope(self.app.appid, ""))
         
     @test
     def validate_scope_returns_False_for_nonempty(self):
-        self.assertFalse(self.ap.validate_scope(self.app.id, "crap"))
+        self.assertFalse(self.ap.validate_scope(self.app.appid, "crap"))
 
     @test
     def validate_scope_returns_False_for_None(self):
-        self.assertFalse(self.ap.validate_scope(self.app.id, "crap"))
+        self.assertFalse(self.ap.validate_scope(self.app.appid, "crap"))
 
     @test
     def validate_access_works_only_if_user_have_logged_in(self):
@@ -167,7 +167,7 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
             self.makeSessionAuthenticated()
             redirectUri = 'https://test.app/redirecturi'
             resp = self.ap.get_authorization_code('code',
-                               self.app.id,
+                               self.app.appid,
                                redirectUri, scope='')
         self.assertEquals(302,resp.status_code)
         location = resp.headers['Location']
@@ -179,19 +179,19 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
         with app.test_request_context('/'):
             redirectUri = 'https://test.app/redirecturi'
             resp = self.ap.get_authorization_code('code',
-                               self.app.id,
+                               self.app.appid,
                                redirectUri, scope='')
         self.assertTrue(resp.headers['Location'].startswith('https://test.app/redirecturi?error=access_denied'))
 
     def getAuthorizationCode(self):
         with app.test_request_context('/'):
             redirect_uri = 'https://test.app/redirecturi'
-            uri = 'https://localhost.local/v1/oauth2/auth?response_type=code&client_id={0}&redirect_uri={1}'.format(self.app.id, 
+            uri = 'https://localhost.local/v1/oauth2/auth?response_type=code&client_id={0}&redirect_uri={1}'.format(self.app.appid, 
                 redirect_uri)
             self.makeSessionAuthenticated()
             self.assertTrue(current_user.is_authenticated())
             params = utils.url_query_params(uri)
-            self.assertEquals(self.app.id, params['client_id'])
+            self.assertEquals(self.app.appid, params['client_id'])
             self.assertTrue('response_type' in params)
             self.assertTrue('client_id' in params)
             self.assertTrue('redirect_uri' in params)
@@ -213,7 +213,7 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
 
     @test
     def authorization_code_can_be_discarded(self):
-        appid = self.app.id
+        appid = self.app.appid
         code = self.getAuthorizationCode()
         self.assertFalse(self.ap.from_authorization_code(appid, code, '') is None)
         self.ap.discard_authorization_code(appid, code)

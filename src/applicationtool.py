@@ -107,7 +107,7 @@ def do_main(verbose, name, secret, redirectUri):
         if app is None:
             print "already existing app with this name: {0}".format(name)
             return 2
-        print "id of the app is: {0}".format(app.id)
+        print "id of the app is: {0}".format(app.appid)
         return 0
 
 if __name__ == "__main__":

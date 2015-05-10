@@ -62,7 +62,7 @@ class UserTesting(ResponseInfo):
         appid = "app-{0}".format(self.randString)
         self.appsecret = "secret-{0}".format(self.randString)
         application = Application.new(appid, self.appsecret, redirect_uri)
-        self.appid = application.id
+        self.appid = application.appid
         uri = 'https://localhost.local/v1/oauth2/auth'
         query_string = 'response_type=code&client_id={0}&redirect_uri={1}'.format(self.appid, 
             redirect_uri)

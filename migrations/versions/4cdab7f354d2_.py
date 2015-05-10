@@ -36,11 +36,13 @@ def upgrade():
     sa.UniqueConstraint('userid')
     )
     op.create_table('application',
-    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('appid', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('secret', sa.String(length=14), nullable=True),
     sa.Column('redirect_uri', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('appid'),
     sa.UniqueConstraint('name')
     )
     op.create_table('credential',
