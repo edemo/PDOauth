@@ -41,7 +41,7 @@ def form_validation_error_response(form, status=400):
     
 def as_dict(user):
     data = {'email':user.email, 
-        'userid':user.id, 
+        'userid':user.userid, 
         'assurances':Assurance.getByUser(user)}
     ret = json.dumps(data)
     return flask.make_response(ret,200)

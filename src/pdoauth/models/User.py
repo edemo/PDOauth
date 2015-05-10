@@ -1,12 +1,13 @@
 from pdoauth.app import db
 from pdoauth.ModelUtils import ModelUtils
 from sqlalchemy.sql.schema import Column
-from sqlalchemy.sql.sqltypes import String, BOOLEAN
+from sqlalchemy.sql.sqltypes import String, BOOLEAN, Integer
 import uuid
 
 class User(db.Model, ModelUtils):
     __tablename__ = 'user'
-    id = Column(String,primary_key=True)
+    id = Column(Integer, primary_key = True)
+    userid = Column(String, nullable = False, unique=True)
     email = Column(String, nullable=False, unique=True)
     hash = Column(String)
     active = Column(BOOLEAN)
@@ -32,12 +33,12 @@ class User(db.Model, ModelUtils):
         if digest is not None:
             self.hash = digest
 
-        self.id=unicode(uuid.uuid4())
+        self.userid=unicode(uuid.uuid4())
         self.active = False
         self.authenticated = False
 
     def get_id(self):
-        return self.id
+        return self.userid
     
     def activate(self):
         self.active = True
@@ -58,5 +59,5 @@ class User(db.Model, ModelUtils):
     
     @classmethod
     def get(cls, userid):
-        return User.query.filter_by(id=userid).first()
+        return User.query.filter_by(userid=userid).first()
     

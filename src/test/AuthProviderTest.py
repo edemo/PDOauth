@@ -120,7 +120,7 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
         "with client_id, scope, access_token, token_type, expiry, refresh_token and_data"
         with app.test_request_context('/'):
             self.makeSessionAuthenticated()
-            self.data = FakeData(client_id='client_id',user_id=current_user.id)
+            self.data = FakeData(client_id='client_id',user_id=current_user.userid)
             self.ap.persist_token_information(self.data.client_id, '', 'access_token', 'token_type', 40, 'refresh_token', self.data)
 
     @test

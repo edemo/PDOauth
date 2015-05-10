@@ -7,7 +7,6 @@ import random
 import string
 from pdoauth.models.Application import Application
 from flask import json
-from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 
 app.extensions["mail"].suppress = True
@@ -137,4 +136,4 @@ class AuthenticatedSessionMixin(UserTesting):
         user.set_authenticated()
         user.save()
         login_user(user)
-        self.userid = user.id
+        self.userid = user.userid

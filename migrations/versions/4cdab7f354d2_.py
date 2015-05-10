@@ -26,12 +26,14 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user',
-    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('userid', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('active', sa.BOOLEAN(), nullable=True),
     sa.Column('authenticated', sa.BOOLEAN(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('userid')
     )
     op.create_table('application',
     sa.Column('id', sa.String(), nullable=False),

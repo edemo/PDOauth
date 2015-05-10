@@ -15,7 +15,7 @@ class UserTest(Fixture, UserTesting):
 
     @test
     def User_id_is_returned_by_get_id(self):
-        theid = self.user.id
+        theid = self.user.userid
         self.assertEquals(theid, self.user.get_id())
         
     @test
@@ -28,11 +28,11 @@ class UserTest(Fixture, UserTesting):
 
     @test
     def Inactive_user_is_loaded_as_inactive(self):
-        self.assertEqual(False, User.get(self.user.id).is_active())
+        self.assertEqual(False, User.get(self.user.userid).is_active())
         
     @test
     def Unauthenticated_user_is_loaded_as_unauthenticated(self):
-        self.assertEqual(False, User.get(self.user.id).is_authenticated())
+        self.assertEqual(False, User.get(self.user.userid).is_authenticated())
 
     @test
     def User_can_be_activated(self):
@@ -50,7 +50,7 @@ class UserTest(Fixture, UserTesting):
     
     @test
     def User_can_be_retrieved_by_id(self):
-        self.assertEqual(self.user, User.get(self.user.id))
+        self.assertEqual(self.user, User.get(self.user.userid))
     
     @test
     def User_email_can_be_stored(self):

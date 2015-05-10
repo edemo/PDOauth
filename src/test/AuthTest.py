@@ -15,7 +15,7 @@ class AuthTest(Fixture):
     @test
     def load_user_loads_the_user_by_id(self):
         user = User.new(email="email@example.org")
-        loaded = load_user(user.id)
+        loaded = load_user(user.userid)
         self.assertEquals(user,loaded)
 
     @test

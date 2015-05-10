@@ -58,7 +58,7 @@ class AuthProvider(AuthorizationProvider):
         keyData.rm()
         
     def persist_authorization_code(self, client_id, code, scope):
-        keyData = KeyData(client_id=client_id, authorization_code = code, user_id=current_user.id)
+        keyData = KeyData(client_id=client_id, authorization_code = code, user_id=current_user.userid)
         keyData.save()
 
     def from_authorization_code(self, client_id, code, scope):

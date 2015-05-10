@@ -21,6 +21,18 @@ class UserInfoTest(Fixture, UserTesting):
             self.assertTrue(data.has_key('userid'))
 
     @test
+    def userid_returned_is_the_string_one(self):
+        with app.test_client() as c:
+            self.login(c)
+            resp = c.get('http://localhost.local/v1/users/me')
+            text = self.getResponseText(resp)
+            self.assertEquals(resp.status_code, 200)
+            data = json.loads(text)
+            userid = data['userid']
+            self.assertTrue(isinstance(userid,basestring))
+            self.assertTrue('-' in userid)
+
+    @test
     def user_info_contains_assurance(self):
         with app.test_client() as c:
             self.login(c)
@@ -49,7 +61,7 @@ class UserInfoTest(Fixture, UserTesting):
             targetuser=self.create_user_with_credentials()
             Assurance.new(targetuser,'test',current_user)
             target = User.getByEmail(self.usercreation_email)
-            resp = c.get('http://localhost.local/v1/users/{0}'.format(target.id))
+            resp = c.get('http://localhost.local/v1/users/{0}'.format(target.userid))
             text = self.getResponseText(resp)
             data = json.loads(text)
             assurances = data['assurances']
