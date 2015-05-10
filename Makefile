@@ -1,7 +1,7 @@
 alltests: tests integrationtest
 
 onlyintegrationtest: testsetup runserver runemail testsetup
-	PYTHONPATH=src python -m unittest discover -s integrationtest -p '*.py'
+	PYTHONPATH=src python -m unittest discover -s integrationtest -p "*.py"
 
 integrationtest: onlyintegrationtest killall
 
@@ -18,7 +18,7 @@ killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
 
 tests: testsetup
-	PYTHONPATH=src python -m unittest discover -s src/test -p '*.py'
+	PYTHONPATH=src python -m unittest discover -s src/test -p "*.py"
 
 testsetup:
 	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade
