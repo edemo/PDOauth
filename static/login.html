@@ -24,8 +24,7 @@ var QueryString = function () { //http://stackoverflow.com/questions/979975/how-
     return query_string;
 } ();
 
-function ajaxpost(uri,data,callback)
-{
+function ajaxBase(callback) {
 	var xmlhttp;
 	if (window.XMLHttpRequest)
 	  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -39,9 +38,15 @@ function ajaxpost(uri,data,callback)
 	  {
 	  if (xmlhttp.readyState==4)
 	    {
-	    	callback(xmlhttp.status,xmlhttp.responseText);
+	    	callback(xmlhttp.status,xmlhttp.responseText,xmlhttp.responseXML);
 	    }
 	  }
+	return xmlhttp;
+}
+
+function ajaxpost(uri,data,callback)
+{
+	xmlhttp = ajaxBase(callback);
 	xmlhttp.open("POST",uri,true);
 	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 	xmlhttp.send(data);
@@ -49,22 +54,7 @@ function ajaxpost(uri,data,callback)
 
 function ajaxget(uri,callback)
 {
-	var xmlhttp;
-	if (window.XMLHttpRequest)
-	  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4)
-	    {
-	    	callback(xmlhttp.status,xmlhttp.responseText);
-	    }
-	  }
+	xmlhttp = ajaxBase(callback)
 	xmlhttp.open("GET",uri,true);
 	xmlhttp.send();
 }
@@ -154,6 +144,30 @@ function addAssurance() {
     ajaxpost("/v1/add_assurance", text, myCallback)
 }
 
+function DigestGetter(formName) {
+	var self = this
+	self.formName = formName
+	self.idCallback = function(status,text, xml) {
+		if (status==200) {
+	    	document.getElementById(self.formName + "_digest_input").value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
+		} else {
+			document.getElementById("errorMsg").innerHTML=text
+		}
+	}
+
+	self.getDigest = function() {
+		personalId = document.getElementById(this.formName+"_predigest_input").value;
+		text = "<id>"+personalId+"</id>"
+		http = ajaxBase(idCallback);
+		http.open("POST",'https://anchor.edemokraciagep.org/anchor',true);
+		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	  	http.setRequestHeader("Content-length", text.length);
+	  	http.setRequestHeader("Connection", "close");
+		http.send(text);
+	}
+	return self
+}
+
 </script>
 </head>
 <body>
@@ -200,10 +214,17 @@ function addAssurance() {
   		<input name="email" type="text" id="RegistrationForm_email_input"/>
   	</div>
   	<div class="formrow">
+  		<div class="label" id="RegistrationForm_predigest_label">
+  			personal id:
+  		</div>
+  		<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
+  	 	<button type="button" id="RegistrationForm_getDigestButton" onclick="DigestGetter('RegistrationForm').getDigest()">Generate Hash</button>
+  	</div>
+  	<div class="formrow">
   		<div class="label" id="RegistrationForm_digest_label">
   			digest:
   		</div>
-  		<input name="digest" type="text" id="RegistrationForm_digest_input"/>
+  		<input name="email" type="text" id="RegistrationForm_digest_input"/>
   	</div>
   	<div class="formrow">
   		<div class="label" id="RegistrationForm_secret_label">
@@ -215,6 +236,7 @@ function addAssurance() {
   	 <input type="submit" value="Register" id="RegistrationForm_submitButton">
   	</div>
   </form>
+  
   <form id="ByEmailForm" action="javascript:byEmail()" method="post" name="byEmail">
   	<div class="formrow">
   		<div class="label" id="ByEmailForm_email_label">
@@ -226,10 +248,19 @@ function addAssurance() {
   	</div>
   	</div>
   </form>
+  
   	<div class="formrow">
   	 <a href="javascript:ajaxget('/v1/users/me',myCallback)">Me</a>
   	</div>
+
   <form id="AddAssuranceForm" action="javascript:addAssurance()" method="post" name="addAssurance">
+  	<div class="formrow">
+  		<div class="label" id="AddAssuranceForm_predigest_label">
+  			personal id:
+  		</div>
+  		<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
+  	 	<button type="button" id="AddAssuranceForm_getDigestButton" onclick="DigestGetter('AddAssuranceForm').getDigest()">Generate Hash</button>
+  	</div>
   	<div class="formrow">
   		<div class="label" id="AddAssuranceForm_digest_label">
   			digest:
