@@ -1,12 +1,12 @@
 alltests: tests integrationtest
 
 onlyintegrationtest: testsetup runserver runemail testsetup
-	PYTHONPATH=src python -m unittest discover -s integrationtest -p "*.py"
+	PYTHONPATH=src python -m unittest discover -s src/integrationtest -p "*.py"
 
 integrationtest: onlyintegrationtest killall
 
 runserver:
-	PYTHONPATH=src:integrationtest python src/pdoauth/main.py&
+	PYTHONPATH=src:src/integrationtest python src/pdoauth/main.py&
 
 killserver:
 	ps ax |grep pdoauth/main.py |grep -v grep |awk '{print $$1}' |xargs kill
