@@ -11,4 +11,5 @@ beautifulsoup4==4.2.1
 pyoauth2-shift==0.0.1
 selenium==2.45.0
 urllib3==1.7.1
+sourcecodegen==0.6.14
 
