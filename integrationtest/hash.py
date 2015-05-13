@@ -18,6 +18,7 @@ class Hash(unittest.TestCase):
         driver.find_element_by_id("RegistrationForm_predigest_input").clear()
         driver.find_element_by_id("RegistrationForm_predigest_input").send_keys("11111111110")
         driver.find_element_by_id("RegistrationForm_getDigestButton").click()
+        driver.save_screenshot("doc/screenshots/getting_digest_for_registration.png")
         time.sleep(1)
         digest = driver.find_element_by_id("RegistrationForm_digest_input").get_attribute('value')
         self.assertEqual(digest,config.testSignatureAllOne)
@@ -28,6 +29,7 @@ class Hash(unittest.TestCase):
         driver.find_element_by_id("AddAssuranceForm_predigest_input").send_keys("22222222220")
         driver.find_element_by_id("AddAssuranceForm_getDigestButton").click()
         time.sleep(1)
+        driver.save_screenshot("doc/screenshots/getting_digest_for_assurance.png")
         digest = driver.find_element_by_id("AddAssuranceForm_digest_input").get_attribute('value')
         self.assertEqual(digest,config.testSignatureAllTwo)
 

@@ -12,20 +12,26 @@ class Registration(unittest.TestCase):
         self.driver.implicitly_wait(5)
         self.base_url = "http://127.0.0.1:8888/"
         self.verificationErrors = []
+        randomString = ''.join(random.choice(string.ascii_letters) for _ in range(6))
+        self.email = "a-{0}@example.com".format(randomString)
+        self.normaluser = "normaluser{0}".format(randomString)
+        self.assurer = "assurer{0}".format(randomString)
+        self.assurer_email = "a-{0}@example.com".format(''.join(random.choice(string.ascii_letters) for _ in range(6)))
     
 
     def register_normal_user(self, driver, time):
-        self.email = "a-{0}@example.com".format(''.join(random.choice(string.ascii_letters) for _ in range(6)))
         driver.get("http://127.0.0.1:8888/static/login.html?next=/v1/users/me")
+        driver.refresh()
         driver.find_element_by_id("RegistrationForm_digest_input").clear()
         driver.find_element_by_id("RegistrationForm_digest_input").send_keys("xxxxxxxxxxxxxxxxxxxx")
         driver.find_element_by_id("RegistrationForm_identifier_input").clear()
-        driver.find_element_by_id("RegistrationForm_identifier_input").send_keys("testuser")
+        driver.find_element_by_id("RegistrationForm_identifier_input").send_keys(self.normaluser)
         driver.find_element_by_id("RegistrationForm_secret_input").clear()
         driver.find_element_by_id("RegistrationForm_secret_input").send_keys("testtest")
         driver.find_element_by_id("RegistrationForm_email_input").clear()
         driver.find_element_by_id("RegistrationForm_email_input").send_keys(self.email)
         driver.find_element_by_id("RegistrationForm_submitButton").click()
+        driver.save_screenshot("doc/screenshots/registration.png")
         time.sleep(1)
         self.assertEqual("http://127.0.0.1:8888/v1/users/me", driver.current_url)
         body = driver.find_element_by_css_selector("BODY").text
@@ -34,17 +40,18 @@ class Registration(unittest.TestCase):
 
     def redirext_before_login(self, driver):
         driver.get("http://127.0.0.1:8888/v1/oauth2/auth")
+        driver.refresh()
         time.sleep(1)
         self.assertEqual("http://127.0.0.1:8888/static/login.html", driver.current_url)
 
 
     def register_assurer(self, driver, time):
-        self.assurer_email = "a-{0}@example.com".format(''.join(random.choice(string.ascii_letters) for _ in range(6)))
         driver.get("http://127.0.0.1:8888/static/login.html?next=/v1/users/me")
+        driver.refresh()
         driver.find_element_by_id("RegistrationForm_digest_input").clear()
         driver.find_element_by_id("RegistrationForm_digest_input").send_keys("xxxxxxxxxxxxxxxxxxxx")
         driver.find_element_by_id("RegistrationForm_identifier_input").clear()
-        driver.find_element_by_id("RegistrationForm_identifier_input").send_keys("testassurer")
+        driver.find_element_by_id("RegistrationForm_identifier_input").send_keys(self.assurer)
         driver.find_element_by_id("RegistrationForm_secret_input").clear()
         driver.find_element_by_id("RegistrationForm_secret_input").send_keys("testtest")
         driver.find_element_by_id("RegistrationForm_email_input").clear()
@@ -58,6 +65,7 @@ class Registration(unittest.TestCase):
 
     def check_me(self, driver, time):
         driver.get("http://127.0.0.1:8888/v1/users/me")
+        driver.save_screenshot("doc/screenshots/my_data.png")
         time.sleep(1)
         self.assertEqual("http://127.0.0.1:8888/v1/users/me", driver.current_url)
         body = driver.find_element_by_css_selector("BODY").text
@@ -69,7 +77,7 @@ class Registration(unittest.TestCase):
     def login_for_csrf(self, driver, time):
         driver.get(self.base_url + "static/login.html")
         driver.find_element_by_id("LoginForm_username_input").clear()
-        driver.find_element_by_id("LoginForm_username_input").send_keys("testassurer")
+        driver.find_element_by_id("LoginForm_username_input").send_keys(self.assurer)
         driver.find_element_by_id("LoginForm_password_input").clear()
         driver.find_element_by_id("LoginForm_password_input").send_keys("testtest")
         driver.find_element_by_id("LoginForm_submitButton").click()
@@ -83,6 +91,8 @@ class Registration(unittest.TestCase):
 
 
     def add_assurance(self, driver, time):
+        driver.get("http://127.0.0.1:8888/static/login.html")
+        driver.refresh()
         driver.find_element_by_id("AddAssuranceForm_digest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_digest_input").send_keys("xxxxxxxxxxxxxxxxx")
         driver.find_element_by_id("AddAssuranceForm_email_input").clear()
@@ -90,6 +100,7 @@ class Registration(unittest.TestCase):
         driver.find_element_by_id("AddAssuranceForm_assurance_input").clear()
         driver.find_element_by_id("AddAssuranceForm_assurance_input").send_keys('test')
         driver.find_element_by_id("AddAssuranceForm_submitButton").click()
+        driver.save_screenshot("doc/screenshots/adding_assurance.png")
         time.sleep(1)
         self.assertEqual("http://127.0.0.1:8888/static/login.html", driver.current_url)
         body = driver.find_element_by_id("message").text
@@ -98,9 +109,12 @@ class Registration(unittest.TestCase):
 
 
     def check_by_email(self, driver, time):
+        driver.get("http://127.0.0.1:8888/static/login.html")
+        driver.refresh()
         driver.find_element_by_id("ByEmailForm_email_input").clear()
         driver.find_element_by_id("ByEmailForm_email_input").send_keys(self.email)
         driver.find_element_by_id("ByEmailForm_submitButton").click()
+        driver.save_screenshot("doc/screenshots/get_user_data_by_email.png")
         time.sleep(1)
         self.assertEqual("http://127.0.0.1:8888/static/login.html", driver.current_url)
         body = driver.find_element_by_id("userdata").text

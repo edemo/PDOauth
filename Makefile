@@ -21,7 +21,7 @@ tests: testsetup
 	PYTHONPATH=src python -m unittest discover -s src/test -p "*.py"
 
 testsetup:
-	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade
+	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade ; mkdir -p doc/screenshots
 
 dbmigrate:
 	PYTHONPATH=src:src/test python src/manage.py db migrate

@@ -31,6 +31,7 @@ class PasswordReset(unittest.TestCase, UserTesting):
         newPassword = unicode(uuid4())
         driver.find_element_by_id("PasswordResetForm_password_input").send_keys(newPassword)
         driver.find_element_by_id("PasswordResetForm_submitButton").click()
+        driver.save_screenshot("doc/screenshots/using_password_reset.png")
         time.sleep(1)
         body = driver.find_element_by_id("message").text
         self.assertEqual("Password successfully changed", body)

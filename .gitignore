@@ -3,5 +3,6 @@
 *.pyc
 doc/html
 doc/xml
+doc/screenshots
 .coverage
 .settings/
