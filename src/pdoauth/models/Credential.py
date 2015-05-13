@@ -4,6 +4,7 @@ from sqlalchemy.sql.schema import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String
 from sqlalchemy.orm import relationship
 from pdoauth.models.User import User
+import time
 
 
 class Credential(db.Model, ModelUtils):
@@ -39,6 +40,15 @@ class Credential(db.Model, ModelUtils):
         cred = cls(user, credentialType, identifier, secret)
         cred.save()
         return cred
+
+    @classmethod
+    def deleteExpired(cls, credType):
+        now = time.time()
+        creds = Credential.query.filter_by(credentialType=credType).all()
+        for c in creds:
+            if float(c.secret) < now:
+                c.rm()
+
     
     def __repr__(self, *args, **kwargs):
         return "Credential(user={0.user.email},credentialType={0.credentialType},secret={0.secret})".format(self)

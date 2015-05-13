@@ -46,7 +46,7 @@ class UserTest(Fixture, UserTesting):
 
     @test
     def User_can_be_created_with_credentials(self):
-        self.create_user_with_credentials()
+        self.createUserWithCredentials()
     
     @test
     def User_can_be_retrieved_by_id(self):

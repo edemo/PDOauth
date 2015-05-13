@@ -39,7 +39,7 @@ class LoginTest(Fixture, UserTesting):
 
     @test
     def password_login_works_with_correct_username_and_password(self):
-        user = self.create_user_with_credentials()
+        user = self.createUserWithCredentials()
         user.activate()
         with app.test_client() as c:
             data = dict(username=self.usercreation_userid, password=self.usercreation_password)
@@ -69,7 +69,7 @@ class LoginTest(Fixture, UserTesting):
 
     @test
     def Authentication_with_bad_userid_is_rejected(self):
-        self.create_user_with_credentials()
+        self.createUserWithCredentials()
         data = {
                 'username': 'baduser',
                 'password': self.usercreation_password,
@@ -83,7 +83,7 @@ class LoginTest(Fixture, UserTesting):
 
     @test
     def Authentication_with_bad_password_is_rejected(self):
-        self.create_user_with_credentials()
+        self.createUserWithCredentials()
         data = {
                 'username': self.usercreation_userid,
                 'password': 'badpassword',

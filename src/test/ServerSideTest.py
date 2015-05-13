@@ -2,7 +2,6 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.Application import Application
-import json
 from test.TestUtil import ServerSide, UserTesting
 
 class ServerSideTest(Fixture, UserTesting, ServerSide):
@@ -23,8 +22,7 @@ class ServerSideTest(Fixture, UserTesting, ServerSide):
         with app.test_client() as serverside:
             resp = serverside.get("https://localhost.local/v1/users/me", headers=[('Authorization', '{0} {1}'.format(data['token_type'], data['access_token']))])
             self.assertEquals(resp.status_code, 200)
-            text = self.getResponseText(resp)
-            data = json.loads(text)
+            data = self.fromJson(resp)
             self.assertTrue(data.has_key('userid'))
 
     @test

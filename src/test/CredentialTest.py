@@ -6,7 +6,7 @@ from Crypto.Hash.SHA256 import SHA256Hash
 class CredentialTest(Fixture, UserTesting):
     def setUp(self):
         self.setupRandom()
-        self.user = self.create_user_with_credentials()
+        self.user = self.createUserWithCredentials()
         self.cred=Credential.get('password', self.usercreation_userid)
 
     @test

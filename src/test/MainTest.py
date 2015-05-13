@@ -14,5 +14,5 @@ class MainTest(Fixture, UserTesting):
     @test
     def static_files_are_served(self):
         with app.test_client() as c:
-            resp = c.get("http://localhost.local/static/index.html")
+            resp = c.get("http://localhost.local/static/login.html")
             self.assertEqual(resp.status_code,200)

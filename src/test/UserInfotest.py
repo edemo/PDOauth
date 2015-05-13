@@ -2,7 +2,6 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.User import User
-import json
 from test.TestUtil import UserTesting
 from flask_login import current_user
 from pdoauth.models.Assurance import Assurance
@@ -15,9 +14,8 @@ class UserInfoTest(Fixture, UserTesting):
         with app.test_client() as c:
             self.login(c)
             resp = c.get('http://localhost.local/v1/users/me')
-            text = self.getResponseText(resp)
             self.assertEquals(resp.status_code, 200)
-            data = json.loads(text)
+            data = self.fromJson(resp)
             self.assertTrue(data.has_key('userid'))
 
     @test
@@ -25,9 +23,8 @@ class UserInfoTest(Fixture, UserTesting):
         with app.test_client() as c:
             self.login(c)
             resp = c.get('http://localhost.local/v1/users/me')
-            text = self.getResponseText(resp)
             self.assertEquals(resp.status_code, 200)
-            data = json.loads(text)
+            data = self.fromJson(resp)
             userid = data['userid']
             self.assertTrue(isinstance(userid,basestring))
             self.assertTrue('-' in userid)
@@ -42,9 +39,8 @@ class UserInfoTest(Fixture, UserTesting):
             Assurance.new(current_user, 'test2', current_user, now)
             Assurance.new(current_user, 'test2', current_user, now)
             resp = c.get('http://localhost.local/v1/users/me')
-            text = self.getResponseText(resp)
             self.assertEquals(resp.status_code, 200)
-            data = json.loads(text)
+            data = self.fromJson(resp)
             self.assertTrue(data.has_key('assurances'))
             assurances = data['assurances']
             assurance = assurances['test'][0]
@@ -58,12 +54,11 @@ class UserInfoTest(Fixture, UserTesting):
         with app.test_client() as c:
             self.login(c)
             Assurance.new(current_user, 'assurer', current_user)
-            targetuser=self.create_user_with_credentials()
+            targetuser=self.createUserWithCredentials()
             Assurance.new(targetuser,'test',current_user)
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/users/{0}'.format(target.userid))
-            text = self.getResponseText(resp)
-            data = json.loads(text)
+            data = self.fromJson(resp)
             assurances = data['assurances']
             self.assertEquals(assurances['test'][0]['assurer'], current_user.email)
 
@@ -71,7 +66,7 @@ class UserInfoTest(Fixture, UserTesting):
     def users_without_assurer_assurance_cannot_get_email_and_digest_for_anyone(self):
         with app.test_client() as c:
             self.login(c)
-            targetuser=self.create_user_with_credentials()
+            targetuser=self.createUserWithCredentials()
             Assurance.new(targetuser,'test',current_user)
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/users/{0}'.format(target.id))
@@ -83,7 +78,7 @@ class UserInfoTest(Fixture, UserTesting):
             self.login(c)
             Assurance.new(current_user, 'assurer', current_user)
             self.setupRandom()
-            self.create_user_with_credentials()
+            self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
             self.assertUserResponse(resp)
@@ -94,7 +89,7 @@ class UserInfoTest(Fixture, UserTesting):
             self.login(c)
             Assurance.new(current_user, 'assurer', current_user)
             self.setupRandom()
-            self.create_user_with_credentials()
+            self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/user_by_email/u{0}'.format(target.email))
             self.assertEquals(resp.status_code,404)
@@ -103,7 +98,7 @@ class UserInfoTest(Fixture, UserTesting):
     def users_without_assurer_assurance_cannot_get_user_by_email(self):
         with app.test_client() as c:
             self.login(c)
-            user = self.create_user_with_credentials()
+            user = self.createUserWithCredentials()
             self.assertTrue(user is not None)
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
@@ -112,7 +107,7 @@ class UserInfoTest(Fixture, UserTesting):
     @test
     def users_without_login_cannot_get_user_by_email(self):
         with app.test_client() as c:
-            self.create_user_with_credentials()
+            self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
             resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
             self.assertEquals(resp.status_code,302)

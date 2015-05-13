@@ -14,6 +14,7 @@ from pdoauth.models.Assurance import Assurance
 from pdoauth.forms.AssuranceForm import AssuranceForm
 from flask import json
 from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
+from pdoauth.forms.PasswordResetForm import PasswordResetForm
 
 
 def errors_to_json(form):
@@ -159,4 +160,35 @@ def do_verify_email(token):
     Assurance.new(user,'emailverification',user)
     cred.rm()
     return simple_response("email verified OK")
- 
+
+def _sendResetMail(user, secret, expiry):
+    timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
+    serverName = app.config.get('SERVER_NAME')
+    uri = "{0}?secret={1}".format(app.config.get("PASSWORD_RESET_FORM_URL"), secret, user.email)
+    text = """Hi, click on <a href="{0}">{0}</a> until {1} to reset your password""".format(uri, timeText)
+    subject = "Password Reset for {0}".format(serverName)
+    mail.send_message(subject=subject, body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
+
+def do_send_password_reset_email(email):
+    user = User.getByEmail(email)
+    if user is None:
+        return error_response(['Invalid email address'])
+    secret=unicode(uuid4())
+    expiry = time.time()
+    Credential.new(user, 'email_for_password_reset', secret, unicode(expiry+14400))
+    _sendResetMail(user, secret, expiry)
+    return simple_response("Password reset email has successfully sent.")
+
+def do_password_reset():
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        credType = 'email_for_password_reset'
+        cred = Credential.get(credType, form.secret.data)
+        if cred is None or (float(cred.secret) < time.time()):
+            Credential.deleteExpired(credType)
+            return error_response(['What?'], 404)
+        passcred = Credential.getByUser(cred.user, 'password')
+        passcred.secret = CredentialManager.protect_secret(form.password.data)
+        cred.rm()
+        return simple_response('Password successfully changed')
+    return form_validation_error_response(form)

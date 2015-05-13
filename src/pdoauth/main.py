@@ -2,7 +2,7 @@ from pdoauth.app import app, login_manager
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.auth import do_login, do_registration, do_get_by_email,\
     do_add_assurance, do_show_user, do_verify_email, error_response,\
-    do_change_password
+    do_change_password, do_send_password_reset_email, do_password_reset
 from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
@@ -39,6 +39,14 @@ def showUser(userid):
 @app.route("/v1/users/<userid>/change_password", methods=["POST"])
 def changePassword(userid):
     return do_change_password(userid)
+
+@app.route("/v1/users/<email>/passwordreset", methods=["GET"])
+def sendPasswordResetEmail(email):
+    return do_send_password_reset_email(email)
+
+@app.route("/v1/password_reset", methods=["POST"])
+def passwordReset():
+    return do_password_reset()
 
 @app.route("/v1/register", methods=["POST"])
 def register():

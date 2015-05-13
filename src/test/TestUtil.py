@@ -23,12 +23,18 @@ class ResponseInfo(object):
             text = self.getResponseText(resp)
         print "{0.status_code}\n{0.headers}\n{1}".format(resp,text)
 
+    def fromJson(self, resp):
+        text = self.getResponseText(resp)
+        data = json.loads(text)
+        return data
+
+
 class UserTesting(ResponseInfo):
 
     def setupRandom(self):
         self.randString = ''.join(random.choice(string.ascii_letters) for _ in range(6))
 
-    def create_user_with_credentials(self, credType='password', userid=None, password=None, email=None):
+    def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
         self.setupRandom()
         if email is None:
             email = "email{0}@example.com".format(self.randString)
@@ -45,7 +51,7 @@ class UserTesting(ResponseInfo):
     def login(self, c, activate = True, createUser = True):
         self.setupRandom()
         if createUser:
-            user = self.create_user_with_credentials()
+            user = self.createUserWithCredentials()
         else:
             user = User.getByEmail(self.usercreation_email)
         if activate:
@@ -94,12 +100,11 @@ class UserTesting(ResponseInfo):
 
     def assertUserResponse(self, resp):
         self.assertEquals(resp.status_code, 200)
-        text = self.getResponseText(resp)
-        data = json.loads(text)
+        data = self.fromJson(resp)
         self.assertEquals(data['assurances'], {})
         self.assertTrue("@example.com" in data['email'])
         self.assertTrue(data.has_key('userid'))
-        return data, text
+        return data
 
 
 class ServerSide(ResponseInfo):
@@ -111,7 +116,7 @@ class ServerSide(ResponseInfo):
             'redirect_uri':'https://test.app/redirecturi'}
         with app.test_client() as serverside:
             resp = serverside.post("https://localhost.local/v1/oauth2/token", data=data)
-            data = json.loads(self.getResponseText(resp))
+            data = self.fromJson(resp)
             self.assertTrue(data.has_key('access_token'))
             self.assertTrue(data.has_key('refresh_token'))
             self.assertEquals(data['token_type'], 'Bearer')
@@ -131,7 +136,7 @@ class CSRFMixin(object):
 
 class AuthenticatedSessionMixin(UserTesting):
     def makeSessionAuthenticated(self):
-        user = self.create_user_with_credentials()
+        user = self.createUserWithCredentials()
         user.activate()
         user.set_authenticated()
         user.save()

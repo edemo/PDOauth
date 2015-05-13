@@ -1,11 +1,6 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-import unittest, time, re, random, string, json, sys
-import assurancetool
-import applicationtool
-from pdoauth.models.Application import Application
-import urllib3
+import unittest, time
 import config
 
 class Hash(unittest.TestCase):

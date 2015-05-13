@@ -33,7 +33,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
             self.login(c)
             Assurance.new(current_user, 'assurer', current_user)
             Assurance.new(current_user, 'assurer.test', current_user)
-            self.create_user_with_credentials()
+            self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
             target.hash="lkajsdlsajkhvdsknjdsflkjhfsaldkjslak"
             data = dict(
@@ -52,7 +52,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
             self.login(c)
             Assurance.new(current_user, 'assurer', current_user)
             Assurance.new(current_user, 'assurer.test', current_user)
-            self.create_user_with_credentials()
+            self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
             target.hash="lkajsdlsajkhvdsknjdsflkjhfsaldkjslak"
             false_cookie=unicode(uuid4())
@@ -73,7 +73,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
             self.login(c)
             Assurance.new(current_user, 'assurer', current_user)
             Assurance.new(current_user, 'assurer.testno', current_user)
-            self.create_user_with_credentials()
+            self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
             target.hash="lkajsdlsajkhvdsknjdsflkjhfsaldkjslak"
             data = dict(

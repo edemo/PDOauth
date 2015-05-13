@@ -3,7 +3,6 @@ from test.TestUtil import UserTesting
 from pdoauth.app import app
 import pdoauth.main  # @UnusedImport
 from flask_login import logout_user
-from flask import json
 
 class RegistrationTest(Fixture, UserTesting):
 
@@ -27,9 +26,8 @@ class RegistrationTest(Fixture, UserTesting):
             self.assertUserResponse(resp)
             
             resp = c.get('http://localhost.local/v1/users/me')
-            text = self.getResponseText(resp)
             self.assertEquals(resp.status_code, 200)
-            data = json.loads(text)
+            data = self.fromJson(resp)
             self.assertTrue(data.has_key('userid'))
             self.assertTrue(u'@example.com' in data['email'])
 

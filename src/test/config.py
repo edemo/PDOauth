@@ -11,3 +11,4 @@ class Config(object):
     WTF_CSRF_ENABLED = False
     SERVER_NAME = "localhost.local"
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
+    PASSWORD_RESET_FORM_URL="https://{0}/static/login.html".format(SERVER_NAME)

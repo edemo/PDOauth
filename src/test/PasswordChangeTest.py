@@ -1,6 +1,5 @@
 from twatson.unittest_annotations import Fixture, test
 from test.TestUtil import UserTesting, CSRFMixin
-from flask import json
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.CredentialManager import CredentialManager
@@ -34,7 +33,7 @@ class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
             self.preparePasswordChangeTest(c)
             resp = self.doPasswordChange(c)
             self.assertEquals(resp.status_code, 200)
-            respdata = json.loads(self.getResponseText(resp))
+            respdata = self.fromJson(resp)
             self.assertEqual(respdata['message'], 'pasword changed succesfully')
 
     @test
@@ -51,7 +50,7 @@ class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
             self.preparePasswordChangeTest(c)
             resp = self.doPasswordChange(c,csrf="badcsrf")
             self.assertEquals(resp.status_code, 400)
-            respdata = json.loads(self.getResponseText(resp))
+            respdata = self.fromJson(resp)
             self.assertEqual(respdata['errors'], [u'csrf_token: csrf validation error'])
             
     @test
@@ -60,7 +59,7 @@ class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
             self.preparePasswordChangeTest(c)
             resp = self.doPasswordChange(c, oldPassword='skip')
             self.assertEquals(resp.status_code, 400)
-            respdata = json.loads(self.getResponseText(resp))
+            respdata = self.fromJson(resp)
             self.assertTrue(u'oldPassword: ' in respdata['errors'][0])
 
     @test
@@ -69,5 +68,5 @@ class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
             self.preparePasswordChangeTest(c)
             resp = self.doPasswordChange(c, oldPassword='incorrectPassword')
             self.assertEquals(resp.status_code, 400)
-            respdata = json.loads(self.getResponseText(resp))
+            respdata = self.fromJson(resp)
             self.assertEqual(respdata['errors'], ["old password does not match"])
