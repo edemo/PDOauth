@@ -35,3 +35,6 @@ sql:
 	sqlite3 /tmp/pdoauth.db
 
 killall: killserver killemail
+
+xmldoc:
+	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
