@@ -29,6 +29,7 @@
 		<section>
 			<title><xsl:value-of select="@name"/></title>
 		    <xsl:apply-templates select="decorator"/>
+		    <xsl:apply-templates select="text()"/>
 		</section>
 	</xsl:template>
 	
@@ -60,5 +61,10 @@
 			<xsl:value-of select="$capitalized"/>.<xsl:value-of select="text()"/>
 		</listitem>
 	</xsl:template>
+	
+	<xsl:template match="text()">
+		<xsl:copy-of select="normalize-space(.)"/>
+	</xsl:template>
+	
 </xsl:stylesheet>
 

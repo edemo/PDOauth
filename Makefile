@@ -53,7 +53,7 @@ tmp/saxon.zip:
 	mkdir -p tmp ;curl -L "http://downloads.sourceforge.net/project/saxon/Saxon-HE/9.6/SaxonHE9-6-0-5J.zip" >tmp/saxon.zip
 
 lib/saxon9he.jar: tmp/saxon.zip
-	unzip -d lib  tmp/saxon.zip saxon9he.jar
+	unzip -f -d lib  tmp/saxon.zip saxon9he.jar
 
 doc/xml/intermediate.xml: lib/saxon9he.jar doc/xml/doc.xml
 	java -jar lib/saxon9he.jar -xsl:src/doc/intermediate.xsl -s:doc/xml/doc.xml >doc/xml/intermediate.xml

@@ -22,6 +22,7 @@ def load_user(userid):
 @app.route("/v1/oauth2/auth", methods=["GET"])
 @login_required
 def authorization_code():
+    "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
     return AuthProvider.auth_interface()
 
 @app.route("/login", methods=["POST"])
