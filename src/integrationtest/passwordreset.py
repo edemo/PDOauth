@@ -5,12 +5,13 @@ from test.TestUtil import UserTesting
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
 from twatson.unittest_annotations import Fixture, test
+import config
 
 class EndUserPasswordResetTest(Fixture, UserTesting):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
-        self.base_url = "http://127.0.0.1:8888/"
+        self.base_url = "http://"+ config.Config.SERVER_NAME
         self.verificationErrors = []
         self.createUserWithCredentials()
 

@@ -7,7 +7,7 @@ class EndUserObtainingHashTest(Fixture):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
-        self.base_url = "http://127.0.0.1:8888/"
+        self.base_url = "http://"+ config.Config.SERVER_NAME
         self.verificationErrors = []
 
     @test
@@ -19,7 +19,7 @@ class EndUserObtainingHashTest(Fixture):
         if (config.skipSlowTests):
             return
         driver = self.driver
-        driver.get("http://127.0.0.1:8888/static/login.html?next=/v1/users/me")
+        driver.get(self.base_url+"/static/login.html?next=/v1/users/me")
         driver.find_element_by_id("RegistrationForm_predigest_input").clear()
         driver.find_element_by_id("RegistrationForm_predigest_input").send_keys("11111111110")
         driver.find_element_by_id("RegistrationForm_getDigestButton").click()
@@ -29,7 +29,7 @@ class EndUserObtainingHashTest(Fixture):
         self.assertEqual(digest,config.testSignatureAllOne)
         time.sleep(59)
         driver = self.driver
-        driver.get("http://127.0.0.1:8888/static/login.html?next=/v1/users/me")
+        driver.get(self.base_url+"/static/login.html?next=/v1/users/me")
         driver.find_element_by_id("AddAssuranceForm_predigest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_predigest_input").send_keys("22222222220")
         driver.find_element_by_id("AddAssuranceForm_getDigestButton").click()
