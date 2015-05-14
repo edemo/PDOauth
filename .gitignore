@@ -6,3 +6,5 @@ doc/xml
 doc/screenshots
 .coverage
 .settings/
+tmp/
+lib/

@@ -54,8 +54,15 @@ class MyWriter(TemplateWriter):
         source = generate_code(ob)
         return self.doc.createTextNode(source)
     
+    def simplifyName(self, name):
+        if name=="Static Method":
+            return "Method"
+        if name=="Class Method":
+            return "Method"
+        return name
+    
     def writeElementForOne(self, child, item):
-        e = self.doc.createElement(unicode(item.kind))
+        e = self.doc.createElement(self.simplifyName(item.kind))
         child.appendChild(e)
         self.setAttrIf(e, item, "name")
         self.setAttrIf(e, item, "parentMod", self.getFullName)

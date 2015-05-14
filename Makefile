@@ -1,3 +1,5 @@
+all: alltests xmldoc
+
 alltests: tests integrationtest
 
 onlyintegrationtest: testsetup runserver runemail testsetup
@@ -38,3 +40,11 @@ killall: killserver killemail
 
 xmldoc:
 	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
+
+tmp/saxon.zip:
+	mkdir -p tmp ;curl -L "http://downloads.sourceforge.net/project/saxon/Saxon-HE/9.6/SaxonHE9-6-0-5J.zip" >tmp/saxon.zip
+
+lib/saxon9he.jar: tmp/saxon.zip
+	unzip -d lib  tmp/saxon.zip saxon9he.jar
+
+
