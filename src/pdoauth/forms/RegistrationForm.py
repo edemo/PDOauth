@@ -1,11 +1,13 @@
 from flask_wtf.form import Form
-from wtforms import TextField, validators
+from wtforms import TextField
+from pdoauth.forms import credentialValidator, userNameValidator,\
+    passwordValidator, emailValidator, digestValidator
 
 class RegistrationForm(Form):
-    credentialType = TextField('credentialType',[validators.AnyOf(values=['password'])])
-    identifier = TextField('identifier', [validators.Length(min=4)])
-    secret = TextField('secret', [validators.Length(min=8)])
-    email = TextField('email', [validators.Email()])
-    digest = TextField('digest')
+    credentialType = TextField('credentialType',credentialValidator)
+    identifier = TextField('identifier', userNameValidator)
+    secret = TextField('secret', passwordValidator)
+    email = TextField('email', emailValidator)
+    digest = TextField('digest', digestValidator)
     
     

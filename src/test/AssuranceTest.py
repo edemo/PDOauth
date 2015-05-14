@@ -17,7 +17,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
             data = dict(
                 digest = "unimportant",
                 assurance = "test",
-                email = "unimportant",
+                email = "invalid@email.com",
                 csrf_token = "")
             resp = c.post('http://localhost.local/v1/add_assurance', data = data)
             self.assertEquals(400, resp.status_code)

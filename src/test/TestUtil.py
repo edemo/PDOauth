@@ -57,6 +57,7 @@ class UserTesting(ResponseInfo):
         if activate:
             user.activate()
         data = {
+                'credentialType': 'password',
                 'username': self.usercreation_userid,
                 'password': self.usercreation_password
         }

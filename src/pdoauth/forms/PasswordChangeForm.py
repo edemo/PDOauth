@@ -1,9 +1,10 @@
 
-from wtforms import TextField, validators
+from wtforms import TextField
 from pdoauth.forms.CSRFForm import CSRFForm
+from pdoauth.forms import passwordValidator
 
 
 class PasswordChangeForm(CSRFForm):
-    oldPassword = TextField('oldPassword', [validators.Length(min=4, max=50)])
-    newPassword = TextField('newPassword', [validators.Length(min=4, max=50)])
+    oldPassword = TextField('oldPassword', passwordValidator)
+    newPassword = TextField('newPassword', passwordValidator)
 

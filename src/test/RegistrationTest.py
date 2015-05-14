@@ -18,6 +18,7 @@ class RegistrationTest(Fixture, UserTesting):
             self.assertEquals(outbox[0].subject,"verification")
             self.assertEquals(outbox[0].sender,"test@edemokraciagep.org")
             data = {
+                'credentialType': 'password',
                 'username': "id_{0}".format(self.randString), 
                 'password':"password_{0}".format(self.randString+self.randString), 
                 'next':'/v1/users/me'

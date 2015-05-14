@@ -1,7 +1,10 @@
 
 from flask_wtf.form import Form
-from wtforms import TextField, validators
+from wtforms.fields.simple import TextField
+from pdoauth.forms import credentialValidator, userNameValidator,\
+    passwordValidator
     
 class LoginForm(Form):
-    username = TextField('username', [validators.Length(min=4, max=25)])
-    password = TextField('password', [validators.Length(min=8)])
+    credentialType = TextField('credentialType',credentialValidator)
+    username = TextField('username', userNameValidator)
+    password = TextField('password', passwordValidator)

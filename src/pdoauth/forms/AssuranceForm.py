@@ -1,10 +1,11 @@
 
-from wtforms import TextField, validators
+from wtforms import TextField
 from pdoauth.forms.CSRFForm import CSRFForm
+from pdoauth.forms import digestValidator, assuranceValidator, emailValidator
 
 
 class AssuranceForm(CSRFForm):
-    digest = TextField('digest', [validators.Length(min=4, max=50)])
-    assurance = TextField('assurance', [validators.Length(min=4, max=50)])
-    email = TextField('email', [validators.Length(min=8, max=50)])
+    digest = TextField('digest', digestValidator)
+    assurance = TextField('assurance', assuranceValidator)
+    email = TextField('email', emailValidator)
 

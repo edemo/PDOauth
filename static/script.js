@@ -99,7 +99,13 @@ function passwordReset() {
 function login() {
     username = document.getElementById("LoginForm_username_input").value;
     password = document.getElementById("LoginForm_password_input").value;
-    ajaxpost("/login", "username="+username+"&password="+password, myCallback)
+    ajaxpost("/login", "credentialType=password&username="+username+"&password="+password, myCallback)
+}
+
+function login_with_facebook(userId, accessToken) {
+    username = userId;
+    password = accessToken;
+    ajaxpost("/login", "credentialType=facebook&username="+username+"&password="+password, myCallback)
 }
 
 function byEmail() {

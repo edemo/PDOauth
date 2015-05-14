@@ -29,9 +29,18 @@ class LoginTest(Fixture, UserTesting):
             self.assertTrue(text.startswith('{"errors": ["password: '))
 
     @test
-    def password_login_needs_correct_username_and_password(self):
+    def password_login_should_send_hidden_field_credentialType(self):
         with app.test_client() as c:
             data = dict(username="userid", password="password")
+            resp = c.post('http://localhost.local/login', data=data)
+            self.assertEquals(resp.status_code, 403)
+            text = self.getResponseText(resp)
+            self.assertTrue(text.startswith('{"errors": ["credentialType: '))
+
+    @test
+    def password_login_needs_correct_username_and_password(self):
+        with app.test_client() as c:
+            data = dict(username="userid", password="password", credentialType='password')
             resp = c.post('http://localhost.local/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
@@ -42,7 +51,7 @@ class LoginTest(Fixture, UserTesting):
         user = self.createUserWithCredentials()
         user.activate()
         with app.test_client() as c:
-            data = dict(username=self.usercreation_userid, password=self.usercreation_password)
+            data = dict(username=self.usercreation_userid, password=self.usercreation_password, credentialType='password')
             resp = c.post('http://localhost.local/login', data=data)
             self.assertUserResponse(resp)
 
@@ -71,6 +80,7 @@ class LoginTest(Fixture, UserTesting):
     def Authentication_with_bad_userid_is_rejected(self):
         self.createUserWithCredentials()
         data = {
+                'credentialType': 'password',
                 'username': 'baduser',
                 'password': self.usercreation_password,
                 'next': '/foo'
@@ -85,6 +95,7 @@ class LoginTest(Fixture, UserTesting):
     def Authentication_with_bad_password_is_rejected(self):
         self.createUserWithCredentials()
         data = {
+                'credentialType': 'password',
                 'username': self.usercreation_userid,
                 'password': 'badpassword',
                 'next': '/foo'
