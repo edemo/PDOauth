@@ -1,16 +1,21 @@
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 import unittest, time
 import config
+from twatson.unittest_annotations import Fixture, test
 
-class Hash(unittest.TestCase):
+class EndUserObtainingHashTest(Fixture):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
         self.base_url = "http://127.0.0.1:8888/"
         self.verificationErrors = []
 
-    def test_registration(self):
+    @test
+    def you_can_obtain_the_hash_by_filling_in_your_personal_id_and_pushing_the_button_near_it(self):
+        """
+        In this case your web browser goes directly to anchor.edemokraciagep.org, and gets the hash for you.
+        The SSO server never sees your personal id.
+        """
         if (config.skipSlowTests):
             return
         driver = self.driver
@@ -32,12 +37,6 @@ class Hash(unittest.TestCase):
         driver.save_screenshot("doc/screenshots/getting_digest_for_assurance.png")
         digest = driver.find_element_by_id("AddAssuranceForm_digest_input").get_attribute('value')
         self.assertEqual(digest,config.testSignatureAllTwo)
-
-    
-    def is_element_present(self, how, what):
-        try: self.driver.find_element(by=how, value=what)
-        except NoSuchElementException, e: return False
-        return True
     
     def tearDown(self):
         self.driver.quit()

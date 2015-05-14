@@ -4,8 +4,9 @@ from uuid import uuid4
 from test.TestUtil import UserTesting
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
+from twatson.unittest_annotations import Fixture, test
 
-class PasswordReset(unittest.TestCase, UserTesting):
+class EndUserPasswordResetTest(Fixture, UserTesting):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
@@ -13,7 +14,7 @@ class PasswordReset(unittest.TestCase, UserTesting):
         self.verificationErrors = []
         self.createUserWithCredentials()
 
-    def getResetLink(self):
+    def the_reset_link_is_in_the_reset_email(self):
         with app.test_client() as c:
             with mail.record_messages() as outbox:
                 c.get("/v1/users/{0}/passwordreset".format(self.usercreation_email))
@@ -22,8 +23,9 @@ class PasswordReset(unittest.TestCase, UserTesting):
                 passwordResetLink = soup.find("a")['href']
         return passwordResetLink
 
-    def test_password_reset(self):
-        resetLink = self.getResetLink()
+    @test
+    def password_can_be_reset_using_the_reset_link(self):
+        resetLink = self.the_reset_link_is_in_the_reset_email()
         driver = self.driver
         print resetLink
         driver.get(resetLink)
@@ -35,7 +37,6 @@ class PasswordReset(unittest.TestCase, UserTesting):
         time.sleep(1)
         body = driver.find_element_by_id("message").text
         self.assertEqual("Password successfully changed", body)
-        
     
     def tearDown(self):
         self.driver.quit()

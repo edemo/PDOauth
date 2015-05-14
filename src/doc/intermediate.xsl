@@ -21,7 +21,7 @@
 						<xsl:attribute name="name">
 							<xsl:copy-of select="substring-before(./@name,'Test')"/>
 						</xsl:attribute>
-						<xsl:for-each select="method[@name!='setUp' and @name != 'tearDown']">
+						<xsl:for-each select="method[@name!='setUp' and @name != 'tearDown' and not(starts-with(@name,'_'))]">
 							<facet>
 								<xsl:copy-of select="@name"/>
 								<xsl:apply-templates select="text()"/>

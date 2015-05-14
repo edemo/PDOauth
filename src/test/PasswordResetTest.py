@@ -34,7 +34,7 @@ class PasswordResetTest(Fixture, UserTesting):
                 c.get("/v1/users/{0}/passwordreset".format(self.usercreation_email))
                 self.assertEqual(outbox[0].subject, "Password Reset for {0}".format(app.config.get('SERVER_NAME')))
 
-    def getResetLink(self):
+    def the_reset_link_is_in_the_reset_email(self):
         with app.test_client() as c:
             with mail.record_messages() as outbox:
                 c.get("/v1/users/{0}/passwordreset".format(self.usercreation_email))
@@ -45,17 +45,17 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def password_reset_email_contains_a_password_reset_link(self):
-        passwordResetLink = self.getResetLink()
+        passwordResetLink = self.the_reset_link_is_in_the_reset_email()
         self.assertTrue(passwordResetLink is not None)
 
     @test
     def password_reset_link_is_of_correct_form(self):
-        passwordResetLink = self.getResetLink()
+        passwordResetLink = self.the_reset_link_is_in_the_reset_email()
         self.assertTrue(re.match("https://.*?secret=[^&]*$",passwordResetLink))
 
     @test
     def password_reset_link_contains_correct_secret(self):
-        passwordResetLink = self.getResetLink()
+        passwordResetLink = self.the_reset_link_is_in_the_reset_email()
         secret = passwordResetLink.split('?secret=')[1]
         cred = Credential.get('email_for_password_reset',secret)
         self.assertEquals(cred.identifier, secret)
@@ -63,7 +63,7 @@ class PasswordResetTest(Fixture, UserTesting):
     @test
     def password_reset_credential_have_4_hours_expiration_time(self):
         now = time.time()
-        passwordResetLink = self.getResetLink()
+        passwordResetLink = self.the_reset_link_is_in_the_reset_email()
         secret = passwordResetLink.split('?secret=')[1]
         cred = Credential.get('email_for_password_reset',secret)
         expiry = float(cred.secret) - now
@@ -84,7 +84,7 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def password_reset_link_leads_to_password_reset_form(self):
-        passwordResetLink = self.getResetLink()
+        passwordResetLink = self.the_reset_link_is_in_the_reset_email()
         with app.test_client() as c:
             resp = c.get(passwordResetLink)
             self.assertEqual(resp.status_code, 200)
