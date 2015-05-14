@@ -1,0 +1,71 @@
+.foldertable {width:100%; border-style:none;}
+.folderdoctable {width:100%; border-style:none;}
+.emptytd {width:4px;background:#eeeeee;}
+.diagramtable {width:100%; border-width: 1px;  border-color: gray;}
+
+.propertytr td {
+    border-width: 1px;
+    border-style: outset;
+    border-color: gray;
+    border-collapse: collapse;
+    -moz-border-radius: 0px 0px 0px 0px;
+}
+.doctable {
+    border-width: 1px;
+    border-spacing: 2px;
+    border-style: outset;
+    border-color: gray;
+    border-collapse: separate;
+    background-color: white;
+}
+.doctable th {
+    border-width: 1px;
+    padding: 1px;
+    border-style: inset;
+    border-color: gray;
+    background-color: white;
+    -moz-border-radius: 0px 0px 0px 0px;
+}
+.doctable td {
+    border-width: 1px;
+    padding: 1px;
+    border-style: inset;
+    border-color: gray;
+    background-color: white;
+    -moz-border-radius: 0px 0px 0px 0px;
+}
+
+.BusinessActor {background:#ffffb5;}
+.BusinessRole {background:#ffffb5;}
+.BusinessInterface {background:#ffffb5;}
+.BusinessCollaboration {background:#ffffb5;}
+.BusinessFunction {background:#ffffb5;}
+.BusinessObject {background:#ffffb5;}
+.BusinessActivity {background:#ffffb5;}
+.BusinessEvent {background:#ffffb5;}
+.BusinessInteraction {background:#ffffb5;}
+.BusinessProcess {background:#ffffb5;}
+.BusinessService {background:#ffffb5;}
+.Meaning {background:#ffffb5;}
+.Contract {background:#ffffb5;}
+.Product {background:#ffffb5;}
+.Value {background:#ffffb5;}
+
+.ApplicationCollaboration {background:#b5ffff;}
+.ApplicationComponent {background:#b5ffff;}
+.ApplicationFunction {background:#b5ffff;}
+.ApplicationInteraction {background:#b5ffff;}
+.ApplicationInterface {background:#b5ffff;}
+.ApplicationService {background:#b5ffff;}
+.DataObject {background:#b5ffff;}
+
+.Artifact {background:#c9e7b7;}
+.CommunicationPath {background:#c9e7b7;}
+.Device {background:#c9e7b7;}
+.Node {background:#c9e7b7;}
+.InfrastructureInterface {background:#c9e7b7;}
+.SystemSoftware {background:#c9e7b7;}
+
+.Junction {background:#dcebeb;}
+.AndJunction {background:#dcebeb;}
+.OrJunction {background:#dcebeb;}

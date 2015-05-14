@@ -59,7 +59,7 @@ class MyWriter(TemplateWriter):
             return "Method"
         if name=="Class Method":
             return "Method"
-        return name
+        return name.lower()
     
     def writeElementForOne(self, child, item):
         e = self.doc.createElement(self.simplifyName(item.kind))

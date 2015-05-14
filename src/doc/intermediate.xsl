@@ -2,7 +2,7 @@
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-	<xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes" omit-xml-declaration="yes"/>
+	<xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes" omit-xml-declaration="no"/>
 
 	<xsl:template match="text()">
 		<xsl:copy-of select="normalize-space(.)"/>
@@ -17,17 +17,17 @@
 			</interfaces>
 			<functionality>
 				<xsl:for-each select="//decorator[.='test']/../..">
-					<ApplicationFunction>
+					<applicationfunction>
 						<xsl:attribute name="name">
 							<xsl:copy-of select="substring-before(./@name,'Test')"/>
 						</xsl:attribute>
-						<xsl:for-each select="Method[@name!='setUp']">
+						<xsl:for-each select="method[@name!='setUp' and @name != 'tearDown']">
 							<facet>
 								<xsl:copy-of select="@name"/>
 								<xsl:apply-templates select="text()"/>
 							</facet>
 						</xsl:for-each>
-					</ApplicationFunction>
+					</applicationfunction>
 				</xsl:for-each>
 			</functionality>
 		</documentation>
