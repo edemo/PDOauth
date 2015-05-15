@@ -7,6 +7,7 @@ from test.TestUtil import UserTesting, CSRFMixin
 from pdoauth.models.Assurance import Assurance
 from uuid import uuid4
 from flask_login import current_user
+import config
 
 class AssuranceTest(Fixture, CSRFMixin, UserTesting):
 
@@ -19,7 +20,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
                 assurance = "test",
                 email = "invalid@email.com",
                 csrf_token = "")
-            resp = c.post('http://localhost.local/v1/add_assurance', data = data)
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
             self.assertEquals(400, resp.status_code)
             self.assertEquals(self.getResponseText(resp),'{"errors": ["csrf_token: csrf validation error"]}')
 
@@ -42,7 +43,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
                 email = target.email,
                 csrf_token = self.getCSRF(c))
             self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
-            resp = c.post('http://localhost.local/v1/add_assurance', data = data)
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
             self.assertEquals(200, resp.status_code)
             self.assertEquals(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
 
@@ -63,7 +64,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
                 csrf_token = false_cookie)
             self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
             c.set_cookie("localhost.localdomain","csrf",false_cookie)
-            resp = c.post('http://localhost.local/v1/add_assurance', data = data)
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
             self.assertEquals(400, resp.status_code)
             self.assertEquals('{"errors": ["csrf_token: csrf validation error"]}',self.getResponseText(resp))
 
@@ -82,6 +83,6 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
                 email = target.email,
                 csrf_token = self.getCSRF(c))
             self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
-            resp = c.post('http://localhost.local/v1/add_assurance', data = data)
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
             self.assertEquals(403, resp.status_code)
 

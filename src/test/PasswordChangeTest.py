@@ -3,6 +3,7 @@ from test.TestUtil import UserTesting, CSRFMixin
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.CredentialManager import CredentialManager
+import config
 
 class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
 
@@ -24,7 +25,7 @@ class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
             newPassword=newPassword)
         if oldPassword != "skip":
             data['oldPassword'] = oldPassword
-        resp = c.post("http://localhost.local/v1/users/me/change_password", data=data)
+        resp = c.post(config.base_url + "/v1/users/me/change_password", data=data)
         return resp
 
     @test

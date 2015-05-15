@@ -3,6 +3,7 @@ from test.TestUtil import UserTesting
 from pdoauth.app import app
 import pdoauth.main  # @UnusedImport
 from flask_login import logout_user
+import config
 
 class RegistrationTest(Fixture, UserTesting):
 
@@ -23,10 +24,10 @@ class RegistrationTest(Fixture, UserTesting):
                 'password':"password_{0}".format(self.randString+self.randString), 
                 'next':'/v1/users/me'
             }
-            resp = c.post('http://localhost.local/login', data=data)
+            resp = c.post(config.base_url + '/login', data=data)
             self.assertUserResponse(resp)
             
-            resp = c.get('http://localhost.local/v1/users/me')
+            resp = c.get(config.base_url + '/v1/users/me')
             self.assertEquals(resp.status_code, 200)
             data = self.fromJson(resp)
             self.assertTrue(data.has_key('userid'))
@@ -54,7 +55,7 @@ class RegistrationTest(Fixture, UserTesting):
                 'identifier': "id_{0}".format(self.randString), 
                 'secret':"password_{0}".format(self.randString),
             }
-            resp = c.post('https://localhost.local/v1/register', data=data)
+            resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertEquals(self.getResponseText(resp),'{"errors": ["email: Invalid email address."]}')
 
@@ -68,7 +69,7 @@ class RegistrationTest(Fixture, UserTesting):
                 'secret':"1234",
                 'email': email,
             }
-            resp = c.post('https://localhost.local/v1/register', data=data)
+            resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["secret: '))
 
@@ -81,7 +82,7 @@ class RegistrationTest(Fixture, UserTesting):
                 'secret':"password_{0}".format(self.randString),
                 'email': email,
             }
-            resp = c.post('https://localhost.local/v1/register', data=data)
+            resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["credentialType: '))
 
@@ -94,7 +95,7 @@ class RegistrationTest(Fixture, UserTesting):
                 'secret':"password_{0}".format(self.randString),
                 'email': email,
             }
-            resp = c.post('https://localhost.local/v1/register', data=data)
+            resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["identifier: '))
@@ -109,10 +110,10 @@ class RegistrationTest(Fixture, UserTesting):
                 'secret':"password_{0}".format(self.randString),
                 'email': email,
             }
-            resp = c.post('https://localhost.local/v1/register', data=data)
+            resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 200)
             data['email'] = "k1-{0}@example.com".format(self.randString)
-            resp = c.post('https://localhost.local/v1/register', data=data)
+            resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["There is already a user with that username or email", "'))

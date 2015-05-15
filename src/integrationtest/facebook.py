@@ -2,8 +2,6 @@ from selenium import webdriver
 import unittest, time
 import config
 from twatson.unittest_annotations import Fixture, test
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions, wait
 
 class EndUserRegistrationAndLoginWithFacebook(Fixture):
     def setUp(self):

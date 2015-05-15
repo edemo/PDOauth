@@ -9,6 +9,10 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "sqlite:////{0}".format(os.path.abspath(os.path.join(tempfile.gettempdir(),'pdoauth.db')))
     AUTHCODE_EXPIRY = 60
     WTF_CSRF_ENABLED = False
-    SERVER_NAME = "localhost.local"
+    SERVER_NAME = "local.sso.edemokraciagep.org:8888"
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
     PASSWORD_RESET_FORM_URL="https://{0}/static/login.html".format(SERVER_NAME)
+    FACEBOOK_APP_ID = "1632759003625536"
+    FACEBOOK_APP_SECRET = "2698fa37973500db2ae740f6c0005601"
+
+base_url = "http://" + Config.SERVER_NAME

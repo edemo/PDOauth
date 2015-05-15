@@ -6,6 +6,7 @@ from test.TestUtil import UserTesting
 from flask_login import current_user
 from pdoauth.models.Assurance import Assurance
 import time
+import config
 
 class UserInfoTest(Fixture, UserTesting):
 
@@ -13,7 +14,7 @@ class UserInfoTest(Fixture, UserTesting):
     def logged_in_user_can_get_its_info(self):
         with app.test_client() as c:
             self.login(c)
-            resp = c.get('http://localhost.local/v1/users/me')
+            resp = c.get(config.base_url+'/v1/users/me')
             self.assertEquals(resp.status_code, 200)
             data = self.fromJson(resp)
             self.assertTrue(data.has_key('userid'))
@@ -22,7 +23,7 @@ class UserInfoTest(Fixture, UserTesting):
     def userid_returned_is_the_string_one(self):
         with app.test_client() as c:
             self.login(c)
-            resp = c.get('http://localhost.local/v1/users/me')
+            resp = c.get(config.base_url+'/v1/users/me')
             self.assertEquals(resp.status_code, 200)
             data = self.fromJson(resp)
             userid = data['userid']
@@ -38,7 +39,7 @@ class UserInfoTest(Fixture, UserTesting):
             Assurance.new(current_user, 'test', current_user, now)
             Assurance.new(current_user, 'test2', current_user, now)
             Assurance.new(current_user, 'test2', current_user, now)
-            resp = c.get('http://localhost.local/v1/users/me')
+            resp = c.get(config.base_url+'/v1/users/me')
             self.assertEquals(resp.status_code, 200)
             data = self.fromJson(resp)
             self.assertTrue(data.has_key('assurances'))
@@ -57,7 +58,7 @@ class UserInfoTest(Fixture, UserTesting):
             targetuser=self.createUserWithCredentials()
             Assurance.new(targetuser,'test',current_user)
             target = User.getByEmail(self.usercreation_email)
-            resp = c.get('http://localhost.local/v1/users/{0}'.format(target.userid))
+            resp = c.get(config.base_url+'/v1/users/{0}'.format(target.userid))
             data = self.fromJson(resp)
             assurances = data['assurances']
             self.assertEquals(assurances['test'][0]['assurer'], current_user.email)
@@ -69,7 +70,7 @@ class UserInfoTest(Fixture, UserTesting):
             targetuser=self.createUserWithCredentials()
             Assurance.new(targetuser,'test',current_user)
             target = User.getByEmail(self.usercreation_email)
-            resp = c.get('http://localhost.local/v1/users/{0}'.format(target.id))
+            resp = c.get(config.base_url+'/v1/users/{0}'.format(target.id))
             self.assertEqual(403, resp.status_code)
 
     @test
@@ -80,7 +81,7 @@ class UserInfoTest(Fixture, UserTesting):
             self.setupRandom()
             self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
-            resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
+            resp = c.get(config.base_url+'/v1/user_by_email/{0}'.format(target.email))
             self.assertUserResponse(resp)
 
     @test
@@ -91,7 +92,7 @@ class UserInfoTest(Fixture, UserTesting):
             self.setupRandom()
             self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
-            resp = c.get('http://localhost.local/v1/user_by_email/u{0}'.format(target.email))
+            resp = c.get(config.base_url+'/v1/user_by_email/u{0}'.format(target.email))
             self.assertEquals(resp.status_code,404)
 
     @test
@@ -101,7 +102,7 @@ class UserInfoTest(Fixture, UserTesting):
             user = self.createUserWithCredentials()
             self.assertTrue(user is not None)
             target = User.getByEmail(self.usercreation_email)
-            resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
+            resp = c.get(config.base_url+'/v1/user_by_email/{0}'.format(target.email))
             self.assertEquals(resp.status_code,403)
 
     @test
@@ -109,6 +110,6 @@ class UserInfoTest(Fixture, UserTesting):
         with app.test_client() as c:
             self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
-            resp = c.get('http://localhost.local/v1/user_by_email/{0}'.format(target.email))
+            resp = c.get(config.base_url+'/v1/user_by_email/{0}'.format(target.email))
             self.assertEquals(resp.status_code,302)
-            self.assertEquals(resp.headers['Location'],"http://localhost.local/static/login.html")
+            self.assertEquals(resp.headers['Location'],config.base_url+"/static/login.html")

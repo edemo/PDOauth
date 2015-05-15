@@ -1,7 +1,6 @@
 
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
-    console.log(response.authResponse);
     if (response.status === 'connected') {
       testAPI();
     } else if (response.status === 'not_authorized') {
@@ -28,9 +27,11 @@
 	    version    : 'v2.2' // use version 2.2
 	  });
 	
+/*
 	  FB.getLoginStatus(function(response) {
 	    statusChangeCallback(response);
 	  });
+*/
   };
 
   // Load the SDK asynchronously
@@ -42,8 +43,6 @@
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 
-  // Here we run a very simple test of the Graph API after login is
-  // successful.  See statusChangeCallback() for when this call is made.
   function testAPI() {
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
@@ -55,6 +54,8 @@
 
   function loginCallBack(response) {
     if (response.status === 'connected') {
+	    console.log(response.authResponse);
+	    console.log(response.authResponse.accessToken);
     	login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
     } else {
       document.getElementById('message').innerHTML = 'Facebook login is unsuccessful'

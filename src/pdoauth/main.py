@@ -1,17 +1,16 @@
 from pdoauth.app import app, login_manager
 from pdoauth.AuthProvider import AuthProvider
-from pdoauth.auth import do_login, do_registration, do_get_by_email,\
-    do_add_assurance, do_show_user, do_verify_email, error_response,\
-    do_change_password, do_send_password_reset_email, do_password_reset
+from pdoauth.Controller import Controller
 from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
 import os
 
+controller = Controller()
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    resp = error_response(["authentication needed"], 302)
+    resp = controller.error_response(["authentication needed"], 302)
     resp.headers['Location'] = '/static/login.html'
     return resp
 
@@ -27,7 +26,7 @@ def authorization_code():
 
 @app.route("/login", methods=["POST"])
 def login():
-    return do_login()
+    return controller.do_login()
 
 @app.route("/v1/oauth2/token", methods=["POST"])
 def token():
@@ -35,37 +34,37 @@ def token():
 
 @app.route("/v1/users/<userid>", methods=["GET"])
 def showUser(userid):
-    return do_show_user(userid)
+    return controller.do_show_user(userid)
 
 @app.route("/v1/users/<userid>/change_password", methods=["POST"])
 def changePassword(userid):
-    return do_change_password(userid)
+    return controller.do_change_password(userid)
 
 @app.route("/v1/users/<email>/passwordreset", methods=["GET"])
 def sendPasswordResetEmail(email):
-    return do_send_password_reset_email(email)
+    return controller.do_send_password_reset_email(email)
 
 @app.route("/v1/password_reset", methods=["POST"])
 def passwordReset():
-    return do_password_reset()
+    return controller.do_password_reset()
 
 @app.route("/v1/register", methods=["POST"])
 def register():
-    return do_registration()
+    return controller.do_registration()
 
 @app.route("/v1/verify_email/<token>", methods=["GET"])
 def verifyEmail(token):
-    return do_verify_email(token)
+    return controller.do_verify_email(token)
 
 @app.route('/v1/user_by_email/<email>', methods=["GET"])
 @login_required
 def get_by_email(email):
-    return do_get_by_email(email)
+    return controller.do_get_by_email(email)
 
 @app.route('/v1/add_assurance', methods=["POST"])
 @login_required
 def add_assurance():
-    return do_add_assurance()
+    return controller.do_add_assurance()
 
 def getStaticPath():
     mainpath = os.path.abspath(__file__)

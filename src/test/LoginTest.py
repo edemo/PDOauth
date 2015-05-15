@@ -1,6 +1,8 @@
 from test.TestUtil import UserTesting
 from twatson.unittest_annotations import Fixture, test
+import config
 from pdoauth.app import app
+
 
 class LoginTest(Fixture, UserTesting):
 
@@ -14,7 +16,7 @@ class LoginTest(Fixture, UserTesting):
     def password_login_needs_username(self):
         with app.test_client() as c:
             data = dict(password="password")
-            resp = c.post('http://localhost.local/login', data=data)
+            resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["username: '))
@@ -23,7 +25,7 @@ class LoginTest(Fixture, UserTesting):
     def password_login_needs_password(self):
         with app.test_client() as c:
             data = dict(username="userid")
-            resp = c.post('http://localhost.local/login', data=data)
+            resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["password: '))
@@ -32,7 +34,7 @@ class LoginTest(Fixture, UserTesting):
     def password_login_should_send_hidden_field_credentialType(self):
         with app.test_client() as c:
             data = dict(username="userid", password="password")
-            resp = c.post('http://localhost.local/login', data=data)
+            resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["credentialType: '))
@@ -41,7 +43,7 @@ class LoginTest(Fixture, UserTesting):
     def password_login_needs_correct_username_and_password(self):
         with app.test_client() as c:
             data = dict(username="userid", password="password", credentialType='password')
-            resp = c.post('http://localhost.local/login', data=data)
+            resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
             self.assertEquals(text,'{"errors": ["Bad username or password"]}')
@@ -52,7 +54,7 @@ class LoginTest(Fixture, UserTesting):
         user.activate()
         with app.test_client() as c:
             data = dict(username=self.usercreation_userid, password=self.usercreation_password, credentialType='password')
-            resp = c.post('http://localhost.local/login', data=data)
+            resp = c.post(config.base_url + '/login', data=data)
             self.assertUserResponse(resp)
 
     @test
@@ -86,7 +88,7 @@ class LoginTest(Fixture, UserTesting):
                 'next': '/foo'
         }
         with app.test_client() as c:
-            resp = c.post('http://localhost.local/login', data=data)
+            resp = c.post(config.base_url + '/login', data=data)
             text = self.getResponseText(resp)
             self.assertEqual(403, resp.status_code)
             self.assertTrue("Bad username or password" in text)
@@ -101,7 +103,18 @@ class LoginTest(Fixture, UserTesting):
                 'next': '/foo'
         }
         with app.test_client() as c:
-            resp = c.post('http://localhost.local/login', data=data)
+            resp = c.post(config.base_url + '/login', data=data)
             text = self.getResponseText(resp)
             self.assertEqual(403, resp.status_code)
             self.assertTrue("Bad username or password" in text)
+
+    def facebook_login_needs_facebook_id_and_access_token(self):
+        data = {
+                'credentialType': 'facebook',
+                'username': app.config.get("FACEBOOK_APP_ID"),
+                'password': self.access_token
+        }
+        with app.test_client() as c:
+            resp = c.post(config.base_url + '/login', data=data)
+            self.printResponse(resp)
+            self.assertEqual(resp.status_code, 200)

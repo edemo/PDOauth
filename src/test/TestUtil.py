@@ -8,10 +8,12 @@ import string
 from pdoauth.models.Application import Application
 from flask import json
 from pdoauth.models.User import User
+import config
 
 app.extensions["mail"].suppress = True
 
 class ResponseInfo(object):
+
     def getResponseText(self, resp):
         text = ""
         for i in resp.response:
@@ -61,7 +63,7 @@ class UserTesting(ResponseInfo):
                 'username': self.usercreation_userid,
                 'password': self.usercreation_password
         }
-        resp = c.post('http://localhost.local/login', data=data)
+        resp = c.post(config.base_url+'/login', data=data)
         return resp
 
     def getCode(self, c):
@@ -70,7 +72,7 @@ class UserTesting(ResponseInfo):
         self.appsecret = "secret-{0}".format(self.randString)
         application = Application.new(appid, self.appsecret, redirect_uri)
         self.appid = application.appid
-        uri = 'https://localhost.local/v1/oauth2/auth'
+        uri = config.base_url + '/v1/oauth2/auth'
         query_string = 'response_type=code&client_id={0}&redirect_uri={1}'.format(self.appid, 
             redirect_uri)
         resp = c.get(uri, query_string=query_string)
@@ -96,7 +98,7 @@ class UserTesting(ResponseInfo):
                 'email': email, 
                 'digest': self.randString
             }
-            resp = c.post('https://localhost.local/v1/register', data=data)
+            resp = c.post(config.base_url + '/v1/register', data=data)
             return resp, outbox
 
     def assertUserResponse(self, resp):
@@ -116,7 +118,7 @@ class ServerSide(ResponseInfo):
             'client_secret':self.appsecret, 
             'redirect_uri':'https://test.app/redirecturi'}
         with app.test_client() as serverside:
-            resp = serverside.post("https://localhost.local/v1/oauth2/token", data=data)
+            resp = serverside.post(config.base_url + "/v1/oauth2/token", data=data)
             data = self.fromJson(resp)
             self.assertTrue(data.has_key('access_token'))
             self.assertTrue(data.has_key('refresh_token'))

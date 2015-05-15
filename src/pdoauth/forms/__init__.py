@@ -7,7 +7,7 @@ def csrfCheck(self, field):
     if not sessionid == field.data:
         raise ValidationError('csrf validation error')
 
-credentialTypes = ['password']
+credentialTypes = ['password', 'facebook']
 credentialValidator = [validators.AnyOf(values=credentialTypes)]
 userNameValidator = [validators.Length(min=4, max=25)]
 passwordValidator = [validators.Length(min=8)]
