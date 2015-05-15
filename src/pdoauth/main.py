@@ -1,12 +1,12 @@
 from pdoauth.app import app, login_manager
 from pdoauth.AuthProvider import AuthProvider
-from pdoauth.Controller import Controller
+from pdoauth.Controller import Controller, FlaskInterface
 from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
 import os
 
-controller = Controller()
+controller = Controller(FlaskInterface)
 
 @login_manager.unauthorized_handler
 def unauthorized():

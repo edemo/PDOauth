@@ -28,7 +28,6 @@ class EndUserPasswordResetTest(Fixture, UserTesting):
     def password_can_be_reset_using_the_reset_link(self):
         resetLink = self.the_reset_link_is_in_the_reset_email()
         driver = self.driver
-        print resetLink
         driver.get(resetLink)
         driver.find_element_by_id("PasswordResetForm_password_input").clear()
         newPassword = unicode(uuid4())

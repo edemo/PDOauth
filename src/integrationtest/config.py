@@ -22,3 +22,4 @@ testSignatureAllTwo = "188c22c817b78882681287783c584a3b12fa137444dd1038d12cc37bc
 skipSlowTests = False
 fbuser = "mag+tesztelek@magwas.rulez.org"
 fbpassword = "Elek the tester"
+fbuserid = "111507052513637"

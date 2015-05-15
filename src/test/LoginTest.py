@@ -3,7 +3,6 @@ from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
 
-
 class LoginTest(Fixture, UserTesting):
 
     @test
@@ -107,14 +106,3 @@ class LoginTest(Fixture, UserTesting):
             text = self.getResponseText(resp)
             self.assertEqual(403, resp.status_code)
             self.assertTrue("Bad username or password" in text)
-
-    def facebook_login_needs_facebook_id_and_access_token(self):
-        data = {
-                'credentialType': 'facebook',
-                'username': app.config.get("FACEBOOK_APP_ID"),
-                'password': self.access_token
-        }
-        with app.test_client() as c:
-            resp = c.post(config.base_url + '/login', data=data)
-            self.printResponse(resp)
-            self.assertEqual(resp.status_code, 200)

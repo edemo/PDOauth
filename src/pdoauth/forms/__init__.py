@@ -7,6 +7,17 @@ def csrfCheck(self, field):
     if not sessionid == field.data:
         raise ValidationError('csrf validation error')
 
+def formValidated(formClass, status=400):
+    def decorator(func):
+        def validated(self):
+            form = formClass()
+            if self.validate_on_submit(form):
+                return func(self, form)
+            return self.form_validation_error_response(form, status)
+        return validated
+    return decorator
+
+
 credentialTypes = ['password', 'facebook']
 credentialValidator = [validators.AnyOf(values=credentialTypes)]
 userNameValidator = [validators.Length(min=4, max=25)]

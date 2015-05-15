@@ -2,16 +2,20 @@ from selenium import webdriver
 import unittest, time
 import config
 from twatson.unittest_annotations import Fixture, test
+from test.TestUtil import UserTesting
+from pdoauth.models.Credential import Credential
 
-class EndUserRegistrationAndLoginWithFacebook(Fixture):
+class EndUserRegistrationAndLoginWithFacebook(Fixture, UserTesting):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
         self.base_url = "http://"+ config.Config.SERVER_NAME
         self.verificationErrors = []
 
-    
+    @test
     def you_can_login_using_facebook(self):
+        self.user = self.createUserWithCredentials("facebook", config.fbuserid, None, config.fbuser)
+        self.user.activate()
         driver = self.driver
         driver.get(self.base_url+"/static/login.html")
         driver.find_element_by_id("Facebook_login_button").click()
@@ -34,10 +38,14 @@ class EndUserRegistrationAndLoginWithFacebook(Fixture):
         driver.switch_to.window(self.master)
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
         body = driver.find_element_by_id("message").text
-        self.assertEqual("Logged in successfully", body)
+        self.assertEqual("", body)
+        body = driver.find_element_by_id("userdata").text
+        self.assertTrue("email: mag+tesztelek@magwas.rulez.org"in body)
 
     
     def tearDown(self):
+        Credential.getByUser(self.user, "facebook").rm()
+        self.user.rm()
         self.driver.quit()
         self.assertEqual([], self.verificationErrors)
 

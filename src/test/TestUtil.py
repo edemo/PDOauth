@@ -12,6 +12,9 @@ import config
 
 app.extensions["mail"].suppress = True
 
+def mkRandomString(length):
+    return ''.join(random.choice(string.ascii_letters) for _ in range(length))
+
 class ResponseInfo(object):
 
     def getResponseText(self, resp):
@@ -34,7 +37,7 @@ class ResponseInfo(object):
 class UserTesting(ResponseInfo):
 
     def setupRandom(self):
-        self.randString = ''.join(random.choice(string.ascii_letters) for _ in range(6))
+        self.randString = mkRandomString(6)
 
     def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
         self.setupRandom()

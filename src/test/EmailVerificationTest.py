@@ -22,8 +22,6 @@ class EmailVerificationTests(Fixture, UserTesting):
             logout_user()
             self.assertUserResponse(resp)
             self.validateUri=re.search('href="([^"]*)',outbox[0].body).group(1)
-            print self.validateUri
-            print config.base_url + "/v1/verify_email/"
             self.assertTrue(self.validateUri.startswith(config.base_url + "/v1/verify_email/"))
         with app.test_client() as c:
             user = User.getByEmail(email)
