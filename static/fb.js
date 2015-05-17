@@ -1,3 +1,27 @@
+  window.fbAsyncInit = function() {
+	  FB.init({
+	    appId      : '1632759003625536',
+	    cookie     : true,  // enable cookies to allow the server to access 
+	                        // the session
+	    xfbml      : true,  // parse social plugins on this page
+	    version    : 'v2.2' // use version 2.2
+	  });
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+function FaceBook(pageScript) {
+	this.pageScript = pageScript;
+	this.doc = document;
+	this.loggedIn = false;
+}
 
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
@@ -18,30 +42,6 @@
     });
   }
 
-  window.fbAsyncInit = function() {
-	  FB.init({
-	    appId      : '1632759003625536',
-	    cookie     : true,  // enable cookies to allow the server to access 
-	                        // the session
-	    xfbml      : true,  // parse social plugins on this page
-	    version    : 'v2.2' // use version 2.2
-	  });
-	
-/*
-	  FB.getLoginStatus(function(response) {
-	    statusChangeCallback(response);
-	  });
-*/
-  };
-
-  // Load the SDK asynchronously
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
 
   function testAPI() {
     console.log('Welcome!  Fetching your information.... ');
@@ -52,33 +52,65 @@
     });
   }
 
-  function loginCallBack(response) {
-    if (response.status === 'connected') {
-	    console.log(response.authResponse);
-	    console.log(response.authResponse.accessToken);
-    	login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
-    } else {
-      document.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
-    } 
-  }
+  FaceBook.prototype.loginCallBack = function(response) {
+  		var self = this;
+	    if (response.status === 'connected') {
+	    	self.loggedIn = response;
+		    console.log(response.authResponse);
+		    console.log(self.loggedIn);
+		    console.log(response.authResponse.accessToken);
+	    	self.pageScript.login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
+	    } else {
+	    	self.doc.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
+	    } 
+	  }
 
-function fblogin() {
-	FB.login(function(response) {
-	    loginCallBack(response);
-	  });
-}
+	FaceBook.prototype.fblogin = function() {
+		var self = this;
+		if (! self.loggedIn ) {
+			console.log("logging in to fb...");
+			FB.login(function(response) {
+			    self.loginCallBack(response);
+			  });
+		}
+	}
 
-  function registerCallBack(response) {
-    if (response.status === 'connected') {
-    	register_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
-    } else {
-      document.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
-    } 
-  }
+	FaceBook.prototype.registerCallBack = function(response) {
+		var self = this;
+	    self.loggedIn = response;
+	    console.log('response: ' + DumpObjectIndented(response,' '));		
+		if (response.status === 'connected') {
+			FB.api('/me', function(response2) {
+				var email;
+		     	if (response2.email) {
+		     		email = response2.email;
+		     	} else {
+		     		e = self.doc.getElementById('RegistrationForm_email_input').value;
+		     		if (e != '') {
+		     			email = e;
+		     		} else {
+			     		self.doc.getElementById('message').innerHTML = "please give us an email in the registration form"
+			     		return;
+			     	};
+		     	};
+				self.pageScript.register_with_facebook(response.authResponse.userID, response.authResponse.accessToken, email)
+		    });
+		} else {
+		  self.doc.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
+		} 
+	}
+	
+	FaceBook.prototype.fbregister = function() {
+		var self = this;
+		if (! self.loggedIn ) {
+			console.log("logging in to fb...");
+			FB.login(function(response) {
+			    self.registerCallBack(response);
+			  });
+		} else {
+			self.registerCallBack(self.loggedIn);
+		}
+	}
 
-function fbregister() {
-	FB.login(function(response) {
-	    registerCallBack(response);
-	  });
-}
- 
+facebook = new FaceBook(pageScript)
+console.log("fb="+facebook)

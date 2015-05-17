@@ -1,20 +1,29 @@
 <html>
 <head>
+<title>SSO test page</title>
 <script type='text/javascript' src="debug.js"></script>
 <script type='text/javascript' src="script.js"></script>
 <script type='text/javascript' src="fb.js"></script>
-</head>
-<body onload="main()">
+<script type='text/javascript' src="http://code.jquery.com/qunit/qunit-1.18.0.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.18.0.css">
 
- <button type="button" id="Facebook_login_button" onclick="fblogin()">Facebook Login</button>
- <button type="button" id="Facebook_registration_button" onclick="fbregister()">Facebook Login</button>
+</head>
+<body onload="pageScript.main()">
+
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+<!--script type='text/javascript' src="tests.js"></script--!>
+ <button type="button" id="Unit_test_button" onclick="javascript:pageScript.unittest()">Run unit tests</button>
+
+ <button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
+ <button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
 
 <div id="status">
 </div>
   <div id="errorMsg"></div>
   <div id="message"></div>
   <div id="userdata"></div>
-  <form id="PasswordResetForm" action="javascript:passwordReset()" method="post" name="PasswordResetForm">
+  <form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
   		<input name="secret" type="text" id="PasswordResetForm_secret_input"/>
   	<div class="formrow">
   		<div class="label" id="PasswordResetForm_password_label">
@@ -27,7 +36,7 @@
   	</div>
   </form>
   
-  <form id="loginform" action="javascript:login()" method="post" name="login">
+  <form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
   	<div class="formrow">
   		<div class="label" id="LoginForm_username_label">
   			username:
@@ -45,7 +54,7 @@
   	</div>
   </form>
 
-  <form id="RegistrationForm" action="javascript:register()" method="post" name="register">
+  <form id="RegistrationForm" action="javascript:pageScript.register()" method="post" name="register">
   	<div class="formrow">
   		<div class="label" id="RegistrationForm_credentialType_label">
   			credentialType:
@@ -71,7 +80,7 @@
   			personal id:
   		</div>
   		<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
-  	 	<button type="button" id="RegistrationForm_getDigestButton" onclick="DigestGetter('RegistrationForm').getDigest()">Generate Hash</button>
+  	 	<button type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Generate Hash</button>
   	</div>
   	<div class="formrow">
   		<div class="label" id="RegistrationForm_digest_label">
@@ -90,7 +99,7 @@
   	</div>
   </form>
   
-  <form id="ByEmailForm" action="javascript:byEmail()" method="post" name="byEmail">
+  <form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
   	<div class="formrow">
   		<div class="label" id="ByEmailForm_email_label">
   			email:
@@ -103,16 +112,16 @@
   </form>
   
   	<div class="formrow">
-  	 <a href="javascript:ajaxget('/v1/users/me',myCallback)">Me</a>
+  	 <a href="javascript:pageScript.ajaxget('/v1/users/me',myCallback)">Me</a>
   	</div>
 
-  <form id="AddAssuranceForm" action="javascript:addAssurance()" method="post" name="addAssurance">
+  <form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
   	<div class="formrow">
   		<div class="label" id="AddAssuranceForm_predigest_label">
   			personal id:
   		</div>
   		<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
-  	 	<button type="button" id="AddAssuranceForm_getDigestButton" onclick="DigestGetter('AddAssuranceForm').getDigest()">Generate Hash</button>
+  	 	<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Generate Hash</button>
   	</div>
   	<div class="formrow">
   		<div class="label" id="AddAssuranceForm_digest_label">

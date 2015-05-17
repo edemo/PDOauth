@@ -13,6 +13,34 @@ class EndUserRegistrationAndLoginWithFacebook(Fixture, UserTesting):
         self.verificationErrors = []
 
     @test
+    def facebook_registration_for_a_user_without_public_email_results_in_a_warning_to_give_us_the_email_address(self):
+        driver = self.driver
+        driver.get(self.base_url+"/static/login.html")
+        driver.find_element_by_id("Facebook_registration_button").click()
+        time.sleep(1)
+        self.master = driver.current_window_handle
+        timeCount = 1;
+        while (len(driver.window_handles) == 1 ):
+            time
+            timeCount += 1
+            if ( timeCount > 50 ): 
+                break;
+        for handle in driver.window_handles:
+            if handle!=self.master:
+                driver.switch_to.window(handle)
+        driver.find_element_by_id("pass").clear()
+        driver.find_element_by_id("pass").send_keys(config.fbpassword)
+        driver.find_element_by_id("email").clear()
+        driver.find_element_by_id("email").send_keys(config.fbuser)
+        driver.find_element_by_id("u_0_2").click()
+        driver.switch_to.window(self.master)
+        self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
+        time.sleep(5)
+        body = driver.find_element_by_id("message").text
+        self.assertEqual("please give us an email in the registration form", body)
+
+
+    @test
     def you_can_login_using_facebook(self):
         self.user = self.createUserWithCredentials("facebook", config.fbuserid, None, config.fbuser)
         self.user.activate()
@@ -41,11 +69,11 @@ class EndUserRegistrationAndLoginWithFacebook(Fixture, UserTesting):
         self.assertEqual("", body)
         body = driver.find_element_by_id("userdata").text
         self.assertTrue("email: mag+tesztelek@magwas.rulez.org"in body)
+        Credential.getByUser(self.user, "facebook").rm()
+        self.user.rm()
 
     
     def tearDown(self):
-        Credential.getByUser(self.user, "facebook").rm()
-        self.user.rm()
         self.driver.quit()
         self.assertEqual([], self.verificationErrors)
 
