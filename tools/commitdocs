@@ -5,6 +5,8 @@ echo working on $branch/$commit
 
 cd doc
 mv html $branch
+git config user.email "mag@magwas.rulez.org"
+git config user.name "travis on behalf of mag"
 git add $branch
 git commit -m "$commit"
 git push origin gh-pages
