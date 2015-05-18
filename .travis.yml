@@ -1,6 +1,6 @@
 env:
   global:
-    -secure: U5DDpdM5O181T6vszF6a6BnDLhwJmVmNSdbCtCYRlTgo9/iRR8nlptb1rfydGGrP0gUivmlhftxYRu1sXs1s3K2xfpKWJHRTKD0OARYHky8dWWqr2W7CO4CxsIt3290s6py2u18Xf2ceBW58SarjXBA1SspqbFgD2P0wufgdqD8=
+    secure: "AgFID7Zfh65cwfqveYJXUT8q7xcBDA6+gNCmV90ihmvips5Uxrb7aGHQYVxPPGQy1pbv2fMnxWHjj5HR7gVp9W06HhN6kTqseGYABPWk0Tmyd0rNdDcvSMfXx9yy4jc+f2tqdmMcNOhdJ+feBaFq7uZOkqlTndkdD8m1XBMZUVs="
 before_install:
 - ./tools/setupdoc
 - export DISPLAY=:99.0
