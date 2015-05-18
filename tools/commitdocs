@@ -1,0 +1,9 @@
+#!/bin/bash
+branch=$(git rev-parse --abbrev-ref HEAD)
+commit=$(git rev-parse HEAD)
+echo working on $branch/$commit
+
+cd doc
+git add $branch
+git commit -m "$commit"
+git push origin gh-pages

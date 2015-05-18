@@ -1,0 +1,6 @@
+#!/bin/bash
+git clone -b gh-pages $(git config remote.origin.url) doc
+branch=$(git rev-parse --abbrev-ref HEAD)
+commit=$(git rev-parse HEAD)
+echo working on $branch/$commit
+mkdir doc/$branch
