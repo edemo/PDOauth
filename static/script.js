@@ -91,7 +91,7 @@ function PageScript(debug) {
 		var data = JSON.parse(text);
 		if (status == 200) {
 			if(QueryString.next) {
-				window.location = QueryString.next
+				window.location = decodeURIComponent(QueryString.next)
 			}
 		}
 		self.processErrors(data)

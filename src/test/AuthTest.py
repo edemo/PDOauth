@@ -3,6 +3,7 @@ from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.User import User
 from pdoauth.main import unauthorized, load_user
+from urllib import urlencode
 
 class AuthTest(Fixture):
     @test
@@ -10,7 +11,11 @@ class AuthTest(Fixture):
         with app.test_request_context('/'):
             resp = unauthorized()
             self.assertEquals(resp.status_code, 302)
-            self.assertEquals(resp.headers['Location'], "/static/login.html")
+            targetUri = "/static/login.html?{0}".format(urlencode(
+                {"next": app.config.get("BASE_URL")+"/"
+                }
+            ))
+            self.assertEquals(resp.headers['Location'], targetUri)
 
     @test
     def load_user_loads_the_user_by_id(self):

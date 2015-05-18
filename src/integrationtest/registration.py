@@ -6,6 +6,7 @@ from pdoauth.models.Application import Application
 import urllib3
 from twatson.unittest_annotations import Fixture, test
 import config
+from urllib import urlencode
 
 class EndUserRegistrationTest(Fixture):
     def setUp(self):
@@ -38,12 +39,15 @@ class EndUserRegistrationTest(Fixture):
         body = driver.find_element_by_css_selector("BODY").text
         self.assertRegexpMatches(body, r"^[\s\S]*assurances[\s\S]*$")
 
-
-    def if_you_are_not_logged_in__the_authorization_uri_redirects_to_login_page(self, driver):
-        driver.get(self.base_url  + "/v1/oauth2/auth")
+    def if_you_are_not_logged_in__the_authorization_uri_redirects_to_login_page_such_that_after_login_you_can_continue(self, driver):
+        uri = self.base_url + "/v1/oauth2/auth"
+        driver.get(uri)
         driver.refresh()
         time.sleep(1)
-        self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
+        targetUri = "{0}/static/login.html?{1}".format(
+            self.base_url,
+            urlencode({"next": uri}))
+        self.assertEqual(targetUri, driver.current_url)
 
 
     def _register_assurer(self, driver, time):
@@ -169,7 +173,7 @@ class EndUserRegistrationTest(Fixture):
     @test
     def _registration(self):
         driver = self.driver
-        self.if_you_are_not_logged_in__the_authorization_uri_redirects_to_login_page(driver)
+        self.if_you_are_not_logged_in__the_authorization_uri_redirects_to_login_page_such_that_after_login_you_can_continue(driver)
         self.registration_is_done_by_filling_out_the_registration_form(driver, time)
         self._register_assurer(driver, time)
         assurancetool.do_main(2, self.assurer_email, 'self', ["assurer", "assurer.test"])

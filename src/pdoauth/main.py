@@ -5,13 +5,16 @@ from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
 import os
+from flask.globals import request
+from urllib import urlencode
 
 controller = Controller(FlaskInterface)
 
 @login_manager.unauthorized_handler
 def unauthorized():
     resp = controller.error_response(["authentication needed"], 302)
-    resp.headers['Location'] = '/static/login.html'
+    uri = "/static/login.html?{0}".format(urlencode({"next": request.url}))
+    resp.headers['Location'] = uri
     return resp
 
 @login_manager.user_loader

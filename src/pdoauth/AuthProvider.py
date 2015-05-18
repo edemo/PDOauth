@@ -75,7 +75,6 @@ class AuthProvider(AuthorizationProvider):
         flask_res = flask.make_response(response.text, response.status_code)
         for k, v in response.headers.iteritems():
             flask_res.headers[k] = v
-        
         return flask_res
 
     @staticmethod

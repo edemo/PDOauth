@@ -10,6 +10,7 @@ from pyoauth2_shift.provider import utils
 from flask_login import current_user
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from test.TestUtil import AuthenticatedSessionMixin
+from urllib import urlencode
 
 class FakeData(object):
     
@@ -218,3 +219,21 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
         self.assertFalse(self.ap.from_authorization_code(appid, code, '') is None)
         self.ap.discard_authorization_code(appid, code)
         self.assertTrue(self.ap.from_authorization_code(appid, code, '') is None)
+        
+    @test
+    def auth_interface_redirects_to_redirect_uri(self):
+        params = {
+            "response_type": "code",
+            "client_id": self.app.name,
+            "redirect_uri": self.app.redirect_uri
+        }
+        uriBase = app.config.get('BASE_URL') +"/v1/oauth2/auth"
+        queryString = urlencode(params)
+        with app.test_client() as c:
+            resp = c.get(uriBase, query_string=queryString)
+            targetUri = "{0}/static/login.html?{1}".format(
+                app.config.get('BASE_URL'),
+                urlencode({"next": "{0}?{1}".format(uriBase, queryString)})
+            )
+        self.assertEquals(resp.status_code, 302)
+        self.assertEquals(resp.headers['Location'],targetUri)

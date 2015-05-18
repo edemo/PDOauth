@@ -7,6 +7,7 @@ from flask_login import current_user
 from pdoauth.models.Assurance import Assurance
 import time
 import config
+from urllib import urlencode
 
 class UserInfoTest(Fixture, UserTesting):
 
@@ -110,6 +111,11 @@ class UserInfoTest(Fixture, UserTesting):
         with app.test_client() as c:
             self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
-            resp = c.get(config.base_url+'/v1/user_by_email/{0}'.format(target.email))
+            url = config.base_url + '/v1/user_by_email/{0}'.format(target.email)
+            resp = c.get(url)
             self.assertEquals(resp.status_code,302)
-            self.assertEquals(resp.headers['Location'],config.base_url+"/static/login.html")
+            targetUri = "{0}/static/login.html?{1}".format(
+                config.base_url,
+                urlencode({"next": url})
+                )
+            self.assertEquals(resp.headers['Location'],targetUri)

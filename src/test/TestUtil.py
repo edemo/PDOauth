@@ -51,7 +51,9 @@ class UserTesting(ResponseInfo):
         self.usercreation_email = email
         self.usercreation_userid = userid
         self.usercreation_password = password
-        return CredentialManager.create_user_with_creds(credType, userid, password, email)
+        user = CredentialManager.create_user_with_creds(credType, userid, password, email)
+        self.assertTrue(user)
+        return user
     
     def login(self, c, activate = True, createUser = True):
         self.setupRandom()
