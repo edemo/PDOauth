@@ -2,6 +2,7 @@ env:
   global:
     secure: "AgFID7Zfh65cwfqveYJXUT8q7xcBDA6+gNCmV90ihmvips5Uxrb7aGHQYVxPPGQy1pbv2fMnxWHjj5HR7gVp9W06HhN6kTqseGYABPWk0Tmyd0rNdDcvSMfXx9yy4jc+f2tqdmMcNOhdJ+feBaFq7uZOkqlTndkdD8m1XBMZUVs="
 before_install:
+- set |grep -v GH_TOKEN
 - ./tools/setupdoc
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
