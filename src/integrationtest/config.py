@@ -1,3 +1,4 @@
+# encoding: utf-8
 import os
 import tempfile
 
@@ -12,6 +13,7 @@ class Config(object):
     MAIL_PORT = 1025
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
     SERVER_NAME="local.sso.edemokraciagep.org:8888"
+    BASE_URL = "http://" + SERVER_NAME
     PASSWORD_RESET_FORM_URL="http://{0}/static/login.html".format(SERVER_NAME)
     FACEBOOK_APP_ID = "1632759003625536"
     FACEBOOK_APP_SECRET = "2698fa37973500db2ae740f6c0005601"
@@ -21,6 +23,9 @@ testSignatureAllOne = "2658cad18da9bf60338e81f69f636740ecbc88115d004d4ba465aedd9
 testSignatureAllTwo = "188c22c817b78882681287783c584a3b12fa137444dd1038d12cc37bcc8227c0d497f378662ec6803def36a2cbfa9fe94ea307eedd4a5791fce069505bb09c534a67eb902fe4fe4be989e8f35542f11db3368606c5bf2307521319ead3a87c6cfda3d883bdce12895f8054d3d91e1435a87a41db589fedca14ccdbb2da6ab9d36f524dcac521530d2392efe04bcffc96021df18dca7444be401e812b97a1e4a42181b20fa62fb7eb49731ad0dc2a8ab5a287c318ca90e61c10946614e59743f52ee4b0a929f13bc41c35e89da12f635b3137acd13255ce394dfa8590f67efd0bc14147b190506ab884ecb158b5233b32c9495dbdfdb06b29fc748565b3ef707a"
 skipSlowTests = False
 skipFacebookTests = True
+#fbuser does not allow email for the fb app, fbuesr2 does
 fbuser = "mag+tesztelek@magwas.rulez.org"
 fbpassword = "Elek the tester"
 fbuserid = "111507052513637"
+fbuser2 = "mag+elekne@magwas.rulez.org"
+fbpassword2 = "Elekne is tesztel"

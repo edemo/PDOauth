@@ -19,7 +19,24 @@
 				<xsl:for-each select="//decorator[.='test']/../..">
 					<applicationfunction>
 						<xsl:attribute name="name">
-							<xsl:copy-of select="substring-before(./@name,'Test')"/>
+							<xsl:copy-of select="
+								string-join(
+									(
+										substring(./@name,1,1),
+										substring(
+											lower-case(
+												replace(
+													substring-before(./@name,'Test'),
+													'([A-Z])',
+													' $0'								
+												)
+											),
+											3
+										)
+									),
+									''
+								)
+							"/>
 						</xsl:attribute>
 						<xsl:for-each select="method[@name!='setUp' and @name != 'tearDown' and not(starts-with(@name,'_'))]">
 							<facet>
@@ -29,6 +46,14 @@
 						</xsl:for-each>
 					</applicationfunction>
 				</xsl:for-each>
+				<xsl:variable name="jsunit" select="document('../../doc/screenshots/unittests.xml')"/>
+				<applicationfunction name="JavaScript tests">
+					<xsl:for-each select="$jsunit//testcase">
+						<facet>
+							<xsl:copy-of select="@name"/>
+						</facet>
+					</xsl:for-each>
+				</applicationfunction>
 			</functionality>
 		</documentation>
 	</xsl:template>

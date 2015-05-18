@@ -24,7 +24,6 @@ function FaceBook(pageScript) {
 }
 
   function statusChangeCallback(response) {
-    console.log('statusChangeCallback');
     if (response.status === 'connected') {
       testAPI();
     } else if (response.status === 'not_authorized') {
@@ -44,7 +43,6 @@ function FaceBook(pageScript) {
 
 
   function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.log('response: ' + DumpObjectIndented(response,' '));
       document.getElementById('status').innerHTML =
@@ -56,9 +54,6 @@ function FaceBook(pageScript) {
   		var self = this;
 	    if (response.status === 'connected') {
 	    	self.loggedIn = response;
-		    console.log(response.authResponse);
-		    console.log(self.loggedIn);
-		    console.log(response.authResponse.accessToken);
 	    	self.pageScript.login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
 	    } else {
 	    	self.doc.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
@@ -68,7 +63,6 @@ function FaceBook(pageScript) {
 	FaceBook.prototype.fblogin = function() {
 		var self = this;
 		if (! self.loggedIn ) {
-			console.log("logging in to fb...");
 			FB.login(function(response) {
 			    self.loginCallBack(response);
 			  });
@@ -78,7 +72,6 @@ function FaceBook(pageScript) {
 	FaceBook.prototype.registerCallBack = function(response) {
 		var self = this;
 	    self.loggedIn = response;
-	    console.log('response: ' + DumpObjectIndented(response,' '));		
 		if (response.status === 'connected') {
 			FB.api('/me', function(response2) {
 				var email;
@@ -103,14 +96,12 @@ function FaceBook(pageScript) {
 	FaceBook.prototype.fbregister = function() {
 		var self = this;
 		if (! self.loggedIn ) {
-			console.log("logging in to fb...");
 			FB.login(function(response) {
 			    self.registerCallBack(response);
-			  });
+			  }, {scope: 'email'});
 		} else {
 			self.registerCallBack(self.loggedIn);
 		}
 	}
 
 facebook = new FaceBook(pageScript)
-console.log("fb="+facebook)

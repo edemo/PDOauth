@@ -17,6 +17,15 @@ class UserTest(Fixture, UserTesting):
     def User_id_is_returned_by_get_id(self):
         theid = self.user.userid
         self.assertEquals(theid, self.user.get_id())
+
+    @test
+    def User_email_with_plus_sign_is_stored_correctly(self):
+        email = "test+{0}@example.com".format(self.randString)
+        user = User.new(email, None)
+        user2 = User.getByEmail(email)
+        self.assertEquals(user2.email, email)
+        self.assertTrue("+" in user2.email)
+        user.rm()
         
     @test
     def User_is_created_as_inactive(self):

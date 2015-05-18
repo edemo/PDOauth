@@ -4,8 +4,9 @@ import config
 from twatson.unittest_annotations import Fixture, test
 from test.TestUtil import UserTesting
 from pdoauth.models.Credential import Credential
+from pdoauth.models.User import User
 
-class EndUserRegistrationAndLoginWithFacebook(Fixture, UserTesting):
+class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
@@ -41,6 +42,37 @@ class EndUserRegistrationAndLoginWithFacebook(Fixture, UserTesting):
         body = driver.find_element_by_id("message").text
         self.assertEqual("please give us an email in the registration form", body)
 
+    @test
+    def it_is_possible_to_register_with_facebook(self):
+        if config.skipFacebookTests:
+            return
+        driver = self.driver
+        driver.get(self.base_url+"/static/login.html")
+        driver.find_element_by_id("Facebook_registration_button").click()
+        time.sleep(1)
+        self.master = driver.current_window_handle
+        timeCount = 1;
+        while (len(driver.window_handles) == 1 ):
+            time
+            timeCount += 1
+            if ( timeCount > 50 ): 
+                break;
+        for handle in driver.window_handles:
+            if handle!=self.master:
+                driver.switch_to.window(handle)
+        driver.find_element_by_id("pass").clear()
+        driver.find_element_by_id("pass").send_keys(config.fbpassword2)
+        driver.find_element_by_id("email").clear()
+        driver.find_element_by_id("email").send_keys(config.fbuser2)
+        driver.find_element_by_id("u_0_2").click()
+        driver.switch_to.window(self.master)
+        self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
+        time.sleep(5)
+        body = driver.find_element_by_id("userdata").text
+        self.assertTrue("email: mag+elekne@magwas.rulez.org"in body)
+        self.user = User.getByEmail(config.fbuser2)
+        Credential.getByUser(self.user, "facebook").rm()
+        self.user.rm()
 
     @test
     def you_can_login_using_facebook(self):

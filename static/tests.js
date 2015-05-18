@@ -1,5 +1,11 @@
 console.log("runnning tests");
 
+QUnit.jUnitReport = function(report) {
+	console.log("writing report");
+    document.getElementById("qunit-xml").innerHTML = report.xml;
+    console.log(report.xml);
+};
+
 function ajaxBase(callback) {
 	var xmlhttp;
 	if (window.XMLHttpRequest)
@@ -21,7 +27,6 @@ function ajaxBase(callback) {
 	}
 	xmlhttp.send = function(data) {
 		self.data = data
-		console.log("stat = "+self.status);
 		callback(self.status,self.text,self.xml);
 	}
 	return xmlhttp;	
@@ -45,14 +50,13 @@ QUnit.test( "ajaxpost can be mocked", function( assert ) {
 	pageScript.status = 201;
 	pageScript.text = "szia";
 	pageScript.xml = xmlFor("<xml>hello</xml>");
-	pageScript.ajaxpost("h","data", function(status,text,xml) {
-		console.log(status + text + xml);
+	pageScript.ajaxpost("h",{data: "hello"}, function(status,text,xml) {
 		assert.equal(201,status);
 		assert.equal("szia",text);
 		assert.equal("hello",xml.childNodes[0].childNodes[0].nodeValue);
 	});
 	assert.equal(pageScript.uri, "h");
-	assert.equal(pageScript.data, "data");
+	assert.equal(pageScript.data, "data=hello");
 	assert.equal(pageScript.method, "POST");
 });
 
@@ -63,7 +67,6 @@ QUnit.test( "ajaxget can be mocked", function( assert ) {
 	pageScript.text = "szia";
 	pageScript.xml = xmlFor("<xml>hello</xml>");
 	pageScript.ajaxget("h", function(status,text,xml) {
-		console.log(status + text + xml);
 		assert.equal(201,status);
 		assert.equal("szia",text);
 		assert.equal("hello",xml.childNodes[0].childNodes[0].nodeValue);
@@ -145,14 +148,14 @@ QUnit.test( "login_with_facebook calls /login with facebook as credential type, 
 	assert.equal(pageScript.method, "POST");
 });
 
-QUnit.test( "byEmail calls /v1/user_by_email/<email address>", function( assert ) {
+QUnit.test( "byEmail calls /v1/user_by_email/[email address]", function( assert ) {
 	document.getElementById("ByEmailForm_email_input").value = "email@address.com"
 	pageScript = new PageScript(true)
 	pageScript.ajaxBase = ajaxBase
 	pageScript.status = 200;
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.byEmail()
-	assert.equal(pageScript.uri, "/v1/user_by_email/email@address.com");
+	assert.equal(pageScript.uri, "/v1/user_by_email/email%40address.com");
 	assert.equal(pageScript.method, "GET");
 });
 
@@ -168,7 +171,7 @@ QUnit.test( "register calls /v1/register with all the data needed for registrati
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.register()
 	assert.equal(pageScript.uri, "/v1/register");
-	assert.equal(pageScript.data, "credentialType=password&identifier=identifier&secret=secret&email=email@mail.com&digest=thedigest");
+	assert.equal(pageScript.data, "credentialType=password&identifier=identifier&secret=secret&email=email%40mail.com&digest=thedigest");
 	assert.equal(pageScript.method, "POST");
 });
 
@@ -179,14 +182,14 @@ QUnit.test( "register_with_facebook calls /v1/register with all the data needed 
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.register_with_facebook("userId", "accessToken", "email@example.com");
 	assert.equal(pageScript.uri, "/v1/register");
-	assert.equal(pageScript.data, "credentialType=facebook&identifier=userId&secret=accessToken&email=email@example.com");
+	assert.equal(pageScript.data, "credentialType=facebook&identifier=userId&secret=accessToken&email=email%40example.com");
 	assert.equal(pageScript.method, "POST");
 });
 
 QUnit.test( "getCookie extracts the named cookie", function( assert ) {
 	pageScript = new PageScript(true)
-	cookie = pageScript.getCookie('csrf')
 	document.cookie = "csrf=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef"
+	cookie = pageScript.getCookie('csrf')
 	assert.equal(cookie, "64b0d60d-0d6f-4c47-80d5-1a698f67d2ef");
 });
 
@@ -202,7 +205,7 @@ QUnit.test( "addAssurance calls /v1/add_assurance with digest,assurance and emai
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.addAssurance();
 	assert.equal(pageScript.uri, "/v1/add_assurance");
-	assert.equal(pageScript.data, "digest=digest&assurance=assurance&email=email@e.mail&csrf_token=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef");
+	assert.equal(pageScript.data, "digest=digest&assurance=assurance&email=email%40e.mail&csrf_token=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef");
 	assert.equal(pageScript.method, "POST");
 });
 

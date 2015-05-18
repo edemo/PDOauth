@@ -49,7 +49,12 @@ function PageScript(debug) {
 		xmlhttp = this.ajaxBase(callback);
 		xmlhttp.open("POST",uri,true);
 		xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-		xmlhttp.send(data);
+		l = []
+		for (key in data) {
+			l.push(key +"=" +encodeURIComponent(data[key]));
+		}
+		
+		xmlhttp.send(l.join("&"));
 	}
 
 	PageScript.prototype.ajaxget = function(uri,callback) {
@@ -95,23 +100,31 @@ function PageScript(debug) {
 	PageScript.prototype.passwordReset = function() {
 	    secret = document.getElementById("PasswordResetForm_secret_input").value;
 	    password = document.getElementById("PasswordResetForm_password_input").value;
-	    this.ajaxpost("/v1/password_reset", "secret="+secret+"&password="+password, this.myCallback)
+	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.myCallback)
 	}
 
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_username_input").value;
+	    username = encodeURIComponent(username)
 	    password = document.getElementById("LoginForm_password_input").value;
-	    this.ajaxpost("/login", "credentialType=password&username="+username+"&password="+password, this.myCallback)
+	    password = encodeURIComponent(password)
+	    this.ajaxpost("/login", {credentialType: "password", username: username, password: password}, this.myCallback)
 	}
 
 	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
-	    username = userId;
-	    password = accessToken;
-	    this.ajaxpost("/login", "credentialType=facebook&username="+username+"&password="+password, this.myCallback)
+	    username = userId
+	    password = encodeURIComponent(accessToken)
+	    data = {
+	    	credentialType: 'facebook',
+	    	username: username,
+	    	password: password
+	    }
+	    this.ajaxpost("/login", data , this.myCallback)
 	}
 
 	PageScript.prototype.byEmail = function() {
 	    email = document.getElementById("ByEmailForm_email_input").value;
+	    email = encodeURIComponent(email)
 	    this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
 	}
 
@@ -121,24 +134,25 @@ function PageScript(debug) {
 	    secret = document.getElementById("RegistrationForm_secret_input").value;
 	    email = document.getElementById("RegistrationForm_email_input").value;
 	    digest = document.getElementById("RegistrationForm_digest_input").value;
-	    text= 
-	    	"credentialType=" + credentialType +
-	    	"&identifier=" + identifier +
-	    	"&secret=" + secret +
-	    	"&email=" + email +
-	    	"&digest=" + digest;
+	    text= {
+	    	credentialType: credentialType,
+	    	identifier: identifier,
+	    	secret: secret,
+	    	email: email,
+	    	digest: digest
+	    }
 	    this.ajaxpost("/v1/register", text, this.myCallback)
 	}
 
 	PageScript.prototype.register_with_facebook = function(userId, accessToken, email) {
 	    username = userId;
 	    password = accessToken;
-	    text= 
-	    	"credentialType=facebook" +
-	    	"&identifier=" + username +
-	    	"&secret=" + password +
-	    	"&email=" + email;
-	    console.log("data="+text);
+	    text = {
+	    	credentialType: "facebook",
+	    	identifier: username,
+	    	secret: password,
+	    	email: email
+	    }
 	    this.ajaxpost("/v1/register", text, this.myCallback)
 	}
 	
@@ -158,17 +172,16 @@ function PageScript(debug) {
 	    assurance = document.getElementById("AddAssuranceForm_assurance_input").value;
 	    email = document.getElementById("AddAssuranceForm_email_input").value;
 	    csrf_token = this.getCookie('csrf');
-	    console.log("csrf_tokenn:"+csrf_token)
-	    text= 
-	    	"digest=" + digest +
-	    	"&assurance=" + assurance +
-	    	"&email=" + email +
-	    	"&csrf_token=" + csrf_token;
+	    text= {
+	    	digest: digest,
+	    	assurance: assurance,
+	    	email: email,
+	    	csrf_token: csrf_token
+	    }
 	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
 	}
 	
 	PageScript.prototype.digestGetter = function(formName) {
-		console.log("digestGetter");
 		self.formName = formName
 		self.idCallback = function(status,text, xml) {
 			if (status==200) {
@@ -177,10 +190,8 @@ function PageScript(debug) {
 				document.getElementById("errorMsg").innerHTML=text
 			}
 		}
-		console.log("digestGetter2");
 	
 		self.getDigest = function() {
-			console.log("setDigest");
 			personalId = document.getElementById(this.formName+"_predigest_input").value;
 			text = "<id>"+personalId+"</id>"
 			http = this.ajaxBase(this.idCallback);
@@ -194,7 +205,6 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.loadjs = function(src) {
-		console.log("loading "+src);
 	    var fileref=document.createElement('script')
 	    fileref.setAttribute("type","text/javascript")
 	    fileref.setAttribute("src", src)
@@ -202,7 +212,6 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.unittest = function() {
-		console.log("unittest")
 		this.loadjs("tests.js")
 	}
 	
@@ -215,5 +224,3 @@ function PageScript(debug) {
 }
 
 pageScript = new PageScript();
-
-console.log("pagescript = " + pageScript);
