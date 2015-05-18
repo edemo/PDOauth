@@ -7,8 +7,8 @@ before_install:
 - sudo apt-get update
 - sudo apt-get install python make python-pip firefox openjdk-7-jre curl docbook-xsl
 - sudo pip install -r requirements.txt
-- mkdir ~/.ssh
-- openssl aes-256-cbc -K $encrypted_51f68230ac78_key -iv $encrypted_51f68230ac78_iv -in id_rsa.enc -out ~\/.ssh/id_rsa -d
+- mkdir -p ~/.ssh
+- openssl aes-256-cbc -K $encrypted_51f68230ac78_key -iv $encrypted_51f68230ac78_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
 - ./tools/setupdoc
 script:
 - make
