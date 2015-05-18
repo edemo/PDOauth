@@ -1,15 +1,16 @@
 before_install:
-- "export DISPLAY=:99.0"
-- "sh -e /etc/init.d/xvfb start"
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
 - cp /etc/hosts /tmp
 - echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
 - sudo cp /tmp/hosts /etc/hosts
 - sudo apt-get update
 - sudo apt-get install python make python-pip firefox openjdk-7-jre curl docbook-xsl
 - sudo pip install -r requirements.txt
-- mkdir -p ~/.ssh
-- openssl aes-256-cbc -K $encrypted_51f68230ac78_key -iv $encrypted_51f68230ac78_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
 - ./tools/setupdoc
 script:
 - make
 - ./tools/commitdocs
+env:
+  global:
+    -secure: U5DDpdM5O181T6vszF6a6BnDLhwJmVmNSdbCtCYRlTgo9/iRR8nlptb1rfydGGrP0gUivmlhftxYRu1sXs1s3K2xfpKWJHRTKD0OARYHky8dWWqr2W7CO4CxsIt3290s6py2u18Xf2ceBW58SarjXBA1SspqbFgD2P0wufgdqD8=
