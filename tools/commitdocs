@@ -4,6 +4,7 @@ commit=$(git rev-parse HEAD)
 echo working on $branch/$commit
 
 cd doc
+mv html $branch
 git add $branch
 git commit -m "$commit"
 git push origin gh-pages
