@@ -1,6 +1,6 @@
 #!/bin/bash
-branch=$(git rev-parse --abbrev-ref HEAD)
-commit=$(git rev-parse HEAD)
+branch=${TRAVIS_BRANCH}
+commit=${TRAVIS_COMMIT}
 echo working on $branch/$commit
 
 cd doc
