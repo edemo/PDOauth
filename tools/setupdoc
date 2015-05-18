@@ -1,4 +1,5 @@
 #!/bin/bash
+echo ${GH_TOKEN}|md5sum
 #git clone -b gh-pages $(git config remote.origin.url|sed 's/:/\//;s/git@/https:\/\//') doc
 git clone -b gh-pages $(git config remote.origin.url) doc
 branch=$(git rev-parse --abbrev-ref HEAD)

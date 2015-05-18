@@ -1,4 +1,8 @@
+env:
+  global:
+    -secure: U5DDpdM5O181T6vszF6a6BnDLhwJmVmNSdbCtCYRlTgo9/iRR8nlptb1rfydGGrP0gUivmlhftxYRu1sXs1s3K2xfpKWJHRTKD0OARYHky8dWWqr2W7CO4CxsIt3290s6py2u18Xf2ceBW58SarjXBA1SspqbFgD2P0wufgdqD8=
 before_install:
+- ./tools/setupdoc
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
 - cp /etc/hosts /tmp
@@ -7,10 +11,6 @@ before_install:
 - sudo apt-get update
 - sudo apt-get install python make python-pip firefox openjdk-7-jre curl docbook-xsl
 - sudo pip install -r requirements.txt
-- ./tools/setupdoc
 script:
 - make
 - ./tools/commitdocs
-env:
-  global:
-    -secure: U5DDpdM5O181T6vszF6a6BnDLhwJmVmNSdbCtCYRlTgo9/iRR8nlptb1rfydGGrP0gUivmlhftxYRu1sXs1s3K2xfpKWJHRTKD0OARYHky8dWWqr2W7CO4CxsIt3290s6py2u18Xf2ceBW58SarjXBA1SspqbFgD2P0wufgdqD8=
