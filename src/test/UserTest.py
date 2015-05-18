@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
-from pdoauth.models.User import User
+from pdoauth.models.User import User, AlreadyExistingUser
 from pdoauth.CredentialManager import CredentialManager
 from test.TestUtil import UserTesting
 
@@ -81,3 +81,8 @@ class UserTest(Fixture, UserTesting):
         user = CredentialManager.create_user_with_creds('password', userid, password, email, digest)
         self.assertEquals(user.email, email)
         self.assertEquals(user.hash, digest)
+
+    @test
+    def cannot_create_user_with_already_existing_email(self):
+        self.createUserWithCredentials()
+        self.assertRaises(AlreadyExistingUser, User.new,self.usercreation_email)

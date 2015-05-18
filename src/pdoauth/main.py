@@ -39,9 +39,9 @@ def token():
 def showUser(userid):
     return controller.do_show_user(userid)
 
-@app.route("/v1/users/<userid>/change_password", methods=["POST"])
-def changePassword(userid):
-    return controller.do_change_password(userid)
+@app.route("/v1/users/me/change_password", methods=["POST"])
+def changePassword():
+    return controller.do_change_password()
 
 @app.route("/v1/users/<email>/passwordreset", methods=["GET"])
 def sendPasswordResetEmail(email):

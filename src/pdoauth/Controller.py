@@ -136,7 +136,7 @@ class Controller(Responses):
             return self.passwordLogin(form)
         if form.credentialType.data == 'facebook':
             return self.facebookLogin(form)
-        return self.error_response(["what kind of login?"], status=403)            
+        raise ValueError() #not reached
     
     
     @formValidated(RegistrationForm)
@@ -151,13 +151,10 @@ class Controller(Responses):
         if r:
             return self.as_dict(user)
     
-    def do_change_password(self, userid):
+    def do_change_password(self):
         form = PasswordChangeForm()
         if form.validate_on_submit():
-            if userid == 'me':
-                user = current_user
-            else:
-                user = User.get(userid)
+            user = current_user
             cred = Credential.getByUser(user, 'password')
             oldSecret = CredentialManager.protect_secret(form.oldPassword.data)
             if cred.secret != oldSecret:
@@ -165,7 +162,7 @@ class Controller(Responses):
             secret = CredentialManager.protect_secret(form.newPassword.data)
             cred.secret = secret
             cred.save()
-            return self.simple_response('pasword changed succesfully')
+            return self.simple_response('password changed succesfully')
         return self.form_validation_error_response(form)
     
     def do_get_by_email(self, email):

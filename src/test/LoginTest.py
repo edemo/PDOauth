@@ -48,6 +48,15 @@ class LoginTest(Fixture, UserTesting):
             self.assertEquals(text,'{"errors": ["Bad username or password"]}')
 
     @test
+    def password_login_needs_correct_credentialType(self):
+        with app.test_client() as c:
+            data = dict(username="userid", password="password", credentialType='incorrect')
+            resp = c.post(config.base_url + '/login', data=data)
+            self.assertEquals(resp.status_code, 403)
+            text = self.getResponseText(resp)
+            self.assertEquals(text,'{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}')
+
+    @test
     def password_login_works_with_correct_username_and_password(self):
         user = self.createUserWithCredentials()
         user.activate()

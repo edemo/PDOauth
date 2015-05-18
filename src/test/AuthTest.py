@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
-from pdoauth.models.User import User
 from pdoauth.main import unauthorized, load_user
 from urllib import urlencode
+from test.TestUtil import UserTesting
 
-class AuthTest(Fixture):
+class AuthTest(Fixture,UserTesting):
     @test
     def unauthorized_response_is_redirecting_to_login_page(self):
         with app.test_request_context('/'):
@@ -19,7 +19,7 @@ class AuthTest(Fixture):
 
     @test
     def load_user_loads_the_user_by_id(self):
-        user = User.new(email="email@example.org")
+        user = self.createUserWithCredentials()
         loaded = load_user(user.userid)
         self.assertEquals(user,loaded)
 

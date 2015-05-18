@@ -35,7 +35,7 @@ class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
             resp = self._doPasswordChange(c)
             self.assertEquals(resp.status_code, 200)
             respdata = self.fromJson(resp)
-            self.assertEqual(respdata['message'], 'pasword changed succesfully')
+            self.assertEqual(respdata['message'], 'password changed succesfully')
 
     @test
     def change_password_does_change_password(self):

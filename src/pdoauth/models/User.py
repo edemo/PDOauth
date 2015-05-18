@@ -4,6 +4,11 @@ from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String, BOOLEAN, Integer
 import uuid
 
+
+class AlreadyExistingUser(Exception):
+    pass
+
+
 class User(db.Model, ModelUtils):
     __tablename__ = 'user'
     id = Column(Integer, primary_key = True)
@@ -23,7 +28,7 @@ class User(db.Model, ModelUtils):
     def new(cls, email, digest=None):
         u = cls.getByEmail(email)
         if u is not None:
-            return u
+            raise AlreadyExistingUser()
         user = cls( email,digest)
         user.save()
         return user
