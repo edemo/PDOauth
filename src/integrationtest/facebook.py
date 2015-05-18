@@ -13,7 +13,9 @@ class EndUserRegistrationAndLoginWithFacebook(Fixture, UserTesting):
         self.verificationErrors = []
 
     @test
-    def facebook_registration_for_a_user_without_public_email_results_in_a_warning_to_give_us_the_email_address(self):
+    def if_a_user_without_public_email_tries_to_register_to_facebook_we_ask_for_email_address(self):
+        if config.skipFacebookTests:
+            return
         driver = self.driver
         driver.get(self.base_url+"/static/login.html")
         driver.find_element_by_id("Facebook_registration_button").click()
@@ -42,6 +44,8 @@ class EndUserRegistrationAndLoginWithFacebook(Fixture, UserTesting):
 
     @test
     def you_can_login_using_facebook(self):
+        if config.skipFacebookTests:
+            return
         self.user = self.createUserWithCredentials("facebook", config.fbuserid, None, config.fbuser)
         self.user.activate()
         driver = self.driver
