@@ -51,6 +51,7 @@ class NewUserTest(Fixture,UserTesting):
         driver.find_element_by_id("RegistrationForm_email_input").send_keys(email)
         driver.find_element_by_id("RegistrationForm_submitButton").click()
         time.sleep(1)
+        print driver.current_url
         self.assertTrue(driver.current_url.startswith(self.redirect_uri.lower()))
 
     @test
@@ -78,6 +79,7 @@ class NewUserTest(Fixture,UserTesting):
         driver.find_element_by_id("u_0_2").click()
         driver.switch_to.window(self.master)
         time.sleep(5)
+        print driver.current_url
         self.assertTrue(driver.current_url.startswith(self.redirect_uri.lower()))
         self.user = User.getByEmail(config.fbuser2)
         Credential.getByUser(self.user, "facebook").rm()
