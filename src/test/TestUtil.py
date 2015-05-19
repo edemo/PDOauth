@@ -9,6 +9,7 @@ from pdoauth.models.Application import Application
 from flask import json
 from pdoauth.models.User import User
 import config
+from Crypto.Hash.SHA512 import SHA512Hash
 
 app.extensions["mail"].suppress = True
 
@@ -35,6 +36,9 @@ class ResponseInfo(object):
 
 
 class UserTesting(ResponseInfo):
+
+    def createHash(self):
+        return SHA512Hash(self.randString).hexdigest() * 2
 
     def setupRandom(self):
         self.randString = mkRandomString(6)
@@ -101,7 +105,7 @@ class UserTesting(ResponseInfo):
                 'identifier': "id_{0}".format(self.randString), 
                 'secret':"password_{0}".format(self.randString+self.randString),
                 'email': email, 
-                'digest': self.randString
+                'digest': self.createHash()
             }
             resp = c.post(config.base_url + '/v1/register', data=data)
             return resp, outbox

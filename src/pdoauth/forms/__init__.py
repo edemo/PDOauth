@@ -17,12 +17,13 @@ def formValidated(formClass, status=400):
         return validated
     return decorator
 
-
+def optional(validator):
+    return [validators.Optional()] + validator
 credentialTypes = ['password', 'facebook']
 credentialValidator = [validators.AnyOf(values=credentialTypes)]
 userNameValidator = [validators.Length(min=4, max=25)]
 passwordValidator = [validators.Length(min=8)]
 emailValidator = [validators.Email()]
-digestValidator = [validators.Optional(), validators.Length(min=4, max=50)]
+digestValidator = [validators.Length(min=256, max=256), validators.regexp("[0-9A-Fa-f]*")]
 assuranceValidator = [validators.Length(min=4, max=50)]
 csrfValidator = [csrfCheck]

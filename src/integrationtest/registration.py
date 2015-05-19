@@ -7,8 +7,9 @@ import urllib3
 from twatson.unittest_annotations import Fixture, test
 import config
 from urllib import urlencode
+from test.TestUtil import UserTesting
 
-class EndUserRegistrationTest(Fixture):
+class EndUserRegistrationTest(Fixture, UserTesting):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(5)
@@ -24,8 +25,9 @@ class EndUserRegistrationTest(Fixture):
     def registration_is_done_by_filling_out_the_registration_form(self, driver, time):
         driver.get(self.base_url  + "/static/login.html?next=/v1/users/me")
         driver.refresh()
+        self.setupRandom()
         driver.find_element_by_id("RegistrationForm_digest_input").clear()
-        driver.find_element_by_id("RegistrationForm_digest_input").send_keys("xxxxxxxxxxxxxxxxxxxx")
+        driver.find_element_by_id("RegistrationForm_digest_input").send_keys(self.createHash())
         driver.find_element_by_id("RegistrationForm_identifier_input").clear()
         driver.find_element_by_id("RegistrationForm_identifier_input").send_keys(self.normaluser)
         driver.find_element_by_id("RegistrationForm_secret_input").clear()
@@ -54,7 +56,7 @@ class EndUserRegistrationTest(Fixture):
         driver.get(self.base_url  + "/static/login.html?next=/v1/users/me")
         driver.refresh()
         driver.find_element_by_id("RegistrationForm_digest_input").clear()
-        driver.find_element_by_id("RegistrationForm_digest_input").send_keys("xxxxxxxxxxxxxxxxxxxx")
+        driver.find_element_by_id("RegistrationForm_digest_input").send_keys(self.createHash())
         driver.find_element_by_id("RegistrationForm_identifier_input").clear()
         driver.find_element_by_id("RegistrationForm_identifier_input").send_keys(self.assurer)
         driver.find_element_by_id("RegistrationForm_secret_input").clear()
@@ -99,7 +101,7 @@ class EndUserRegistrationTest(Fixture):
         driver.get(self.base_url  + "/static/login.html")
         driver.refresh()
         driver.find_element_by_id("AddAssuranceForm_digest_input").clear()
-        driver.find_element_by_id("AddAssuranceForm_digest_input").send_keys("xxxxxxxxxxxxxxxxx")
+        driver.find_element_by_id("AddAssuranceForm_digest_input").send_keys(self.createHash())
         driver.find_element_by_id("AddAssuranceForm_email_input").clear()
         driver.find_element_by_id("AddAssuranceForm_email_input").send_keys(self.email)
         driver.find_element_by_id("AddAssuranceForm_assurance_input").clear()

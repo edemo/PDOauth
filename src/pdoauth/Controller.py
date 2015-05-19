@@ -180,7 +180,10 @@ class Controller(Responses):
         neededAssurance = form.assurance.data
         assurerAssurance = "assurer.{0}".format(neededAssurance)
         if assurances.has_key('assurer') and assurances.has_key(assurerAssurance):
-            user = User.getByEmail(form.email.data)
+            if form.email.data:
+                user = User.getByEmail(form.email.data)
+            else:
+                user = User.getByDigest(form.digest.data)
             Assurance.new(user, neededAssurance, current_user)
             return self.simple_response("added assurance {0} for {1}".format(neededAssurance, user.email))
         return self.error_response(["no authorization"], 403)

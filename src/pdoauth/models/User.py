@@ -65,4 +65,9 @@ class User(db.Model, ModelUtils):
     @classmethod
     def get(cls, userid):
         return User.query.filter_by(userid=userid).first()
+
     
+    @classmethod
+    def getByDigest(cls, digest):
+        u= cls.query.filter_by(hash=digest).first()
+        return u
