@@ -7,6 +7,10 @@ from pdoauth.models.User import User
 import time
 
 
+class AlreadyExistingCredential(Exception):
+    pass
+
+
 class Credential(db.Model, ModelUtils):
     __tablename__ = 'credential'
     id = Column(Integer,primary_key=True)
@@ -36,7 +40,7 @@ class Credential(db.Model, ModelUtils):
     def new(cls, user, credentialType, identifier, secret):
         oldcred = cls.get(credentialType, identifier)
         if oldcred is not None:
-            return None
+            raise AlreadyExistingCredential
         cred = cls(user, credentialType, identifier, secret)
         cred.save()
         return cred

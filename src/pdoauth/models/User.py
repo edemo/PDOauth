@@ -69,5 +69,4 @@ class User(db.Model, ModelUtils):
     
     @classmethod
     def getByDigest(cls, digest):
-        u= cls.query.filter_by(hash=digest).first()
-        return u
+        return cls.query.filter_by(hash=digest).all()

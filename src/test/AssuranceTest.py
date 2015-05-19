@@ -112,7 +112,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
 
     @test
     def assurers_need_giving_assurance(self):
-        "that is assurance.[the assurance to give]"
+        "that is they have to have assurance.[the assurance to give]"
         with app.test_client() as c:
             target = self._setupTestWithoutAssurance(c)
             Assurance.new(current_user, 'assurer', current_user)
@@ -124,3 +124,40 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
             resp = c.post(config.base_url + '/v1/add_assurance', data = data)
             self.assertEquals(403, resp.status_code)
             self.assertEquals('{"errors": ["no authorization"]}', self.getResponseText(resp))
+
+    @test
+    def when_an_assurer_wants_to_add_an_assurance_for_a_user_with_hash_and_without_email___and_there_are_multiple_users_with_that_hash___then_an_error_is_signaled(self):
+        with app.test_client() as c:
+            target = self._setupTest(c)
+            anotherUser = self.createUserWithCredentials()
+            anotherUser.hash = target.hash
+            anotherUser.save()
+            data = dict(
+                digest = target.hash,
+                assurance = "test",
+                csrf_token = self.getCSRF(c))
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
+            self.assertEquals(400, resp.status_code)
+            self.assertEquals('{"errors": ["Two users with the same hash; specify both hash and email"]}', self.getResponseText(resp))
+
+    @test
+    def when_an_assurance_added_with_hash_and_email___and_there_is_another_user_with_the_same_hash___the_hash_from_the_other_user_is_deleted(self):
+        with app.test_client() as c:
+            target = self._setupTest(c)
+            anotherUser = self.createUserWithCredentials()
+            anotherEmail = self.usercreation_email
+            anotherUser.hash = target.hash
+            targetHash = target.hash
+            anotherUser.save()
+            data = dict(
+                digest = target.hash,
+                assurance = "test",
+                email = target.email,
+                csrf_token = self.getCSRF(c))
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
+            self.assertEquals(200, resp.status_code)
+            self.assertEquals(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
+            anotherUser = User.getByEmail(anotherEmail)
+            self.assertEqual(anotherUser.hash, None)
+            user = User.getByEmail(target.email)
+            self.assertEqual(user.hash, targetHash)

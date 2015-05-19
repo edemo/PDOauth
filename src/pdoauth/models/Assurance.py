@@ -6,6 +6,8 @@ from pdoauth.models.User import User
 import time
 from pdoauth.ModelUtils import ModelUtils
 
+emailVerification = "emailverification"
+
 class Assurance(db.Model, ModelUtils):
     __tablename__ = 'assurance'
     id = Column(Integer, primary_key=True)

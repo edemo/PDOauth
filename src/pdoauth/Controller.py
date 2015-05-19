@@ -10,13 +10,15 @@ from pdoauth.models.Credential import Credential
 from uuid import uuid4
 import time
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from pdoauth.models.Assurance import Assurance
+from pdoauth.models.Assurance import Assurance, emailVerification
 from pdoauth.forms.AssuranceForm import AssuranceForm
 from flask import json
 from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
 from pdoauth.forms.PasswordResetForm import PasswordResetForm
 import urllib3
 from pdoauth.forms import formValidated
+
+anotherUserUsingYourHash = "another user is using your hash"
 
 class FlaskInterface(object):
     def make_response(self, ret, status):
@@ -57,11 +59,11 @@ class Responses(object):
         errdict = self.errors_to_json(form)
         return self.error_response(errdict, status)
     
-    def as_dict(self, user):
-        data = {'email':user.email, 
+    def as_dict(self, user, **kwargs):
+        kwargs.update({'email':user.email, 
             'userid':user.userid, 
-            'assurances':Assurance.getByUser(user)}
-        ret = json.dumps(data)
+            'assurances':Assurance.getByUser(user)})
+        ret = json.dumps(kwargs)
         return self.make_response(ret,200)
 
 class Controller(Responses):
@@ -137,19 +139,34 @@ class Controller(Responses):
         if form.credentialType.data == 'facebook':
             return self.facebookLogin(form)
         raise ValueError() #not reached
-    
-    
+
+    def isAnyoneHandAssurredOf(self, anotherUsers):
+        for anotherUser in anotherUsers:
+            for assurance in Assurance.getByUser(anotherUser):
+                if assurance not in [emailVerification]:
+                    return True        
+        return False
+
     @formValidated(RegistrationForm)
     def do_registration(self, form):
-        user = CredentialManager.create_from_form(form)
-        if user is None:
-            return self.error_response(["There is already a user with that username or email", form.email.data])
+        additionalInfo = {}
+        anotherUsers = User.getByDigest(form.digest.data)
+        if anotherUsers:
+            if self.isAnyoneHandAssurredOf(anotherUsers):
+                return self.error_response([anotherUserUsingYourHash], 400)
+            additionalInfo["message"] = anotherUserUsingYourHash
+        user = CredentialManager.create_user_with_creds(
+            form.credentialType.data,
+            form.identifier.data,
+            form.secret.data,
+            form.email.data,
+            form.digest.data)
         self.email_verification(user)
         user.set_authenticated()
         user.activate()
         r = login_user(user)
         if r:
-            return self.as_dict(user)
+            return self.as_dict(user, **additionalInfo)
     
     def do_change_password(self):
         form = PasswordChangeForm()
@@ -182,8 +199,17 @@ class Controller(Responses):
         if assurances.has_key('assurer') and assurances.has_key(assurerAssurance):
             if form.email.data:
                 user = User.getByEmail(form.email.data)
+                if form.digest.data:
+                    users = User.getByDigest(form.digest.data)
+                    for anotherUser in users:
+                        if anotherUser.email != user.email:
+                            anotherUser.hash = None
+                            anotherUser.save()
             else:
-                user = User.getByDigest(form.digest.data)
+                users = User.getByDigest(form.digest.data)
+                if len(users) > 1:
+                    return self.error_response(["Two users with the same hash; specify both hash and email"], 400)  
+                user = users[0]                  
             Assurance.new(user, neededAssurance, current_user)
             return self.simple_response("added assurance {0} for {1}".format(neededAssurance, user.email))
         return self.error_response(["no authorization"], 403)
@@ -199,7 +225,7 @@ class Controller(Responses):
         if cred is None:
             return self.error_response(["unknown token"], 404)
         user = cred.user
-        Assurance.new(user,'emailverification',user)
+        Assurance.new(user,emailVerification,user)
         cred.rm()
         return self.simple_response("email verified OK")
     
