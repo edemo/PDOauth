@@ -4,3 +4,5 @@ It is an OAuth provider, which utilizes a one-directional hash created by PDAnch
 It also have support for an assurance program.
 Users with an appropriate privilege can attach assurances to other users.
 There is also an 'emailverification' assurance, which can be obtained by verifying one's own email address.
+
+For documentation, see http://edemo.github.io/PDOauth/
