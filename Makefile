@@ -1,7 +1,18 @@
-all: alltests xmldoc
+install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-junit.js
+
+checkall: install alltests xmldoc
+
+static/qunit-1.18.0.js:
+	curl http://code.jquery.com/qunit/qunit-1.18.0.js -o static/qunit-1.18.0.js
+
+static/qunit-1.18.0.css:
+	curl http://code.jquery.com/qunit/qunit-1.18.0.css -o static/qunit-1.18.0.css
+
+static/qunit-reporter-junit.js:
+	curl https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/qunit-reporter-junit.js -o static/qunit-reporter-junit.js
 
 clean:
-	rm -rf doc lib tmp
+	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js
 
 alltests: tests integrationtest
 

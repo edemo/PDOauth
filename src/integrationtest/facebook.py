@@ -100,10 +100,12 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting):
         driver.find_element_by_id("email").send_keys(config.fbuser)
         driver.find_element_by_id("u_0_2").click()
         driver.switch_to.window(self.master)
+        time.sleep(1)
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
         body = driver.find_element_by_id("message").text
         self.assertEqual("", body)
         body = driver.find_element_by_id("userdata").text
+        print body
         self.assertTrue("email: mag+tesztelek@magwas.rulez.org"in body)
         Credential.getByUser(self.user, "facebook").rm()
         self.user.rm()
