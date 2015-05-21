@@ -133,7 +133,7 @@ QUnit.test( "login calls /login with password as credential type, username and p
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.login()
 	assert.equal(pageScript.uri, "/login");
-	assert.equal(pageScript.data, "credentialType=password&username=theuser&password=thepassword");
+	assert.equal(pageScript.data, "credentialType=password&identifier=theuser&secret=thepassword");
 	assert.equal(pageScript.method, "POST");
 });
 
@@ -144,7 +144,7 @@ QUnit.test( "login_with_facebook calls /login with facebook as credential type, 
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.login_with_facebook("fbid", "accesstoken")
 	assert.equal(pageScript.uri, "/login");
-	assert.equal(pageScript.data, "credentialType=facebook&username=fbid&password=accesstoken");
+	assert.equal(pageScript.data, "credentialType=facebook&identifier=fbid&secret=accesstoken");
 	assert.equal(pageScript.method, "POST");
 });
 
