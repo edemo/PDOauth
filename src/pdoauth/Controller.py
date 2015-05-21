@@ -17,6 +17,7 @@ from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
 from pdoauth.forms.PasswordResetForm import PasswordResetForm
 import urllib3
 from pdoauth.forms import formValidated
+from pdoauth.forms.CredentialForm import CredentialForm
 
 anotherUserUsingYourHash = "another user is using your hash"
 
@@ -62,7 +63,9 @@ class Responses(object):
     def as_dict(self, user, **kwargs):
         kwargs.update({'email':user.email, 
             'userid':user.userid, 
-            'assurances':Assurance.getByUser(user)})
+            'assurances':Assurance.getByUser(user),
+            'credentials': Credential.getByUser_as_dictlist(user)
+        })
         ret = json.dumps(kwargs)
         return self.make_response(ret,200)
 
@@ -119,14 +122,14 @@ class Controller(Responses):
         return self.login_create_response(user)
     
     def facebookLogin(self, form):
-        code = form.password.data
+        code = form.secret.data
         resp = self._facebookMe(code)
         if 200 != resp.status:
             return self.error_response(["Cannot login to facebook"], 403)
         data = json.loads(resp.data)
-        if data["id"] != form.username.data:
+        if data["id"] != form.identifier.data:
             return self.error_response(["bad facebook id"], 403)
-        cred = Credential.get("facebook", form.username.data)
+        cred = Credential.get("facebook", form.identifier.data)
         if cred is None:
             return self.error_response(["You have to register first"], 403)
         user = cred.user
@@ -258,3 +261,11 @@ class Controller(Responses):
         passcred.secret = CredentialManager.protect_secret(form.password.data)
         cred.rm()
         return self.simple_response('Password successfully changed')
+
+    @formValidated(CredentialForm)
+    def do_add_credential(self, form):
+        Credential.new(current_user,
+            form.credentialType.data,
+            form.identifier.data,
+            form.secret.data)
+        return self.as_dict(current_user)

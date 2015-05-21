@@ -108,7 +108,7 @@ function PageScript(debug) {
 	    username = encodeURIComponent(username)
 	    password = document.getElementById("LoginForm_password_input").value;
 	    password = encodeURIComponent(password)
-	    this.ajaxpost("/login", {credentialType: "password", username: username, password: password}, this.myCallback)
+	    this.ajaxpost("/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
 	}
 
 	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
@@ -116,8 +116,8 @@ function PageScript(debug) {
 	    password = encodeURIComponent(accessToken)
 	    data = {
 	    	credentialType: 'facebook',
-	    	username: username,
-	    	password: password
+	    	identifier: username,
+	    	secret: password
 	    }
 	    this.ajaxpost("/login", data , this.myCallback)
 	}

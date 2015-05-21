@@ -56,3 +56,17 @@ class Credential(db.Model, ModelUtils):
     
     def __repr__(self, *args, **kwargs):
         return "Credential(user={0.user.email},credentialType={0.credentialType},secret={0.secret})".format(self)
+
+    
+    @classmethod
+    def getByUser_as_dictlist(cls, user):
+        l = []
+        creds = Credential.query.filter_by(user=user).all()
+        for cred in creds:
+            l.append(dict(
+                credentialType = cred.credentialType,
+                identifier = cred.identifier
+            ))
+        return l
+    
+    

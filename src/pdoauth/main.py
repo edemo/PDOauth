@@ -69,6 +69,11 @@ def get_by_email(email):
 def add_assurance():
     return controller.do_add_assurance()
 
+@app.route('/v1/add_credential', methods=["POST"])
+@login_required
+def add_credential():
+    return controller.do_add_credential()
+
 def getStaticPath():
     mainpath = os.path.abspath(__file__)
     up = os.path.dirname

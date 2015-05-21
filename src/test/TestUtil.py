@@ -2,12 +2,13 @@
 from pdoauth.CredentialManager import CredentialManager
 from flask_login import login_user
 from pdoauth.app import app, mail
-import pdoauth.main  # @UnusedImport
 import random
 import string
 from pdoauth.models.Application import Application
 from flask import json
 from pdoauth.models.User import User
+from pdoauth import main  # @UnusedImport
+
 import config
 from Crypto.Hash.SHA512 import SHA512Hash
 
@@ -69,8 +70,8 @@ class UserTesting(ResponseInfo):
             user.activate()
         data = {
                 'credentialType': 'password',
-                'username': self.usercreation_userid,
-                'password': self.usercreation_password
+                'identifier': self.usercreation_userid,
+                'secret': self.usercreation_password
         }
         resp = c.post(config.base_url+'/login', data=data)
         return resp

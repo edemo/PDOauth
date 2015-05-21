@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
-from pdoauth import main  # @UnusedImport
 from pdoauth.models.User import User
 from test.TestUtil import UserTesting, CSRFMixin
 from pdoauth.models.Assurance import Assurance

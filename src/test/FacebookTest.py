@@ -35,8 +35,8 @@ class FacebookTest(Fixture, UserTesting):
         self.controller.access_token = self.usercreation_password
         data = {
                 'credentialType': 'facebook',
-                'username': self.controller.facebook_id,
-                'password': self.controller.access_token
+                'identifier': self.controller.facebook_id,
+                'secret': self.controller.access_token
         }
         self.controller.request_data = data
 
@@ -48,7 +48,7 @@ class FacebookTest(Fixture, UserTesting):
 
     @test
     def facebook_login_needs_facebook_id_as_username(self):
-        self.controller.request_data['username'] = 'badid'
+        self.controller.request_data['identifier'] = 'badid'
         with app.test_request_context():
             resp = self.controller.do_login()
             self.assertEqual(resp.status_code, 403)
@@ -57,7 +57,7 @@ class FacebookTest(Fixture, UserTesting):
 
     @test
     def facebook_login_needs_correct_access_token_as_password(self):
-        self.controller.request_data['password'] = 'badpassword'
+        self.controller.request_data['secret'] = 'badpassword'
         with app.test_request_context():
             resp = self.controller.do_login()
             self.assertEqual(resp.status_code, 403)

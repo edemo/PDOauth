@@ -12,36 +12,36 @@ class LoginTest(Fixture, UserTesting):
             self.assertEquals(resp.status_code, 404)
 
     @test
-    def password_login_needs_username(self):
+    def password_login_needs_identifier(self):
         with app.test_client() as c:
-            data = dict(password="password")
+            data = dict(secret="password")
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["username: '))
+            self.assertTrue(text.startswith('{"errors": ["identifier: '))
 
     @test
-    def password_login_needs_password(self):
+    def password_login_needs_secret(self):
         with app.test_client() as c:
-            data = dict(username="userid")
+            data = dict(credentialType="password", identifier="userid")
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["password: '))
+            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long."]}', text)
 
     @test
     def password_login_should_send_hidden_field_credentialType(self):
         with app.test_client() as c:
-            data = dict(username="userid", password="password")
+            data = dict(identifier="userid", secret="password")
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["credentialType: '))
 
     @test
-    def password_login_needs_correct_username_and_password(self):
+    def password_login_needs_correct_identifier_and_secret(self):
         with app.test_client() as c:
-            data = dict(username="userid", password="password", credentialType='password')
+            data = dict(identifier="userid", secret="password", credentialType='password')
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
@@ -50,18 +50,18 @@ class LoginTest(Fixture, UserTesting):
     @test
     def password_login_needs_correct_credentialType(self):
         with app.test_client() as c:
-            data = dict(username="userid", password="password", credentialType='incorrect')
+            data = dict(identifier="userid", secret="password", credentialType='incorrect')
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
             self.assertEquals(text,'{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}')
 
     @test
-    def password_login_works_with_correct_username_and_password(self):
+    def password_login_works_with_correct_identifier_and_secret(self):
         user = self.createUserWithCredentials()
         user.activate()
         with app.test_client() as c:
-            data = dict(username=self.usercreation_userid, password=self.usercreation_password, credentialType='password')
+            data = dict(identifier=self.usercreation_userid, secret=self.usercreation_password, credentialType='password')
             resp = c.post(config.base_url + '/login', data=data)
             self.assertUserResponse(resp)
 
@@ -91,8 +91,8 @@ class LoginTest(Fixture, UserTesting):
         self.createUserWithCredentials()
         data = {
                 'credentialType': 'password',
-                'username': 'baduser',
-                'password': self.usercreation_password,
+                'identifier': 'baduser',
+                'secret': self.usercreation_password,
                 'next': '/foo'
         }
         with app.test_client() as c:
@@ -102,16 +102,16 @@ class LoginTest(Fixture, UserTesting):
             self.assertTrue("Bad username or password" in text)
 
     @test
-    def Authentication_with_bad_password_is_rejected(self):
+    def Authentication_with_bad_secret_is_rejected(self):
         self.createUserWithCredentials()
         data = {
                 'credentialType': 'password',
-                'username': self.usercreation_userid,
-                'password': 'badpassword',
+                'identifier': self.usercreation_userid,
+                'secret': 'badpassword',
                 'next': '/foo'
         }
         with app.test_client() as c:
             resp = c.post(config.base_url + '/login', data=data)
             text = self.getResponseText(resp)
             self.assertEqual(403, resp.status_code)
-            self.assertTrue("Bad username or password" in text)
+            self.assertEqual('{"errors": ["Bad username or password"]}', text)

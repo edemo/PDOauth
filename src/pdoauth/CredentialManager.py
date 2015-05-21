@@ -21,10 +21,10 @@ class CredentialManager(object):
     
     @classmethod
     def validate_from_form(cls, form):
-        cred = Credential.get('password', form.username.data)
+        cred = Credential.get('password', form.identifier.data)
         if cred is None:
             return None
-        hashed = cls.protect_secret(form.password.data)
+        hashed = cls.protect_secret(form.secret.data)
         if cred.secret == hashed:
             return cred.user
         return None

@@ -1,7 +1,6 @@
 from twatson.unittest_annotations import Fixture, test
 from test.TestUtil import UserTesting
 from pdoauth.app import app
-import pdoauth.main  # @UnusedImport
 from flask_login import logout_user
 import config
 from pdoauth.models.Assurance import Assurance, emailVerification
@@ -22,8 +21,8 @@ class RegistrationTest(Fixture, UserTesting):
             self.assertEquals(outbox[0].sender,"test@edemokraciagep.org")
             data = {
                 'credentialType': 'password',
-                'username': "id_{0}".format(self.randString), 
-                'password':"password_{0}".format(self.randString+self.randString), 
+                'identifier': "id_{0}".format(self.randString), 
+                'secret':"password_{0}".format(self.randString+self.randString), 
                 'next':'/v1/users/me'
             }
             resp = c.post(config.base_url + '/login', data=data)
