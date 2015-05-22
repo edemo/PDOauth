@@ -4,6 +4,7 @@ import config
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from Crypto.Hash.SHA256 import SHA256Hash
+from pdoauth.models.User import User
 
 class CredentialTest(Fixture, UserTesting):
     def setUp(self):
@@ -216,6 +217,7 @@ class CredentialTest(Fixture, UserTesting):
             resp = c.post(uri, data=data)
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["secret: password should contain uppercase"]}', self.getResponseText(resp))
+
     @test
     def cannot_add_an_already_existing_identifier(self):
         with app.test_client() as c:
@@ -229,3 +231,86 @@ class CredentialTest(Fixture, UserTesting):
             resp = c.post(uri, data=data)
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["identifier: There is already a user with that username"]}', self.getResponseText(resp))
+
+    @test
+    def a_credential_can_be_deleted(self):
+        with app.test_client() as c:
+            self.login(c)
+            user = User.getByEmail(self.usercreation_email)
+            credId = self.randString
+            Credential.new(user, "facebook", credId, "testsecret")
+            self.assertTrue(Credential.get("facebook", credId))
+            data = {
+                "credentialType": "facebook",
+                "identifier": credId,
+            }
+            resp = c.post(config.base_url + "/v1/remove_credential", data=data)
+            self.assertEqual(200, resp.status_code)
+            self.assertEqual('{"message": "credential removed"}', self.getResponseText(resp))
+            
+    @test
+    def the_credential_is_actually_deleted(self):
+        with app.test_client() as c:
+            self.login(c)
+            user = User.getByEmail(self.usercreation_email)
+            credId = self.randString
+            Credential.new(user, "facebook", credId, "testsecret")
+            self.assertTrue(Credential.get("facebook", credId))
+            data = {
+                "credentialType": "facebook",
+                "identifier": credId,
+            }
+            c.post(config.base_url + "/v1/remove_credential", data=data)
+            self.assertFalse(Credential.get("facebook", credId))
+
+    @test
+    def you_should_give_the_credentialType_for_credential_deletion(self):
+        with app.test_client() as c:
+            self.login(c)
+            credId = self.randString
+            data = {
+                "identifier": credId,
+            }
+            resp = c.post(config.base_url + "/v1/remove_credential", data=data)
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}', self.getResponseText(resp))
+
+    @test
+    def you_should_give_valid_credentialType_for_credential_deletion(self):
+        with app.test_client() as c:
+            self.login(c)
+            credId = self.randString
+            data = {
+                "identifier": credId,
+                "credentialType": "test",
+            }
+            resp = c.post(config.base_url + "/v1/remove_credential", data=data)
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}', self.getResponseText(resp))
+
+    @test
+    def you_should_give_the_identifier_for_credential_deletion(self):
+        with app.test_client() as c:
+            self.login(c)
+            data = {
+                "credentialType": "facebook",
+            }
+            resp = c.post(config.base_url + "/v1/remove_credential", data=data)
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 25 characters long."]}', self.getResponseText(resp))
+
+    @test
+    def you_should_give_valid_identifier_for_credential_deletion(self):
+        with app.test_client() as c:
+            self.login(c)
+            user = User.getByEmail(self.usercreation_email)
+            credId = self.randString
+            Credential.new(user, "facebook", credId, "testsecret")
+            self.assertTrue(Credential.get("facebook", credId))
+            data = {
+                "identifier": credId+"no",
+                "credentialType": "facebook",
+            }
+            resp = c.post(config.base_url + "/v1/remove_credential", data=data)
+            self.assertEqual(404, resp.status_code)
+            self.assertEqual('{"errors": ["No such credential"]}', self.getResponseText(resp))

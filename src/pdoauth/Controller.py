@@ -19,6 +19,7 @@ import urllib3
 from pdoauth.forms import formValidated
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
+from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 
 anotherUserUsingYourHash = "another user is using your hash"
 
@@ -268,6 +269,14 @@ class Controller(Responses):
         passcred.secret = CredentialManager.protect_secret(form.password.data)
         cred.rm()
         return self.simple_response('Password successfully changed')
+
+    @formValidated(CredentialIdentifierForm)
+    def do_remove_credential(self, form):
+        cred=Credential.get(form.credentialType.data, form.identifier.data)
+        if cred is None:
+            return self.error_response(['No such credential'], 404)
+        cred.rm()
+        return self.simple_response('credential removed')
 
     @formValidated(CredentialForm)
     def do_add_credential(self, form):

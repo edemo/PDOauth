@@ -79,6 +79,11 @@ def add_assurance():
 def add_credential():
     return controller.do_add_credential()
 
+@app.route('/v1/remove_credential', methods=["POST"])
+@login_required
+def remove_credential():
+    return controller.do_remove_credential()
+
 def getStaticPath():
     mainpath = os.path.abspath(__file__)
     up = os.path.dirname
