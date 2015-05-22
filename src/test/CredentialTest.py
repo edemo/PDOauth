@@ -314,3 +314,17 @@ class CredentialTest(Fixture, UserTesting):
             resp = c.post(config.base_url + "/v1/remove_credential", data=data)
             self.assertEqual(404, resp.status_code)
             self.assertEqual('{"errors": ["No such credential"]}', self.getResponseText(resp))
+
+    @test
+    def the_credential_used_for_login_cannot_be_cleared(self):
+        with app.test_client() as c:
+            self.login(c)
+            self.assertTrue(Credential.get("password", self.usercreation_userid))
+            data = {
+                "identifier": self.usercreation_userid,
+                "credentialType": "password",
+            }
+            resp = c.post(config.base_url + "/v1/remove_credential", data=data)
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["You cannot delete the login you are using"]}', self.getResponseText(resp))
+            self.assertTrue(Credential.get("password", self.usercreation_userid))

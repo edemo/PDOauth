@@ -139,6 +139,7 @@ class Controller(Responses):
 
     @formValidated(LoginForm, 403)
     def do_login(self,form):
+        session['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
         if form.credentialType.data == 'password':
             return self.passwordLogin(form)
         if form.credentialType.data == 'facebook':
@@ -272,6 +273,9 @@ class Controller(Responses):
 
     @formValidated(CredentialIdentifierForm)
     def do_remove_credential(self, form):
+        if session['logincred']['credentialType'] == form.credentialType.data and \
+            session['logincred']['identifier'] == form.identifier.data:
+            return self.error_response(["You cannot delete the login you are using"], 400)            
         cred=Credential.get(form.credentialType.data, form.identifier.data)
         if cred is None:
             return self.error_response(['No such credential'], 404)
