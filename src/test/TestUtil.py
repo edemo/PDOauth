@@ -14,8 +14,6 @@ from Crypto.Hash.SHA512 import SHA512Hash
 
 app.extensions["mail"].suppress = True
 
-def mkRandomString(length):
-    return ''.join(random.choice(string.ascii_letters) for _ in range(length))
 
 class ResponseInfo(object):
 
@@ -38,11 +36,21 @@ class ResponseInfo(object):
 
 class UserTesting(ResponseInfo):
 
+    def mkRandomString(self, length):
+        return ''.join(random.choice(string.ascii_letters) for _ in range(length))
+    
+    def mkRandomPassword(self):
+        return ''.join((
+            random.choice(string.ascii_lowercase) +
+            random.choice(string.ascii_uppercase) +
+            random.choice(string.digits)
+            ) for _ in range(8))
+    
     def createHash(self):
         return SHA512Hash(self.randString).hexdigest() * 2
 
     def setupRandom(self):
-        self.randString = mkRandomString(6)
+        self.randString = self.mkRandomString(6)
 
     def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
         self.setupRandom()
@@ -51,7 +59,7 @@ class UserTesting(ResponseInfo):
         if userid is None:
             userid = "aaa_{0}".format(self.randString)
         if password is None:
-            password = "password_{0}".format(self.randString)
+            password = "{0}".format(self.mkRandomPassword())
 
         self.usercreation_email = email
         self.usercreation_userid = userid
@@ -101,10 +109,11 @@ class UserTesting(ResponseInfo):
             if email is None:
                 email = "{0}@example.com".format(self.randString)
             self.registered_email = email
+            self.registered_password = "password_{0}".format(self.mkRandomPassword())
             data = {
                 'credentialType':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString+self.randString),
+                'secret': self.registered_password,
                 'email': email, 
                 'digest': self.createHash()
             }

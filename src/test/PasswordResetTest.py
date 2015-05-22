@@ -101,7 +101,7 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def password_reset_needs_secret(self):
-        password = unicode(uuid4())
+        password = self.mkRandomPassword()
         with app.test_client() as c:
             data = dict(password=password)
             resp = c.post("/v1/password_reset", data = data)
@@ -111,7 +111,7 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def password_reset_secret_have_to_be_valid(self):
-        password = unicode(uuid4())
+        password = self.mkRandomPassword()
         secret = unicode(uuid4())
         with app.test_client() as c:
             data = dict(password=password, secret=secret)
@@ -122,7 +122,7 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def Valid_secret_is_accepted(self):
-        password = unicode(uuid4())
+        password = self.mkRandomPassword()
         secret = unicode(uuid4())
         user = User.getByEmail(self.usercreation_email)
         Credential.new(user, 'email_for_password_reset', secret, time.time()+3600)
@@ -135,7 +135,7 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def successful_password_reset_sets_the_password(self):
-        password = unicode(uuid4())
+        password = self.mkRandomPassword()
         secret = unicode(uuid4())
         user = User.getByEmail(self.usercreation_email)
         Credential.new(user, 'email_for_password_reset', secret, time.time()+3600)
@@ -147,7 +147,7 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def successful_password_clears_the_temporary_credential(self):
-        password = unicode(uuid4())
+        password = self.mkRandomPassword()
         secret = unicode(uuid4())
         user = User.getByEmail(self.usercreation_email)
         Credential.new(user, 'email_for_password_reset', secret, time.time()+3600)
@@ -159,7 +159,7 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def no_password_reset_for_timed_out_temporary_credential(self):
-        password = unicode(uuid4())
+        password = self.mkRandomPassword()
         secret = unicode(uuid4())
         user = User.getByEmail(self.usercreation_email)
         Credential.new(user, 'email_for_password_reset', secret, time.time()-1)
@@ -170,7 +170,7 @@ class PasswordResetTest(Fixture, UserTesting):
 
     @test
     def bad_secret_clears_up_all_timed_out_temporary_credentials(self):
-        password = unicode(uuid4())
+        password = self.mkRandomPassword()
         secret = unicode(uuid4())
         for someone in User.query.all()[:5]:  # @UndefinedVariable
             Credential.new(someone, 'email_for_password_reset', unicode(uuid4()), time.time()-1)

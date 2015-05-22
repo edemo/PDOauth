@@ -31,7 +31,7 @@ class CredentialTest(Fixture, UserTesting):
             data = {
                 "credentialType": "password",
                 "identifier": "user_{0}".format(self.randString),
-                "secret": "secret is {0}".format(self.randString)
+                "secret": "secret is {0}".format(self.mkRandomPassword())
             }
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
@@ -46,7 +46,7 @@ class CredentialTest(Fixture, UserTesting):
             data = {
                 "credentialType": "password",
                 "identifier": username,
-                "secret": "secret is {0}".format(self.randString)
+                "secret": "secret is {0}".format(self.mkRandomPassword())
             }
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
@@ -75,7 +75,7 @@ class CredentialTest(Fixture, UserTesting):
             data = {
                 "credentialType": "password",
                 "identifier": username,
-                "secret": "secret is {0}".format(self.randString)
+                "secret": "secret is {0}".format(self.mkRandomPassword())
             }
             uri = config.base_url + "/v1/add_credential"
             credBefore = Credential.get("password", username)
@@ -93,7 +93,7 @@ class CredentialTest(Fixture, UserTesting):
             username = "user_{0}".format(self.randString)
             data = {
                 "identifier": username,
-                "secret": "secret is {0}".format(self.randString)
+                "secret": "secret is {0}".format(self.mkRandomPassword())
             }
             uri = config.base_url + "/v1/add_credential"
             credBefore = Credential.get("password", username)
@@ -113,7 +113,7 @@ class CredentialTest(Fixture, UserTesting):
             data = {
                 "credentialType": "invalid",
                 "identifier": username,
-                "secret": "secret is {0}".format(self.randString)
+                "secret": "secret is {0}".format(self.mkRandomPassword())
             }
             uri = config.base_url + "/v1/add_credential"
             credBefore = Credential.get("password", username)
@@ -131,7 +131,7 @@ class CredentialTest(Fixture, UserTesting):
             self.setupRandom()
             data = {
                 "credentialType": "password",
-                "secret": "secret is {0}".format(self.randString)
+                "secret": "secret is {0}".format(self.mkRandomPassword())
             }
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
@@ -146,7 +146,7 @@ class CredentialTest(Fixture, UserTesting):
             data = {
                 "credentialType": "password",
                 "identifier": "aaa",
-                "secret": "secret is {0}".format(self.randString)
+                "secret": "secret is {0}".format(self.mkRandomPassword())
             }
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
@@ -166,10 +166,11 @@ class CredentialTest(Fixture, UserTesting):
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long."]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long.", "secret: password should contain lowercase", "secret: password should contain uppercase", "secret: password should contain digit"]}',
+                 self.getResponseText(resp))
 
     @test
-    def the_added_credential_should_contain_valid_secret(self):
+    def the_password_should_be_at_least_8_characters_long(self):
         with app.test_client() as c:
             self.login(c)
             self.setupRandom()
@@ -177,7 +178,7 @@ class CredentialTest(Fixture, UserTesting):
             data = {
                 "credentialType": "password",
                 "identifier": username,
-                "secret": "short"
+                "secret": "sH0rt"
             }
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
@@ -185,13 +186,44 @@ class CredentialTest(Fixture, UserTesting):
             self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long."]}', self.getResponseText(resp))
 
     @test
+    def the_password_should_contain_lowercase_letters(self):
+        with app.test_client() as c:
+            self.login(c)
+            self.setupRandom()
+            username = "user_{0}".format(self.randString)
+            data = {
+                "credentialType": "password",
+                "identifier": username,
+                "secret": "THIS P4SSWORD IS UPPERCASE"
+            }
+            uri = config.base_url + "/v1/add_credential"
+            resp = c.post(uri, data=data)
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["secret: password should contain lowercase"]}', self.getResponseText(resp))
+
+    @test
+    def the_password_should_contain_uppercase_letters(self):
+        with app.test_client() as c:
+            self.login(c)
+            self.setupRandom()
+            username = "user_{0}".format(self.randString)
+            data = {
+                "credentialType": "password",
+                "identifier": username,
+                "secret": "th1s p4ssw0rd 15 10w3rc453"
+            }
+            uri = config.base_url + "/v1/add_credential"
+            resp = c.post(uri, data=data)
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["secret: password should contain uppercase"]}', self.getResponseText(resp))
+    @test
     def cannot_add_an_already_existing_identifier(self):
         with app.test_client() as c:
             self.login(c)
             data = {
                 "credentialType": "password",
                 "identifier": self.usercreation_userid,
-                "secret": "aaaaaaaaaaaa"
+                "secret": self.mkRandomPassword()
             }
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)

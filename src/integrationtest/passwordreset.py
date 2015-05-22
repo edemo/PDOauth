@@ -30,7 +30,7 @@ class EndUserPasswordResetTest(Fixture, UserTesting):
         driver = self.driver
         driver.get(resetLink)
         driver.find_element_by_id("PasswordResetForm_password_input").clear()
-        newPassword = unicode(uuid4())
+        newPassword = self.mkRandomPassword()
         driver.find_element_by_id("PasswordResetForm_password_input").send_keys(newPassword)
         driver.find_element_by_id("PasswordResetForm_submitButton").click()
         driver.save_screenshot("doc/screenshots/using_password_reset.png")

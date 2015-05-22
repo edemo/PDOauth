@@ -14,7 +14,7 @@ class LoginTest(Fixture, UserTesting):
     @test
     def password_login_needs_identifier(self):
         with app.test_client() as c:
-            data = dict(secret="password")
+            data = dict(secret=self.mkRandomPassword())
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
@@ -23,16 +23,17 @@ class LoginTest(Fixture, UserTesting):
     @test
     def password_login_needs_secret(self):
         with app.test_client() as c:
-            data = dict(credentialType="password", identifier="userid")
+            data = dict(credentialType=self.mkRandomPassword(), identifier="userid")
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
-            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long."]}', text)
+            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long.", "secret: password should contain lowercase", "secret: password should contain uppercase", "secret: password should contain digit", "credentialType: Invalid value, must be one of: password, facebook."]}',
+                text)
 
     @test
     def password_login_should_send_hidden_field_credentialType(self):
         with app.test_client() as c:
-            data = dict(identifier="userid", secret="password")
+            data = dict(identifier="userid", secret=self.mkRandomPassword())
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
@@ -41,7 +42,7 @@ class LoginTest(Fixture, UserTesting):
     @test
     def password_login_needs_correct_identifier_and_secret(self):
         with app.test_client() as c:
-            data = dict(identifier="userid", secret="password", credentialType='password')
+            data = dict(identifier="userid", secret=self.mkRandomPassword(), credentialType='password')
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
@@ -50,7 +51,7 @@ class LoginTest(Fixture, UserTesting):
     @test
     def password_login_needs_correct_credentialType(self):
         with app.test_client() as c:
-            data = dict(identifier="userid", secret="password", credentialType='incorrect')
+            data = dict(identifier="userid", secret=self.mkRandomPassword(), credentialType='incorrect')
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
@@ -107,7 +108,7 @@ class LoginTest(Fixture, UserTesting):
         data = {
                 'credentialType': 'password',
                 'identifier': self.usercreation_userid,
-                'secret': 'badpassword',
+                'secret': self.mkRandomPassword(),
                 'next': '/foo'
         }
         with app.test_client() as c:

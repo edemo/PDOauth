@@ -14,7 +14,7 @@ class UserInfoTest(Fixture, UserTesting):
     @test
     def logged_in_user_can_get_its_info(self):
         with app.test_client() as c:
-            self.login(c)
+            resp = self.login(c)
             resp = c.get(config.base_url+'/v1/users/me')
             self.assertEquals(resp.status_code, 200)
             data = self.fromJson(resp)

@@ -18,7 +18,7 @@ class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
         if oldPassword is None:
             oldPassword = self.usercreation_password
         if newPassword is None:
-            newPassword="n3wp4ssw0rd.{0}".format(self.randString)
+            newPassword="n3wp4ssw0rd.{0}".format(self.mkRandomPassword())
         self.newPassword = newPassword
         data = dict(
             csrf_token=csrf,
@@ -67,7 +67,7 @@ class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
     def old_password_for_self_should_be_correct(self):
         with app.test_client() as c:
             self._preparePasswordChangeTest(c)
-            resp = self._doPasswordChange(c, oldPassword='incorrectPassword')
+            resp = self._doPasswordChange(c, oldPassword=self.mkRandomPassword())
             self.assertEquals(resp.status_code, 400)
             respdata = self.fromJson(resp)
             self.assertEqual(respdata['errors'], ["old password does not match"])

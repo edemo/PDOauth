@@ -22,7 +22,13 @@ def optional(validator):
 credentialTypes = ['password', 'facebook']
 credentialValidator = [validators.AnyOf(values=credentialTypes)]
 userNameValidator = [validators.Length(min=4, max=25)]
-passwordValidator = [validators.Length(min=8)]
+passwordValidator = [validators.Length(min=8),
+                     validators.Regexp(".*[a-z].*", message="password should contain lowercase"),
+                     validators.Regexp(".*[A-Z].*", message="password should contain uppercase"),
+                     validators.Regexp(".*[0-9].*", message="password should contain digit")]
+secretValidator = [validators.Length(min=8),
+                     validators.Regexp(".*[a-z].*", message="password should contain lowercase"),
+                     validators.Regexp(".*[0-9].*", message="password should contain digit")]
 emailValidator = [validators.Email()]
 digestValidator = [validators.Length(min=256, max=256), validators.regexp("[0-9A-Fa-f]*")]
 assuranceValidator = [validators.Length(min=4, max=50)]

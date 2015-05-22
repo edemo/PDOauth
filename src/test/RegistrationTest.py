@@ -41,7 +41,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'credentialType':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString+self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
                 'email': email,
             }
             resp = c.post(config.base_url + '/v1/register', data=data)
@@ -55,7 +55,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'credentialType':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString+self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
                 'email': email,
             }
             c.post(config.base_url + '/v1/register', data=data)
@@ -73,7 +73,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'credentialType': 'password',
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString+self.randString)
+                'secret': self.registered_password
             }
             resp = c.post(config.base_url + '/login', data=data)
             self.assertUserResponse(resp)
@@ -105,7 +105,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'credentialType':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
             }
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
@@ -131,7 +131,7 @@ class RegistrationTest(Fixture, UserTesting):
         with app.test_client() as c:
             data = {
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
                 'email': email,
             }
             resp = c.post(config.base_url + '/v1/register', data=data)
@@ -144,7 +144,7 @@ class RegistrationTest(Fixture, UserTesting):
         with app.test_client() as c:
             data = {
                 'credentialType':'password', 
-                'secret':"password_{0}".format(self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
                 'email': email,
             }
             resp = c.post(config.base_url + '/v1/register', data=data)
@@ -160,7 +160,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'identifier': "id_{0}".format(self.randString), 
                 'credentialType':'password', 
-                'secret':"password_{0}".format(self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
                 'email': email,
             }
             resp = c.post(config.base_url + '/v1/register', data=data)
@@ -181,7 +181,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'credentialType':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString+self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
                 'email': "email{0}@example.com".format(self.randString),
                 'digest': theHash
             }
@@ -201,7 +201,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'credentialType':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString+self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
                 'email': "email{0}@example.com".format(self.randString),
                 'digest': theHash
             }
@@ -221,7 +221,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'credentialType':'password', 
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString+self.randString),
+                'secret':"password_{0}".format(self.mkRandomPassword()),
                 'email': "email{0}@example.com".format(self.randString),
                 'digest': theHash
             }

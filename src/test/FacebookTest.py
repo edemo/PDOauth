@@ -57,7 +57,7 @@ class FacebookTest(Fixture, UserTesting):
 
     @test
     def facebook_login_needs_correct_access_token_as_password(self):
-        self.controller.request_data['secret'] = 'badpassword'
+        self.controller.request_data['secret'] = self.mkRandomPassword()
         with app.test_request_context():
             resp = self.controller.do_login()
             self.assertEqual(resp.status_code, 403)
