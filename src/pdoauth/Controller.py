@@ -3,7 +3,7 @@ import flask
 from pdoauth.models.User import User
 from pdoauth.forms.LoginForm import LoginForm
 from pdoauth.CredentialManager import CredentialManager
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, logout_user
 from flask.globals import request, session
 from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.models.Credential import Credential
@@ -145,6 +145,10 @@ class Controller(Responses):
         if form.credentialType.data == 'facebook':
             return self.facebookLogin(form)
         raise ValueError() #not reached
+
+    def do_logout(self):
+        logout_user()
+        return self.simple_response('logged out')
 
     def isAnyoneHandAssurredOf(self, anotherUsers):
         for anotherUser in anotherUsers:

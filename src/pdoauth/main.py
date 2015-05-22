@@ -31,6 +31,11 @@ def authorization_code():
 def login():
     return controller.do_login()
 
+@app.route("/logout", methods=["GET"])
+@login_required
+def logout():
+    return controller.do_logout()
+
 @app.route("/v1/oauth2/token", methods=["POST"])
 def token():
     return AuthProvider.token_interface()
