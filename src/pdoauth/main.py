@@ -31,6 +31,10 @@ def authorization_code():
 def login():
     return controller.do_login()
 
+@app.route("/deregister", methods=["POST"])
+def deregister():
+    return controller.do_deregister()
+
 @app.route("/logout", methods=["GET"])
 @login_required
 def logout():

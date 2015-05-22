@@ -52,7 +52,8 @@ class UserTesting(ResponseInfo):
     def setupRandom(self):
         self.randString = self.mkRandomString(6)
 
-    def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
+
+    def setupUserCreationData(self, userid=None, password=None, email=None):
         self.setupRandom()
         if email is None:
             email = "email{0}@example.com".format(self.randString)
@@ -60,10 +61,13 @@ class UserTesting(ResponseInfo):
             userid = "aaa_{0}".format(self.randString)
         if password is None:
             password = "{0}".format(self.mkRandomPassword())
-
         self.usercreation_email = email
         self.usercreation_userid = userid
         self.usercreation_password = password
+        return userid, password, email
+
+    def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
+        userid, password, email = self.setupUserCreationData(userid, password, email)
         user = CredentialManager.create_user_with_creds(credType, userid, password, email)
         self.assertTrue(user)
         return user

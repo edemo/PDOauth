@@ -20,6 +20,7 @@ from pdoauth.forms import formValidated
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
+from pdoauth.forms.DeregisterForm import DeregisterForm
 
 anotherUserUsingYourHash = "another user is using your hash"
 
@@ -145,6 +146,12 @@ class Controller(Responses):
         if form.credentialType.data == 'facebook':
             return self.facebookLogin(form)
         raise ValueError() #not reached
+
+    @formValidated(DeregisterForm, 400)
+    def do_deregister(self,form):
+        if not self.isLoginCredentials(form):
+            return self.error_response(["You should use your login credentials to deregister"], 400)            
+        return self.simple_response('deregistered')
 
     def do_logout(self):
         logout_user()
@@ -275,10 +282,12 @@ class Controller(Responses):
         cred.rm()
         return self.simple_response('Password successfully changed')
 
+    def isLoginCredentials(self, form):
+        return session['logincred']['credentialType'] == form.credentialType.data and session['logincred']['identifier'] == form.identifier.data
+
     @formValidated(CredentialIdentifierForm)
     def do_remove_credential(self, form):
-        if session['logincred']['credentialType'] == form.credentialType.data and \
-            session['logincred']['identifier'] == form.identifier.data:
+        if self.isLoginCredentials(form):
             return self.error_response(["You cannot delete the login you are using"], 400)            
         cred=Credential.get(form.credentialType.data, form.identifier.data)
         if cred is None:
