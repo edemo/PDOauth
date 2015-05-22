@@ -32,9 +32,15 @@ class Assurance(db.Model, ModelUtils):
             timestamp = self.timestamp,
             readable_time = time.asctime(time.gmtime(self.timestamp)))
         
+
+    @classmethod
+    def listByUser(cls, user):
+        assurances = Assurance.query.filter_by(user=user).all()
+        return assurances
+
     @classmethod
     def getByUser(cls, user):
-        assurances = Assurance.query.filter_by(user=user).all()
+        assurances = cls.listByUser(user)
         r = {}
         for ass in assurances:
             if not r.has_key(ass.name):

@@ -69,4 +69,6 @@ class User(db.Model, ModelUtils):
     
     @classmethod
     def getByDigest(cls, digest):
+        if digest == '' or digest is None:
+            raise ValueError()
         return cls.query.filter_by(hash=digest).all()

@@ -47,6 +47,11 @@ def changePassword():
 def sendPasswordResetEmail(email):
     return controller.do_send_password_reset_email(email)
 
+@app.route("/v1/users/me/update_hash", methods=["POST"])
+@login_required
+def updateHash():
+    return controller.do_update_hash()
+
 @app.route("/v1/password_reset", methods=["POST"])
 def passwordReset():
     return controller.do_password_reset()

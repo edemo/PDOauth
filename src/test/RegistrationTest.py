@@ -5,6 +5,7 @@ from flask_login import logout_user
 import config
 from pdoauth.models.Assurance import Assurance, emailVerification
 import time
+from pdoauth.models.User import User
 
 class RegistrationTest(Fixture, UserTesting):
 
@@ -12,7 +13,42 @@ class RegistrationTest(Fixture, UserTesting):
         self.setupRandom()
  
     @test
-    def register_and_get_our_info(self):
+    def you_can_register_with_username__password__email_and_hash(self):
+        with app.test_client() as c:
+            resp, outbox = self.register(c)  # @UnusedVariable
+            self.assertUserResponse(resp)
+
+    @test
+    def you_can_register_without_hash(self):
+        with app.test_client() as c:
+            email = "{0}@example.com".format(self.randString)
+            self.registered_email = email
+            data = {
+                'credentialType':'password', 
+                'identifier': "id_{0}".format(self.randString), 
+                'secret':"password_{0}".format(self.randString+self.randString),
+                'email': email,
+            }
+            resp = c.post(config.base_url + '/v1/register', data=data)
+            self.assertUserResponse(resp)
+
+    @test
+    def if_you_register_without_hash_it_will_be_null(self):
+        with app.test_client() as c:
+            email = "{0}@example.com".format(self.randString)
+            self.registered_email = email
+            data = {
+                'credentialType':'password', 
+                'identifier': "id_{0}".format(self.randString), 
+                'secret':"password_{0}".format(self.randString+self.randString),
+                'email': email,
+            }
+            c.post(config.base_url + '/v1/register', data=data)
+            user = User.getByEmail(email)
+            self.assertEqual(user.hash, None)
+
+    @test
+    def you_can_login_after_registration(self):
         with app.test_client() as c:
             resp, outbox = self.register(c)
             logout_user()
@@ -22,8 +58,7 @@ class RegistrationTest(Fixture, UserTesting):
             data = {
                 'credentialType': 'password',
                 'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.randString+self.randString), 
-                'next':'/v1/users/me'
+                'secret':"password_{0}".format(self.randString+self.randString)
             }
             resp = c.post(config.base_url + '/login', data=data)
             self.assertUserResponse(resp)

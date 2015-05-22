@@ -86,3 +86,11 @@ class UserTest(Fixture, UserTesting):
     def cannot_create_user_with_already_existing_email(self):
         self.createUserWithCredentials()
         self.assertRaises(AlreadyExistingUser, User.new,self.usercreation_email)
+
+    @test
+    def getByDigest_does_not_allow_empty_digest(self):
+        self.assertRaises(ValueError, User.getByDigest,'')
+
+    @test
+    def getByDigest_does_not_allow_null_digest(self):
+        self.assertRaises(ValueError, User.getByDigest,None)

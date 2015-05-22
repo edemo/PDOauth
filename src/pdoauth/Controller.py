@@ -18,6 +18,7 @@ from pdoauth.forms.PasswordResetForm import PasswordResetForm
 import urllib3
 from pdoauth.forms import formValidated
 from pdoauth.forms.CredentialForm import CredentialForm
+from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
 
 anotherUserUsingYourHash = "another user is using your hash"
 
@@ -153,17 +154,21 @@ class Controller(Responses):
     @formValidated(RegistrationForm)
     def do_registration(self, form):
         additionalInfo = {}
-        anotherUsers = User.getByDigest(form.digest.data)
-        if anotherUsers:
-            if self.isAnyoneHandAssurredOf(anotherUsers):
-                return self.error_response([anotherUserUsingYourHash], 400)
-            additionalInfo["message"] = anotherUserUsingYourHash
+        digest = form.digest.data
+        if digest == '':
+            digest = None
+        if digest is not None:
+            anotherUsers = User.getByDigest(form.digest.data)
+            if anotherUsers:
+                if self.isAnyoneHandAssurredOf(anotherUsers):
+                    return self.error_response([anotherUserUsingYourHash], 400)
+                additionalInfo["message"] = anotherUserUsingYourHash
         user = CredentialManager.create_user_with_creds(
             form.credentialType.data,
             form.identifier.data,
             form.secret.data,
             form.email.data,
-            form.digest.data)
+            digest)
         self.email_verification(user)
         user.set_authenticated()
         user.activate()
@@ -269,3 +274,15 @@ class Controller(Responses):
             form.identifier.data,
             form.secret.data)
         return self.as_dict(current_user)
+    
+    @formValidated(DigestUpdateForm)
+    def do_update_hash(self,form):
+        digest = form.digest.data
+        if digest == '':
+            digest = None
+        current_user.hash = digest
+        assurances = Assurance.listByUser(current_user)
+        for assurance in assurances:
+            if assurance.name != emailVerification:
+                assurance.rm()
+        return self.simple_response('')
