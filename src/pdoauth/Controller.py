@@ -80,8 +80,8 @@ class Controller(Responses):
     
     def email_verification(self, user):
         secret=unicode(uuid4())
-        expiry = time.time()
-        Credential.new(user, 'emailcheck', secret, unicode(expiry))
+        expiry = time.time() + 60*60*24*4
+        Credential.new(user, 'emailcheck', unicode(expiry), secret )
         timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
         uri = "{0}/v1/verify_email/{1}".format(app.config.get('BASE_URL'),secret)
         text = """Hi, click on <a href="{0}">{0}</a> until {1} to verify your email""".format(uri, timeText)
@@ -229,9 +229,11 @@ class Controller(Responses):
         return self.error_response(["no authorization"], status=403)
     
     def do_verify_email(self, token):
-        cred = Credential.get('emailcheck', token)
+        cred = Credential.getBySecret('emailcheck', token)
         if cred is None:
             return self.error_response(["unknown token"], 404)
+        if float(cred.identifier) < time.time():
+            return self.error_response(["expired token"], 400)
         user = cred.user
         Assurance.new(user,emailVerification,user)
         cred.rm()

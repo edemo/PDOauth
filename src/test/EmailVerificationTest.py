@@ -8,6 +8,7 @@ from pdoauth.models.Assurance import Assurance, emailVerification
 from test.TestUtil import UserTesting
 from flask_login import logout_user
 import config
+import time
 
 app.extensions["mail"].suppress = True
 
@@ -35,6 +36,24 @@ class EmailVerificationTests(Fixture, UserTesting):
             assurances = Assurance.getByUser(user)
             self.assertTrue(assurances[emailVerification] is not None)
             user.rm()
+
+    @test
+    def email_verification_after_expiry_will_fail(self):
+        self.setupRandom()
+        with app.test_client() as c:
+            resp, outbox = self.register(c)  # @UnusedVariable
+            email = self.registered_email
+            logout_user()
+            self.validateUri=re.search('href="([^"]*)',outbox[0].body).group(1)
+        with app.test_client() as c:
+            user = User.getByEmail(email)
+            creds = Credential.getByUser(user)
+            for cred in creds:
+                if cred.credentialType == 'emailcheck':
+                    cred.identifier = unicode(time.time()- 1)
+            resp = c.get(self.validateUri)
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["expired token"]}', self.getResponseText(resp))
 
     @test
     def bad_email_uri_signals_error(self):

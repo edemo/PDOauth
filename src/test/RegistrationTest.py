@@ -6,6 +6,7 @@ import config
 from pdoauth.models.Assurance import Assurance, emailVerification
 import time
 from pdoauth.models.User import User
+import re
 
 class RegistrationTest(Fixture, UserTesting):
 
@@ -17,6 +18,20 @@ class RegistrationTest(Fixture, UserTesting):
         with app.test_client() as c:
             resp, outbox = self.register(c)  # @UnusedVariable
             self.assertUserResponse(resp)
+
+    @test
+    def on_registration_a_temporary_email_verification_credential_is_registered(self):
+        with app.test_client() as c:
+            resp, outbox = self.register(c)  # @UnusedVariable
+            data = self.fromJson(resp)
+            self.assertEquals("emailcheck", data['credentials'][1]['credentialType'])
+    @test
+    def the_emailcheck_secret_is_not_shown_in_the_registration_answer(self):
+        with app.test_client() as c:
+            resp, outbox = self.register(c)  # @UnusedVariable
+            text = self.getResponseText(resp)
+            secret=re.search('href=".*verify_email/([^"]*)"',outbox[0].body).group(1)
+            self.assertTrue(not (secret in text))
 
     @test
     def you_can_register_without_hash(self):
