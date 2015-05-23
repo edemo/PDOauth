@@ -6,7 +6,7 @@ before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
 - cp /etc/apt/sources.list /tmp
-- echo deb http://de.archive.ubuntu.com/ubuntu/ trusty main >/tmp/sources.list
+- echo deb http://de.archive.ubuntu.com/ubuntu/ trusty main restricted universe >/tmp/sources.list
 - sudo cp /tmp/sources.list /etc/apt
 - cp /etc/hosts /tmp
 - echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
