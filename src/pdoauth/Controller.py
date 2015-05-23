@@ -21,6 +21,7 @@ from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterForm import DeregisterForm
+from OpenSSL import crypto
 
 anotherUserUsingYourHash = "another user is using your hash"
 
@@ -147,10 +148,26 @@ class Controller(Responses):
             return self.facebookLogin(form)
         raise ValueError() #not reached
 
+    def do_ssl_login(self):
+        cert = request.environ.get('SSL_CLIENT_CERT',None)
+        if cert is None:
+            return self.error_response(["No certificate given"], 403)            
+        x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
+        digest = x509.digest('sha1')
+        cn = x509.get_subject().commonName
+        identifier="{0}/{1}".format(
+            digest,
+            cn
+        )
+        cred = Credential.get("certificate", identifier)
+        if cred is None:
+            return self.error_response(["You have to register first"], 403)            
+        return self.simple_response("You are logged in")
+
     @formValidated(DeregisterForm, 400)
     def do_deregister(self,form):
         if not self.isLoginCredentials(form):
-            return self.error_response(["You should use your login credentials to deregister"], 400)            
+            return self.error_response(["You should use your login credentials to deregister"], 400)
         return self.simple_response('deregistered')
 
     def do_logout(self):

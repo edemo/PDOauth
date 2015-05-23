@@ -150,8 +150,8 @@ class EndUserRegistrationTest(Fixture, UserTesting):
 
     def _weAreTheServerFromNow(self):
         self.http = urllib3.PoolManager(
-            cert_reqs='CERT_REQUIRED', # Force certificate check.
-            ca_certs=config.ca_certs,         # Path to your certificate bundle.
+            cert_reqs='CERT_REQUIRED',
+            ca_certs=config.ca_certs,
     )
 
 

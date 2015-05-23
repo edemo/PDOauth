@@ -21,6 +21,8 @@ var QueryString = function () { //http://stackoverflow.com/questions/979975/how-
     return query_string;
 } ();
 
+var uribase="";
+
 function PageScript(debug) {
 	var self = this
 	this.debug=debug
@@ -47,7 +49,7 @@ function PageScript(debug) {
 
 	PageScript.prototype.ajaxpost = function(uri,data,callback) {
 		xmlhttp = this.ajaxBase(callback);
-		xmlhttp.open("POST",uri,true);
+		xmlhttp.open("POST",uribase+uri,true);
 		xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 		l = []
 		for (key in data) {
@@ -59,7 +61,7 @@ function PageScript(debug) {
 
 	PageScript.prototype.ajaxget = function(uri,callback) {
 		xmlhttp = this.ajaxBase(callback)
-		xmlhttp.open("GET",uri,true);
+		xmlhttp.open("GET",uribase+uri,true);
 		xmlhttp.send();
 	}
 
