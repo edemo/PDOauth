@@ -22,10 +22,10 @@ onlyintegrationtest: testsetup runserver runemail testsetup
 integrationtest: onlyintegrationtest killall
 
 runserver:
-	PYTHONPATH=src:src/integrationtest python src/pdoauth/main.py&
+	mkdir -p tmp; apache2 -X -f $$(pwd)/src/integrationtest/apache2.conf&
 
 killserver:
-	ps ax |grep pdoauth/main.py |grep -v grep |awk '{print $$1}' |xargs kill
+	kill $$(cat tmp/httpd.pid)
 
 runemail:
 	python -m smtpd -n -c DebuggingServer localhost:1025&

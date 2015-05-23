@@ -9,7 +9,7 @@ before_install:
 - echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
 - sudo cp /tmp/hosts /etc/hosts
 - sudo apt-get update
-- sudo apt-get install python make python-pip firefox openjdk-7-jre curl docbook-xsl
+- sudo apt-get install python make python-pip firefox openjdk-7-jre curl docbook-xsl apache2 libapache2-mod-wsgi
 - sudo pip install -r requirements.txt
 script:
 - make checkall
