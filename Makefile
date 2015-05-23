@@ -16,7 +16,7 @@ clean:
 
 alltests: tests integrationtest
 
-onlyintegrationtest: testsetup runserver runemail testsetup
+onlyintegrationtest: install testsetup runserver runemail testsetup
 	PYTHONPATH=src python -m unittest discover -s src/integrationtest -p "*.py"
 
 integrationtest: onlyintegrationtest killall

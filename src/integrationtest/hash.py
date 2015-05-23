@@ -7,7 +7,7 @@ class EndUserObtainingHashTest(Fixture):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
-        self.base_url = "http://"+ config.Config.SERVER_NAME
+        self.base_url = config.Config.BASE_URL
         self.verificationErrors = []
 
     @test

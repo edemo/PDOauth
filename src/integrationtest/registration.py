@@ -13,7 +13,7 @@ class EndUserRegistrationTest(Fixture, UserTesting):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(5)
-        self.base_url = "http://"+ config.Config.SERVER_NAME
+        self.base_url = config.Config.BASE_URL
         self.verificationErrors = []
         randomString = ''.join(random.choice(string.ascii_letters) for _ in range(6))
         self.email = "a-{0}@example.com".format(randomString)
@@ -149,7 +149,10 @@ class EndUserRegistrationTest(Fixture, UserTesting):
         self.code = driver.current_url.split('=')[1]
 
     def _weAreTheServerFromNow(self):
-        self.http = urllib3.PoolManager()
+        self.http = urllib3.PoolManager(
+            cert_reqs='CERT_REQUIRED', # Force certificate check.
+            ca_certs=config.ca_certs,         # Path to your certificate bundle.
+    )
 
 
     def the_server_can_get_your_access_tokens_using_your_authorization_code(self):
