@@ -5,7 +5,7 @@ before_install:
 - ./tools/setupdoc
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
-- cp /atc/apt/sources.list /tmp
+- cp /etc/apt/sources.list /tmp
 - echo deb http://de.archive.ubuntu.com/ubuntu/ trusty main >/tmp/sources.list
 - sudo cp /tmp/sources.list /etc/apt
 - cp /etc/hosts /tmp
