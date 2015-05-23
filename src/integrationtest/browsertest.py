@@ -4,8 +4,9 @@ import config
 from twatson.unittest_annotations import Fixture, test
 import re
 import os
+from test.TestUtil import UserTesting
 
-class JavaScriptUnitTest(Fixture):
+class JavaScriptUnitTest(Fixture, UserTesting):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
@@ -36,6 +37,30 @@ class JavaScriptUnitTest(Fixture):
     def tearDown(self):
         self.driver.quit()
         self.assertEqual([], self.verificationErrors)
+
+    @test
+    def the_me_link_works(self):
+        driver = self.driver
+        driver.get(self.base_url+"/static/login.html")
+        user = self.createUserWithCredentials()
+        user.activate()
+        self.thePassword = self.mkRandomPassword()
+        driver.find_element_by_id("LoginForm_username_input").clear()
+        driver.find_element_by_id("LoginForm_username_input").send_keys(self.usercreation_userid)
+        driver.find_element_by_id("LoginForm_password_input").clear()
+        driver.find_element_by_id("LoginForm_password_input").send_keys(self.usercreation_password)
+        driver.find_element_by_id("LoginForm_submitButton").click()
+        time.sleep(1)
+        driver.get(self.base_url+"/static/login.html")
+        body = driver.find_element_by_id("userdata").text
+        print body
+        self.assertEqual(body, '')
+        driver.find_element_by_id("melink").click()
+        time.sleep(5)
+        body = driver.find_element_by_id("userdata").text
+        print body
+        self.assertRegexpMatches(body, r"^[\s\S]*@example.com[\s\S]*$")
+
 
 if __name__ == "__main__":
     unittest.main()
