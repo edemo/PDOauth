@@ -1,10 +1,23 @@
 from test.TestUtil import UserTesting
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
-from oauthlib.common import urldecode
 from pdoauth.models.Credential import Credential
 from OpenSSL import crypto
 from pdoauth.models.User import User
+
+spkac = """MIICSTCCATEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDt66ujL7Qi
+gKPRoJzI7cdMFgxoNE7u5aKhAMLC7EE9Npn7Ig1Y6G5NIfjdWZy+Ryrw3/HdYRsS
+9bL2LZb+w17lnrR8jv6kMRPuqw+tPGZMdri/QF6IZnbSa77zTLHB/z0Ffx/wgicX
+Yp/XPJLwM0iNzanjnFoG1dlaQ8PL5lHbuHnorCpV9TbAzGkzofm059RxoHT8bes0
+D4t4JzQaSKhpGf+w2SD2TlnxE9My1IK/q3UrgreBJ4Wn6CG0G6sTL2gw60oFr0Go
+1n8ESRgXkt4DyiW5rjcj087WdxYYHYtJLv3czwSytvUeFfWl2EAtXJnH4AWuDS7S
+iyT38IPwk8tZAgMBAAEWCTEyMzQ1Njc4OTANBgkqhkiG9w0BAQQFAAOCAQEA0kt4
+sDLvT3ho/pxXIT14OcCtMxRvTq5CuEKrMICjnrOIwWcWLtjNBOTRW0cobEsn970k
+vNjkzH/BnEzXwCqLPN0s6ctXHyTC8Y+528iFCw7R4nvMgAevqI4x1CNWB+/l0Hl5
+0507mHjMJWSjqsW2RlQb/mp4S1rN8+VDja5hUCxRKc1/9omUht5EcygciMsKC79k
+N8v6i3mEYWeRnsIXDfWpWZoejEm3cdlCr2sstFQ4GIzTw/KIHnEnkCOZWz8uQVIE
+FiFJjirn+7QTlDjctU89Y4OqX2pufBxULSLMVnc8aM1/vXUDwtQKFuS1hr2DrUbb
+JA3SM6HtjlWWGuocNw=="""
 
 class KeygenTest(Fixture, UserTesting):
 
@@ -16,8 +29,6 @@ class KeygenTest(Fixture, UserTesting):
         return identifier, cn
 
     def setUp(self):
-        encoded = "MIICSTCCATEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDt66ujL7Qi%0D%0AgKPRoJzI7cdMFgxoNE7u5aKhAMLC7EE9Npn7Ig1Y6G5NIfjdWZy%2BRyrw3%2FHdYRsS%0D%0A9bL2LZb%2Bw17lnrR8jv6kMRPuqw%2BtPGZMdri%2FQF6IZnbSa77zTLHB%2Fz0Ffx%2FwgicX%0D%0AYp%2FXPJLwM0iNzanjnFoG1dlaQ8PL5lHbuHnorCpV9TbAzGkzofm059RxoHT8bes0%0D%0AD4t4JzQaSKhpGf%2Bw2SD2TlnxE9My1IK%2Fq3UrgreBJ4Wn6CG0G6sTL2gw60oFr0Go%0D%0A1n8ESRgXkt4DyiW5rjcj087WdxYYHYtJLv3czwSytvUeFfWl2EAtXJnH4AWuDS7S%0D%0AiyT38IPwk8tZAgMBAAEWCTEyMzQ1Njc4OTANBgkqhkiG9w0BAQQFAAOCAQEA0kt4%0D%0AsDLvT3ho%2FpxXIT14OcCtMxRvTq5CuEKrMICjnrOIwWcWLtjNBOTRW0cobEsn970k%0D%0AvNjkzH%2FBnEzXwCqLPN0s6ctXHyTC8Y%2B528iFCw7R4nvMgAevqI4x1CNWB%2B%2Fl0Hl5%0D%0A0507mHjMJWSjqsW2RlQb%2Fmp4S1rN8%2BVDja5hUCxRKc1%2F9omUht5EcygciMsKC79k%0D%0AN8v6i3mEYWeRnsIXDfWpWZoejEm3cdlCr2sstFQ4GIzTw%2FKIHnEnkCOZWz8uQVIE%0D%0AFiFJjirn%2B7QTlDjctU89Y4OqX2pufBxULSLMVnc8aM1%2FvXUDwtQKFuS1hr2DrUbb%0D%0AJA3SM6HtjlWWGuocNw%3D%3D"
-        spkac = urldecode(encoded)[0][0]
         self.setupUserCreationData()
         self.certemail=self.usercreation_email
         self.data = dict(
