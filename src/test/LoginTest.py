@@ -2,6 +2,7 @@ from test.TestUtil import UserTesting
 from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
+from pdoauth.forms import credentialTypes, credErr
 
 class LoginTest(Fixture, UserTesting):
 
@@ -27,7 +28,7 @@ class LoginTest(Fixture, UserTesting):
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
-            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long.", "secret: password should contain lowercase", "secret: password should contain uppercase", "secret: password should contain digit", "credentialType: Invalid value, must be one of: password, facebook."]}',
+            self.assertEqual('{{"errors": ["secret: Field must be at least 8 characters long.", "secret: password should contain lowercase", "secret: password should contain uppercase", "secret: password should contain digit", {0}]}}'.format(credErr),
                 text)
 
     @test
@@ -55,7 +56,8 @@ class LoginTest(Fixture, UserTesting):
             resp = c.post(config.base_url + '/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
-            self.assertEquals(text,'{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}')
+            expected = '{{"errors": [{0}]}}'.format(credErr)
+            self.assertEquals(text,expected)
 
     @test
     def password_login_works_with_correct_identifier_and_secret(self):

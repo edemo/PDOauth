@@ -4,6 +4,7 @@ import config
 from pdoauth.app import app
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
+from pdoauth.forms import credErr
 
 class DeregisterTest(Fixture, UserTesting, CSRFMixin):
 
@@ -49,7 +50,7 @@ class DeregisterTest(Fixture, UserTesting, CSRFMixin):
             )
             resp = c.post(config.base_url+'/deregister', data=data)
             self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}', self.getResponseText(resp))
+            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
 
     @test
     def you_need_valid_credentialType_to_deregister(self):
@@ -63,7 +64,7 @@ class DeregisterTest(Fixture, UserTesting, CSRFMixin):
             )
             resp = c.post(config.base_url+'/deregister', data=data)
             self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}', self.getResponseText(resp))
+            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
 
     @test
     def you_need_identifier_to_deregister(self):
@@ -76,7 +77,7 @@ class DeregisterTest(Fixture, UserTesting, CSRFMixin):
             )
             resp = c.post(config.base_url+'/deregister', data=data)
             self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 25 characters long."]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
     @test
     def you_need_valid_identifier_to_deregister(self):
@@ -90,7 +91,7 @@ class DeregisterTest(Fixture, UserTesting, CSRFMixin):
             )
             resp = c.post(config.base_url+'/deregister', data=data)
             self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 25 characters long."]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
     @test
     def you_need_secret_to_deregister(self):

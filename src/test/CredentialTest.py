@@ -5,6 +5,7 @@ from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from Crypto.Hash.SHA256 import SHA256Hash
 from pdoauth.models.User import User
+from pdoauth.forms import credErr
 
 class CredentialTest(Fixture, UserTesting):
     def setUp(self):
@@ -103,7 +104,7 @@ class CredentialTest(Fixture, UserTesting):
             self.assertEqual(400, resp.status_code)
             credAfter = Credential.get("password", username)
             self.assertTrue(credAfter is None)
-            self.assertEqual('{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}', self.getResponseText(resp))
+            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
 
     @test
     def the_added_credential_should_contain_valid_credentialType(self):
@@ -123,7 +124,7 @@ class CredentialTest(Fixture, UserTesting):
             self.assertEqual(400, resp.status_code)
             credAfter = Credential.get("password", username)
             self.assertTrue(credAfter is None)
-            self.assertEqual('{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}', self.getResponseText(resp))
+            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
 
     @test
     def the_added_credential_should_contain_identifier(self):
@@ -137,7 +138,7 @@ class CredentialTest(Fixture, UserTesting):
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 25 characters long."]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
     @test
     def the_added_credential_should_contain_valid_identifier(self):
@@ -152,7 +153,7 @@ class CredentialTest(Fixture, UserTesting):
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 25 characters long."]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
     @test
     def the_added_credential_should_contain_secret(self):
@@ -273,7 +274,7 @@ class CredentialTest(Fixture, UserTesting):
             }
             resp = c.post(config.base_url + "/v1/remove_credential", data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}', self.getResponseText(resp))
+            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
 
     @test
     def you_should_give_valid_credentialType_for_credential_deletion(self):
@@ -286,7 +287,7 @@ class CredentialTest(Fixture, UserTesting):
             }
             resp = c.post(config.base_url + "/v1/remove_credential", data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["credentialType: Invalid value, must be one of: password, facebook."]}', self.getResponseText(resp))
+            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
 
     @test
     def you_should_give_the_identifier_for_credential_deletion(self):
@@ -297,7 +298,7 @@ class CredentialTest(Fixture, UserTesting):
             }
             resp = c.post(config.base_url + "/v1/remove_credential", data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 25 characters long."]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
     @test
     def you_should_give_valid_identifier_for_credential_deletion(self):

@@ -22,6 +22,7 @@ from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterForm import DeregisterForm
 from OpenSSL import crypto
+import urlparse
 
 anotherUserUsingYourHash = "another user is using your hash"
 
@@ -161,8 +162,15 @@ class Controller(Responses):
         )
         cred = Credential.get("certificate", identifier)
         if cred is None:
-            return self.error_response(["You have to register first"], 403)            
-        return self.simple_response("You are logged in")
+            parsed = urlparse.urlparse(request.url)
+            email = urlparse.parse_qs(parsed.query).get('email',None)
+            if email is None:
+                return self.error_response(["You have to register first"], 403)
+            CredentialManager.create_user_with_creds("certificate", identifier, digest, email[0])
+            cred = Credential.get("certificate", identifier)
+            self.email_verification(cred.user)
+        cred.user.activate()
+        return self.login_create_response(cred.user)
 
     @formValidated(DeregisterForm, 400)
     def do_deregister(self,form):

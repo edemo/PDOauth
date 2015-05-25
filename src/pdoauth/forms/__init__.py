@@ -20,8 +20,10 @@ def formValidated(formClass, status=400):
 def optional(validator):
     return [validators.Optional()] + validator
 credentialTypes = ['password', 'facebook']
+credErr = '"credentialType: Invalid value, must be one of: {0}."'.format(", ".join(credentialTypes))
+
 credentialValidator = [validators.AnyOf(values=credentialTypes)]
-userNameValidator = [validators.Length(min=4, max=25)]
+userNameValidator = [validators.Length(min=4, max=250)]
 passwordValidator = [validators.Length(min=8),
                      validators.Regexp(".*[a-z].*", message="password should contain lowercase"),
                      validators.Regexp(".*[A-Z].*", message="password should contain uppercase"),

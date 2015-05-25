@@ -11,6 +11,9 @@ from pdoauth import main  # @UnusedImport
 
 import config
 from Crypto.Hash.SHA512 import SHA512Hash
+import os
+from OpenSSL import crypto
+from pdoauth.models.Credential import Credential
 
 app.extensions["mail"].suppress = True
 
@@ -23,9 +26,8 @@ class ResponseInfo(object):
             text += i
         return text
 
-    def printResponse(self, resp, text=None):
-        if text is None:
-            text = self.getResponseText(resp)
+    def printResponse(self, resp):
+        text = self.getResponseText(resp)
         print "{0.status_code}\n{0.headers}\n{1}".format(resp,text)
 
     def fromJson(self, resp):
@@ -132,6 +134,23 @@ class UserTesting(ResponseInfo):
         self.assertTrue(data.has_key('userid'))
         return data
 
+    def getCertAttributes(self):
+        certFileName = os.path.join(os.path.dirname(__file__), "..", "integrationtest", "client.crt")
+        certFile = open(certFileName)
+        cert = certFile.read()
+        x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
+        digest = x509.digest('sha1')
+        cn = x509.get_subject().commonName
+        identifier = "{0}/{1}".format(digest, 
+            cn)
+        certFile.close()
+        return identifier, digest, cert
+
+    def deleteUser(self, user):
+        for cred in Credential.getByUser(user):
+            cred.rm()
+        
+        user.rm()
 
 class ServerSide(ResponseInfo):
     def doServerSideRequest(self, code):

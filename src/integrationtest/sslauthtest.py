@@ -5,9 +5,6 @@ from twatson.unittest_annotations import Fixture, test
 import os
 from test.TestUtil import UserTesting
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
-import pdb
-from OpenSSL import crypto
-from pdoauth.models.Credential import Credential
 
 class SSLAuthTest(Fixture, UserTesting):
     def setUp(self):
@@ -21,30 +18,16 @@ class SSLAuthTest(Fixture, UserTesting):
         self.base_url = config.Config.BASE_URL
         self.verificationErrors = []
 
-    def _getCertAttributes(self):
-        certFileName = os.path.join(os.path.dirname(__file__), "client.crt")
-        certFile = open(certFileName)
-        cert = certFile.read()
-        x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
-        digest = x509.digest('sha1')
-        cn = x509.get_subject().commonName
-        identifier = "{0}/{1}".format(digest, 
-            cn)
-        return identifier, digest
-
     @test
     def ssl_login_logs_in_if_you_are_registered_and_have_cert(self):
-        identifier, digest = self._getCertAttributes()
+        identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
         user = self.createUserWithCredentials("certificate", identifier, digest, "certuser@example.org")
         driver = self.defcertDriver
         #pdb.set_trace()
         driver.get(config.Config.SSL_LOGIN_URL)
         body = driver.find_element_by_css_selector("BODY").text
         self.assertEqual(body, u'{"message": "You are logged in"}')
-        for cred in Credential.getByUser(user):
-            cred.rm()
-        user.rm()
-
+        self.deleteUser(user)
 
     @test
     def normal_pages_do_not_ask_for_cert(self):
