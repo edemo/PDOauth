@@ -37,6 +37,28 @@
   	</div>
   </form>
   
+  <form id="keygenform" method="post" action="/keygen">
+	  	<div class="formrow">
+	  		<div class="label" id="KeygenForm_pubkey_label">
+	  			key length:
+	  		</div>
+			<keygen name="pubkey" challenge="123456789" keytype="RSA">
+		</div>
+	  	<div class="formrow">
+	  		<div class="label" id="KeygenForm_email_label">
+	  			email:
+	  		</div>
+	  	</div>
+	   	<input name="email" type="text" id="KeygenForm_email_input"/>
+	  	<div class="formrow">
+	   		<input type="checkbox" name="createUser" value="true">Create User<br>
+	  	</div>
+	   	</div>
+	  	<div class="formrow">
+	   		<input id="KeygenForm_submit" type="submit" name="createcert" value="Generate Certificate">
+	   	</div>
+  </form>
+ 
   <form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
   	<div class="formrow">
   		<div class="label" id="LoginForm_username_label">

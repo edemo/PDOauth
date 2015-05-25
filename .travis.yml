@@ -15,7 +15,7 @@ before_install:
 - sudo apt-get --purge remove postgresql-common
 - sudo apt-get update
 - sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" --force-yes -fuy upgrade
-- sudo apt-get -y install python make python-pip firefox openjdk-7-jre curl docbook-xsl apache2 libapache2-mod-wsgi
+- sudo apt-get -y install python make python-pip firefox openjdk-7-jre curl docbook-xsl apache2 libapache2-mod-wsgi swig
 - sudo pip install -r requirements.txt
 script:
 - make checkall

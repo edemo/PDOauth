@@ -1,9 +1,10 @@
-from pdoauth.Controller import FlaskInterface, Controller
+from pdoauth.Controller import Controller
 from flask import json
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from test.TestUtil import UserTesting
 from pdoauth.models.Credential import Credential
+from pdoauth.FlaskInterface import FlaskInterface
 
 
 class record(object):

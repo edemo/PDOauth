@@ -1,12 +1,13 @@
 from pdoauth.app import app, login_manager
 from pdoauth.AuthProvider import AuthProvider
-from pdoauth.Controller import Controller, FlaskInterface
+from pdoauth.Controller import Controller
 from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
 import os
 from flask.globals import request
 from urllib import urlencode
+from pdoauth.FlaskInterface import FlaskInterface
 
 controller = Controller(FlaskInterface)
 
@@ -34,6 +35,10 @@ def login():
 @app.route("/ssl_login", methods=["GET"])
 def ssl_login():
     return controller.do_ssl_login()
+
+@app.route("/keygen", methods=["POST"])
+def keygen():
+    return controller.do_keygen()
 
 @app.route("/deregister", methods=["POST"])
 def deregister():

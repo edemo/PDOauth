@@ -15,5 +15,7 @@ class Config(object):
     PASSWORD_RESET_FORM_URL="https://{0}/static/login.html".format(SERVER_NAME)
     FACEBOOK_APP_ID = "1632759003625536"
     FACEBOOK_APP_SECRET = "2698fa37973500db2ae740f6c0005601"
+    CA_CERTIFICATE_FILE = os.path.join(os.path.dirname(__file__), "..", "integrationtest","server.crt")
+    CA_KEY_FILE = os.path.join(os.path.dirname(__file__), "..", "integrationtest","server.key")
 
 base_url = Config.BASE_URL
