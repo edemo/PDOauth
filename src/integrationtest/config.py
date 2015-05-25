@@ -12,8 +12,9 @@ class Config(object):
     WTF_CSRF_ENABLED = False
     MAIL_PORT = 1025
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
-    SERVER_NAME="local.sso.edemokraciagep.org:8889"
-    BASE_URL = "https://" + SERVER_NAME
+    #SERVER_NAME="local.sso.edemokraciagep.org:8889"
+    BASE_URL = "https://" + "local.sso.edemokraciagep.org:8888"
+    SSL_LOGIN_URL = "https://" + "local.sso.edemokraciagep.org:8889/ssl_login"
     PASSWORD_RESET_FORM_URL="{0}/static/login.html".format(BASE_URL)
     FACEBOOK_APP_ID = "1632759003625536"
     FACEBOOK_APP_SECRET = "2698fa37973500db2ae740f6c0005601"
