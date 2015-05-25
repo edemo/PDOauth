@@ -26,7 +26,8 @@ class SSLAuthTest(Fixture, UserTesting):
         #pdb.set_trace()
         driver.get(config.Config.SSL_LOGIN_URL)
         body = driver.find_element_by_css_selector("BODY").text
-        self.assertEqual(body, u'{"message": "You are logged in"}')
+        self.assertTrue('{"credentialType": "certificate", "identifier": "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"}' in
+            body)
         self.deleteUser(user)
 
     @test
