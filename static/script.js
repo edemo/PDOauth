@@ -143,7 +143,7 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.sslLogin = function() {
-		alert("uris processed"+QueryString.uris.SSL_LOGIN_URL)
+		a=document.getElementById("sslLoginDiv")
 		this.ajaxget(QueryString.uris.SSL_LOGIN_URL, this.myCallback)
 	}
 
@@ -235,7 +235,7 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.main = function() {
-		this.ajaxget("../uris", this.uriCallback)
+		this.ajaxget("/uris", this.uriCallback)
 		if (QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
 		}

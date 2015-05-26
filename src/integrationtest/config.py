@@ -12,10 +12,11 @@ class Config(object):
     WTF_CSRF_ENABLED = False
     MAIL_PORT = 1025
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
-    #SERVER_NAME="local.sso.edemokraciagep.org:8889"
-    BASE_URL = "https://" + "local.sso.edemokraciagep.org:8888"
-    SSL_LOGIN_URL = "https://" + "local.sso.edemokraciagep.org:8889/ssl_login"
-    PASSWORD_RESET_FORM_URL="{0}/static/login.html".format(BASE_URL)
+    BASE_URL = "https://local.sso.edemokraciagep.org:8888"
+    SSL_LOGIN_BASE_URL = "https://local.sso.edemokraciagep.org:8889"
+    SSL_LOGOUT_URL = "https://local.sso.edemokraciagep.org:8889/ssl_logout/"
+    START_URL = "{0}/static/login.html".format(BASE_URL)
+    PASSWORD_RESET_FORM_URL = START_URL
     FACEBOOK_APP_ID = "1632759003625536"
     FACEBOOK_APP_SECRET = "2698fa37973500db2ae740f6c0005601"
     CA_CERTIFICATE_FILE = os.path.join(os.path.dirname(__file__), "..", "integrationtest","server.crt")

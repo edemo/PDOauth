@@ -3,6 +3,7 @@ from pdoauth.models.Credential import Credential
 from flask import json
 import urllib3
 import flask
+from pdoauth.app import app, logging
 
 class FlaskInterface(object):
     @classmethod
@@ -26,7 +27,10 @@ class FlaskInterface(object):
             try:
                 return func(*args, **kwargs)
             except ReportedError as e:
-                return cls.error_response(e.descriptor, e.status)         
+                logging.log(logging.INFO,"status={0}, descriptor={1}".format(e.status, e.descriptor))
+                resp = cls.error_response(e.descriptor, e.status)   
+                resp.headers['Access-Control-Allow-Origin'] = app.config.get('BASE_URL')
+                return resp      
         return f
 
     @classmethod

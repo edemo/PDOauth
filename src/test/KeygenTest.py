@@ -22,7 +22,7 @@ JA3SM6HtjlWWGuocNw=="""
 class KeygenTest(Fixture, UserTesting):
 
     def _getCertId(self, cert):
-        x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
+        x509 = crypto.load_certificate(crypto.FILETYPE_ASN1, cert)
         digest = x509.digest('sha1')
         cn = x509.get_subject().commonName.encode('raw_unicode_escape').decode('utf-8')
         identifier = u"{0}/{1}".format(digest, cn)

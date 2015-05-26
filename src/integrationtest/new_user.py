@@ -1,4 +1,3 @@
-from selenium import webdriver
 import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
@@ -8,11 +7,11 @@ import time
 from urllib import urlencode
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
+from integrationtest.BrowserSetup import BrowserSetup
 
-class NewUserTest(Fixture,UserTesting):
+class NewUserTest(Fixture,UserTesting, BrowserSetup):
     def setUp(self):
-        self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(10)
+        self.setupDriver()
         self.base_url = config.Config.BASE_URL
         self.verificationErrors = []
         self._setupApp()

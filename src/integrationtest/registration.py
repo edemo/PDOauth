@@ -1,4 +1,3 @@
-from selenium import webdriver
 import unittest, time, random, string, json
 import assurancetool
 import applicationtool
@@ -8,11 +7,12 @@ from twatson.unittest_annotations import Fixture, test
 import config
 from urllib import urlencode
 from test.TestUtil import UserTesting
+from integrationtest.BrowserSetup import BrowserSetup
 
-class EndUserRegistrationTest(Fixture, UserTesting):
+class EndUserRegistrationTest(Fixture, UserTesting, BrowserSetup):
+
     def setUp(self):
-        self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(5)
+        self.setupDriver()
         self.base_url = config.Config.BASE_URL
         self.verificationErrors = []
         randomString = ''.join(random.choice(string.ascii_letters) for _ in range(6))

@@ -1,16 +1,14 @@
-from selenium import webdriver
 import unittest, time
-from uuid import uuid4
 from test.TestUtil import UserTesting
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
 from twatson.unittest_annotations import Fixture, test
 import config
+from integrationtest.BrowserSetup import BrowserSetup
 
-class EndUserPasswordResetTest(Fixture, UserTesting):
+class EndUserPasswordResetTest(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
-        self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(10)
+        self.setupDriver()
         self.base_url = config.Config.BASE_URL
         self.verificationErrors = []
         self.createUserWithCredentials()

@@ -227,13 +227,14 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
             "client_id": self.app.name,
             "redirect_uri": self.app.redirect_uri
         }
-        uriBase = app.config.get('BASE_URL') +"/v1/oauth2/auth"
+        baseUrl = app.config.get('BASE_URL')
+        uriBase = "/v1/oauth2/auth"
         queryString = urlencode(params)
         with app.test_client() as c:
-            resp = c.get(uriBase, query_string=queryString)
-            targetUri = "{0}/static/login.html?{1}".format(
-                app.config.get('BASE_URL'),
-                urlencode({"next": "{0}?{1}".format(uriBase, queryString)})
+            resp = c.get(uriBase, query_string=queryString, base_url=baseUrl)
+            targetUri = "{0}?{1}".format(
+                app.config.get('START_URL'),
+                urlencode({"next": "{0}?{1}".format(baseUrl+uriBase, queryString)})
             )
         self.assertEquals(resp.status_code, 302)
         self.assertEquals(resp.headers['Location'],targetUri)

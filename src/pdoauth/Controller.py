@@ -131,7 +131,8 @@ class Controller(Responses):
         serial=1
         now = int(time.time())
         notAfter = now + 60 * 60 * 24 * 365 * 2
-        cert = spkac.gen_crt(ca_pkey, ca_crt, serial, now, notAfter, 'sha1').as_pem()
+        certObj = spkac.gen_crt(ca_pkey, ca_crt, serial, now, notAfter, 'sha1')
+        cert = certObj.as_pem()
         if current_user.is_authenticated():
             identifier, digest = self.parseCert(cert)
             Credential.new(current_user, "certificate", identifier, digest)
@@ -139,13 +140,16 @@ class Controller(Responses):
             if form.createUser.data:
                 cred = self.registerCertUser(cert, [email])
                 self.loginUser(cred.user)
-        resp = flask.make_response(cert, 200)
+        resp = flask.make_response(certObj.as_der(), 200)
         resp.headers["Content-Type"] = "application/x-x509-user-cert"
         return resp
         
 
     def parseCert(self, cert):
-        x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
+        try:
+            x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
+        except Exception:
+            raise ReportedError(["error in cert", cert],400)
         digest = x509.digest('sha1')
         cn = x509.get_subject().commonName.encode('raw_unicode_escape').decode('utf-8')
         identifier = u"{0}/{1}".format(digest, 
@@ -158,14 +162,15 @@ class Controller(Responses):
         return email
 
     def registerCertUser(self, cert, email):
-        if cert is None:
+        if cert is None or cert == '':
             raise ReportedError(["No certificate given"], 403)
         identifier, digest = self.parseCert(cert)
         cred = Credential.get("certificate", identifier)
         if cred is None:
             if email is None:
                 raise ReportedError(["You have to register first"], 403)
-            CredentialManager.create_user_with_creds("certificate", identifier, digest, email[0])
+            theEmail = email[0]
+            CredentialManager.create_user_with_creds("certificate", identifier, digest, theEmail)
             cred = Credential.get("certificate", identifier)
             self.email_verification(cred.user)
         cred.user.activate()
@@ -176,7 +181,9 @@ class Controller(Responses):
         cert = request.environ.get('SSL_CLIENT_CERT',None)
         email = self.getEmailFromQueryParameters()
         cred = self.registerCertUser(cert, email)
-        return self.finishLogin(cred.user)
+        resp = self.finishLogin(cred.user)
+        resp.headers['Access-Control-Allow-Origin']="*"
+        return resp
 
     @formValidated(DeregisterForm, 400)
     @FlaskInterface.exceptionChecked
@@ -317,7 +324,7 @@ class Controller(Responses):
         cred = Credential.get(credType, form.secret.data)
         if cred is None or (float(cred.secret) < time.time()):
             Credential.deleteExpired(credType)
-            raise ReportedError(['What?'], 404)
+            raise ReportedError(['The secret has expired'], 404)
         passcred = Credential.getByUser(cred.user, 'password')
         passcred.secret = CredentialManager.protect_secret(form.password.data)
         cred.rm()

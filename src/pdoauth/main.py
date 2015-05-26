@@ -14,7 +14,7 @@ controller = Controller(FlaskInterface)
 @login_manager.unauthorized_handler
 def unauthorized():
     resp = controller.error_response(["authentication needed"], 302)
-    uri = "/static/login.html?{0}".format(urlencode({"next": request.url}))
+    uri = "{1}?{0}".format(urlencode({"next": request.url}), app.config.get("START_URL"))
     resp.headers['Location'] = uri
     return resp
 

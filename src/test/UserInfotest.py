@@ -111,11 +111,12 @@ class UserInfoTest(Fixture, UserTesting):
         with app.test_client() as c:
             self.createUserWithCredentials()
             target = User.getByEmail(self.usercreation_email)
-            url = config.base_url + '/v1/user_by_email/{0}'.format(target.email)
-            resp = c.get(url)
+            baseUrl = app.config.get('BASE_URL')
+            url = '/v1/user_by_email/{0}'.format(target.email)
+            resp = c.get(url, base_url = baseUrl)
             self.assertEquals(resp.status_code,302)
-            targetUri = "{0}/static/login.html?{1}".format(
-                config.base_url,
-                urlencode({"next": url})
+            targetUri = "{0}?{1}".format(
+                app.config.get('START_URL'),
+                urlencode({"next": baseUrl+url})
                 )
             self.assertEquals(resp.headers['Location'],targetUri)

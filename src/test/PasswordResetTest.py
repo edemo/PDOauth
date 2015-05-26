@@ -118,7 +118,7 @@ class PasswordResetTest(Fixture, UserTesting):
             resp = c.post("/v1/password_reset", data = data)
             self.assertEqual(resp.status_code, 404)
             respData = self.fromJson(resp)
-            self.assertEquals("What?",respData['errors'][0])
+            self.assertEquals('The secret has expired',respData['errors'][0])
 
     @test
     def Valid_secret_is_accepted(self):

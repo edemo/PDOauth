@@ -8,13 +8,14 @@ from test.TestUtil import UserTesting
 class AuthTest(Fixture,UserTesting):
     @test
     def unauthorized_response_is_redirecting_to_login_page(self):
-        with app.test_request_context('/'):
+        testUrl = app.config.get("BASE_URL") + "/"
+        with app.test_request_context("/", base_url=app.config.get("BASE_URL")):
             resp = unauthorized()
             self.assertEquals(resp.status_code, 302)
-            targetUri = "/static/login.html?{0}".format(urlencode(
-                {"next": app.config.get("BASE_URL")+"/"
-                }
-            ))
+            targetUri = "{1}?{0}".format(
+                urlencode(dict(next=testUrl)),
+                app.config.get("START_URL")
+            )
             self.assertEquals(resp.headers['Location'], targetUri)
 
     @test

@@ -1,15 +1,14 @@
-from selenium import webdriver
 import unittest, time
 import config
 from twatson.unittest_annotations import Fixture, test
 import re
 import os
 from test.TestUtil import UserTesting
+from integrationtest.BrowserSetup import BrowserSetup
 
-class JavaScriptUnitTest(Fixture, UserTesting):
+class JavaScriptUnitTest(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
-        self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(10)
+        self.setupDriver()
         self.base_url = config.Config.BASE_URL
         self.verificationErrors = []
 
