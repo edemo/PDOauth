@@ -1,0 +1,4 @@
+{
+     "AutoSelectCertificateForUrls": ["{\"pattern\":\"local.sso.edemokraciagep.org:8889\",\"filter\":{\"ISSUER\":{\"CN\":\"local.sso.edemokraciagep.org\"}}}"],
+     "EnableDeprecatedWebPlatformFeatures": ["ShowModalDialog_EffectiveUntil20150430"]
+}

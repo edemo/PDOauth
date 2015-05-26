@@ -18,7 +18,7 @@ class NewUserTest(Fixture,UserTesting, BrowserSetup):
 
     def _setupApp(self):
         self.setupRandom()
-        self.redirect_uri = "https://app-{0}.nonexistent.rulez.org/".format(self.randString)
+        self.redirect_uri = "https://app-{0}.github.com/".format(self.randString)
         self.appname = "testapp{0}".format(self.randString)
         self.app = Application.new(self.appname, "S3cret", self.redirect_uri)
         self.assertTrue(self.app)

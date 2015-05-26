@@ -130,8 +130,12 @@ function PageScript(debug) {
 	    this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
 	}
 
+	PageScript.prototype.logoutCallback = function(status, text) {
+		self.myCallback(status,text);
+	    window.location = QueryString.uris.START_URL		
+	}
 	PageScript.prototype.logout = function() {
-	    this.ajaxget("/logout", this.myCallback)
+	    this.ajaxget("/logout", this.logoutCallback)
 	}
 
 
@@ -140,11 +144,19 @@ function PageScript(debug) {
 		var data = JSON.parse(text);
 		QueryString.uris = data
 		self.processErrors(data)
+		loc = '' + window.location
+		if(loc.indexOf(QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
+			console.log("ssl login");
+			self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.myCallback)
+		}		
+		
 	}
 	
 	PageScript.prototype.sslLogin = function() {
-		a=document.getElementById("sslLoginDiv")
-		this.ajaxget(QueryString.uris.SSL_LOGIN_URL, this.myCallback)
+		loc = '' +window.location
+		newloc = loc.replace(QueryString.uris.BASE_URL, QueryString.uris.SSL_LOGIN_BASE_URL)
+		console.log(newloc)
+		window.location = newloc
 	}
 
 	PageScript.prototype.register = function() {

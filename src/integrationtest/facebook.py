@@ -20,16 +20,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         driver.get(self.base_url+"/static/login.html")
         driver.find_element_by_id("Facebook_registration_button").click()
         time.sleep(1)
-        self.master = driver.current_window_handle
-        timeCount = 1;
-        while (len(driver.window_handles) == 1 ):
-            time
-            timeCount += 1
-            if ( timeCount > 50 ): 
-                break;
-        for handle in driver.window_handles:
-            if handle!=self.master:
-                driver.switch_to.window(handle)
+        self._switchWindow(driver)
         driver.find_element_by_id("pass").clear()
         driver.find_element_by_id("pass").send_keys(config.fbpassword)
         driver.find_element_by_id("email").clear()
@@ -49,16 +40,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         driver.get(self.base_url+"/static/login.html")
         driver.find_element_by_id("Facebook_registration_button").click()
         time.sleep(1)
-        self.master = driver.current_window_handle
-        timeCount = 1;
-        while (len(driver.window_handles) == 1 ):
-            time
-            timeCount += 1
-            if ( timeCount > 50 ): 
-                break;
-        for handle in driver.window_handles:
-            if handle!=self.master:
-                driver.switch_to.window(handle)
+        self._switchWindow(driver)
         driver.find_element_by_id("pass").clear()
         driver.find_element_by_id("pass").send_keys(config.fbpassword2)
         driver.find_element_by_id("email").clear()
@@ -83,16 +65,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         driver.get(self.base_url+"/static/login.html")
         driver.find_element_by_id("Facebook_login_button").click()
         time.sleep(1)
-        self.master = driver.current_window_handle
-        timeCount = 1;
-        while (len(driver.window_handles) == 1 ):
-            time
-            timeCount += 1
-            if ( timeCount > 50 ): 
-                break;
-        for handle in driver.window_handles:
-            if handle!=self.master:
-                driver.switch_to.window(handle)
+        self._switchWindow(driver)
         driver.find_element_by_id("pass").clear()
         driver.find_element_by_id("pass").send_keys(config.fbpassword)
         driver.find_element_by_id("email").clear()

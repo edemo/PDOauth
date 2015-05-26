@@ -1,48 +1,47 @@
 from selenium import webdriver
-from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 import os
-import shutil
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+import subprocess
+from selenium.webdriver.chrome.options import Options
+import logging
 
 class BrowserSetup:
 
-    def getDriver(self, profile=None, autoselect=None):
-        self.setProfileDirectory()
+    def getDriver(self):
         if os.environ.get("WEBDRIVER", None) == "chrome":
             os.environ['PATH'] += ":/usr/lib/chromium-browser"
-            self.profile = webdriver.ChromeOptions();
-            if profile is not None:
-                self.profile.add_argument("user-data-dir={0}".format(self.profile_directory));
-            theDriver = webdriver.Chrome(chrome_options=self.profile)
+            logging.basicConfig(level=logging.DEBUG)
+            options = Options()
+            options.add_argument("--no-sandbox")
+            theDriver = webdriver.Chrome(chrome_options = options)
         else:
-            if profile is not None:
-                self.profile = FirefoxProfile(self.profile_directory)
-                if autoselect is not None:
-                    self.profile.set_preference("security.default_personal_cert", "Select Automatically")
-            else:
-                self.profile = FirefoxProfile()
-            theDriver = webdriver.Firefox(firefox_profile=self.profile)
+            profile_directory = os.path.join(os.path.dirname(__file__), "firefox-client-nossl-profile")
+            profile = FirefoxProfile(profile_directory)
+            profile.set_preference("security.default_personal_cert", "Select Automatically")
+            theDriver = webdriver.Firefox(firefox_profile=profile)
         return theDriver
     
-    def setProfileDirectory(self):
-        if os.environ.get("WEBDRIVER", None) == "chrome":
-            profile_directory = os.path.join(os.path.dirname(__file__), "chromium-client-ssl-profile")
-            self.profile_directory=os.tmpnam()
-            shutil.copytree(profile_directory, self.profile_directory)
-        else:
-            self.profile_directory = os.path.join(os.path.dirname(__file__), "firefox-client-ssl-profile")
-
     def setupDriver(self):
         self.driver = self.getDriver()
         self.driver.implicitly_wait(5)
         self.driver.set_page_load_timeout(10)
         return self.driver
 
-    def setupDefCertDriver(self):
-        self.defcertDriver = self.getDriver(profile=True, autoselect=True)
-        self.defcertDriver.implicitly_wait(10)
+    def _switchWindow(self,driver):
+        self.master = driver.current_window_handle
+        timeCount = 1;
+        while (len(driver.window_handles) == 1 ):
+            timeCount += 1
+            if ( timeCount > 50 ): 
+                break;
+        for handle in driver.window_handles:
+            if handle!=self.master:
+                driver.switch_to.window(handle)
 
-    def setupCertAskingDriver(self):
-        driver = self.getDriver(profile=True)
-        return driver
 
+    def deleteCerts(self):
+        if os.environ.get("WEBDRIVER", None) == "chrome":
+            delete_script = os.path.join(os.path.dirname(__file__), "..", "..", "tools", "delcerts")
+            retcode = subprocess.call(delete_script)
+            self.assertEqual(retcode, 0)
 

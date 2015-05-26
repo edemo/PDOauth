@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ -z "${I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED}" ]
+then
+    echo this will not work this way. see the script source
+    exit -1
+fi
+export NSS_DEFAULT_DB_TYPE="sql"
+certutil -d ~/.pki/nssdb -L |grep ID|sed 's/ID.*$/ID/' |xargs -d '\n' -n 1 certutil -d ~/.pki/nssdb -D -n  

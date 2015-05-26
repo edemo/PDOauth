@@ -4,18 +4,34 @@ from pdoauth.app import app
 
 class UriServiceTest(Fixture, UserTesting):
 
-    @test
-    def the_uri_service_gives_back_the_base_url(self):
-        with app.test_client() as c:
-            resp = c.get("/uris")
-            self.assertEquals(resp.status_code, 200)
-            uris = self.fromJson(resp)
-            self.assertEqual(uris['BASE_URL'], app.config.get('BASE_URL'))
+    def _checkUri(self, c, checkedUri):
+        resp = c.get("/uris")
+        self.assertEquals(resp.status_code, 200)
+        uris = self.fromJson(resp)
+        self.assertTrue(uris[checkedUri] is not None)
+        self.assertEqual(uris[checkedUri], app.config.get(checkedUri))
 
     @test
-    def the_uri_service_gives_back_the_ssl_login_url(self):
+    def the_uri_service_gives_back_the_BASE_URL(self):
         with app.test_client() as c:
-            resp = c.get("/uris")
-            self.assertEquals(resp.status_code, 200)
-            uris = self.fromJson(resp)
-            self.assertEqual(uris['SSL_LOGIN_URL'], app.config.get('SSL_LOGIN_URL'))
+            self._checkUri(c, 'BASE_URL')
+
+    @test
+    def the_uri_service_gives_back_the_SSL_LOGIN_BASE_URL(self):
+        with app.test_client() as c:
+            self._checkUri(c, 'SSL_LOGIN_BASE_URL')
+
+    @test
+    def the_uri_service_gives_back_the_PASSWORD_RESET_FORM_URL(self):
+        with app.test_client() as c:
+            self._checkUri(c, 'PASSWORD_RESET_FORM_URL')
+
+    @test
+    def the_uri_service_gives_back_the_START_URL(self):
+        with app.test_client() as c:
+            self._checkUri(c, 'START_URL')
+
+    @test
+    def the_uri_service_gives_back_the_SSL_LOGOUT_URL(self):
+        with app.test_client() as c:
+            self._checkUri(c, 'SSL_LOGOUT_URL')

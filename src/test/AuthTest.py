@@ -7,7 +7,8 @@ from test.TestUtil import UserTesting
 
 class AuthTest(Fixture,UserTesting):
     @test
-    def unauthorized_response_is_redirecting_to_login_page(self):
+    def unauthorized_response_is_redirecting_to_START_URL(self):
+        "more specifically to START_URL?next={request.url}"
         testUrl = app.config.get("BASE_URL") + "/"
         with app.test_request_context("/", base_url=app.config.get("BASE_URL")):
             resp = unauthorized()

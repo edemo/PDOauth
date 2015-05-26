@@ -128,8 +128,8 @@ class Controller(Responses):
         spkac = SPKAC(form.pubkey.data, CN=email, Email = email)
         ca_crt = X509.load_cert_string(self.contentsOfFileNamedInConfig("CA_CERTIFICATE_FILE"))
         ca_pkey = EVP.load_key_string(self.contentsOfFileNamedInConfig("CA_KEY_FILE"))
-        serial=1
         now = int(time.time())
+        serial=now
         notAfter = now + 60 * 60 * 24 * 365 * 2
         certObj = spkac.gen_crt(ca_pkey, ca_crt, serial, now, notAfter, 'sha1')
         cert = certObj.as_pem()
@@ -369,7 +369,10 @@ class Controller(Responses):
     def do_uris(self):
         data = dict(
             BASE_URL = app.config.get('BASE_URL'),
-            SSL_LOGIN_URL = app.config.get('SSL_LOGIN_URL'),
+            START_URL = app.config.get('START_URL'),
+            PASSWORD_RESET_FORM_URL = app.config.get('PASSWORD_RESET_FORM_URL'),
+            SSL_LOGIN_BASE_URL = app.config.get('SSL_LOGIN_BASE_URL'),
+            SSL_LOGOUT_URL = app.config.get('SSL_LOGOUT_URL'),
         )
         ret = json.dumps(data)
         return self.make_response(ret,200)

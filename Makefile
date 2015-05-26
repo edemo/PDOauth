@@ -16,8 +16,13 @@ clean:
 
 alltests: tests integrationtest
 
-onlyintegrationtest: install testsetup runserver runemail testsetup
+onlyintegrationtest: install testsetup runserver runemail testsetup chrometest firefoxtest
+
+firefoxtest:
 	PYTHONPATH=src python -m unittest discover -s src/integrationtest -p "*.py"
+
+chrometest:
+	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -s src/integrationtest -p "*.py"
 
 integrationtest: onlyintegrationtest killall
 
