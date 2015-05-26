@@ -102,6 +102,10 @@ def add_credential():
 def remove_credential():
     return controller.do_remove_credential()
 
+@app.route('/uris', methods=["GET"])
+def uriservice():
+    return controller.do_uris()
+
 def getStaticPath():
     mainpath = os.path.abspath(__file__)
     up = os.path.dirname

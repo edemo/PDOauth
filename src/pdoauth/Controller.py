@@ -358,3 +358,11 @@ class Controller(Responses):
             if assurance.name != emailVerification:
                 assurance.rm()
         return self.simple_response('')
+
+    def do_uris(self):
+        data = dict(
+            BASE_URL = app.config.get('BASE_URL'),
+            SSL_LOGIN_URL = app.config.get('SSL_LOGIN_URL'),
+        )
+        ret = json.dumps(data)
+        return self.make_response(ret,200)

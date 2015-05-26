@@ -130,6 +130,23 @@ function PageScript(debug) {
 	    this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
 	}
 
+	PageScript.prototype.logout = function() {
+	    this.ajaxget("/logout", this.myCallback)
+	}
+
+
+	PageScript.prototype.uriCallback = function(status,text) {
+		document.getElementById("errorMsg").innerHTML=text
+		var data = JSON.parse(text);
+		QueryString.uris = data
+		self.processErrors(data)
+	}
+	
+	PageScript.prototype.sslLogin = function() {
+		alert("uris processed"+QueryString.uris.SSL_LOGIN_URL)
+		this.ajaxget(QueryString.uris.SSL_LOGIN_URL, this.myCallback)
+	}
+
 	PageScript.prototype.register = function() {
 	    credentialType = document.getElementById("RegistrationForm_credentialType_input").value;
 	    identifier = document.getElementById("RegistrationForm_identifier_input").value;
@@ -218,6 +235,7 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.main = function() {
+		this.ajaxget("../uris", this.uriCallback)
 		if (QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
 		}

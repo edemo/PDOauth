@@ -14,161 +14,182 @@
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
 <!--script type='text/javascript' src="tests.js"></script--!>
- <button type="button" id="Unit_test_button" onclick="javascript:pageScript.unittest()">Run unit tests</button>
 
- <button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
- <button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
+<table border="1">
+	<tr>
+		<td>
+			<button type="button" id="Unit_test_button" onclick="javascript:pageScript.unittest()">Run unit tests</button>
+  		</td><td>
+			<button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
+  		</td><td>
+			<button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
+ 		</td>
+ 	</tr>
+	<tr>
+		<td>
+			<div id="status">
+			</div>
+			<div id="errorMsg"></div>
+			<div id="message"></div>
+			<div id="userdata"></div>
+		</td><td>  
+		  	<div class="formrow">
+		  	 <a id="melink" href="javascript:pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Me</a>
+		  	</div>
+		  	<div class="formrow">
+		  	 <a id="ssl_login" href="javascript:pageScript.sslLogin()">SSL Login</a>
+		  	</div>
+  		</td><td>
+  			<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button> 
+  		</td>
+	<tr>
+		<td>
 
-<div id="status">
-</div>
-  <div id="errorMsg"></div>
-  <div id="message"></div>
-  <div id="userdata"></div>
-  <form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
-  		<input name="secret" type="text" id="PasswordResetForm_secret_input"/>
-  	<div class="formrow">
-  		<div class="label" id="PasswordResetForm_password_label">
-  			New password:
-  		</div>
-  		<input name="password" type="password" id="PasswordResetForm_password_input"/>
-  	</div>
-  	<div class="formrow">
-  	 <input type="submit" value="Reset Password" id="PasswordResetForm_submitButton">
-  	</div>
-  </form>
-  
-  <form id="keygenform" method="post" action="/keygen">
-	  	<div class="formrow">
-	  		<div class="label" id="KeygenForm_pubkey_label">
-	  			key length:
-	  		</div>
-			<keygen name="pubkey" challenge="123456789" keytype="RSA">
-		</div>
-	  	<div class="formrow">
-	  		<div class="label" id="KeygenForm_email_label">
-	  			email:
-	  		</div>
-	  	</div>
-	   	<input name="email" type="text" id="KeygenForm_email_input"/>
-	  	<div class="formrow">
-	   		<input type="checkbox" name="createUser" value="true">Create User<br>
-	  	</div>
-	   	</div>
-	  	<div class="formrow">
-	   		<input id="KeygenForm_submit" type="submit" name="createcert" value="Generate Certificate">
-	   	</div>
-  </form>
- 
-  <form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
-  	<div class="formrow">
-  		<div class="label" id="LoginForm_username_label">
-  			username:
-  		</div>
-  		<input name="username" type="text" id="LoginForm_username_input"/>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="LoginForm_password_label">
-  			password:
-  		</div>
-  		<input name="username" type="password" id="LoginForm_password_input"/>
-  	</div>
-  	<div class="formrow">
-  	 <input type="submit" value="Login" id="LoginForm_submitButton">
-  	</div>
-  </form>
-
-  <form id="RegistrationForm" action="javascript:pageScript.register()" method="post" name="register">
-  	<div class="formrow">
-  		<div class="label" id="RegistrationForm_credentialType_label">
-  			credentialType:
-  		</div>
-  		<select name="credentialType" type="text" id="RegistrationForm_credentialType_input">
-  			<option>password</option>
-  		</select>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="RegistrationForm_identifier_label">
-  			identifier:
-  		</div>
-  		<input name="identifier" type="text" id="RegistrationForm_identifier_input"/>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="RegistrationForm_email_label">
-  			email:
-  		</div>
-  		<input name="email" type="text" id="RegistrationForm_email_input"/>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="RegistrationForm_predigest_label">
-  			personal id:
-  		</div>
-  		<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
-  	 	<button type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Generate Hash</button>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="RegistrationForm_digest_label">
-  			digest:
-  		</div>
-  		<input name="email" type="text" id="RegistrationForm_digest_input"/>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="RegistrationForm_secret_label">
-  			secret:
-  		</div>
-  		<input name="secret" type="password" id="RegistrationForm_secret_input"/>
-  	</div>
-  	<div class="formrow">
-  	 <input type="submit" value="Register" id="RegistrationForm_submitButton">
-  	</div>
-  </form>
-  
-  <form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
-  	<div class="formrow">
-  		<div class="label" id="ByEmailForm_email_label">
-  			email:
-  		</div>
-  		<input name="email" type="text" id="ByEmailForm_email_input"/>
-  	<div class="formrow">
-  	 <input type="submit" value="Show" id="ByEmailForm_submitButton">
-  	</div>
-  	</div>
-  </form>
-  
-  	<div class="formrow">
-  	 <a id="melink" href="javascript:pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Me</a>
-  	</div>
-
-  <form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
-  	<div class="formrow">
-  		<div class="label" id="AddAssuranceForm_predigest_label">
-  			personal id:
-  		</div>
-  		<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
-  	 	<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Generate Hash</button>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="AddAssuranceForm_digest_label">
-  			digest:
-  		</div>
-  		<input name="digest" type="text" id="AddAssuranceForm_digest_input"/>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="AddAssuranceForm_assurance_label">
-  			assurance:
-  		</div>
-  		<input name="assurance" type="text" id="AddAssuranceForm_assurance_input"/>
-  	</div>
-  	<div class="formrow">
-  		<div class="label" id="AddAssuranceForm_email_label">
-  			email:
-  		</div>
-  		<input name="email" type="text" id="AddAssuranceForm_email_input"/>
-  	</div>
-  	<div class="formrow">
-  	 <input type="submit" value="Add Assurance" id="AddAssuranceForm_submitButton">
-  	</div>
-  </form>
-
+		  <form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
+		  		<input name="secret" type="text" id="PasswordResetForm_secret_input"/>
+		  	<div class="formrow">
+		  		<div class="label" id="PasswordResetForm_password_label">
+		  			New password:
+		  		</div>
+		  		<input name="password" type="password" id="PasswordResetForm_password_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  	 <input type="submit" value="Reset Password" id="PasswordResetForm_submitButton">
+		  	</div>
+		  </form>
+		 
+		</td><td>  
+	
+		  <form id="keygenform" method="post" action="/keygen">
+			  	<div class="formrow">
+			  		<div class="label" id="KeygenForm_pubkey_label">
+			  			key length:
+			  		</div>
+					<keygen name="pubkey" challenge="123456789" keytype="RSA">
+				</div>
+			  	<div class="formrow">
+			  		<div class="label" id="KeygenForm_email_label">
+			  			email:
+			  		</div>
+			  	</div>
+			   	<input name="email" type="text" id="KeygenForm_email_input"/>
+			  	<div class="formrow">
+			   		<input type="checkbox" name="createUser" value="true">Create User<br>
+			  	</div>
+			   	</div>
+			  	<div class="formrow">
+			   		<input id="KeygenForm_submit" type="submit" name="createcert" value="Generate Certificate">
+			   	</div>
+		  </form>
+		</td><td> 
+		  <form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
+		  	<div class="formrow">
+		  		<div class="label" id="LoginForm_username_label">
+		  			username:
+		  		</div>
+		  		<input name="username" type="text" id="LoginForm_username_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="LoginForm_password_label">
+		  			password:
+		  		</div>
+		  		<input name="username" type="password" id="LoginForm_password_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  	 <input type="submit" value="Login" id="LoginForm_submitButton">
+		  	</div>
+		  </form>
+		</td></tr><tr><td>
+		  <form id="RegistrationForm" action="javascript:pageScript.register()" method="post" name="register">
+		  	<div class="formrow">
+		  		<div class="label" id="RegistrationForm_credentialType_label">
+		  			credentialType:
+		  		</div>
+		  		<select name="credentialType" type="text" id="RegistrationForm_credentialType_input">
+		  			<option>password</option>
+		  		</select>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="RegistrationForm_identifier_label">
+		  			identifier:
+		  		</div>
+		  		<input name="identifier" type="text" id="RegistrationForm_identifier_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="RegistrationForm_email_label">
+		  			email:
+		  		</div>
+		  		<input name="email" type="text" id="RegistrationForm_email_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="RegistrationForm_predigest_label">
+		  			personal id:
+		  		</div>
+		  		<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
+		  	 	<button type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Generate Hash</button>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="RegistrationForm_digest_label">
+		  			digest:
+		  		</div>
+		  		<input name="email" type="text" id="RegistrationForm_digest_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="RegistrationForm_secret_label">
+		  			secret:
+		  		</div>
+		  		<input name="secret" type="password" id="RegistrationForm_secret_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  	 <input type="submit" value="Register" id="RegistrationForm_submitButton">
+		  	</div>
+		  </form>
+		</td><td>  
+		  <form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
+		  	<div class="formrow">
+		  		<div class="label" id="ByEmailForm_email_label">
+		  			email:
+		  		</div>
+		  		<input name="email" type="text" id="ByEmailForm_email_input"/>
+		  	<div class="formrow">
+		  	 <input type="submit" value="Show" id="ByEmailForm_submitButton">
+		  	</div>
+		  	</div>
+		  </form>
+		</td><td>
+		  <form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
+		  	<div class="formrow">
+		  		<div class="label" id="AddAssuranceForm_predigest_label">
+		  			personal id:
+		  		</div>
+		  		<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
+		  	 	<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Generate Hash</button>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="AddAssuranceForm_digest_label">
+		  			digest:
+		  		</div>
+		  		<input name="digest" type="text" id="AddAssuranceForm_digest_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="AddAssuranceForm_assurance_label">
+		  			assurance:
+		  		</div>
+		  		<input name="assurance" type="text" id="AddAssuranceForm_assurance_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="AddAssuranceForm_email_label">
+		  			email:
+		  		</div>
+		  		<input name="email" type="text" id="AddAssuranceForm_email_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  	 <input type="submit" value="Add Assurance" id="AddAssuranceForm_submitButton">
+		  	</div>
+		  </form>
+		</td>
+	</tr>
+</table>
   <div id="qunit-xml"></div>
 </body>
 </html>
