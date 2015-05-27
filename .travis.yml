@@ -12,7 +12,7 @@ before_install:
 - cp /etc/hosts /tmp
 - echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
 - sudo cp /tmp/hosts /etc/hosts
-- sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 3B4FE6ACC0B21F32
+- sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 3B4FE6ACC0B21F32 40976EAF437D05B5
 - sudo apt-get --purge remove postgresql-common
 - sudo apt-get update
 - sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" --force-yes -fuy upgrade
