@@ -8,7 +8,6 @@ import time
 
 class HashTest(Fixture, UserTesting, CSRFMixin):
 
-
     @test
     def a_logged_in_user_can_record_its_hash(self):
         with app.test_client() as c:
@@ -22,6 +21,7 @@ class HashTest(Fixture, UserTesting, CSRFMixin):
             )
             resp = c.post(config.base_url+'/v1/users/me/update_hash', data=data)
             self.assertEqual(200,resp.status_code)
+            self.assertEqual('{"message": "new hash registered"}', self.getResponseText(resp))
 
     @test
     def the_users_hash_is_changed_to_the_new_one(self):
@@ -175,7 +175,7 @@ class HashTest(Fixture, UserTesting, CSRFMixin):
             resp = c.post(config.base_url+'/v1/users/me/update_hash', data=data)
             self.assertEqual(400,resp.status_code)
             self.assertEqual(
-                '{"errors": ["digest: Field must be between 256 and 256 characters long."]}'
+                '{"errors": ["digest: Field must be between 512 and 512 characters long."]}'
                 ,self.getResponseText(resp)
             )
 

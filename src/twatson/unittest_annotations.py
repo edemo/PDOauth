@@ -32,7 +32,7 @@ class TestFixtureManager( type ):
         TestDeclaration.declarations.clear()
         return new_class
 
-    def __init__( cls, name, bases, thedict ):
+    def __init__( self, name, bases, thedict ):
         #todo: deal with fixture setup/teardown here!
         pass
 

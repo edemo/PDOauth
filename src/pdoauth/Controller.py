@@ -70,8 +70,10 @@ class Controller(Responses):
         r = login_user(user)
         return r
 
-    def returnUserAndLoginCookie(self, user):
-        resp = self.as_dict(user)
+    def returnUserAndLoginCookie(self, user, additionalInfo=None):
+        if additionalInfo is None:
+            additionalInfo={}
+        resp = self.as_dict(user, **additionalInfo)
         token = unicode(uuid4())
         session['csrf_token'] = token
         resp.set_cookie("csrf", token)
@@ -228,7 +230,7 @@ class Controller(Responses):
         user.activate()
         r = login_user(user)
         if r:
-            return self.as_dict(user, **additionalInfo)
+            return self.returnUserAndLoginCookie(user, additionalInfo)
     
     @FlaskInterface.exceptionChecked
     def do_change_password(self):
@@ -360,11 +362,12 @@ class Controller(Responses):
         if digest == '':
             digest = None
         current_user.hash = digest
+        current_user.save()
         assurances = Assurance.listByUser(current_user)
         for assurance in assurances:
             if assurance.name != emailVerification:
                 assurance.rm()
-        return self.simple_response('')
+        return self.simple_response('new hash registered')
 
     def do_uris(self):
         data = dict(
