@@ -3,8 +3,6 @@ from flask.globals import session
 from wtforms.validators import ValidationError
 
 def csrfCheck(self, field):
-    if not session.has_key('csrf_token'):
-        raise ValidationError('csrf validation error')
     sessionid = session['csrf_token']
     if not sessionid == field.data:
         raise ValidationError('csrf validation error')
@@ -34,6 +32,6 @@ secretValidator = [validators.Length(min=8),
                      validators.Regexp(".*[a-z].*", message="password should contain lowercase"),
                      validators.Regexp(".*[0-9].*", message="password should contain digit")]
 emailValidator = [validators.Email()]
-digestValidator = [validators.Length(min=512, max=512), validators.regexp("[0-9A-Fa-f]*")]
+digestValidator = [validators.Length(min=256, max=256), validators.regexp("[0-9A-Fa-f]*")]
 assuranceValidator = [validators.Length(min=4, max=50)]
 csrfValidator = [csrfCheck]

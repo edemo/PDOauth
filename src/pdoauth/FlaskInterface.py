@@ -66,10 +66,8 @@ class Responses(object):
         return self.error_response(errdict, status)
     
     def as_dict(self, user, **kwargs):
-        kwargs.update({
-            'email':user.email, 
+        kwargs.update({'email':user.email, 
             'userid':user.userid, 
-            'hash': user.hash,
             'assurances':Assurance.getByUser(user),
             'credentials': Credential.getByUser_as_dictlist(user)
         })

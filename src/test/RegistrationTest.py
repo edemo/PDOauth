@@ -20,12 +20,6 @@ class RegistrationTest(Fixture, UserTesting):
             self.assertUserResponse(resp)
 
     @test
-    def registration_sets_the_csrf_cookie(self):
-        with app.test_client() as c:
-            resp, outbox = self.register(c)  # @UnusedVariable
-            self.assertTrue("csrf=" in unicode(resp.headers['Set-Cookie']))
-
-    @test
     def on_registration_a_temporary_email_verification_credential_is_registered(self):
         with app.test_client() as c:
             resp, outbox = self.register(c)  # @UnusedVariable

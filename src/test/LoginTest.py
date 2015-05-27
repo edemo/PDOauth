@@ -2,7 +2,7 @@ from test.TestUtil import UserTesting
 from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
-from pdoauth.forms import credErr
+from pdoauth.forms import credentialTypes, credErr
 
 class LoginTest(Fixture, UserTesting):
 
