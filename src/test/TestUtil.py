@@ -49,7 +49,7 @@ class UserTesting(ResponseInfo):
             ) for _ in range(8))
     
     def createHash(self):
-        return SHA512Hash(self.randString).hexdigest() * 4
+        return SHA512Hash(self.randString).hexdigest() * 2
 
     def setupRandom(self):
         self.randString = self.mkRandomString(6)

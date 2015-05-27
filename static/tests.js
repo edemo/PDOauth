@@ -101,16 +101,14 @@ QUnit.test( "with processErrors assurances, email and userid are shown in the us
         }
 	
 	pageScript.processErrors(data)
-	assert.equal(document.getElementById("userdata").innerHTML,
-		"email: my@email.com<br>userid: theuserid<br>hash: undefined<br>assurances:<ul><li>test</li><li>foo</li></ul><br>credentials:<ul></ul>");	
+	assert.equal(document.getElementById("userdata").innerHTML,"email: my@email.com<br>userid: theuserid<ul><li>test</li><li>foo</li></ul>");	
 });
 
 QUnit.test( "MyCallback processes the data through processErrors", function( assert ) {
 	pageScript = new PageScript(true)
 	data = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	pageScript.myCallback(200,data)
-	assert.equal(document.getElementById("userdata").innerHTML,
-		"email: my@email.com<br>userid: theuserid<br>hash: undefined<br>assurances:<ul><li>test</li><li>foo</li></ul><br>credentials:<ul></ul>");	
+	assert.equal(document.getElementById("userdata").innerHTML,"email: my@email.com<br>userid: theuserid<ul><li>test</li><li>foo</li></ul>");	
 });
 
 QUnit.test( "passwordReset calls /v1/password_reset with secret and password", function( assert ) {

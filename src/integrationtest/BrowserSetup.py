@@ -5,7 +5,7 @@ import subprocess
 from selenium.webdriver.chrome.options import Options
 import logging
 
-class BrowserSetup(object):
+class BrowserSetup:
 
     def getDriver(self):
         if os.environ.get("WEBDRIVER", None) == "chrome":
