@@ -74,3 +74,13 @@ class FacebookTest(Fixture, UserTesting):
             self.assertEqual(resp.status_code, 403)
             data = self.fromJson(resp)
             self.assertEqual(data['errors'],["You have to register first"])
+
+    @test
+    def facebookMe_reaches_facebook(self):
+        controller = Controller(FlaskInterface)
+        resp = controller._facebookMe("code")
+        self.assertEqual(400, resp.status)
+        self.assertTrue(resp.headers.has_key('x-fb-rev'))
+        self.assertEqual('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}', resp.data)
+        
+        

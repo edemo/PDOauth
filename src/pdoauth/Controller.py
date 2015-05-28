@@ -113,7 +113,6 @@ class Controller(Responses):
             return self.passwordLogin(form)
         if form.credentialType.data == 'facebook':
             return self.facebookLogin(form)
-        raise ValueError() #not reached
 
     def contentsOfFileNamedInConfig(self, confkey):
         f = open(app.config.get(confkey))

@@ -116,5 +116,3 @@ def getStaticPath():
 def send_static(path):
     return send_from_directory(getStaticPath(), path)
 
-if __name__ == '__main__':
-    app.run("localhost", 8888)

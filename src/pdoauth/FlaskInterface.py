@@ -4,6 +4,7 @@ from flask import json
 import urllib3
 import flask
 from pdoauth.app import app, logging
+from pdoauth.ReportedError import ReportedError
 
 class FlaskInterface(object):
     @classmethod
@@ -41,12 +42,6 @@ class FlaskInterface(object):
     @classmethod
     def error_response(self,descriptor, status=400):
         return self._make_response(dict(errors=descriptor), status)
-
-class ReportedError(Exception):
-    def __init__(self, descriptor, status=400):
-        self.descriptor = descriptor
-        self.status = status
-
 
 class Responses(object):
 

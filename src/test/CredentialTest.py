@@ -6,6 +6,7 @@ from pdoauth.models.Credential import Credential
 from Crypto.Hash.SHA256 import SHA256Hash
 from pdoauth.models.User import User
 from pdoauth.forms import credErr
+from pdoauth.ReportedError import ReportedError
 
 class CredentialTest(Fixture, UserTesting):
     def setUp(self):
@@ -329,3 +330,11 @@ class CredentialTest(Fixture, UserTesting):
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["You cannot delete the login you are using"]}', self.getResponseText(resp))
             self.assertTrue(Credential.get("password", self.usercreation_userid))
+
+    @test
+    def an_already_existing_credential_cannot_be_addedd(self):
+        self.createUserWithCredentials(userid="existinguser")
+        with self.assertRaises(ReportedError):
+            self.createUserWithCredentials(userid="existinguser")
+        cred = Credential.get("password", "existinguser")
+        cred.rm()
