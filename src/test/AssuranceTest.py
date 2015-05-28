@@ -160,3 +160,15 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
             self.assertEqual(anotherUser.hash, None)
             user = User.getByEmail(target.email)
             self.assertEqual(user.hash, targetHash)
+
+    @test
+    def adding_assurance_with_invalid_hash_and_no_email_fails(self):
+        self.fail()
+    
+    @test
+    def adding_assurance_with_invalid_hash_and_email_fails(self):
+        self.fail()
+
+    @test
+    def adding_assurance_with_email_and_hash_of_someone_other_fails(self):
+        self.fail()

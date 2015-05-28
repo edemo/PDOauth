@@ -28,16 +28,29 @@ from M2Crypto import EVP, X509
 from pdoauth.FlaskInterface import Responses, ReportedError, FlaskInterface
 
 anotherUserUsingYourHash = "another user is using your hash"
+passwordResetCredentialType = 'email_for_password_reset'
 
-class Controller(Responses):
-    
-    def __init__(self, interface):
-        class __patched(self.__class__):
-            pass
-        __patched.__bases__ += (interface,)
-        self.__class__ = __patched
-    
-    def email_verification(self, user):
+class UserOrBearerAuthentication(object):
+
+    def authenticateUserOrBearer(self, userid):
+        authHeader = request.headers.get('Authorization')
+        if current_user.is_authenticated():
+            if userid == 'me':
+                return current_user
+            if Assurance.getByUser(current_user).has_key('assurer'):
+                return User.get(userid)
+        if authHeader:
+            token = authHeader.split(" ")[1]
+            data = TokenInfoByAccessKey.find(token)
+            targetuserid = data.tokeninfo.user_id
+            authuser = User.get(targetuserid)
+            if authuser.id == userid or userid == 'me':
+                return authuser
+        raise ReportedError(["no authorization"], status=403)
+
+class EmailHandling(object):
+
+    def sendPasswordVerificationEmail(self, user):
         secret=unicode(uuid4())
         expiry = time.time() + 60*60*24*4
         Credential.new(user, 'emailcheck', unicode(expiry), secret )
@@ -46,24 +59,15 @@ class Controller(Responses):
         text = """Hi, click on <a href="{0}">{0}</a> until {1} to verify your email""".format(uri, timeText)
         mail.send_message(subject="verification", body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
     
-    def isAllowedToGetUser(self, userid):
-        allowed = False
-        authuser = None
-        authHeader = request.headers.get('Authorization')
-        if current_user.is_authenticated():
-            if userid == 'me':
-                return (True,current_user)
-            if Assurance.getByUser(current_user).has_key('assurer'):
-                authuser = User.get(userid)
-                return (True, authuser)
-        if authHeader:
-            token = authHeader.split(" ")[1]
-            data = TokenInfoByAccessKey.find(token)
-            targetuserid = data.tokeninfo.user_id
-            authuser = User.get(targetuserid)
-            allowed = authuser.id == userid or userid == 'me'
-        return allowed, authuser
-    
+    def sendPasswordResetMail(self, user, secret, expiry):
+        timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
+        serverName = app.config.get('SERVER_NAME')
+        uri = "{0}?secret={1}".format(app.config.get("PASSWORD_RESET_FORM_URL"), secret, user.email)
+        text = """Hi, click on <a href="{0}">{0}</a> until {1} to reset your password""".format(uri, timeText)
+        subject = "Password Reset for {0}".format(serverName)
+        mail.send_message(subject=subject, body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
+
+class LoginHandling(object):
 
     def loginUser(self, user):
         user.set_authenticated()
@@ -105,14 +109,7 @@ class Controller(Responses):
             raise ReportedError(["You have to register first"], 403)
         return self.finishLogin(cred.user)
 
-    @formValidated(LoginForm, 403)
-    @FlaskInterface.exceptionChecked
-    def do_login(self,form):
-        session['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
-        if form.credentialType.data == 'password':
-            return self.passwordLogin(form)
-        if form.credentialType.data == 'facebook':
-            return self.facebookLogin(form)
+class CryptoUtils(object):
 
     def contentsOfFileNamedInConfig(self, confkey):
         f = open(app.config.get(confkey))
@@ -120,29 +117,15 @@ class Controller(Responses):
         f.close()
         return ret
 
-    @formValidated(KeygenForm)
-    @FlaskInterface.exceptionChecked
-    def do_keygen(self, form):
-        email = form.email.data
-        spkac = SPKAC(form.pubkey.data, CN=email, Email = email)
+    def createCertFromSPKAC(self, spkacInput, cn, email):
+        spkac = SPKAC(spkacInput, CN=cn, Email=email)
         ca_crt = X509.load_cert_string(self.contentsOfFileNamedInConfig("CA_CERTIFICATE_FILE"))
         ca_pkey = EVP.load_key_string(self.contentsOfFileNamedInConfig("CA_KEY_FILE"))
         now = int(time.time())
-        serial=now
+        serial = now
         notAfter = now + 60 * 60 * 24 * 365 * 2
         certObj = spkac.gen_crt(ca_pkey, ca_crt, serial, now, notAfter, 'sha1')
-        cert = certObj.as_pem()
-        if current_user.is_authenticated():
-            identifier, digest = self.parseCert(cert)
-            Credential.new(current_user, "certificate", identifier, digest)
-        else:
-            if form.createUser.data:
-                cred = self.registerCertUser(cert, [email])
-                self.loginUser(cred.user)
-        resp = flask.make_response(certObj.as_der(), 200)
-        resp.headers["Content-Type"] = "application/x-x509-user-cert"
-        return resp
-        
+        return certObj
 
     def parseCert(self, cert):
         try:
@@ -154,6 +137,49 @@ class Controller(Responses):
         identifier = u"{0}/{1}".format(digest, 
             cn)
         return identifier, digest
+
+@FlaskInterface.interfaceClass
+class Controller(Responses, EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthentication):
+
+    @classmethod
+    def setInterface(cls, interface):
+        cls.__bases__ = (interface,) + cls.__bases__
+
+    @classmethod
+    def unsetInterface(cls, interface):
+        bases = list(cls.__bases__)
+        bases.remove(interface)
+        cls.__bases__ = tuple(bases)
+
+    @classmethod
+    def getInstance(cls):
+        return cls.instance
+    
+    @FlaskInterface.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
+    def do_login(self,form):
+        session['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
+        if form.credentialType.data == 'password':
+            return self.passwordLogin(form)
+        if form.credentialType.data == 'facebook':
+            return self.facebookLogin(form)
+
+    @formValidated(KeygenForm)
+    @FlaskInterface.exceptionChecked
+    def do_keygen(self, form):
+        email = form.email.data
+        spkacInput = form.pubkey.data
+        certObj = self.createCertFromSPKAC(spkacInput, email, email)
+        cert = certObj.as_pem()
+        if current_user.is_authenticated():
+            identifier, digest = self.parseCert(cert)
+            Credential.new(current_user, "certificate", identifier, digest)
+        else:
+            if form.createUser.data:
+                cred = self.registerCertUser(cert, [email])
+                self.loginUser(cred.user)
+        resp = flask.make_response(certObj.as_der(), 200)
+        resp.headers["Content-Type"] = "application/x-x509-user-cert"
+        return resp
 
     def getEmailFromQueryParameters(self):
         parsed = urlparse.urlparse(request.url)
@@ -171,7 +197,7 @@ class Controller(Responses):
             theEmail = email[0]
             CredentialManager.create_user_with_creds("certificate", identifier, digest, theEmail)
             cred = Credential.get("certificate", identifier)
-            self.email_verification(cred.user)
+            self.sendPasswordVerificationEmail(cred.user)
         cred.user.activate()
         return cred
 
@@ -231,7 +257,7 @@ class Controller(Responses):
             form.secret.data,
             form.email.data,
             digest)
-        self.email_verification(user)
+        self.sendPasswordVerificationEmail(user)
         user.set_authenticated()
         user.activate()
         r = login_user(user)
@@ -263,75 +289,85 @@ class Controller(Responses):
             return self.as_dict(user)
         raise ReportedError(["no authorization"], status=403)
     
+    def deleteDigestFromOtherUsers(self, user, digest):
+        if digest:
+            users = User.getByDigest(digest)
+            for anotherUser in users:
+                if anotherUser.email != user.email:
+                    anotherUser.hash = None
+                    anotherUser.save()
+
+    def assureExactlyOneUserInList(self, users):
+        if len(users) > 1:
+            raise ReportedError(["Two users with the same hash; specify both hash and email"], 400)
+
+    def getUserForEmailAndOrHash(self, digest, email):
+        if email:
+            user = User.getByEmail(email)
+            self.deleteDigestFromOtherUsers(user, digest)
+        else:
+            users = User.getByDigest(digest)
+            self.assureExactlyOneUserInList(users)
+            user = users[0]
+        return user
+
+    def assureUserHaveTheGivingAssurancesFor(self, neededAssurance):
+        assurances = Assurance.getByUser(current_user)
+        assurerAssurance = "assurer.{0}".format(neededAssurance)
+        if not (assurances.has_key('assurer') and assurances.has_key(assurerAssurance)):
+            raise ReportedError(["no authorization"], 403)
+
     @formValidated(AssuranceForm)
     @FlaskInterface.exceptionChecked
     def do_add_assurance(self, form):
-        assurances = Assurance.getByUser(current_user)
         neededAssurance = form.assurance.data
-        assurerAssurance = "assurer.{0}".format(neededAssurance)
-        if assurances.has_key('assurer') and assurances.has_key(assurerAssurance):
-            if form.email.data:
-                user = User.getByEmail(form.email.data)
-                if form.digest.data:
-                    users = User.getByDigest(form.digest.data)
-                    for anotherUser in users:
-                        if anotherUser.email != user.email:
-                            anotherUser.hash = None
-                            anotherUser.save()
-            else:
-                users = User.getByDigest(form.digest.data)
-                if len(users) > 1:
-                    raise ReportedError(["Two users with the same hash; specify both hash and email"], 400)  
-                user = users[0]                  
-            Assurance.new(user, neededAssurance, current_user)
-            return self.simple_response("added assurance {0} for {1}".format(neededAssurance, user.email))
-        raise ReportedError(["no authorization"], 403)
+        self.assureUserHaveTheGivingAssurancesFor(neededAssurance)
+        user = self.getUserForEmailAndOrHash(form.digest.data, form.email.data)                  
+        Assurance.new(user, neededAssurance, current_user)
+        return self.simple_response("added assurance {0} for {1}".format(neededAssurance, user.email))
     
     @FlaskInterface.exceptionChecked
     def do_show_user(self, userid):
-        allowed, targetuser = self.isAllowedToGetUser(userid)
-        if allowed:
-            return self.as_dict(targetuser)
-        raise ReportedError(["no authorization"], status=403)
+        authuser = self.authenticateUserOrBearer(userid)
+        return self.as_dict(authuser)
     
-    @FlaskInterface.exceptionChecked
-    def do_verify_email(self, token):
-        cred = Credential.getBySecret('emailcheck', token)
+    def checkEmailverifyCredential(self, cred):
         if cred is None:
             raise ReportedError(["unknown token"], 404)
         if float(cred.identifier) < time.time():
             raise ReportedError(["expired token"], 400)
+
+    def getCredentialForEmailverifyToken(self, token):
+        cred = Credential.getBySecret('emailcheck', token)
+        return cred
+
+    @FlaskInterface.exceptionChecked
+    def do_verify_email(self, token):
+        cred = self.getCredentialForEmailverifyToken(token)
+        self.checkEmailverifyCredential(cred)
         user = cred.user
         Assurance.new(user,emailVerification,user)
         cred.rm()
         return self.simple_response("email verified OK")
-    
-    def _sendResetMail(self, user, secret, expiry):
-        timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
-        serverName = app.config.get('SERVER_NAME')
-        uri = "{0}?secret={1}".format(app.config.get("PASSWORD_RESET_FORM_URL"), secret, user.email)
-        text = """Hi, click on <a href="{0}">{0}</a> until {1} to reset your password""".format(uri, timeText)
-        subject = "Password Reset for {0}".format(serverName)
-        mail.send_message(subject=subject, body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
     
     @FlaskInterface.exceptionChecked
     def do_send_password_reset_email(self, email):
         user = User.getByEmail(email)
         if user is None:
             raise ReportedError(['Invalid email address'])
+        passwordResetEmailExpiration = 14400
         secret=unicode(uuid4())
-        expiry = time.time()
-        Credential.new(user, 'email_for_password_reset', secret, unicode(expiry+14400))
-        self._sendResetMail(user, secret, expiry)
+        expirationTime = time.time() + passwordResetEmailExpiration
+        Credential.new(user, passwordResetCredentialType, secret, unicode(expirationTime))
+        self.sendPasswordResetMail(user, secret, expirationTime)
         return self.simple_response("Password reset email has successfully sent.")
     
     @formValidated(PasswordResetForm)
     @FlaskInterface.exceptionChecked
     def do_password_reset(self, form):
-        credType = 'email_for_password_reset'
-        cred = Credential.get(credType, form.secret.data)
+        cred = Credential.get(passwordResetCredentialType, form.secret.data)
         if cred is None or (float(cred.secret) < time.time()):
-            Credential.deleteExpired(credType)
+            Credential.deleteExpired(passwordResetCredentialType)
             raise ReportedError(['The secret has expired'], 404)
         passcred = Credential.getByUser(cred.user, 'password')
         passcred.secret = CredentialManager.protect_secret(form.password.data)
@@ -361,6 +397,11 @@ class Controller(Responses):
             form.secret.data)
         return self.as_dict(current_user)
     
+    def deleteHandAssuredAssurances(self, assurances):
+        for assurance in assurances:
+            if assurance.name != emailVerification:
+                assurance.rm()
+
     @formValidated(DigestUpdateForm)
     @FlaskInterface.exceptionChecked
     def do_update_hash(self,form):
@@ -369,9 +410,7 @@ class Controller(Responses):
             digest = None
         current_user.hash = digest
         assurances = Assurance.listByUser(current_user)
-        for assurance in assurances:
-            if assurance.name != emailVerification:
-                assurance.rm()
+        self.deleteHandAssuredAssurances(assurances)
         return self.simple_response('')
 
     def do_uris(self):

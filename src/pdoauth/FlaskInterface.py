@@ -5,12 +5,51 @@ import urllib3
 import flask
 from pdoauth.app import app, logging
 from pdoauth.ReportedError import ReportedError
+from flask.globals import request
 
-class FlaskInterface(object):
+class Responses(object):
+
+    @classmethod
+    def errors_to_json(self, form):
+        errs = []
+        for field, errors in form.errors.items():
+            for error in errors:
+                fieldname = getattr(form, field).label.text
+                errs.append("{0}: {1}".format(fieldname,error))
+        return errs
+
+    def simple_response(self,text):
+        return self._make_response(dict(message=text))
+    
+    def as_dict(self, user, **kwargs):
+        kwargs.update({'email':user.email, 
+            'userid':user.userid, 
+            'assurances':Assurance.getByUser(user),
+            'credentials': Credential.getByUser_as_dictlist(user)
+        })
+        ret = json.dumps(kwargs)
+        return self.make_response(ret,200)
+
+    @classmethod
+    def _make_response(self, descriptor,status=200):
+        ret = json.dumps(descriptor)
+        return self.make_response(ret, status)
+    
+    @classmethod
+    def error_response(self,descriptor, status=400):
+        return self._make_response(dict(errors=descriptor), status)
+
+    @classmethod
+    def form_validation_error_response(self, form, status=400):
+        errdict = self.errors_to_json(form)
+        return self.error_response(errdict, status)
+    
     @classmethod
     def make_response(self, ret, status):
         return flask.make_response(ret, status)
     
+
+class FlaskInterface(Responses):
     def validate_on_submit(self,form):
         return form.validate_on_submit()
 
@@ -23,48 +62,59 @@ class FlaskInterface(object):
         return resp
 
     @classmethod
+    def errorReport(cls, e):
+        logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))
+        resp = cls.error_response(e.descriptor, e.status)
+        resp.headers['Access-Control-Allow-Origin'] = app.config.get('BASE_URL')
+        return resp
+
+    @classmethod
+    def formValidated(formClass, status=400):
+        def decorator(func):
+            def validated(self):
+                form = formClass()
+                if self.validate_on_submit(form):
+                    return func(self, form)
+                return self.form_validation_error_response(form, status)
+            return validated
+        return decorator
+
+    @classmethod
+    def interfaceClass(cls, klass):
+        instance = klass()
+        klass.instance = instance
+        for name, method in klass.__dict__.iteritems():
+            if hasattr(method, "instance"):
+                print "decorating", name
+                method.instance = instance
+        return klass
+    
+    @classmethod
+    def interfaceFunc(cls, rule, formClass=None, status=400, **options):
+        def decorator(func):
+            def validated(*args, **kwargs):
+                if formClass is not None:
+                    form = formClass()
+                    if not form.validate_on_submit():
+                        return cls.form_validation_error_response(form, status)
+                    kwargs["form"] = form
+                try:
+                    return func(validated.instance, *args, **kwargs)
+                except ReportedError as e:
+                    resp = cls.errorReport(e)
+                    return resp
+            validated.instance = None
+            endpoint = options.pop('endpoint', None)
+            app.add_url_rule(rule, endpoint, validated, **options)
+            return validated
+        return decorator
+
+    @classmethod
     def exceptionChecked(cls,func):
         def f(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
             except ReportedError as e:
-                logging.log(logging.INFO,"status={0}, descriptor={1}".format(e.status, e.descriptor))
-                resp = cls.error_response(e.descriptor, e.status)   
-                resp.headers['Access-Control-Allow-Origin'] = app.config.get('BASE_URL')
+                resp = cls.errorReport(e)
                 return resp      
         return f
-
-    @classmethod
-    def _make_response(self, descriptor,status=200):
-        ret = json.dumps(descriptor)
-        return self.make_response(ret, status)
-    
-    @classmethod
-    def error_response(self,descriptor, status=400):
-        return self._make_response(dict(errors=descriptor), status)
-
-class Responses(object):
-
-    def errors_to_json(self, form):
-        errs = []
-        for field, errors in form.errors.items():
-            for error in errors:
-                fieldname = getattr(form, field).label.text
-                errs.append("{0}: {1}".format(fieldname,error))
-        return errs
-
-    def simple_response(self,text):
-        return self._make_response(dict(message=text))
-    
-    def form_validation_error_response(self, form, status=400):
-        errdict = self.errors_to_json(form)
-        return self.error_response(errdict, status)
-    
-    def as_dict(self, user, **kwargs):
-        kwargs.update({'email':user.email, 
-            'userid':user.userid, 
-            'assurances':Assurance.getByUser(user),
-            'credentials': Credential.getByUser_as_dictlist(user)
-        })
-        ret = json.dumps(kwargs)
-        return self.make_response(ret,200)
