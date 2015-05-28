@@ -14,7 +14,7 @@ class UserInfoTest(Fixture, UserTesting):
     @test
     def logged_in_user_can_get_its_info(self):
         with app.test_client() as c:
-            resp = self.login(c)
+            self.login(c)
             resp = c.get(config.base_url+'/v1/users/me')
             self.assertEquals(resp.status_code, 200)
             data = self.fromJson(resp)
@@ -51,6 +51,18 @@ class UserInfoTest(Fixture, UserTesting):
             self.assertEqual(assurance['timestamp'], now)
             self.assertEqual(assurance['readable_time'], time.asctime(time.gmtime(now)))
             self.assertEqual(len(assurances['test2']),2)
+
+    @test
+    def user_info_contains_hash(self):
+        with app.test_client() as c:
+            self.login(c)
+            current_user.hash = self.createHash()
+            current_user.save()
+            resp = c.get(config.base_url+'/v1/users/me')
+            self.assertEquals(resp.status_code, 200)
+            data = self.fromJson(resp)
+            self.assertEquals(data['hash'],current_user.hash)
+
     @test
     def users_with_assurer_assurance_can_get_email_and_digest_for_anyone(self):
         with app.test_client() as c:

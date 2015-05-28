@@ -55,8 +55,9 @@ function PageScript(debug) {
 		for (key in data) {
 			l.push(key +"=" +encodeURIComponent(data[key]));
 		}
-		
-		xmlhttp.send(l.join("&"));
+		t = l.join("&")
+		console.log(t)
+		xmlhttp.send(t);
 	}
 
 	PageScript.prototype.ajaxget = function(uri,callback) {
@@ -67,15 +68,24 @@ function PageScript(debug) {
 
 	PageScript.prototype.processErrors = function(data) {
 			t = "<ul>"
+			console.log(data)
 			if (data.message) {
 				document.getElementById("message").innerHTML=data.message
 			}
 			if (data.assurances) {
 				userdata = "email: "+data.email
 				userdata +="<br/>userid: "+data.userid
+				userdata +="<br/>hash: "+data.hash
+				userdata +="<br/>assurances:"
 				userdata +="<ul>"
 				for(ass in data.assurances) {
 					userdata += "<li>"+ass+"</li>"
+				}
+				userdata +="</ul>"
+				userdata +="<br/>credentials:"
+				userdata +="<ul>"
+				for(i in data.credentials) {
+					userdata += "<li>"+data.credentials[i].credentialType+"</li>"
 				}
 				userdata +="</ul>"
 				document.getElementById("userdata").innerHTML=userdata			
@@ -210,6 +220,21 @@ function PageScript(debug) {
 	    	csrf_token: csrf_token
 	    }
 	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
+	}
+
+	PageScript.prototype.hashCallback = function(status,text) {
+		self.myCallback(status,text);
+		self.ajaxget('/v1/users/me',self.myCallback);
+	}
+
+	PageScript.prototype.changeHash = function() {
+	    digest = document.getElementById("ChangeHashForm_digest_input").value;
+	    csrf_token = this.getCookie('csrf');
+	    text= {
+	    	digest: digest,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost("/v1/users/me/update_hash", text, this.hashCallback)
 	}
 	
 	PageScript.prototype.digestGetter = function(formName) {

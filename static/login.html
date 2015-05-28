@@ -9,13 +9,13 @@
 <link rel="stylesheet" href="qunit-1.18.0.css">
 
 </head>
-<body onload="pageScript.main()">
+<body onload="pageScript.main()" >
 
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
 <!--script type='text/javascript' src="tests.js"></script--!>
 
-<table border="1">
+<table border="1" >
 	<tr>
 		<td>
 			<button type="button" id="Unit_test_button" onclick="javascript:pageScript.unittest()">Run unit tests</button>
@@ -26,13 +26,7 @@
  		</td>
  	</tr>
 	<tr>
-		<td>
-			<div id="status">
-			</div>
-			<div id="errorMsg"></div>
-			<div id="message"></div>
-			<div id="userdata"></div>
-		</td><td>  
+		<td>  
 		  	<div class="formrow">
 		  	 <a id="melink" href="javascript:pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Me</a>
 		  	</div>
@@ -42,7 +36,13 @@
 		  	</div>
   		</td><td>
   			<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button> 
-  		</td>
+  		</td><td>
+			<div id="status">
+			</div>
+			<div id="errorMsg"></div>
+			<div id="message"></div>
+			<div id="userdata"></div>
+		</td>
 	<tr>
 		<td>
 
@@ -189,6 +189,29 @@
 		  	</div>
 		  </form>
 		</td>
+	</tr></tr>
+		<td>
+		  <form id="ChangeHashForm" action="javascript:pageScript.changeHash()" method="post" name="addAssurance">
+		  	<div class="formrow">
+		  		<div class="label" id="ChangeHashForm_predigest_label">
+		  			personal id:
+		  		</div>
+		  		<input name="digest" type="text" id="ChangeHashForm_predigest_input"></input>
+		  	 	<button type="button" id="ChangeHashForm_getDigestButton" onclick="pageScript.digestGetter('ChangeHashForm').getDigest()">Generate Hash</button>
+		  	</div>
+		  	<div class="formrow">
+		  		<div class="label" id="ChangeHashForm_digest_label">
+		  			digest:
+		  		</div>
+		  		<input name="digest" type="text" id="ChangeHashForm_digest_input"/>
+		  	</div>
+		  	<div class="formrow">
+		  	 <input type="submit" value="Add/Change hash" id="ChangeHashForm_submitButton">
+		  	</div>
+		  </form>
+		</td>
+		<td></td>
+		<td></td>
 	</tr>
 </table>
   <div id="qunit-xml"></div>
