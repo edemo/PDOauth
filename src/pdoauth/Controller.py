@@ -189,6 +189,15 @@ class Controller(Responses):
     def do_deregister(self,form):
         if not self.isLoginCredentials(form):
             raise ReportedError(["You should use your login credentials to deregister"], 400)
+        cred = Credential.get(form.credentialType.data, form.identifier.data)
+        user = cred.user
+        creds = Credential.getByUser(user)
+        for cred in creds:
+            cred.rm()
+        assurances = Assurance.listByUser(user)
+        for assurance in assurances:
+            assurance.rm()
+        user.rm()
         return self.simple_response('deregistered')
 
     @FlaskInterface.exceptionChecked
