@@ -118,3 +118,13 @@ class FlaskInterface(Responses):
                 resp = cls.errorReport(e)
                 return resp      
         return f
+
+    @classmethod
+    def _make_response(self, descriptor,status=200):
+        ret = json.dumps(descriptor)
+        return self.make_response(ret, status)
+    
+    @classmethod
+    def error_response(self,descriptor, status=400):
+        return self._make_response(dict(errors=descriptor), status)
+

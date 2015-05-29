@@ -74,8 +74,10 @@ class LoginHandling(object):
         r = login_user(user)
         return r
 
-    def returnUserAndLoginCookie(self, user):
-        resp = self.as_dict(user)
+    def returnUserAndLoginCookie(self, user, additionalInfo=None):
+        if additionalInfo is None:
+            additionalInfo={}
+        resp = self.as_dict(user, **additionalInfo)
         token = unicode(uuid4())
         session['csrf_token'] = token
         resp.set_cookie("csrf", token)
@@ -262,7 +264,7 @@ class Controller(Responses, EmailHandling, LoginHandling, CryptoUtils, UserOrBea
         user.activate()
         r = login_user(user)
         if r:
-            return self.as_dict(user, **additionalInfo)
+            return self.returnUserAndLoginCookie(user, additionalInfo)
     
     @FlaskInterface.exceptionChecked
     def do_change_password(self):
@@ -409,6 +411,7 @@ class Controller(Responses, EmailHandling, LoginHandling, CryptoUtils, UserOrBea
         if digest == '':
             digest = None
         current_user.hash = digest
+        current_user.save()
         assurances = Assurance.listByUser(current_user)
         self.deleteHandAssuredAssurances(assurances)
         return self.simple_response('')
