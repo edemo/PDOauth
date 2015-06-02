@@ -24,7 +24,7 @@ class BrowserSetup(object):
     def setupDriver(self):
         self.driver = self.getDriver()
         self.driver.implicitly_wait(5)
-        self.driver.set_page_load_timeout(10)
+        self.driver.set_page_load_timeout(20)
         return self.driver
 
     def _switchWindow(self,driver):

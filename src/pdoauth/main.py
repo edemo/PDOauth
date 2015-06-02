@@ -8,6 +8,7 @@ import os
 from flask.globals import request
 from urllib import urlencode
 from pdoauth.FlaskInterface import FlaskInterface
+from pdoauth.forms.LoginForm import LoginForm
 
 Controller.setInterface(FlaskInterface)
 
@@ -30,10 +31,9 @@ def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
     return AuthProvider.auth_interface()
 
-#@app.route("/login", methods=["POST"])
-
-def login():
-    return controller.do_login()
+@FlaskInterface.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
+def login(form):
+    return controller.do_login(form)
 
 @app.route("/ssl_login", methods=["GET"])
 def ssl_login():

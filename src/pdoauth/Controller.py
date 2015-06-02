@@ -26,6 +26,7 @@ from pdoauth.forms.KeygenForm import KeygenForm
 from pyspkac.spkac import SPKAC
 from M2Crypto import EVP, X509
 from pdoauth.FlaskInterface import Responses, ReportedError, FlaskInterface
+import traceback
 
 anotherUserUsingYourHash = "another user is using your hash"
 passwordResetCredentialType = 'email_for_password_reset'
@@ -71,7 +72,7 @@ class LoginHandling(object):
 
     def loginUser(self, user):
         user.set_authenticated()
-        r = login_user(user)
+        r = self.loginUserInFramework(user)
         return r
 
     def returnUserAndLoginCookie(self, user, additionalInfo=None):
@@ -79,7 +80,7 @@ class LoginHandling(object):
             additionalInfo={}
         resp = self.as_dict(user, **additionalInfo)
         token = unicode(uuid4())
-        session['csrf_token'] = token
+        self.getSession()['csrf_token'] = token
         resp.set_cookie("csrf", token)
         return resp
 
@@ -140,26 +141,31 @@ class CryptoUtils(object):
             cn)
         return identifier, digest
 
-@FlaskInterface.interfaceClass
-class Controller(Responses, EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthentication):
+class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthentication):
 
     @classmethod
     def setInterface(cls, interface):
-        cls.__bases__ = (interface,) + cls.__bases__
+        bases = set(cls.__bases__)
+        bases.add(interface)
+        cls.__bases__ = tuple(bases)
 
     @classmethod
     def unsetInterface(cls, interface):
         bases = list(cls.__bases__)
-        bases.remove(interface)
+        if interface in bases:
+            bases.remove(interface)
         cls.__bases__ = tuple(bases)
 
     @classmethod
     def getInstance(cls):
-        return cls.instance
+        instance = getattr(cls, "instance", None)
+        if instance is None:
+            instance = cls()
+            cls.instance = instance
+        return instance
     
-    @FlaskInterface.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
     def do_login(self,form):
-        session['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
+        self.getSession()['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
         if form.credentialType.data == 'password':
             return self.passwordLogin(form)
         if form.credentialType.data == 'facebook':
@@ -300,18 +306,25 @@ class Controller(Responses, EmailHandling, LoginHandling, CryptoUtils, UserOrBea
                     anotherUser.save()
 
     def assureExactlyOneUserInList(self, users):
+        if len(users) == 0:
+            raise ReportedError('No user with this hash', 400)
         if len(users) > 1:
-            raise ReportedError(["Two users with the same hash; specify both hash and email"], 400)
+            raise ReportedError(["More users with the same hash; specify both hash and email"], 400)
+
+
+    def checkUserAgainsDigest(self, digest, user):
+        if digest is not None and user.hash != digest:
+            raise ReportedError('This user does not have that digest', 400)
 
     def getUserForEmailAndOrHash(self, digest, email):
         if email:
             user = User.getByEmail(email)
             self.deleteDigestFromOtherUsers(user, digest)
-        else:
-            users = User.getByDigest(digest)
-            self.assureExactlyOneUserInList(users)
-            user = users[0]
-        return user
+            self.checkUserAgainsDigest(digest, user)
+            return user
+        users = User.getByDigest(digest)
+        self.assureExactlyOneUserInList(users)
+        return users[0]
 
     def assureUserHaveTheGivingAssurancesFor(self, neededAssurance):
         assurances = Assurance.getByUser(current_user)
@@ -414,7 +427,7 @@ class Controller(Responses, EmailHandling, LoginHandling, CryptoUtils, UserOrBea
         current_user.save()
         assurances = Assurance.listByUser(current_user)
         self.deleteHandAssuredAssurances(assurances)
-        return self.simple_response('')
+        return self.simple_response('new hash registered')
 
     def do_uris(self):
         data = dict(

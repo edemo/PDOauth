@@ -5,7 +5,8 @@ import urllib3
 import flask
 from pdoauth.app import app, logging
 from pdoauth.ReportedError import ReportedError
-from flask.globals import request
+from flask.globals import session
+from flask_login import login_user
 
 class Responses(object):
 
@@ -25,6 +26,7 @@ class Responses(object):
         kwargs.update({'email':user.email, 
             'userid':user.userid, 
             'assurances':Assurance.getByUser(user),
+            'hash': user.hash,
             'credentials': Credential.getByUser_as_dictlist(user)
         })
         ret = json.dumps(kwargs)
@@ -80,16 +82,6 @@ class FlaskInterface(Responses):
         return decorator
 
     @classmethod
-    def interfaceClass(cls, klass):
-        instance = klass()
-        klass.instance = instance
-        for name, method in klass.__dict__.iteritems():
-            if hasattr(method, "instance"):
-                print "decorating", name
-                method.instance = instance
-        return klass
-    
-    @classmethod
     def interfaceFunc(cls, rule, formClass=None, status=400, **options):
         def decorator(func):
             def validated(*args, **kwargs):
@@ -99,11 +91,10 @@ class FlaskInterface(Responses):
                         return cls.form_validation_error_response(form, status)
                     kwargs["form"] = form
                 try:
-                    return func(validated.instance, *args, **kwargs)
+                    return func(*args, **kwargs)
                 except ReportedError as e:
                     resp = cls.errorReport(e)
                     return resp
-            validated.instance = None
             endpoint = options.pop('endpoint', None)
             app.add_url_rule(rule, endpoint, validated, **options)
             return validated
@@ -128,3 +119,9 @@ class FlaskInterface(Responses):
     def error_response(self,descriptor, status=400):
         return self._make_response(dict(errors=descriptor), status)
 
+    def getSession(self):
+        return session
+
+    def loginUserInFramework(self, user):
+        r = login_user(user)
+        return r

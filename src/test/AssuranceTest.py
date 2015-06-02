@@ -10,12 +10,17 @@ import config
 
 class AssuranceTest(Fixture, CSRFMixin, UserTesting):
 
-    def _setupTestWithoutAssurance(self, c):
-        self.login(c)
+
+    def _createUserWithHash(self):
         self.createUserWithCredentials()
         target = User.getByEmail(self.usercreation_email)
         target.hash = self.createHash()
         target.save()
+        return target
+
+    def _setupTestWithoutAssurance(self, c):
+        self.login(c)
+        target = self._createUserWithHash()
         self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
         return target
 
@@ -137,7 +142,7 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
                 csrf_token = self.getCSRF(c))
             resp = c.post(config.base_url + '/v1/add_assurance', data = data)
             self.assertEquals(400, resp.status_code)
-            self.assertEquals('{"errors": ["Two users with the same hash; specify both hash and email"]}', self.getResponseText(resp))
+            self.assertEquals('{"errors": ["More users with the same hash; specify both hash and email"]}', self.getResponseText(resp))
 
     @test
     def when_an_assurance_added_with_hash_and_email___and_there_is_another_user_with_the_same_hash___the_hash_from_the_other_user_is_deleted(self):
@@ -162,13 +167,45 @@ class AssuranceTest(Fixture, CSRFMixin, UserTesting):
             self.assertEqual(user.hash, targetHash)
 
     @test
-    def adding_assurance_with_invalid_hash_and_no_email_fails(self):
-        self.fail()
+    def adding_assurance_with_invalid_hash_and_email_fails(self):
+        with app.test_client() as c:
+            target = self._setupTest(c)
+            self.setupRandom()
+            data = dict(
+                digest = self.createHash(),
+                assurance = "test",
+                email = target.email,
+                csrf_token = self.getCSRF(c))
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
+            self.assertEquals(400, resp.status_code)
+            self.assertEquals(self.fromJson(resp)['errors'],'This user does not have that digest')
+            self.assertFalse(Assurance.getByUser(target).has_key('test'))
     
     @test
-    def adding_assurance_with_invalid_hash_and_email_fails(self):
-        self.fail()
+    def adding_assurance_with_invalid_hash_and_no_email_fails(self):
+        with app.test_client() as c:
+            self._setupTest(c)
+            self.setupRandom()
+            data = dict(
+                digest = self.createHash(),
+                assurance = "test",
+                csrf_token = self.getCSRF(c))
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
+            self.assertEquals(400, resp.status_code)
+            self.assertEquals(self.fromJson(resp)['errors'],'No user with this hash')
 
     @test
     def adding_assurance_with_email_and_hash_of_someone_other_fails(self):
-        self.fail()
+        with app.test_client() as c:
+            target = self._setupTest(c)
+            otheruser = self._createUserWithHash()
+            self.setupRandom()
+            data = dict(
+                digest = otheruser.hash,
+                assurance = "test",
+                email = target.email,
+                csrf_token = self.getCSRF(c))
+            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
+            self.assertEquals(400, resp.status_code)
+            self.assertEquals(self.fromJson(resp)['errors'],'This user does not have that digest')
+            self.assertFalse(Assurance.getByUser(target).has_key('test'))
