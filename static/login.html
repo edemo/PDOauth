@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta charset="UTF-8">
 <title>SSO test page</title>
 <script type='text/javascript' src="debug.js"></script>
 <script type='text/javascript' src="script.js"></script>
@@ -132,7 +133,7 @@
 					<table width="100%" >
 						<tr>
 							<td>
-								<p>St·tusz</p>
+								<p>St√°tusz</p>
 							</td>
 							<td>
 								<div id="status">
@@ -141,7 +142,7 @@
 						</tr>
 						<tr>
 							<td>
-								<p>Hiba¸zenet</p>
+								<p>Hiba√ºzenet</p>
 							</td>
 							<td>
 								<div id="errorMsg">
@@ -150,7 +151,7 @@
 						</tr>
 						<tr>
 							<td>
-								<p>‹zenet</p>
+								<p>√úzenet</p>
 							</td>
 							<td>
 								<div id="message">
@@ -159,7 +160,7 @@
 						</tr>
 						<tr>
 							<td>
-								<p>Felhaszn·lÛi adatok</p>
+								<p>Felhaszn√°l√≥i adatok</p>
 							</td>
 							<td>
 								<div id="userdata">
@@ -173,7 +174,7 @@
 			          <input type="radio" checked name="tabs" id="tab1">
 			          <label for="tab1">Login</label>
 			          <div id="tab-content1" class="tab-content animated fadeIn">
-						<p>BejelentkezÈsi lehetısÈgek</p>
+						<p>Bejelentkez√©si lehet≈ës√©gek</p>
 			            <button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
 						<hr/>
 						<div class="formrow">
@@ -190,7 +191,7 @@
 										<td width="30%">
 											<div class="formrow">
 												<div class="label" id="LoginForm_username_label">
-													Felhaszn·lÛ nÈv:
+													Felhaszn√°l√≥ n√©v:
 												</div>
 												<input name="username" type="text" id="LoginForm_username_input"/>
 											</div>
@@ -198,7 +199,7 @@
 										<td width="30%">
 											<div class="formrow">
 												<div class="label" id="LoginForm_password_label">
-													JelszÛ:
+													Jelsz√≥:
 												</div>
 												<input name="username" type="password" id="LoginForm_password_input"/>
 											</div>
@@ -216,48 +217,48 @@
 			        </li>
 					<li>
 			          <input type="radio" checked name="tabs" id="tab2">
-			          <label for="tab2">Regisztr·ciÛ</label>
+			          <label for="tab2">Regisztr√°ci√≥</label>
 			          <div id="tab-content1" class="tab-content animated fadeIn">
-						<p>Regisztr·l·si lehetısÈgek</p>
+						<p>Regisztr√°l√°si lehet≈ës√©gek</p>
 						<button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
 						<hr/>
 						<form id="RegistrationForm" action="javascript:pageScript.register()" method="post" name="register">
 							<div class="formrow">
 								<div class="label" id="RegistrationForm_credentialType_label">
-									A hitelesÌtÈs tÌpusa:
+									A hiteles√≠t√©s t√≠pusa:
 								</div>
 								<select name="credentialType" type="text" id="RegistrationForm_credentialType_input">
-									<option>jelszÛ</option>
+									<option>jelsz√≥</option>
 								</select>
 							</div>
 							<div class="formrow">
 								<div class="label" id="RegistrationForm_identifier_label">
-									* felhaszn·lÛnÈv:
+									* felhaszn√°l√≥n√©v:
 								</div>
 								<input name="identifier" type="text" id="RegistrationForm_identifier_input"/>
 							</div>
 							<div class="formrow">
 								<div class="label" id="RegistrationForm_email_label">
-									* e-mail cÌm:
+									* e-mail c√≠m:
 								</div>
 								<input name="email" type="text" id="RegistrationForm_email_input"/>
 							</div>
 							<div class="formrow">
 								<div class="label" id="RegistrationForm_predigest_label">
-									szemÈlyi sz·m:
+									szem√©lyi sz√°m:
 								</div>
 								<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
 								<button type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Generate Hash</button>
 							</div>
 							<div class="formrow">
 								<div class="label" id="RegistrationForm_digest_label">
-									titkos kÛd:
+									titkos k√≥d:
 								</div>
 								<input name="email" type="text" id="RegistrationForm_digest_input"/>
 							</div>
 							<div class="formrow">
 								<div class="label" id="RegistrationForm_secret_label">
-									jelszÛ:
+									jelsz√≥:
 								</div>
 								<input name="secret" type="password" id="RegistrationForm_secret_input"/>
 							</div>
@@ -266,17 +267,17 @@
 							</div>
 						</form>
 						<hr/>
-						<p>BelÈpÈs bˆngÈszıben t·rolt SSL jogosÌtv·nnyal</p>
+						<p>Bel√©p√©s b√∂ng√©sz≈ëben t√°rolt SSL jogos√≠tv√°nnyal</p>
 						<form id="keygenform" method="post" action="/keygen">
 							<div class="formrow">
 								<div class="label" id="KeygenForm_pubkey_label">
-									a kulcs mÈrete:
+									a kulcs m√©rete:
 								</div>
 								<keygen name="pubkey" challenge="123456789" keytype="RSA">
 							</div>
 							<div class="formrow">
 								<div class="label" id="KeygenForm_email_label">
-									e-mail cÌm:
+									e-mail c√≠m:
 								</div>
 							</div>
 							<input name="email" type="text" id="KeygenForm_email_input"/>
@@ -284,20 +285,20 @@
 								<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true">Create User<br>
 							</div>
 							<div class="formrow">
-								<input id="KeygenForm_submit" type="submit" name="createcert" value="JogosÌtv·ny elı·llÌt·sa">
+								<input id="KeygenForm_submit" type="submit" name="createcert" value="Jogos√≠tv√°ny el≈ë√°ll√≠t√°sa">
 							</div>
 						</form>
 			          </div>
 			        </li>
 			        <li>
 			          <input type="radio" name="tabs" id="tab3">
-			          <label for="tab3">Ellenırˆknek</label>
+			          <label for="tab3">Ellen≈ër√∂knek</label>
 			          <div id="tab-content2" class="tab-content animated fadeIn">
-						<p>Felhaszn·lÛ adatainak lekÈrdezÈse</p>
+						<p>Felhaszn√°l√≥ adatainak lek√©rdez√©se</p>
 						<form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
 							<div class="formrow">
 								<div class="label" id="ByEmailForm_email_label">
-									e-mail cÌm:
+									e-mail c√≠m:
 								</div>
 								<input name="email" type="text" id="ByEmailForm_email_input"/>
 								<div class="formrow">
@@ -306,30 +307,30 @@
 							</div>
 						</form>
 						<hr/>
-						<p>Felhaszn·lÛ ellenırzÈse</p>
+						<p>Felhaszn√°l√≥ ellen≈ërz√©se</p>
 						<form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
 							<div class="formrow">
 								<div class="label" id="AddAssuranceForm_predigest_label">
-									szemÈlyi sz·m:
+									szem√©lyi sz√°m:
 								</div>
 								<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
-								<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Titkos kÛd gener·l·sa</button>
+								<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Titkos k√≥d gener√°l√°sa</button>
 							</div>
 							<div class="formrow">
 								<div class="label" id="AddAssuranceForm_digest_label">
-									titkÛs kÛd:
+									titk√≥s k√≥d:
 								</div>
 								<input name="digest" type="text" id="AddAssuranceForm_digest_input"/>
 							</div>
 							<div class="formrow">
 								<div class="label" id="AddAssuranceForm_assurance_label">
-									ellenırzÈsi szint:
+									ellen≈ërz√©si szint:
 								</div>
 								<input name="assurance" type="text" id="AddAssuranceForm_assurance_input"/>
 							</div>
 							<div class="formrow">
 								<div class="label" id="AddAssuranceForm_email_label">
-									e-mail cÌm:
+									e-mail c√≠m:
 								</div>
 								<input name="email" type="text" id="AddAssuranceForm_email_input"/>
 							</div>
@@ -341,32 +342,32 @@
 			        </li>
 			        <li>
 			          <input type="radio" name="tabs" id="tab4">
-			          <label for="tab4">FiÛkom</label>
+			          <label for="tab4">Fi√≥kom</label>
 			          <div id="tab-content3" class="tab-content animated fadeIn">
-						<p>KijelentkezÈs</p>
+						<p>Kijelentkez√©s</p>
 						  	<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button>
 						<hr/>
-						<p>Adataim megjelenÌtÈse</p>
+						<p>Adataim megjelen√≠t√©se</p>
 						  	<div class="formrow">
 								<button type="button">
 									<a id="melink" style="text-decoration: none; color: black;" href="javascript:pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</a>
 								</button>
 							</div>
 						<hr/>
-						<p>Titkos kÛd cserÈje/hozz·ad·sa</p>
-						A szemÈlyi sz·mot nem t·rolja a rendszer. Egy titkosÌtott un. hash-t (titkos kÛdot) gener·lunk belıle, amibıl a szemÈlyi sz·m nem nyerhetı vissza
-						<p>FigyelmeztetÈs! A hash megv·ltoztat·s·val az ˆsszes eddigi valid·l·si inform·ciÛ elvÈsz.</p>
+						<p>Titkos k√≥d cser√©je/hozz√°ad√°sa</p>
+						A szem√©lyi sz√°mot nem t√°rolja a rendszer. Egy titkos√≠tott un. hash-t (titkos k√≥dot) gener√°lunk bel≈ële, amib≈ël a szem√©lyi sz√°m nem nyerhet≈ë vissza
+						<p>Figyelmeztet√©s! A hash megv√°ltoztat√°s√°val az √∂sszes eddigi valid√°l√°si inform√°ci√≥ elv√©sz.</p>
 						<form id="ChangeHashForm" action="javascript:pageScript.changeHash()" method="post" name="addAssurance">
 							<div class="formrow">
 								<div class="label" id="ChangeHashForm_predigest_label">
-								szemÈlyi sz·m:
+								szem√©lyi sz√°m:
 								</div>
 								<input name="digest" type="text" id="ChangeHashForm_predigest_input"></input>
-								<button type="button" id="ChangeHashForm_getDigestButton" onclick="pageScript.digestGetter('ChangeHashForm').getDigest()">Titkos kÛd elı·llÌt·sa</button>
+								<button type="button" id="ChangeHashForm_getDigestButton" onclick="pageScript.digestGetter('ChangeHashForm').getDigest()">Titkos k√≥d el≈ë√°ll√≠t√°sa</button>
 							</div>
 							<div class="formrow">
 								<div class="label" id="ChangeHashForm_digest_label">
-								titkos kÛd:
+								titkos k√≥d:
 								</div>
 								<input name="digest" type="text" id="ChangeHashForm_digest_input"/>
 							</div>
@@ -375,12 +376,12 @@
 							</div>
 						</form>
 						<hr/>
-						<p>JelszÛ csere</p>
+						<p>Jelsz√≥ csere</p>
 						<form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
 							<input name="secret" type="text" id="PasswordResetForm_secret_input"/>
 							<div class="formrow">
 								<div class="label" id="PasswordResetForm_password_label">
-								⁄j jelszÛ:
+								√öj jelsz√≥:
 								</div>
 								<input name="password" type="password" id="PasswordResetForm_password_input"/>
 							</div>
@@ -392,6 +393,6 @@
 			        </li>
 			    </ul>
 	      	</div>
-			<div id="qunit-xml" class="message_container">qunit-xml: ide mi fog jˆnni?</div>
+			<div id="qunit-xml" class="message_container">qunit-xml: ide mi fog j√∂nni?</div>
 </body>
 </html>
