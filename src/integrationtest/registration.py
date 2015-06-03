@@ -69,6 +69,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
 
     def for_some_forms_you_need_a_csrf_token__you_can_obtain_it_by_logging_in(self, driver):
         driver.get(self.base_url + "/static/login.html")
+        self.switchToTab("login")
         driver.find_element_by_id("LoginForm_username_input").clear()
         driver.find_element_by_id("LoginForm_username_input").send_keys(self.assurer)
         driver.find_element_by_id("LoginForm_password_input").clear()
@@ -86,6 +87,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
     def an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(self, driver,):
         driver.get(self.base_url  + "/static/login.html")
         driver.refresh()
+        self.switchToTab("assurer")
         driver.find_element_by_id("AddAssuranceForm_digest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_digest_input").send_keys(self.createHash())
         driver.find_element_by_id("AddAssuranceForm_email_input").clear()
@@ -104,6 +106,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
     def an_assurer_can_get_user_information_using_the_users_email(self, driver):
         driver.get(self.base_url  + "/static/login.html")
         driver.refresh()
+        self.switchToTab("assurer")
         driver.find_element_by_id("ByEmailForm_email_input").clear()
         driver.find_element_by_id("ByEmailForm_email_input").send_keys(self.email)
         driver.find_element_by_id("ByEmailForm_submitButton").click()
