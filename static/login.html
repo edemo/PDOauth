@@ -178,9 +178,7 @@
 			            <button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
 						<hr/>
 						<div class="formrow">
-							<button type="button">
-								<a id="ssl_login" href="javascript:pageScript.sslLogin()" style="text-decoration: none; color: black;">SSL Login</a>
-							</button>
+							<button type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL Login</button>
 							<div id="sslLoginDiv"></div>
 						</div>
 						<hr/>
@@ -349,9 +347,7 @@
 						<hr/>
 						<p>Adataim megjelenítése</p>
 						  	<div class="formrow">
-								<button type="button">
-									<a id="melink" style="text-decoration: none; color: black;" href="javascript:pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</a>
-								</button>
+								<button type="button" id="melink" href="pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</button>
 							</div>
 						<hr/>
 						<p>Titkos kód cseréje/hozzáadása</p>
