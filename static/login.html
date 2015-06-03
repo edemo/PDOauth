@@ -171,9 +171,9 @@
 				</div>
 	        	<ul class="tabs">
 			        <li>
-			          <input type="radio" checked name="tabs" id="tab1">
-			          <label for="tab1">Login</label>
-			          <div id="tab-content1" class="tab-content animated fadeIn">
+			          <input type="radio" checked name="tabs" id="login">
+			          <label for="login">Login</label>
+			          <div id="tab-content-login" class="tab-content animated fadeIn">
 						<p>Bejelentkezési lehetőségek</p>
 			            <button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
 						<hr/>
@@ -216,9 +216,9 @@
 			          </div>
 			        </li>
 					<li>
-			          <input type="radio" checked name="tabs" id="tab2">
-			          <label for="tab2">Regisztráció</label>
-			          <div id="tab-content1" class="tab-content animated fadeIn">
+			          <input type="radio" checked name="tabs" id="registration">
+			          <label for="registration">Regisztráció</label>
+			          <div id="tab-content-registration" class="tab-content animated fadeIn">
 						<p>Regisztrálási lehetőségek</p>
 						<button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
 						<hr/>
@@ -227,7 +227,7 @@
 								<div class="label" id="RegistrationForm_credentialType_label">
 									A hitelesítés típusa:
 								</div>
-								<select name="credentialType" type="text" id="RegistrationForm_credentialType_input">
+								<select name="credentialType" type="text" id="RegistrationForm_credentialType_input" style="visible: hidden;">
 									<option>jelszó</option>
 								</select>
 							</div>
@@ -291,9 +291,9 @@
 			          </div>
 			        </li>
 			        <li>
-			          <input type="radio" name="tabs" id="tab3">
-			          <label for="tab3">Ellenőröknek</label>
-			          <div id="tab-content2" class="tab-content animated fadeIn">
+			          <input type="radio" name="tabs" id="assurer">
+			          <label for="assurer">Ellenőröknek</label>
+			          <div id="tab-content-assurer" class="tab-content animated fadeIn">
 						<p>Felhasználó adatainak lekérdezése</p>
 						<form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
 							<div class="formrow">
@@ -341,9 +341,9 @@
 			          </div>
 			        </li>
 			        <li>
-			          <input type="radio" name="tabs" id="tab4">
-			          <label for="tab4">Fiókom</label>
-			          <div id="tab-content3" class="tab-content animated fadeIn">
+			          <input type="radio" name="tabs" id="account">
+			          <label for="account">Fiókom</label>
+			          <div id="tab-content-account" class="tab-content animated fadeIn">
 						<p>Kijelentkezés</p>
 						  	<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button>
 						<hr/>
@@ -393,6 +393,6 @@
 			        </li>
 			    </ul>
 	      	</div>
-			<div id="qunit-xml" class="message_container">qunit-xml: ide mi fog jönni?</div>
+			<div id="qunit-xml" class="message_container"></div>
 </body>
 </html>
