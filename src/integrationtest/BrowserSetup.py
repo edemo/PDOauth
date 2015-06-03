@@ -7,6 +7,12 @@ import logging
 
 class BrowserSetup(object):
 
+    def switchToTab(self,tab):
+        for i in ['login', 'registration', 'account', 'assurer']:
+            self.driver.execute_script("document.getElementById('tab-content-{0}').style.visibility = 'hidden'".format(i))
+            self.driver.execute_script("document.getElementById('tab-content-{0}').style.visibility = 'visible'".format(tab))
+
+
     def getDriver(self):
         if os.environ.get("WEBDRIVER", None) == "chrome":
             os.environ['PATH'] += ":/usr/lib/chromium-browser"

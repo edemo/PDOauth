@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta charset="UTF-8">
 <title>SSO test page</title>
 <script type='text/javascript' src="debug.js"></script>
 <script type='text/javascript' src="script.js"></script>
@@ -7,213 +8,390 @@
 <script type='text/javascript' src="qunit-1.18.0.js"></script>
 <script type='text/javascript' src="qunit-reporter-junit.js"></script>
 <link rel="stylesheet" href="qunit-1.18.0.css">
+<style type="text/css">
+	      body, html {
+	          height: 100%;
+	          margin: 0;
+	          -webkit-font-smoothing: antialiased;
+	          font-weight: 100;
+	      }
+	      
+	      .tabs input[type=radio] {
+	          position: absolute;
+	          top: -9999px;
+	          left: -9999px;
+	      }
+	      .tabs {
+	        width: 800px;
+	        float: none;
+	        list-style: none;
+	        position: relative;
+	        padding: 0;
+	        margin: 75px auto;
+	      }
+		  
+		  .message_container
+		  {
+	        width: 800px;
+	        float: none;
+	        list-style: none;
+	        position: relative;
+	        padding: 0;
+	        margin: 75px auto;
 
-</head>
+			margin-top: 5px;
+			margin-bottom: 5px;
+		  }
+		  
+		  .message_container table {
+		  border-width: 0px;
+		  }
+		  
+		  div.message_container td {
+		  border-width: 0px;
+		  padding: 5px;
+		  }
+		  
+		  .message_container table tr {
+		  background: rgba(253, 242, 217, 1);
+		  border-color: rgba(253, 242, 217, 1);
+		  padding 5px;
+		  }
+		  
+	      .tabs li{
+	        float: left;
+	      }
+		  
+	      .tabs label {
+	          display: block;
+	          padding: 10px 20px;
+	          border-radius: 2px 2px 0 0;
+	          color: #08C;
+	          font-size: 24px;
+	          font-weight: normal;
+	          font-family: 'Roboto', helveti;
+	          background: rgba(255,255,255,0.2);
+	          cursor: pointer;
+	          position: relative;
+	          top: 3px;
+	          -webkit-transition: all 0.2s ease-in-out;
+	          -moz-transition: all 0.2s ease-in-out;
+	          -o-transition: all 0.2s ease-in-out;
+	          transition: all 0.2s ease-in-out;
+	      }
+	      .tabs label:hover {
+	        background: rgba(255,255,255,0.5);
+	        top: 0;
+	      }
+	      
+	      [id^=tab]:checked + label {
+	        background: #08C;
+	        color: white;
+	        top: 0;
+	      }
+	      
+	      [id^=tab]:checked ~ [id^=tab-content] {
+	          display: block;
+			  visibility: visible;
+	      }
+	      .tab-content {
+	        z-index: 2;
+			visibility: hidden;
+<!--	        display: none; -->
+	        text-align: left;
+	        width: 100%;
+	        font-size: 20px;
+	        line-height: 140%;
+	        padding-top: 10px;
+	        background: #08C;
+	        padding: 15px;
+	        color: white;
+	        position: absolute;
+	        top: 53px;
+	        left: 0;
+	        box-sizing: border-box;
+	        -webkit-animation-duration: 0.5s;
+	        -o-animation-duration: 0.5s;
+	        -moz-animation-duration: 0.5s;
+	        animation-duration: 0.5s;
+	      }
+		  
+		  div.label {
+			color: yellow;
+			padding: 10px,0,10px,10px;
+			font-size: 20px;
+		  }
+	    </style></head>
 <body onload="pageScript.main()" >
 
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
-<!--script type='text/javascript' src="tests.js"></script--!>
-
-<table border="1" >
-	<tr>
-		<td>
+<!--script type='text/javascript' src="tests.js"></script-->
 			<button type="button" id="Unit_test_button" onclick="javascript:pageScript.unittest()">Run unit tests</button>
-  		</td><td>
-			<button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
-  		</td><td>
-			<button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
- 		</td>
- 	</tr>
-	<tr>
-		<td>  
-		  	<div class="formrow">
-		  	 <a id="melink" href="javascript:pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Me</a>
-		  	</div>
-		  	<div class="formrow">
-		  	 <a id="ssl_login" href="javascript:pageScript.sslLogin()">SSL Login</a>
-		  	 <div id="sslLoginDiv"></div>
-		  	</div>
-  		</td><td>
-  			<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button> 
-  		</td><td>
-			<div id="status">
-			</div>
-			<div id="errorMsg"></div>
-			<div id="message"></div>
-			<div id="userdata"></div>
-		</td>
-	<tr>
-		<td>
-
-		  <form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
-		  		<input name="secret" type="text" id="PasswordResetForm_secret_input"/>
-		  	<div class="formrow">
-		  		<div class="label" id="PasswordResetForm_password_label">
-		  			New password:
-		  		</div>
-		  		<input name="password" type="password" id="PasswordResetForm_password_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  	 <input type="submit" value="Reset Password" id="PasswordResetForm_submitButton">
-		  	</div>
-		  </form>
-		 
-		</td><td>  
-	
-		  <form id="keygenform" method="post" action="/keygen">
-			  	<div class="formrow">
-			  		<div class="label" id="KeygenForm_pubkey_label">
-			  			key length:
-			  		</div>
-					<keygen name="pubkey" challenge="123456789" keytype="RSA">
+			<div class="main">
+				<div class="message_container"> <!-- Output container -->
+					<table width="100%" >
+						<tr>
+							<td>
+								<p>Státusz</p>
+							</td>
+							<td>
+								<div id="status">
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Hibaüzenet</p>
+							</td>
+							<td>
+								<div id="errorMsg">
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Üzenet</p>
+							</td>
+							<td>
+								<div id="message">
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Felhasználói adatok</p>
+							</td>
+							<td>
+								<div id="userdata">
+								</div>
+							</td>
+						</tr>
+					</table>
 				</div>
-			  	<div class="formrow">
-			  		<div class="label" id="KeygenForm_email_label">
-			  			email:
-			  		</div>
-			  	</div>
-			   	<input name="email" type="text" id="KeygenForm_email_input"/>
-			  	<div class="formrow">
-			   		<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true">Create User<br>
-			  	</div>
-			   	</div>
-			  	<div class="formrow">
-			   		<input id="KeygenForm_submit" type="submit" name="createcert" value="Generate Certificate">
-			   	</div>
-		  </form>
-		</td><td> 
-		  <form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
-		  	<div class="formrow">
-		  		<div class="label" id="LoginForm_username_label">
-		  			username:
-		  		</div>
-		  		<input name="username" type="text" id="LoginForm_username_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="LoginForm_password_label">
-		  			password:
-		  		</div>
-		  		<input name="username" type="password" id="LoginForm_password_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  	 <input type="submit" value="Login" id="LoginForm_submitButton">
-		  	</div>
-		  </form>
-		</td></tr><tr><td>
-		  <form id="RegistrationForm" action="javascript:pageScript.register()" method="post" name="register">
-		  	<div class="formrow">
-		  		<div class="label" id="RegistrationForm_credentialType_label">
-		  			credentialType:
-		  		</div>
-		  		<select name="credentialType" type="text" id="RegistrationForm_credentialType_input">
-		  			<option>password</option>
-		  		</select>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="RegistrationForm_identifier_label">
-		  			identifier:
-		  		</div>
-		  		<input name="identifier" type="text" id="RegistrationForm_identifier_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="RegistrationForm_email_label">
-		  			email:
-		  		</div>
-		  		<input name="email" type="text" id="RegistrationForm_email_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="RegistrationForm_predigest_label">
-		  			personal id:
-		  		</div>
-		  		<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
-		  	 	<button type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Generate Hash</button>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="RegistrationForm_digest_label">
-		  			digest:
-		  		</div>
-		  		<input name="email" type="text" id="RegistrationForm_digest_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="RegistrationForm_secret_label">
-		  			secret:
-		  		</div>
-		  		<input name="secret" type="password" id="RegistrationForm_secret_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  	 <input type="submit" value="Register" id="RegistrationForm_submitButton">
-		  	</div>
-		  </form>
-		</td><td>  
-		  <form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
-		  	<div class="formrow">
-		  		<div class="label" id="ByEmailForm_email_label">
-		  			email:
-		  		</div>
-		  		<input name="email" type="text" id="ByEmailForm_email_input"/>
-		  	<div class="formrow">
-		  	 <input type="submit" value="Show" id="ByEmailForm_submitButton">
-		  	</div>
-		  	</div>
-		  </form>
-		</td><td>
-		  <form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
-		  	<div class="formrow">
-		  		<div class="label" id="AddAssuranceForm_predigest_label">
-		  			personal id:
-		  		</div>
-		  		<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
-		  	 	<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Generate Hash</button>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="AddAssuranceForm_digest_label">
-		  			digest:
-		  		</div>
-		  		<input name="digest" type="text" id="AddAssuranceForm_digest_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="AddAssuranceForm_assurance_label">
-		  			assurance:
-		  		</div>
-		  		<input name="assurance" type="text" id="AddAssuranceForm_assurance_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="AddAssuranceForm_email_label">
-		  			email:
-		  		</div>
-		  		<input name="email" type="text" id="AddAssuranceForm_email_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  	 <input type="submit" value="Add Assurance" id="AddAssuranceForm_submitButton">
-		  	</div>
-		  </form>
-		</td>
-	</tr></tr>
-		<td>
-		  <form id="ChangeHashForm" action="javascript:pageScript.changeHash()" method="post" name="addAssurance">
-		  	<div class="formrow">
-		  		<div class="label" id="ChangeHashForm_predigest_label">
-		  			personal id:
-		  		</div>
-		  		<input name="digest" type="text" id="ChangeHashForm_predigest_input"></input>
-		  	 	<button type="button" id="ChangeHashForm_getDigestButton" onclick="pageScript.digestGetter('ChangeHashForm').getDigest()">Generate Hash</button>
-		  	</div>
-		  	<div class="formrow">
-		  		<div class="label" id="ChangeHashForm_digest_label">
-		  			digest:
-		  		</div>
-		  		<input name="digest" type="text" id="ChangeHashForm_digest_input"/>
-		  	</div>
-		  	<div class="formrow">
-		  	 <input type="submit" value="Add/Change hash" id="ChangeHashForm_submitButton">
-		  	</div>
-		  </form>
-		</td>
-		<td></td>
-		<td></td>
-	</tr>
-</table>
-  <div id="qunit-xml"></div>
+	        	<ul class="tabs">
+			        <li>
+			          <input type="radio" checked name="tabs" id="tab-login">
+			          <label for="tab-login">Login</label>
+			          <div id="tab-content-login" class="tab-content animated fadeIn">
+						<p>Bejelentkezési lehetőségek</p>
+			            <button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
+						<hr/>
+						<div class="formrow">
+							<button type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL Login</button>
+							<div id="sslLoginDiv"></div>
+						</div>
+						<hr/>
+						<div>
+							<form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
+								<table>
+									<tr>
+										<td width="30%">
+											<div class="formrow">
+												<div class="label" id="LoginForm_username_label">
+													Felhasználó név:
+												</div>
+												<input name="username" type="text" id="LoginForm_username_input"/>
+											</div>
+										</td>
+										<td width="30%">
+											<div class="formrow">
+												<div class="label" id="LoginForm_password_label">
+													Jelszó:
+												</div>
+												<input name="username" type="password" id="LoginForm_password_input"/>
+											</div>
+										</td>
+										<td>
+											<div class="formrow">
+												<input type="submit" value="Login" id="LoginForm_submitButton">
+											</div>
+										</td>
+									</tr>
+								</table>
+							</form>
+						</div>
+			          </div>
+			        </li>
+					<li>
+			          <input type="radio" checked name="tabs" id="tab-registration">
+			          <label for="tab-registration">Regisztráció</label>
+			          <div id="tab-content-registration" class="tab-content animated fadeIn">
+						<p>Regisztrálási lehetőségek</p>
+						<button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
+						<hr/>
+						<form id="RegistrationForm" action="javascript:pageScript.register()" method="post" name="register">
+							<div class="formrow">
+								<div class="label" id="RegistrationForm_credentialType_label" style="visibility: hidden;">
+									A hitelesítés típusa:
+								</div>
+								<select name="credentialType" type="text" id="RegistrationForm_credentialType_input" style="visibility: hidden;" value="password">
+									<option selected="selected">password</option>
+								</select>
+							</div>
+							<div class="formrow">
+								<div class="label" id="RegistrationForm_identifier_label">
+									* felhasználónév:
+								</div>
+								<input name="identifier" type="text" id="RegistrationForm_identifier_input"/>
+							</div>
+							<div class="formrow">
+								<div class="label" id="RegistrationForm_email_label">
+									* e-mail cím:
+								</div>
+								<input name="email" type="text" id="RegistrationForm_email_input"/>
+							</div>
+							<div class="formrow">
+								<div class="label" id="RegistrationForm_predigest_label">
+									személyi szám:
+								</div>
+								<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
+								<button type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Generate Hash</button>
+							</div>
+							<div class="formrow">
+								<div class="label" id="RegistrationForm_digest_label">
+									titkos kód:
+								</div>
+								<input name="email" type="text" id="RegistrationForm_digest_input"/>
+							</div>
+							<div class="formrow">
+								<div class="label" id="RegistrationForm_secret_label">
+									jelszó:
+								</div>
+								<input name="secret" type="password" id="RegistrationForm_secret_input"/>
+							</div>
+							<div class="formrow">
+								<input type="submit" value="Register" id="RegistrationForm_submitButton">
+							</div>
+						</form>
+						<hr/>
+						<p>Regisztráció böngészőben tárolt SSL jogosítvánnyal</p>
+						<form id="keygenform" method="post" action="/keygen">
+							<div class="formrow">
+								<div class="label" id="KeygenForm_pubkey_label">
+									a kulcs mérete:
+								</div>
+								<keygen name="pubkey" challenge="123456789" keytype="RSA">
+							</div>
+							<div class="formrow">
+								<div class="label" id="KeygenForm_email_label">
+									e-mail cím:
+								</div>
+							</div>
+							<input name="email" type="text" id="KeygenForm_email_input"/>
+							<div class="formrow">
+								<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true">Create User<br>
+							</div>
+							<div class="formrow">
+								<input id="KeygenForm_submit" type="submit" name="createcert" value="Jogosítvány előállítása">
+							</div>
+						</form>
+			          </div>
+			        </li>
+			        <li>
+			          <input type="radio" name="tabs" id="tab-assurer">
+			          <label for="tab-assurer">Ellenőröknek</label>
+			          <div id="tab-content-assurer" class="tab-content animated fadeIn">
+						<p>Felhasználó adatainak lekérdezése</p>
+						<form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
+							<div class="formrow">
+								<div class="label" id="ByEmailForm_email_label">
+									e-mail cím:
+								</div>
+								<input name="email" type="text" id="ByEmailForm_email_input"/>
+								<div class="formrow">
+									<input type="submit" value="Mutasd" id="ByEmailForm_submitButton"></input>
+								</div>
+							</div>
+						</form>
+						<hr/>
+						<p>Felhasználó ellenőrzése</p>
+						<form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_predigest_label">
+									személyi szám:
+								</div>
+								<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
+								<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Titkos kód generálása</button>
+							</div>
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_digest_label">
+									titkós kód:
+								</div>
+								<input name="digest" type="text" id="AddAssuranceForm_digest_input"/>
+							</div>
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_assurance_label">
+									ellenőrzési szint:
+								</div>
+								<input name="assurance" type="text" id="AddAssuranceForm_assurance_input"/>
+							</div>
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_email_label">
+									e-mail cím:
+								</div>
+								<input name="email" type="text" id="AddAssuranceForm_email_input"/>
+							</div>
+							<div class="formrow">
+								<input type="submit" value="Add Assurance" id="AddAssuranceForm_submitButton">
+							</div>
+						</form>
+			          </div>
+			        </li>
+			        <li>
+			          <input type="radio" name="tabs" id="tab-account">
+			          <label for="tab-account">Fiókom</label>
+			          <div id="tab-content-account" class="tab-content animated fadeIn">
+						<p>Kijelentkezés</p>
+						  	<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button>
+						<hr/>
+						<p>Adataim megjelenítése</p>
+						  	<div class="formrow">
+								<button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</button>
+							</div>
+						<hr/>
+						<p>Titkos kód cseréje/hozzáadása</p>
+						A személyi számot nem tárolja a rendszer. Egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza
+						<p>Figyelmeztetés! A hash megváltoztatásával az összes eddigi validálási információ elvész.</p>
+						<form id="ChangeHashForm" action="javascript:pageScript.changeHash()" method="post" name="addAssurance">
+							<div class="formrow">
+								<div class="label" id="ChangeHashForm_predigest_label">
+								személyi szám:
+								</div>
+								<input name="digest" type="text" id="ChangeHashForm_predigest_input"></input>
+								<button type="button" id="ChangeHashForm_getDigestButton" onclick="pageScript.digestGetter('ChangeHashForm').getDigest()">Titkos kód előállítása</button>
+							</div>
+							<div class="formrow">
+								<div class="label" id="ChangeHashForm_digest_label">
+								titkos kód:
+								</div>
+								<input name="digest" type="text" id="ChangeHashForm_digest_input"/>
+							</div>
+							<div class="formrow">
+								<input type="submit" value="Mehet" id="ChangeHashForm_submitButton"></input>
+							</div>
+						</form>
+						<hr/>
+						<p>Jelszó csere</p>
+						<form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
+							<div class="label" id="PasswordResetForm_secret_input_label">
+								A kapott e-mailből jövő titok:
+							</div>
+							<input name="secret" type="text" id="PasswordResetForm_secret_input" disabled/>
+							<div class="formrow">
+								<div class="label" id="PasswordResetForm_password_label">
+								Új jelszó:
+								</div>
+								<input name="password" type="password" id="PasswordResetForm_password_input"/>
+							</div>
+							<div class="formrow">
+								<input type="submit" value="Mehet" id="PasswordResetForm_submitButton">
+							</div>
+						</form>
+			          </div>
+			        </li>
+			    </ul>
+	      	</div>
+			<div id="qunit-xml" class="message_container"></div>
 </body>
 </html>
