@@ -171,8 +171,8 @@
 				</div>
 	        	<ul class="tabs">
 			        <li>
-			          <input type="radio" checked name="tabs" id="login">
-			          <label for="login">Login</label>
+			          <input type="radio" checked name="tabs" id="tab-login">
+			          <label for="tab-login">Login</label>
 			          <div id="tab-content-login" class="tab-content animated fadeIn">
 						<p>Bejelentkezési lehetőségek</p>
 			            <button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
@@ -216,8 +216,8 @@
 			          </div>
 			        </li>
 					<li>
-			          <input type="radio" checked name="tabs" id="registration">
-			          <label for="registration">Regisztráció</label>
+			          <input type="radio" checked name="tabs" id="tab-registration">
+			          <label for="tab-registration">Regisztráció</label>
 			          <div id="tab-content-registration" class="tab-content animated fadeIn">
 						<p>Regisztrálási lehetőségek</p>
 						<button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
@@ -291,8 +291,8 @@
 			          </div>
 			        </li>
 			        <li>
-			          <input type="radio" name="tabs" id="assurer">
-			          <label for="assurer">Ellenőröknek</label>
+			          <input type="radio" name="tabs" id="tab-assurer">
+			          <label for="tab-assurer">Ellenőröknek</label>
 			          <div id="tab-content-assurer" class="tab-content animated fadeIn">
 						<p>Felhasználó adatainak lekérdezése</p>
 						<form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
@@ -341,8 +341,8 @@
 			          </div>
 			        </li>
 			        <li>
-			          <input type="radio" name="tabs" id="account">
-			          <label for="account">Fiókom</label>
+			          <input type="radio" name="tabs" id="tab-account">
+			          <label for="tab-account">Fiókom</label>
 			          <div id="tab-content-account" class="tab-content animated fadeIn">
 						<p>Kijelentkezés</p>
 						  	<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button>
@@ -378,7 +378,10 @@
 						<hr/>
 						<p>Jelszó csere</p>
 						<form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
-							<input name="secret" type="text" id="PasswordResetForm_secret_input"/>
+							<div class="label" id="PasswordResetForm_secret_input_label">
+								A kapott e-mailből jövő titok:
+							</div>
+							<input name="secret" type="text" id="PasswordResetForm_secret_input" disabled/>
 							<div class="formrow">
 								<div class="label" id="PasswordResetForm_password_label">
 								Új jelszó:
