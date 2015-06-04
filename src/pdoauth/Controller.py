@@ -255,6 +255,9 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
     @FlaskInterface.formValidated(RegistrationForm)
     @FlaskInterface.exceptionChecked
     def do_registration(self, form):
+        return self._do_registration(form)
+
+    def _do_registration(self, form):
         additionalInfo = {}
         digest = form.digest.data
         if digest == '':
@@ -274,7 +277,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         self.sendPasswordVerificationEmail(user)
         user.set_authenticated()
         user.activate()
-        r = login_user(user)
+        r = self.loginUserInFramework(user)
         if r:
             return self.returnUserAndLoginCookie(user, additionalInfo)
     

@@ -42,30 +42,18 @@ class RegistrationTest(Fixture, UserTesting):
     @test
     def you_can_register_without_hash(self):
         with app.test_client() as c:
-            email = "{0}@example.com".format(self.randString)
-            self.registered_email = email
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
+            data = self.prepareData()
+            data.pop('digest')
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertUserResponse(resp)
 
     @test
     def if_you_register_without_hash_it_will_be_null(self):
         with app.test_client() as c:
-            email = "{0}@example.com".format(self.randString)
-            self.registered_email = email
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
+            data = self.prepareData()
+            data.pop('digest')
             c.post(config.base_url + '/v1/register', data=data)
-            user = User.getByEmail(email)
+            user = User.getByEmail(self.registered_email)
             self.assertEqual(user.hash, None)
 
     @test
@@ -108,51 +96,35 @@ class RegistrationTest(Fixture, UserTesting):
     @test
     def registration_is_impossible_without_email(self):
         with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-            }
+            data = self.prepareData()
+            data.pop('email')
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertEquals(self.getResponseText(resp),'{"errors": ["email: Invalid email address."]}')
 
     @test
     def password_registration_needs_good_password(self):
-        email = "k0-{0}@example.com".format(self.randString)
+        data = self.prepareData()
+        data['secret'] = '1234'
         with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"1234",
-                'email': email,
-            }
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["secret: '))
 
     @test
     def registration_should_give_a_credential_type(self):
-        email = "k0-{0}@example.com".format(self.randString)
+        data = self.prepareData()
+        data.pop('credentialType')
         with app.test_client() as c:
-            data = {
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["credentialType: '))
 
     @test
     def registration_should_give_an_identifier(self):
-        email = "k0-{0}@example.com".format(self.randString)
+        data = self.prepareData()
+        data.pop('identifier')
         with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             text = self.getResponseText(resp)
@@ -160,15 +132,8 @@ class RegistrationTest(Fixture, UserTesting):
 
     @test
     def password_registration_is_impossible_with_already_used_username(self):
-        self.setupRandom()
-        email = "k0-{0}@example.com".format(self.randString)
+        data = self.prepareData()
         with app.test_client() as c:
-            data = {
-                'identifier': "id_{0}".format(self.randString), 
-                'credentialType':'password', 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 200)
             data['email'] = "k1-{0}@example.com".format(self.randString)
@@ -183,14 +148,9 @@ class RegistrationTest(Fixture, UserTesting):
         self.setupRandom()
         theHash = self.createHash()
         anotherUser.hash = theHash
+        data = self.prepareData()
+        data['digest'] = theHash
         with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': "email{0}@example.com".format(self.randString),
-                'digest': theHash
-            }
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEqual(200, resp.status_code)
             text = self.getResponseText(resp)
@@ -203,14 +163,9 @@ class RegistrationTest(Fixture, UserTesting):
         self.setupRandom()
         theHash = self.createHash()
         anotherUser.hash = theHash
+        data = self.prepareData()
+        data['digest'] = theHash
         with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': "email{0}@example.com".format(self.randString),
-                'digest': theHash
-            }
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEqual(400, resp.status_code)
             text = self.getResponseText(resp)
@@ -223,14 +178,9 @@ class RegistrationTest(Fixture, UserTesting):
         self.setupRandom()
         theHash = self.createHash()
         anotherUser.hash = theHash
+        data = self.prepareData()
+        data['digest'] = theHash
         with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': "email{0}@example.com".format(self.randString),
-                'digest': theHash
-            }
             resp = c.post(config.base_url + '/v1/register', data=data)
             self.assertEqual(200, resp.status_code)
             text = self.getResponseText(resp)

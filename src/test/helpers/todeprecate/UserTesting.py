@@ -46,18 +46,21 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
             self.login(c)
             return self.getCode(c)
 
+
+    def prepareData(self, email=None):
+        if email is None:
+            email = "{0}@example.com".format(self.randString)
+        self.registered_email = email
+        self.registered_password = "password_{0}".format(self.mkRandomPassword())
+        data = {'credentialType':'password', 
+            'identifier':"id_{0}".format(self.randString), 
+            'secret':self.registered_password, 
+            'email':email, 
+            'digest':self.createHash()}
+        return data
+
     def register(self, c, email = None):
         with mail.record_messages() as outbox:
-            if email is None:
-                email = "{0}@example.com".format(self.randString)
-            self.registered_email = email
-            self.registered_password = "password_{0}".format(self.mkRandomPassword())
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret': self.registered_password,
-                'email': email, 
-                'digest': self.createHash()
-            }
+            data = self.prepareData(email)
             resp = c.post(config.base_url + '/v1/register', data=data)
             return resp, outbox

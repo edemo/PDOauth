@@ -7,8 +7,6 @@ from pdoauth.app import app, logging
 from pdoauth.ReportedError import ReportedError
 from flask.globals import session, request
 from flask_login import login_user, current_user
-import pdb
-import traceback
 
 class Responses(object):
 
@@ -52,7 +50,31 @@ class Responses(object):
     def make_response(self, ret, status):
         return flask.make_response(ret, status)
 
-class FlaskInterface(Responses):
+class Decorators(object):
+    @classmethod
+    def formValidated(cls, formClass, status=400):
+        def decorator(func):
+            def validated(*args,**kwargs):
+                form = formClass()
+                kwargs['form']=form
+                if form.validate_on_submit():
+                    return func(*args, **kwargs)
+                return cls.form_validation_error_response(form, status)
+            return validated
+        return decorator
+
+    @classmethod
+    def exceptionChecked(cls,func):
+        def _f(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except ReportedError as e:
+                resp = cls.errorReport(e)
+                return resp      
+        return _f
+
+
+class FlaskInterface(Responses, Decorators):
     
     def getHeader(self, header):
         return request.headers.get(header)
@@ -102,33 +124,11 @@ class FlaskInterface(Responses):
         return decorator
 
     @classmethod
-    def formValidated(cls, formClass, status=400):
-        def decorator(func):
-            def validated(*args,**kwargs):
-                form = formClass()
-                kwargs['form']=form
-                if form.validate_on_submit():
-                    return func(*args, **kwargs)
-                return cls.form_validation_error_response(form, status)
-            return validated
-        return decorator
-
-    @classmethod
     def errorReport(cls, e):
         logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))
         resp = cls.error_response(e.descriptor, e.status)
         resp.headers['Access-Control-Allow-Origin'] = app.config.get('BASE_URL')
         return resp
-
-    @classmethod
-    def exceptionChecked(cls,func):
-        def _f(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except ReportedError as e:
-                resp = cls.errorReport(e)
-                return resp      
-        return _f
 
     def getSession(self):
         return session
