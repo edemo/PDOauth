@@ -7,7 +7,7 @@ from pdoauth.models.Credential import Credential
 from pdoauth.forms import credErr
 from pdoauth.models.Assurance import Assurance
 from test.helpers.CSRFMixin import CSRFMixin
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class DeregisterTest(Fixture, UserTesting, CSRFMixin):
 

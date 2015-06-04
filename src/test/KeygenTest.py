@@ -3,7 +3,7 @@ from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from OpenSSL import crypto
 from pdoauth.models.User import User
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 spkac = """MIICSTCCATEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDt66ujL7Qi
 gKPRoJzI7cdMFgxoNE7u5aKhAMLC7EE9Npn7Ig1Y6G5NIfjdWZy+Ryrw3/HdYRsS

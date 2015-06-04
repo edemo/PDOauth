@@ -2,7 +2,7 @@ from pdoauth.app import mail, app
 import flask
 from pdoauth.models.User import User
 from pdoauth.CredentialManager import CredentialManager
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, logout_user
 from flask.globals import request, session
 from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.models.Credential import Credential
@@ -32,7 +32,8 @@ passwordResetCredentialType = 'email_for_password_reset'
 class UserOrBearerAuthentication(object):
 
     def authenticateUserOrBearer(self, userid):
-        authHeader = request.headers.get('Authorization')
+        authHeader = self.getHeader('Authorization')
+        current_user = self.getCurrentUser()
         if current_user.is_authenticated():
             if userid == 'me':
                 return current_user
@@ -176,9 +177,10 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         spkacInput = form.pubkey.data
         certObj = self.createCertFromSPKAC(spkacInput, email, email)
         cert = certObj.as_pem()
-        if current_user.is_authenticated():
+        user = self.getCurrentUser()
+        if user.is_authenticated():
             identifier, digest = self.parseCert(cert)
-            Credential.new(current_user, "certificate", identifier, digest)
+            Credential.new(user, "certificate", identifier, digest)
         else:
             if form.createUser.data:
                 cred = self.registerCertUser(cert, [email])
@@ -274,7 +276,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
     def do_change_password(self):
         form = PasswordChangeForm()
         if form.validate_on_submit():
-            user = current_user
+            user = self.getCurrentUser()
             cred = Credential.getByUser(user, 'password')
             oldSecret = CredentialManager.protect_secret(form.oldPassword.data)
             if cred.secret != oldSecret:
@@ -287,7 +289,10 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
     
     @FlaskInterface.exceptionChecked
     def do_get_by_email(self, email):
-        assurances = Assurance.getByUser(current_user)
+        return self._do_get_by_email(email)
+
+    def _do_get_by_email(self, email):
+        assurances = Assurance.getByUser(self.getCurrentUser())
         if assurances.has_key('assurer'):
             user = User.getByEmail(email)
             if user is None:
@@ -325,7 +330,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         return users[0]
 
     def assureUserHaveTheGivingAssurancesFor(self, neededAssurance):
-        assurances = Assurance.getByUser(current_user)
+        assurances = Assurance.getByUser(self.getCurrentUser())
         assurerAssurance = "assurer.{0}".format(neededAssurance)
         if not (assurances.has_key('assurer') and assurances.has_key(assurerAssurance)):
             raise ReportedError(["no authorization"], 403)
@@ -336,13 +341,16 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         neededAssurance = form.assurance.data
         self.assureUserHaveTheGivingAssurancesFor(neededAssurance)
         user = self.getUserForEmailAndOrHash(form.digest.data, form.email.data)                  
-        Assurance.new(user, neededAssurance, current_user)
+        Assurance.new(user, neededAssurance, self.getCurrentUser())
         return self.simple_response("added assurance {0} for {1}".format(neededAssurance, user.email))
     
-    @FlaskInterface.exceptionChecked
-    def do_show_user(self, userid):
+    def _do_show_user(self, userid):
         authuser = self.authenticateUserOrBearer(userid)
         return self.as_dict(authuser)
+
+    @FlaskInterface.exceptionChecked
+    def do_show_user(self, userid):
+        return self. _do_show_user(userid)
     
     def checkEmailverifyCredential(self, cred):
         if cred is None:
@@ -404,11 +412,12 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
     @FlaskInterface.formValidated(CredentialForm)
     @FlaskInterface.exceptionChecked
     def do_add_credential(self, form):
-        Credential.new(current_user,
+        user = self.getCurrentUser()
+        Credential.new(user,
             form.credentialType.data,
             form.identifier.data,
             form.secret.data)
-        return self.as_dict(current_user)
+        return self.as_dict(user)
     
     def deleteHandAssuredAssurances(self, assurances):
         for assurance in assurances:
@@ -421,9 +430,10 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         digest = form.digest.data
         if digest == '':
             digest = None
-        current_user.hash = digest
-        current_user.save()
-        assurances = Assurance.listByUser(current_user)
+        user = self.getCurrentUser()
+        user.hash = digest
+        user.save()
+        assurances = Assurance.listByUser(user)
         self.deleteHandAssuredAssurances(assurances)
         return self.simple_response('new hash registered')
 

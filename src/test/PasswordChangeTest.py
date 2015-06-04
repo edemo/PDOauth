@@ -4,10 +4,9 @@ from pdoauth.models.Credential import Credential
 from pdoauth.CredentialManager import CredentialManager
 import config
 from test.helpers.CSRFMixin import CSRFMixin
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
-
 
     def _preparePasswordChangeTest(self, c):
         resp = self.login(c)

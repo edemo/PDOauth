@@ -4,7 +4,7 @@ from pdoauth.app import app
 from pdoauth.models.Application import Application
 import config
 from test.helpers.ServerSide import ServerSide
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class ServerSideTest(Fixture, UserTesting, ServerSide):
 

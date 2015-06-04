@@ -1,10 +1,10 @@
 import unittest, time
 import config
 from twatson.unittest_annotations import Fixture, test
-from test.helpers.CSRFMixin import UserTesting
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 from integrationtest.BrowserSetup import BrowserSetup
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
@@ -77,7 +77,6 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         body = driver.find_element_by_id("message").text
         self.assertEqual("", body)
         body = driver.find_element_by_id("userdata").text
-        print body
         self.assertTrue("email: mag+tesztelek@magwas.rulez.org"in body)
         Credential.getByUser(self.user, "facebook").rm()
         self.user.rm()

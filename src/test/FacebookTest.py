@@ -1,17 +1,15 @@
 from pdoauth.Controller import Controller
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.Credential import Credential
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.ReportedError import ReportedError
 from test.helpers.FakeInterFace import FakeInterface, FakeForm
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
+from test.helpers.PDUnitTest import PDUnitTest, test
 
+class FacebookTest(PDUnitTest, UserTesting):
 
-class FacebookTest(Fixture, UserTesting):
     def setUp(self):
-        Controller.unsetInterface(FlaskInterface)
-        Controller.setInterface(FakeInterface)
-        self.controller = Controller.getInstance()
+        self.setUpController()
         self.user = self.createUserWithCredentials(credType="facebook")
         self.user.activate()
         self.controller.facebook_id = self.usercreation_userid
@@ -23,9 +21,9 @@ class FacebookTest(Fixture, UserTesting):
         }
         self.request_data = FakeForm(data)
 
+
     def tearDown(self):
-        Controller.unsetInterface(FakeInterface)        
-        Controller.setInterface(FlaskInterface)        
+        self.tearDownController()        
     @test
     def facebook_login_needs_facebook_id_and_access_token(self):
         resp = self.controller.do_login(self.request_data)

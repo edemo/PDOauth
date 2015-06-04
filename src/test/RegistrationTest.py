@@ -6,7 +6,7 @@ from pdoauth.models.Assurance import Assurance, emailVerification
 import time
 from pdoauth.models.User import User
 import re
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class RegistrationTest(Fixture, UserTesting):
 

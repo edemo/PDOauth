@@ -5,8 +5,8 @@ import urllib3
 import flask
 from pdoauth.app import app, logging
 from pdoauth.ReportedError import ReportedError
-from flask.globals import session
-from flask_login import login_user
+from flask.globals import session, request
+from flask_login import login_user, current_user
 import pdb
 import traceback
 
@@ -52,8 +52,14 @@ class Responses(object):
     def make_response(self, ret, status):
         return flask.make_response(ret, status)
 
-
 class FlaskInterface(Responses):
+    
+    def getHeader(self, header):
+        return request.headers.get(header)
+
+    def getCurrentUser(self):
+        return current_user
+
     def validate_on_submit(self,form):
         return form.validate_on_submit()
 

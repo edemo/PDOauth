@@ -1,11 +1,12 @@
 import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
-from test.helpers.CSRFMixin import UserTesting
 from pdoauth.app import app
 from pdoauth.models.User import User
 from integrationtest.BrowserSetup import BrowserSetup
 import time
+from test.helpers.todeprecate.UserTesting import UserTesting
+import pdb
 
 class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
 
@@ -21,13 +22,11 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self.driver.find_element_by_id("KeygenForm_email_input").send_keys(self.usercreation_email)
         self.driver.find_element_by_id("KeygenForm_createuser_input").click()
         self.driver.find_element_by_id("KeygenForm_submit").click()
-        print self.driver.find_element_by_css_selector("BODY").text
+        time.sleep(1)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
-        print self.driver.find_element_by_css_selector("BODY").text
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
         body = self.driver.find_element_by_css_selector("BODY").text
-        print body
         self.assertTrue('{"credentialType": "certificate", "identifier": ' in body)
         self.assertTrue('/{0}"}}'.format(self.usercreation_email) in
             body)

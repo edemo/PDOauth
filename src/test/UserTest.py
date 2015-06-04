@@ -2,9 +2,9 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.User import User, AlreadyExistingUser
 from pdoauth.CredentialManager import CredentialManager
-from test.helpers.UserTesting import UserTesting
+from test.helpers.UserUtil import UserUtil
 
-class UserTest(Fixture, UserTesting):
+class UserTest(Fixture, UserUtil):
 
     def setUp(self):
         self.User_can_be_created()

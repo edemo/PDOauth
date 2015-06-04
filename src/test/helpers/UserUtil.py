@@ -10,6 +10,14 @@ class UserUtil(ResponseInfo, RandomUtil):
         self.assertTrue(user)
         return user
     
+    def createLoggedInUser(self):
+        self.setupRandom()
+        user = self.createUserWithCredentials()
+        user.activate()
+        user.authenticated = True
+        self.controller._testdata.current_user = user
+        return user
+    
     def deleteUser(self, user):
         for cred in Credential.getByUser(user):
             cred.rm()

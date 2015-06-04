@@ -18,21 +18,31 @@ class FakeResponse(object):
         self.status_code = status
         self.status = status
         self.data = message
+        self.response = [message]
         self.cookies = {}
     
     def set_cookie(self,name,value):
         self.cookies[name] = value
 
+class TestData(object):
+    def __init__(self):
+        self.headers = dict()
+
 class FakeInterface(FlaskInterface):
+    _testdata = TestData()
+    
+    def getHeader(self, header):
+        return self._testdata.headers.get(header)
+
+    def getCurrentUser(self):
+        user = self._testdata.current_user
+        return user
 
     def __init__(self):
         self.headers = dict()
 
     def getRequestHeader(self, header):
         return self.headers.get(header)
-
-    def getCurrentUser(self):
-        return self.current_user
 
     def validate_on_submit(self,form):
         for k in self.request_data.keys():

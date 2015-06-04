@@ -5,7 +5,8 @@ from pdoauth.models.User import User
 from pdoauth.models.Assurance import Assurance, emailVerification
 import time
 from test.helpers.CSRFMixin import CSRFMixin
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
+
 
 class HashTest(Fixture, UserTesting, CSRFMixin):
 

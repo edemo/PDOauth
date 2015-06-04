@@ -8,7 +8,7 @@ from pdoauth.models.Assurance import Assurance, emailVerification
 from flask_login import logout_user
 import config
 import time
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 app.extensions["mail"].suppress = True
 

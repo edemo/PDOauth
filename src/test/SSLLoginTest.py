@@ -2,7 +2,7 @@ from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from urllib import urlencode
-from test.helpers.UserTesting import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class SSLLoginTest(Fixture, UserTesting):
 
