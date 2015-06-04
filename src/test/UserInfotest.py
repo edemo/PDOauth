@@ -82,7 +82,7 @@ class UserInfoTest(PDUnitTest, UserTesting):
         target = User.getByEmail(self.usercreation_email)
         with self.assertRaises(ReportedError) as e:
             self.controller._do_show_user(target.id)
-            self.assertTrue(e.status,403)
+        self.assertTrue(e.exception.status,403)
 
     @test
     def users_with_assurer_assurance_can_get_user_by_email(self):
@@ -103,7 +103,7 @@ class UserInfoTest(PDUnitTest, UserTesting):
         target = User.getByEmail(self.usercreation_email)
         with self.assertRaises(ReportedError) as e:
             self.controller._do_get_by_email('u'+target.email)
-            self.assertTrue(e.status,404)
+        self.assertTrue(e.exception.status,404)
 
     @test
     def users_without_assurer_assurance_cannot_get_user_by_email(self):
@@ -112,7 +112,7 @@ class UserInfoTest(PDUnitTest, UserTesting):
         target = User.getByEmail(self.usercreation_email)
         with self.assertRaises(ReportedError) as e:
             self.controller._do_get_by_email(target.email)
-            self.assertTrue(e.status,403)
+        self.assertTrue(e.exception.status,403)
 
     @test
     def users_without_login_cannot_get_user_by_email(self):
@@ -121,11 +121,4 @@ class UserInfoTest(PDUnitTest, UserTesting):
         target = User.getByEmail(self.usercreation_email)
         with self.assertRaises(ReportedError) as e:
             self.controller._do_get_by_email(target.email)
-            baseUrl = Config.BASE_URL
-            url = '/v1/user_by_email/{0}'.format(target.email)
-            self.assertEquals(e.status,302)
-            targetUri = "{0}?{1}".format(
-                Config.START_URL,
-                urlencode({"next": baseUrl+url})
-                )
-            self.assertEquals(e.headers['Location'],targetUri)
+        self.assertEquals(e.exception.status,403)
