@@ -1,7 +1,6 @@
 from pdoauth.app import mail, app
 import flask
 from pdoauth.models.User import User
-from pdoauth.forms.LoginForm import LoginForm
 from pdoauth.CredentialManager import CredentialManager
 from flask_login import login_user, current_user, logout_user
 from flask.globals import request, session
@@ -15,18 +14,17 @@ from pdoauth.forms.AssuranceForm import AssuranceForm
 from flask import json
 from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
 from pdoauth.forms.PasswordResetForm import PasswordResetForm
-from pdoauth.forms import formValidated
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterForm import DeregisterForm
 from OpenSSL import crypto
 import urlparse
-from pdoauth.forms.KeygenForm import KeygenForm
 from pyspkac.spkac import SPKAC
 from M2Crypto import EVP, X509
-from pdoauth.FlaskInterface import Responses, ReportedError, FlaskInterface
-import traceback
+from pdoauth.FlaskInterface import FlaskInterface
+from pdoauth.ReportedError import ReportedError
+from pdoauth.forms.KeygenForm import KeygenForm
 
 anotherUserUsingYourHash = "another user is using your hash"
 passwordResetCredentialType = 'email_for_password_reset'
@@ -171,7 +169,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         if form.credentialType.data == 'facebook':
             return self.facebookLogin(form)
 
-    @formValidated(KeygenForm)
+    @FlaskInterface.formValidated(KeygenForm)
     @FlaskInterface.exceptionChecked
     def do_keygen(self, form):
         email = form.email.data
@@ -218,7 +216,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         resp.headers['Access-Control-Allow-Origin']="*"
         return resp
 
-    @formValidated(DeregisterForm, 400)
+    @FlaskInterface.formValidated(DeregisterForm, 400)
     @FlaskInterface.exceptionChecked
     def do_deregister(self,form):
         if not self.isLoginCredentials(form):
@@ -246,7 +244,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
                     return True        
         return False
 
-    @formValidated(RegistrationForm)
+    @FlaskInterface.formValidated(RegistrationForm)
     @FlaskInterface.exceptionChecked
     def do_registration(self, form):
         additionalInfo = {}
@@ -332,7 +330,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         if not (assurances.has_key('assurer') and assurances.has_key(assurerAssurance)):
             raise ReportedError(["no authorization"], 403)
 
-    @formValidated(AssuranceForm)
+    @FlaskInterface.formValidated(AssuranceForm)
     @FlaskInterface.exceptionChecked
     def do_add_assurance(self, form):
         neededAssurance = form.assurance.data
@@ -377,7 +375,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         self.sendPasswordResetMail(user, secret, expirationTime)
         return self.simple_response("Password reset email has successfully sent.")
     
-    @formValidated(PasswordResetForm)
+    @FlaskInterface.formValidated(PasswordResetForm)
     @FlaskInterface.exceptionChecked
     def do_password_reset(self, form):
         cred = Credential.get(passwordResetCredentialType, form.secret.data)
@@ -392,7 +390,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
     def isLoginCredentials(self, form):
         return session['logincred']['credentialType'] == form.credentialType.data and session['logincred']['identifier'] == form.identifier.data
 
-    @formValidated(CredentialIdentifierForm)
+    @FlaskInterface.formValidated(CredentialIdentifierForm)
     @FlaskInterface.exceptionChecked
     def do_remove_credential(self, form):
         if self.isLoginCredentials(form):
@@ -403,7 +401,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         cred.rm()
         return self.simple_response('credential removed')
 
-    @formValidated(CredentialForm)
+    @FlaskInterface.formValidated(CredentialForm)
     @FlaskInterface.exceptionChecked
     def do_add_credential(self, form):
         Credential.new(current_user,
@@ -417,7 +415,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
             if assurance.name != emailVerification:
                 assurance.rm()
 
-    @formValidated(DigestUpdateForm)
+    @FlaskInterface.formValidated(DigestUpdateForm)
     @FlaskInterface.exceptionChecked
     def do_update_hash(self,form):
         digest = form.digest.data

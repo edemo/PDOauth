@@ -7,6 +7,8 @@ from pdoauth.app import app, logging
 from pdoauth.ReportedError import ReportedError
 from flask.globals import session
 from flask_login import login_user
+import pdb
+import traceback
 
 class Responses(object):
 
@@ -49,7 +51,7 @@ class Responses(object):
     @classmethod
     def make_response(self, ret, status):
         return flask.make_response(ret, status)
-    
+
 
 class FlaskInterface(Responses):
     def validate_on_submit(self,form):
@@ -62,24 +64,6 @@ class FlaskInterface(Responses):
         http = urllib3.PoolManager()
         resp = http.request('GET', "https://graph.facebook.com/v2.2/me", args)
         return resp
-
-    @classmethod
-    def errorReport(cls, e):
-        logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))
-        resp = cls.error_response(e.descriptor, e.status)
-        resp.headers['Access-Control-Allow-Origin'] = app.config.get('BASE_URL')
-        return resp
-
-    @classmethod
-    def formValidated(formClass, status=400):
-        def decorator(func):
-            def validated(self):
-                form = formClass()
-                if self.validate_on_submit(form):
-                    return func(self, form)
-                return self.form_validation_error_response(form, status)
-            return validated
-        return decorator
 
     @classmethod
     def interfaceFunc(cls, rule, formClass=None, status=400, **options):
@@ -101,23 +85,33 @@ class FlaskInterface(Responses):
         return decorator
 
     @classmethod
+    def formValidated(cls, formClass, status=400):
+        def decorator(func):
+            def validated(*args,**kwargs):
+                form = formClass()
+                kwargs['form']=form
+                if form.validate_on_submit():
+                    return func(*args, **kwargs)
+                return cls.form_validation_error_response(form, status)
+            return validated
+        return decorator
+
+    @classmethod
+    def errorReport(cls, e):
+        logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))
+        resp = cls.error_response(e.descriptor, e.status)
+        resp.headers['Access-Control-Allow-Origin'] = app.config.get('BASE_URL')
+        return resp
+
+    @classmethod
     def exceptionChecked(cls,func):
-        def f(*args, **kwargs):
+        def _f(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
             except ReportedError as e:
                 resp = cls.errorReport(e)
                 return resp      
-        return f
-
-    @classmethod
-    def _make_response(self, descriptor,status=200):
-        ret = json.dumps(descriptor)
-        return self.make_response(ret, status)
-    
-    @classmethod
-    def error_response(self,descriptor, status=400):
-        return self._make_response(dict(errors=descriptor), status)
+        return _f
 
     def getSession(self):
         return session
