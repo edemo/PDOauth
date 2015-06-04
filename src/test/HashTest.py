@@ -1,10 +1,11 @@
 from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting, CSRFMixin
 from pdoauth.app import app
 import config
 from pdoauth.models.User import User
 from pdoauth.models.Assurance import Assurance, emailVerification
 import time
+from test.helpers.CSRFMixin import CSRFMixin
+from test.helpers.UserTesting import UserTesting
 
 class HashTest(Fixture, UserTesting, CSRFMixin):
 

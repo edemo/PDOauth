@@ -1,5 +1,5 @@
 import unittest, time
-from test.TestUtil import UserTesting
+from test.helpers.CSRFMixin import UserTesting
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
 from twatson.unittest_annotations import Fixture, test

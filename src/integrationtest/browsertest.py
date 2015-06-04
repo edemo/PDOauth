@@ -3,7 +3,7 @@ import config
 from twatson.unittest_annotations import Fixture, test
 import re
 import os
-from test.TestUtil import UserTesting
+from test.helpers.CSRFMixin import UserTesting
 from integrationtest.BrowserSetup import BrowserSetup
 
 class JavaScriptUnitTest(Fixture, UserTesting, BrowserSetup):

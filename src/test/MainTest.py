@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
-from test.TestUtil import UserTesting
 import config
+from test.helpers.UserTesting import UserTesting
 
 class MainTest(Fixture, UserTesting):
 

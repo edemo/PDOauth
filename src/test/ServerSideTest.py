@@ -2,8 +2,9 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.Application import Application
-from test.TestUtil import ServerSide, UserTesting
 import config
+from test.helpers.ServerSide import ServerSide
+from test.helpers.UserTesting import UserTesting
 
 class ServerSideTest(Fixture, UserTesting, ServerSide):
 

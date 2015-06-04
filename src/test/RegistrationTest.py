@@ -1,5 +1,4 @@
 from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting
 from pdoauth.app import app
 from flask_login import logout_user
 import config
@@ -7,6 +6,7 @@ from pdoauth.models.Assurance import Assurance, emailVerification
 import time
 from pdoauth.models.User import User
 import re
+from test.helpers.UserTesting import UserTesting
 
 class RegistrationTest(Fixture, UserTesting):
 

@@ -2,11 +2,12 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.User import User
-from test.TestUtil import UserTesting, CSRFMixin
 from pdoauth.models.Assurance import Assurance
 from uuid import uuid4
 from flask_login import current_user
 import config
+from test.helpers.CSRFMixin import CSRFMixin
+from test.helpers.UserTesting import UserTesting
 
 class AssuranceTest(Fixture, CSRFMixin, UserTesting):
 

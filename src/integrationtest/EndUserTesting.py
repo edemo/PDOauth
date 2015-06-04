@@ -1,4 +1,4 @@
-from test.TestUtil import UserTesting
+from test.helpers.CSRFMixin import UserTesting
 
 class EndUserTesting(UserTesting):
     def fillInAndSubmitRegistrationForm(self, driver, email=None, userid=None, password=None, digest=None):

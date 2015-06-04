@@ -3,9 +3,10 @@ from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.main import unauthorized, load_user
 from urllib import urlencode
-from test.TestUtil import UserTesting
+from test.helpers.UserTesting import UserTesting
 
-class AuthTest(Fixture,UserTesting):
+
+class AuthTest(Fixture, UserTesting):
     @test
     def unauthorized_response_is_redirecting_to_START_URL(self):
         "more specifically to START_URL?next={request.url}"

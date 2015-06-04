@@ -1,9 +1,10 @@
 from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting, CSRFMixin
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.CredentialManager import CredentialManager
 import config
+from test.helpers.CSRFMixin import CSRFMixin
+from test.helpers.UserTesting import UserTesting
 
 class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
 

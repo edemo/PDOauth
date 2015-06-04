@@ -2,7 +2,7 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.User import User, AlreadyExistingUser
 from pdoauth.CredentialManager import CredentialManager
-from test.TestUtil import UserTesting
+from test.helpers.UserTesting import UserTesting
 
 class UserTest(Fixture, UserTesting):
 

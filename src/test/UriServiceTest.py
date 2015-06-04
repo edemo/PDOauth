@@ -1,8 +1,10 @@
-from test.TestUtil import UserTesting
+
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
+from pdoauth import main  # @UnusedImport
+from test.helpers.ResponseInfo import ResponseInfo
 
-class UriServiceTest(Fixture, UserTesting):
+class UriServiceTest(Fixture, ResponseInfo):
 
     def _checkUri(self, c, checkedUri):
         resp = c.get("/uris")

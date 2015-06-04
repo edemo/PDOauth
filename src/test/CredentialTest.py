@@ -1,4 +1,4 @@
-from test.TestUtil import UserTesting
+
 from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
@@ -7,6 +7,7 @@ from Crypto.Hash.SHA256 import SHA256Hash
 from pdoauth.models.User import User
 from pdoauth.forms import credErr
 from pdoauth.ReportedError import ReportedError
+from test.helpers.UserTesting import UserTesting
 
 class CredentialTest(Fixture, UserTesting):
     def setUp(self):

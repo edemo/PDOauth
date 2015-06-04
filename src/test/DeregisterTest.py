@@ -1,4 +1,4 @@
-from test.TestUtil import UserTesting, CSRFMixin
+
 from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
@@ -6,6 +6,8 @@ from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
 from pdoauth.forms import credErr
 from pdoauth.models.Assurance import Assurance
+from test.helpers.CSRFMixin import CSRFMixin
+from test.helpers.UserTesting import UserTesting
 
 class DeregisterTest(Fixture, UserTesting, CSRFMixin):
 

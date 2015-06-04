@@ -1,7 +1,8 @@
-from test.TestUtil import UserTesting
+
 from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
+from test.helpers.UserTesting import UserTesting
 
 class LogoutTest(Fixture, UserTesting):
 

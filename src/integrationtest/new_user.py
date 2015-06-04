@@ -2,7 +2,7 @@ import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.Application import Application
-from test.TestUtil import UserTesting
+from test.helpers.CSRFMixin import UserTesting
 import time
 from urllib import urlencode
 from pdoauth.models.User import User

@@ -2,12 +2,12 @@
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.User import User
-from test.TestUtil import UserTesting
 from flask_login import current_user
 from pdoauth.models.Assurance import Assurance
 import time
 import config
 from urllib import urlencode
+from test.helpers.UserTesting import UserTesting
 
 class UserInfoTest(Fixture, UserTesting):
 

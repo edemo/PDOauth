@@ -1,7 +1,7 @@
 import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting
+from test.helpers.CSRFMixin import UserTesting
 from pdoauth.app import app
 from pdoauth.models.User import User
 from integrationtest.BrowserSetup import BrowserSetup
