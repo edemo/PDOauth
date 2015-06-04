@@ -61,29 +61,29 @@ class SSLLoginTest(PDUnitTest, UserTesting):
         identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
         with self.assertRaises(ReportedError) as e:
             self._sslLoginWithCert(cert)
-            self.assertEquals(e.status, 403)
-            self.assertEqual('{"errors": ["You have to register first"]}', e.message)
+        self.assertEquals(e.exception.status, 403)
+        self.assertEqual(["You have to register first"], e.exception.descriptor)
 
     @test
     def you_cannot_login_without_a_cert(self):
         with self.assertRaises(ReportedError) as e:
             self.controller._do_ssl_login()
-            self.assertEquals(e.status, 403)
-            self.assertEqual('{"errors": ["No certificate given"]}', e.message)
+        self.assertEquals(e.exception.status, 403)
+        self.assertEqual(["No certificate given"], e.exception.descriptor)
 
     @test
     def empty_certstring_gives_error(self):
         with self.assertRaises(ReportedError) as e:
             self._sslLoginWithCert('')
-            self.assertEquals(e.status, 403)
-            self.assertEqual('{"errors": ["No certificate given"]}', e.message)
+        self.assertEquals(e.exception.status, 403)
+        self.assertEqual(["No certificate given"], e.exception.descriptor)
 
     @test
     def junk_certstring_gives_error(self):
         with self.assertRaises(ReportedError) as e:
             self._sslLoginWithCert('junk')
-            self.assertEquals(e.status, 400)
-            self.assertEqual('{"errors": ["error in cert", "junk"]}', e.message)
+        self.assertEquals(e.exception.status, 400)
+        self.assertEqual(["error in cert", "junk"], e.exception.descriptor)
 
     @test
     def ssl_login_is_cors_enabled(self):
@@ -115,5 +115,5 @@ class SSLLoginTest(PDUnitTest, UserTesting):
     def you_cannot_ssl_login_without_a_cert(self):
         with self.assertRaises(ReportedError) as e:
             self.controller._do_ssl_login()
-            self.assertEquals(e.status, 403)
-            self.assertEqual('{"errors": ["No certificate given"]}', e.message)
+            self.assertEquals(e.exception.status, 403)
+            self.assertEqual('{"errors": ["No certificate given"]}', e.exception.descriptor)

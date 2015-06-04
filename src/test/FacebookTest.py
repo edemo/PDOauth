@@ -1,8 +1,7 @@
-from pdoauth.Controller import Controller
 from pdoauth.models.Credential import Credential
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.ReportedError import ReportedError
-from test.helpers.FakeInterFace import FakeInterface, FakeForm
+from test.helpers.FakeInterFace import FakeForm
 from test.helpers.todeprecate.UserTesting import UserTesting
 from test.helpers.PDUnitTest import PDUnitTest, test
 
@@ -35,16 +34,16 @@ class FacebookTest(PDUnitTest, UserTesting):
         self.request_data.set('identifier','badid')
         with self.assertRaises(ReportedError) as e:
             self.controller.do_login(self.request_data)
-            self.assertEqual(e.status, 403)
-            self.assertEqual(e.message,"bad facebook id")
+        self.assertEqual(e.exception.status, 403)
+        self.assertEqual(e.exception.descriptor,["bad facebook id"])
 
     @test
     def facebook_login_needs_correct_access_token_as_password(self):
         self.request_data.set('secret',self.mkRandomPassword())
         with self.assertRaises(ReportedError) as e:
             self.controller.do_login(self.request_data)
-            self.assertEqual(e.status, 403)
-            self.assertEqual(e.message, "Carnnot login to facebook")
+        self.assertEqual(e.exception.status, 403)
+        self.assertEqual(e.exception.descriptor, ["Cannot login to facebook"])
 
     @test
     def facebook_login_needs_facebook_credentials_as_registered(self):
@@ -52,8 +51,8 @@ class FacebookTest(PDUnitTest, UserTesting):
         cred.rm()
         with self.assertRaises(ReportedError) as e:
             self.controller.do_login(self.request_data)
-            self.assertEqual(e.status, 403)
-            self.assertEqual(e.message,"You have to register first")
+        self.assertEqual(e.exception.status, 403)
+        self.assertEqual(e.exception.descriptor,["You have to register first"])
 
     @test
     def facebookMe_reaches_facebook(self):

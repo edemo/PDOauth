@@ -3,7 +3,6 @@ import os
 from pydoctor import model
 from xml.dom.minidom import getDOMImplementation
 from sourcecodegen.generation import generate_code
-from compiler.ast import CallFunc
 
 class MyWriter(TemplateWriter):
     

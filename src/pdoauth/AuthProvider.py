@@ -1,12 +1,8 @@
 
 from pyoauth2_shift.provider import AuthorizationProvider
 from pdoauth.models.Application import Application
-from flask.globals import request
 from pdoauth.models.KeyData import KeyData
-from flask_login import current_user
-import flask
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.Controller import Interfaced
 
 class ScopeMustBeEmpty(Exception):
