@@ -1,6 +1,9 @@
 env:
   global: 
-    secure: "AgFID7Zfh65cwfqveYJXUT8q7xcBDA6+gNCmV90ihmvips5Uxrb7aGHQYVxPPGQy1pbv2fMnxWHjj5HR7gVp9W06HhN6kTqseGYABPWk0Tmyd0rNdDcvSMfXx9yy4jc+f2tqdmMcNOhdJ+feBaFq7uZOkqlTndkdD8m1XBMZUVs="
+    - NSS_DEFAULT_DB_TYPE="sql"
+    - I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
+    - secure: "AgFID7Zfh65cwfqveYJXUT8q7xcBDA6+gNCmV90ihmvips5Uxrb7aGHQYVxPPGQy1pbv2fMnxWHjj5HR7gVp9W06HhN6kTqseGYABPWk0Tmyd0rNdDcvSMfXx9yy4jc+f2tqdmMcNOhdJ+feBaFq7uZOkqlTndkdD8m1XBMZUVs="
+    - secure: "bhDgjMQP4ybYNwIIlhYZbMQj21jo2N3bKbmPZix9CXN8frniLkRs7RsoxMcB15yFSmSka3F6c4jkGDfGBw5gZQz6JFJRpHGUleJKb9WgxMXxc+eUkfAArDXh5Su0pxN71AisWgf+DtGcFmnxFUh4atte1rEkPzDcdTHr5qvgrGY="
 before_install:
 - ./tools/setupdoc
 - export DISPLAY=:99.0
