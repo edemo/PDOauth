@@ -140,8 +140,9 @@ class CryptoUtils(object):
             cn)
         return identifier, digest
 
-class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthentication):
-
+class Dummy(object):
+    pass
+class Interfaced(FlaskInterface, Dummy):
     @classmethod
     def setInterface(cls, interface):
         bases = set(cls.__bases__)
@@ -162,6 +163,8 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
             instance = cls()
             cls.instance = instance
         return instance
+
+class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthentication):
     
     def do_login(self,form):
         self.getSession()['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)

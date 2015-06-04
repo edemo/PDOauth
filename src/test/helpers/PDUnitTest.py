@@ -1,5 +1,5 @@
 from twatson.unittest_annotations import Fixture, test  # @UnusedImport
-from pdoauth.Controller import Controller
+from pdoauth.Controller import Controller, Interfaced
 from pdoauth.FlaskInterface import FlaskInterface
 from test.helpers.FakeInterFace import FakeInterface, FakeMailer, TestData
 
@@ -10,15 +10,14 @@ class PDUnitTest(Fixture):
         self.tearDownController()
 
     def setUpController(self):
-        Controller.unsetInterface(FlaskInterface)
-        Controller.setInterface(FakeInterface)
+        Interfaced.unsetInterface(FlaskInterface)
+        Interfaced.setInterface(FakeInterface)
         FakeInterface._testdata = TestData()
         self.controller = Controller.getInstance()
-        self.oldmail = self.controller.mail
+        self.oldmail = getattr(self.controller,"mail", None)
         self.controller.mail = FakeMailer()
 
     def tearDownController(self):
-        Controller.unsetInterface(FakeInterface)
-        Controller.setInterface(FlaskInterface)
+        Interfaced.unsetInterface(FakeInterface)
+        Interfaced.setInterface(FlaskInterface)
         self.controller.mail = self.oldmail
-

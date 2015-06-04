@@ -44,6 +44,11 @@ class FakeInterface(FlaskInterface):
     def getEnvironmentVariable(self, variableName):
         return self._testdata.environ.get(variableName, None)
 
+    @classmethod
+    def getRequestForm(self):
+        return self._testdata.postdata
+
+    @classmethod
     def getRequestUrl(self):
         return self._testdata.request_url
     
@@ -75,6 +80,7 @@ class FakeInterface(FlaskInterface):
         self._testdata.current_user = user
         return user
 
+    @classmethod
     def make_response(self, ret, status):
         r = FakeResponse(status, ret)
         return r

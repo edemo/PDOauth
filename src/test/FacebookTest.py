@@ -9,7 +9,7 @@ from test.helpers.PDUnitTest import PDUnitTest, test
 class FacebookTest(PDUnitTest, UserTesting):
 
     def setUp(self):
-        self.setUpController()
+        PDUnitTest.setUp(self)
         self.user = self.createUserWithCredentials(credType="facebook")
         self.user.activate()
         self.controller.facebook_id = self.usercreation_userid
@@ -23,7 +23,8 @@ class FacebookTest(PDUnitTest, UserTesting):
 
 
     def tearDown(self):
-        self.tearDownController()        
+        PDUnitTest.tearDown(self)
+
     @test
     def facebook_login_needs_facebook_id_and_access_token(self):
         resp = self.controller.do_login(self.request_data)
@@ -56,12 +57,8 @@ class FacebookTest(PDUnitTest, UserTesting):
 
     @test
     def facebookMe_reaches_facebook(self):
-        Controller.unsetInterface(FakeInterface)
-        Controller.setInterface(FlaskInterface)
-        resp = self.controller._facebookMe("code")
+        resp = FlaskInterface()._facebookMe("code")
         self.assertEqual(400, resp.status)
         self.assertTrue(resp.headers.has_key('x-fb-rev'))
         self.assertEqual('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}', resp.data)
-        Controller.unsetInterface(FlaskInterface)
-        Controller.setInterface(FakeInterface)
         

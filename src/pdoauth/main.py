@@ -10,8 +10,6 @@ from urllib import urlencode
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.forms.LoginForm import LoginForm
 
-Controller.setInterface(FlaskInterface)
-
 controller = Controller.getInstance()
 controller.mail = mail
 

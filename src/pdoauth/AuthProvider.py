@@ -6,6 +6,8 @@ from pdoauth.models.KeyData import KeyData
 from flask_login import current_user
 import flask
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
+from pdoauth.FlaskInterface import FlaskInterface
+from pdoauth.Controller import Interfaced
 
 class ScopeMustBeEmpty(Exception):
     pass
@@ -13,7 +15,7 @@ class ScopeMustBeEmpty(Exception):
 class DiscardingNonexistingToken(Exception):
     pass
 
-class AuthProvider(AuthorizationProvider):
+class AuthProvider(AuthorizationProvider,Interfaced):
 
     def validate_client_id(self,client_id):
         if client_id is None:
@@ -39,7 +41,7 @@ class AuthProvider(AuthorizationProvider):
         return scope == ""
     
     def validate_access(self):
-        return current_user.is_authenticated()
+        return self.getCurrentUser().is_authenticated()
 
     def persist_token_information(self, client_id, scope, access_token, token_type, expires_in, refresh_token, data):
         keydata = KeyData.new(client_id, data.user_id, access_token, refresh_token)
@@ -58,7 +60,7 @@ class AuthProvider(AuthorizationProvider):
         keyData.rm()
         
     def persist_authorization_code(self, client_id, code, scope):
-        keyData = KeyData(client_id=client_id, authorization_code = code, user_id=current_user.userid)
+        keyData = KeyData(client_id=client_id, authorization_code = code, user_id=self.getCurrentUser().userid)
         keyData.save()
 
     def from_authorization_code(self, client_id, code, scope):
@@ -68,21 +70,22 @@ class AuthProvider(AuthorizationProvider):
         keydata = self.from_authorization_code(client_id, code, '')
         keydata.rm()
         
-    @staticmethod
-    def auth_interface():
+    @classmethod
+    def auth_interface(cls):
         provider = AuthProvider()
-        response = provider.get_authorization_code_from_uri(request.url)
-        flask_res = flask.make_response(response.text, response.status_code)
+        response = provider.get_authorization_code_from_uri(cls.getRequestUrl())
+        flask_res = cls.make_response(response.text, response.status_code)
         for k, v in response.headers.iteritems():
             flask_res.headers[k] = v
         return flask_res
 
-    @staticmethod
-    def token_interface():
+    @classmethod
+    def token_interface(cls):
         provider = AuthProvider()
-        data = {k:request.form[k] for k in request.form.iterkeys()}
+        requestForm = cls.getRequestForm()
+        data = {k:requestForm[k] for k in requestForm.iterkeys()}
         response = provider.get_token_from_post_data(data)
-        flask_res = flask.make_response(response.text, response.status_code)
+        flask_res = cls.make_response(response.text, response.status_code)
         for k, v in response.headers.iteritems():
             flask_res.headers[k] = v
         

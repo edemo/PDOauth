@@ -63,6 +63,11 @@ class FlaskInterface(Responses):
     def getEnvironmentVariable(self, variableName):
         return request.environ.get(variableName, None)
 
+    @classmethod
+    def getRequestForm(self):
+        return request.form
+
+    @classmethod
     def getRequestUrl(self):
         return request.url
 
