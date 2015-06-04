@@ -1,171 +1,29 @@
-from pdoauth.app import app
-import flask
 from pdoauth.models.User import User
-from pdoauth.CredentialManager import CredentialManager
-from flask_login import login_user, logout_user
-from flask.globals import session
-from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.models.Credential import Credential
-from uuid import uuid4
-import time
-from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from pdoauth.models.Assurance import Assurance, emailVerification
+from pdoauth.CredentialManager import CredentialManager
+from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.forms.AssuranceForm import AssuranceForm
-from flask import json
 from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
 from pdoauth.forms.PasswordResetForm import PasswordResetForm
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterForm import DeregisterForm
-from OpenSSL import crypto
-import urlparse
-from pyspkac.spkac import SPKAC
-from M2Crypto import EVP, X509
-from pdoauth.FlaskInterface import FlaskInterface
+from uuid import uuid4
+import time
+from flask import json
 from pdoauth.ReportedError import ReportedError
-from pdoauth.forms.KeygenForm import KeygenForm
+from pdoauth.Interfaced import Interfaced
+from pdoauth.Decorators import Decorators
+from pdoauth.EmailHandling import EmailHandling
+from pdoauth.LoginHandling import LoginHandling
+from pdoauth.CertificateHandling import CertificateHandling
 
 anotherUserUsingYourHash = "another user is using your hash"
 passwordResetCredentialType = 'email_for_password_reset'
+class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling):
 
-class UserOrBearerAuthentication(object):
-
-    def authenticateUserOrBearer(self, userid):
-        authHeader = self.getHeader('Authorization')
-        current_user = self.getCurrentUser()
-        if current_user.is_authenticated():
-            if userid == 'me':
-                return current_user
-            if Assurance.getByUser(current_user).has_key('assurer'):
-                return User.get(userid)
-        if authHeader:
-            token = authHeader.split(" ")[1]
-            data = TokenInfoByAccessKey.find(token)
-            targetuserid = data.tokeninfo.user_id
-            authuser = User.get(targetuserid)
-            if authuser.id == userid or userid == 'me':
-                return authuser
-        raise ReportedError(["no authorization"], status=403)
-
-class EmailHandling(object):
-
-    def sendPasswordVerificationEmail(self, user):
-        secret=unicode(uuid4())
-        expiry = time.time() + 60*60*24*4
-        Credential.new(user, 'emailcheck', unicode(expiry), secret )
-        timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
-        uri = "{0}/v1/verify_email/{1}".format(app.config.get('BASE_URL'),secret)
-        text = """Hi, click on <a href="{0}">{0}</a> until {1} to verify your email""".format(uri, timeText)
-        self.mail.send_message(subject="verification", body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
-    
-    def sendPasswordResetMail(self, user, secret, expiry):
-        timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
-        serverName = app.config.get('SERVER_NAME')
-        uri = "{0}?secret={1}".format(app.config.get("PASSWORD_RESET_FORM_URL"), secret, user.email)
-        text = """Hi, click on <a href="{0}">{0}</a> until {1} to reset your password""".format(uri, timeText)
-        subject = "Password Reset for {0}".format(serverName)
-        self.mail.send_message(subject=subject, body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
-
-class LoginHandling(object):
-
-    def loginUser(self, user):
-        user.set_authenticated()
-        r = self.loginUserInFramework(user)
-        return r
-
-    def returnUserAndLoginCookie(self, user, additionalInfo=None):
-        if additionalInfo is None:
-            additionalInfo={}
-        resp = self.as_dict(user, **additionalInfo)
-        token = unicode(uuid4())
-        self.getSession()['csrf_token'] = token
-        resp.set_cookie("csrf", token)
-        return resp
-
-    def finishLogin(self, user):
-        r = self.loginUser(user)
-        if r:
-            return self.returnUserAndLoginCookie(user)
-        raise ReportedError(["Inactive or disabled user"], status=403)
-
-    def passwordLogin(self, form):
-        user = CredentialManager.validate_from_form(form)
-        if user is None:
-            raise ReportedError(["Bad username or password"], status=403)
-        return self.finishLogin(user)
-
-    def checkIdAgainstFacebookMe(self, form):
-        code = form.secret.data
-        resp = self._facebookMe(code)
-        if 200 != resp.status:
-            raise ReportedError(["Cannot login to facebook"], 403)
-        data = json.loads(resp.data)
-        if data["id"] != form.identifier.data:
-            raise ReportedError(["bad facebook id"], 403)
-
-    def facebookLogin(self, form):
-        self.checkIdAgainstFacebookMe(form)
-        cred = Credential.get("facebook", form.identifier.data)
-        if cred is None:
-            raise ReportedError(["You have to register first"], 403)
-        return self.finishLogin(cred.user)
-
-class CryptoUtils(object):
-
-    def contentsOfFileNamedInConfig(self, confkey):
-        f = open(app.config.get(confkey))
-        ret = f.read()
-        f.close()
-        return ret
-
-    def createCertFromSPKAC(self, spkacInput, cn, email):
-        spkac = SPKAC(spkacInput, CN=cn, Email=email)
-        ca_crt = X509.load_cert_string(self.contentsOfFileNamedInConfig("CA_CERTIFICATE_FILE"))
-        ca_pkey = EVP.load_key_string(self.contentsOfFileNamedInConfig("CA_KEY_FILE"))
-        now = int(time.time())
-        serial = now
-        notAfter = now + 60 * 60 * 24 * 365 * 2
-        certObj = spkac.gen_crt(ca_pkey, ca_crt, serial, now, notAfter, 'sha1')
-        return certObj
-
-    def parseCert(self, cert):
-        try:
-            x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
-        except Exception:
-            raise ReportedError(["error in cert", cert],400)
-        digest = x509.digest('sha1')
-        cn = x509.get_subject().commonName.encode('raw_unicode_escape').decode('utf-8')
-        identifier = u"{0}/{1}".format(digest, 
-            cn)
-        return identifier, digest
-
-class Dummy(object):
-    pass
-class Interfaced(FlaskInterface, Dummy):
-    @classmethod
-    def setInterface(cls, interface):
-        bases = set(cls.__bases__)
-        bases.add(interface)
-        cls.__bases__ = tuple(bases)
-
-    @classmethod
-    def unsetInterface(cls, interface):
-        bases = list(cls.__bases__)
-        if interface in bases:
-            bases.remove(interface)
-        cls.__bases__ = tuple(bases)
-
-    @classmethod
-    def getInstance(cls):
-        instance = getattr(cls, "instance", None)
-        if instance is None:
-            instance = cls()
-            cls.instance = instance
-        return instance
-
-class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthentication):
-    
     def do_login(self,form):
         self.getSession()['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
         if form.credentialType.data == 'password':
@@ -173,59 +31,13 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         if form.credentialType.data == 'facebook':
             return self.facebookLogin(form)
 
-    @FlaskInterface.formValidated(KeygenForm)
-    @FlaskInterface.exceptionChecked
-    def do_keygen(self, form):
-        email = form.email.data
-        spkacInput = form.pubkey.data
-        certObj = self.createCertFromSPKAC(spkacInput, email, email)
-        cert = certObj.as_pem()
-        user = self.getCurrentUser()
-        if user.is_authenticated():
-            identifier, digest = self.parseCert(cert)
-            Credential.new(user, "certificate", identifier, digest)
-        else:
-            if form.createUser.data:
-                cred = self.registerCertUser(cert, [email])
-                self.loginUser(cred.user)
-        resp = flask.make_response(certObj.as_der(), 200)
-        resp.headers["Content-Type"] = "application/x-x509-user-cert"
-        return resp
+    @Decorators.exceptionChecked
+    def do_logout(self):
+        self.LogOut()
+        return self.simple_response('logged out')
 
-    def getEmailFromQueryParameters(self):
-        parsed = urlparse.urlparse(self.getRequestUrl())
-        email = urlparse.parse_qs(parsed.query).get('email', None)
-        return email
-
-    def registerCertUser(self, cert, email):
-        if cert is None or cert == '':
-            raise ReportedError(["No certificate given"], 403)
-        identifier, digest = self.parseCert(cert)
-        cred = Credential.get("certificate", identifier)
-        if cred is None:
-            if email is None:
-                raise ReportedError(["You have to register first"], 403)
-            theEmail = email[0]
-            CredentialManager.create_user_with_creds("certificate", identifier, digest, theEmail)
-            cred = Credential.get("certificate", identifier)
-            self.sendPasswordVerificationEmail(cred.user)
-        cred.user.activate()
-        return cred
-
-    @FlaskInterface.exceptionChecked
-    def do_ssl_login(self):
-        return self._do_ssl_login()
-
-    def _do_ssl_login(self):
-        cert = self.getEnvironmentVariable('SSL_CLIENT_CERT')
-        email = self.getEmailFromQueryParameters()
-        cred = self.registerCertUser(cert, email)
-        resp = self.finishLogin(cred.user)
-        resp.headers['Access-Control-Allow-Origin']="*"
-        return resp
-
-    @FlaskInterface.formValidated(DeregisterForm, 400)
-    @FlaskInterface.exceptionChecked
+    @Decorators.formValidated(DeregisterForm, 400)
+    @Decorators.exceptionChecked
     def do_deregister(self,form):
         if not self.isLoginCredentials(form):
             raise ReportedError(["You should use your login credentials to deregister"], 400)
@@ -240,11 +52,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         user.rm()
         return self.simple_response('deregistered')
 
-    @FlaskInterface.exceptionChecked
-    def do_logout(self):
-        logout_user()
-        return self.simple_response('logged out')
-
     def isAnyoneHandAssurredOf(self, anotherUsers):
         for anotherUser in anotherUsers:
             for assurance in Assurance.getByUser(anotherUser):
@@ -252,8 +59,8 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
                     return True        
         return False
 
-    @FlaskInterface.formValidated(RegistrationForm)
-    @FlaskInterface.exceptionChecked
+    @Decorators.formValidated(RegistrationForm)
+    @Decorators.exceptionChecked
     def do_registration(self, form):
         return self._do_registration(form)
 
@@ -281,7 +88,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         if r:
             return self.returnUserAndLoginCookie(user, additionalInfo)
     
-    @FlaskInterface.exceptionChecked
+    @Decorators.exceptionChecked
     def do_change_password(self):
         form = PasswordChangeForm()
         if form.validate_on_submit():
@@ -296,7 +103,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
             return self.simple_response('password changed succesfully')
         return self.form_validation_error_response(form)
     
-    @FlaskInterface.exceptionChecked
+    @Decorators.exceptionChecked
     def do_get_by_email(self, email):
         return self._do_get_by_email(email)
 
@@ -344,8 +151,8 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         if not (assurances.has_key('assurer') and assurances.has_key(assurerAssurance)):
             raise ReportedError(["no authorization"], 403)
 
-    @FlaskInterface.formValidated(AssuranceForm)
-    @FlaskInterface.exceptionChecked
+    @Decorators.formValidated(AssuranceForm)
+    @Decorators.exceptionChecked
     def do_add_assurance(self, form):
         neededAssurance = form.assurance.data
         self.assureUserHaveTheGivingAssurancesFor(neededAssurance)
@@ -353,11 +160,12 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         Assurance.new(user, neededAssurance, self.getCurrentUser())
         return self.simple_response("added assurance {0} for {1}".format(neededAssurance, user.email))
     
-    def _do_show_user(self, userid):
-        authuser = self.authenticateUserOrBearer(userid)
-        return self.as_dict(authuser)
+    @Decorators.authenticateUserOrBearer
+    def _do_show_user(self, authuser):
+        ret = self.as_dict(authuser)
+        return ret
 
-    @FlaskInterface.exceptionChecked
+    @Decorators.exceptionChecked
     def do_show_user(self, userid):
         return self. _do_show_user(userid)
     
@@ -371,7 +179,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         cred = Credential.getBySecret('emailcheck', token)
         return cred
 
-    @FlaskInterface.exceptionChecked
+    @Decorators.exceptionChecked
     def do_verify_email(self, token):
         cred = self.getCredentialForEmailverifyToken(token)
         self.checkEmailverifyCredential(cred)
@@ -380,7 +188,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         cred.rm()
         return self.simple_response("email verified OK")
     
-    @FlaskInterface.exceptionChecked
+    @Decorators.exceptionChecked
     def do_send_password_reset_email(self, email):
         user = User.getByEmail(email)
         if user is None:
@@ -392,8 +200,8 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         self.sendPasswordResetMail(user, secret, expirationTime)
         return self.simple_response("Password reset email has successfully sent.")
     
-    @FlaskInterface.formValidated(PasswordResetForm)
-    @FlaskInterface.exceptionChecked
+    @Decorators.formValidated(PasswordResetForm)
+    @Decorators.exceptionChecked
     def do_password_reset(self, form):
         cred = Credential.get(passwordResetCredentialType, form.secret.data)
         if cred is None or (float(cred.secret) < time.time()):
@@ -405,10 +213,11 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         return self.simple_response('Password successfully changed')
 
     def isLoginCredentials(self, form):
+        session = self.getSession()
         return session['logincred']['credentialType'] == form.credentialType.data and session['logincred']['identifier'] == form.identifier.data
 
-    @FlaskInterface.formValidated(CredentialIdentifierForm)
-    @FlaskInterface.exceptionChecked
+    @Decorators.formValidated(CredentialIdentifierForm)
+    @Decorators.exceptionChecked
     def do_remove_credential(self, form):
         if self.isLoginCredentials(form):
             raise ReportedError(["You cannot delete the login you are using"], 400)            
@@ -418,8 +227,8 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
         cred.rm()
         return self.simple_response('credential removed')
 
-    @FlaskInterface.formValidated(CredentialForm)
-    @FlaskInterface.exceptionChecked
+    @Decorators.formValidated(CredentialForm)
+    @Decorators.exceptionChecked
     def do_add_credential(self, form):
         user = self.getCurrentUser()
         Credential.new(user,
@@ -433,8 +242,8 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
             if assurance.name != emailVerification:
                 assurance.rm()
 
-    @FlaskInterface.formValidated(DigestUpdateForm)
-    @FlaskInterface.exceptionChecked
+    @Decorators.formValidated(DigestUpdateForm)
+    @Decorators.exceptionChecked
     def do_update_hash(self,form):
         digest = form.digest.data
         if digest == '':
@@ -448,11 +257,11 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
 
     def do_uris(self):
         data = dict(
-            BASE_URL = app.config.get('BASE_URL'),
-            START_URL = app.config.get('START_URL'),
-            PASSWORD_RESET_FORM_URL = app.config.get('PASSWORD_RESET_FORM_URL'),
-            SSL_LOGIN_BASE_URL = app.config.get('SSL_LOGIN_BASE_URL'),
-            SSL_LOGOUT_URL = app.config.get('SSL_LOGOUT_URL'),
+            BASE_URL = self.getConfig('BASE_URL'),
+            START_URL = self.getConfig('START_URL'),
+            PASSWORD_RESET_FORM_URL = self.getConfig('PASSWORD_RESET_FORM_URL'),
+            SSL_LOGIN_BASE_URL = self.getConfig('SSL_LOGIN_BASE_URL'),
+            SSL_LOGOUT_URL = self.getConfig('SSL_LOGOUT_URL'),
         )
         ret = json.dumps(data)
         return self.make_response(ret,200)

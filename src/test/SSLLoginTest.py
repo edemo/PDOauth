@@ -27,7 +27,7 @@ class SSLLoginTest(PDUnitTest, UserTesting):
 
     def _sslLoginWithCert(self, cert):
         self.controller._testdata.environ = dict(SSL_CLIENT_CERT=cert)
-        resp = self.controller._do_ssl_login()
+        resp = self.controller.do_ssl_login()
         return resp
 
     @test
@@ -59,31 +59,27 @@ class SSLLoginTest(PDUnitTest, UserTesting):
     @test
     def you_cannot_login_using_an_unregistered_ssl_cert_without_email(self):
         identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
-        with self.assertRaises(ReportedError) as e:
-            self._sslLoginWithCert(cert)
-        self.assertEquals(e.exception.status, 403)
-        self.assertEqual(["You have to register first"], e.exception.descriptor)
+        resp =  self._sslLoginWithCert(cert)
+        self.assertEquals(resp.status_code, 403)
+        self.assertEqual('{"errors": ["You have to register first"]}',self.getResponseText(resp))
 
     @test
     def you_cannot_login_without_a_cert(self):
-        with self.assertRaises(ReportedError) as e:
-            self.controller._do_ssl_login()
-        self.assertEquals(e.exception.status, 403)
-        self.assertEqual(["No certificate given"], e.exception.descriptor)
+        resp = self.controller.do_ssl_login()
+        self.assertEquals(resp.status_code, 403)
+        self.assertEqual('{"errors": ["No certificate given"]}',self.getResponseText(resp))
 
     @test
     def empty_certstring_gives_error(self):
-        with self.assertRaises(ReportedError) as e:
-            self._sslLoginWithCert('')
-        self.assertEquals(e.exception.status, 403)
-        self.assertEqual(["No certificate given"], e.exception.descriptor)
+        resp = self._sslLoginWithCert('')
+        self.assertEquals(resp.status_code, 403)
+        self.assertEqual('{"errors": ["No certificate given"]}', self.getResponseText(resp))
 
     @test
     def junk_certstring_gives_error(self):
-        with self.assertRaises(ReportedError) as e:
-            self._sslLoginWithCert('junk')
-        self.assertEquals(e.exception.status, 400)
-        self.assertEqual(["error in cert", "junk"], e.exception.descriptor)
+        resp = self._sslLoginWithCert('junk')
+        self.assertEquals(resp.status_code, 400)
+        self.assertEqual('{"errors": ["error in cert", "junk"]}',self.getResponseText(resp))
 
     @test
     def ssl_login_is_cors_enabled(self):
@@ -113,7 +109,6 @@ class SSLLoginTest(PDUnitTest, UserTesting):
 
     @test
     def you_cannot_ssl_login_without_a_cert(self):
-        with self.assertRaises(ReportedError) as e:
-            self.controller._do_ssl_login()
-            self.assertEquals(e.exception.status, 403)
-            self.assertEqual('{"errors": ["No certificate given"]}', e.exception.descriptor)
+        resp = self.controller.do_ssl_login()
+        self.assertEquals(resp.status_code, 403)
+        self.assertEqual('{"errors": ["No certificate given"]}', self.getResponseText(resp))

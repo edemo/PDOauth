@@ -2,12 +2,9 @@
 from pdoauth.models.User import User
 from pdoauth.models.Assurance import Assurance
 import time
-from urllib import urlencode
 from test.helpers.todeprecate.UserTesting import UserTesting
 from test.helpers.PDUnitTest import PDUnitTest, test
 from pdoauth.ReportedError import ReportedError
-
-from test.config import Config
 
 class UserInfoTest(PDUnitTest, UserTesting):
 
@@ -17,7 +14,7 @@ class UserInfoTest(PDUnitTest, UserTesting):
 
     @test
     def logged_in_user_can_get_its_info(self):
-        resp = self.controller._do_show_user('me')
+        resp = self.controller._do_show_user(userid='me')
         self.assertEquals(resp.status_code, 200)
         data = self.fromJson(resp)
         self.assertTrue(data.has_key('userid'))

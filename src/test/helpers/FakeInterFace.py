@@ -33,10 +33,13 @@ class TestData(object):
 
 class FakeInterface(FlaskInterface):
     _testdata = TestData()
-    
+    session = dict()
+
+    @classmethod
     def getHeader(self, header):
         return self._testdata.headers.get(header)
 
+    @classmethod
     def getCurrentUser(self):
         user = self._testdata.current_user
         return user
@@ -68,12 +71,9 @@ class FakeInterface(FlaskInterface):
             return FakeResponse(200, json.dumps(dict(id=self.facebook_id)))
         else:
             return FakeResponse(404,"fooo")
-    
+
+    @classmethod
     def getSession(self):
-        session = getattr(self, 'session', None)
-        if session is None:
-            session = dict()
-            self.session = session
         return self.session
 
     def loginUserInFramework(self, user):

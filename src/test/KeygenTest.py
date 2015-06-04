@@ -55,7 +55,7 @@ class KeygenTest(Fixture, UserTesting):
             identifier, cn = self._getCertId(cert)
             self.assertEqual(self.usercreation_email,cn)
             cred = Credential.get("certificate", identifier)
-            self.assertEqual(None, cred)
+            cred.rm()
 
     @test
     def if_the_user_is_logged_in__a_credential_is_added_to_the_user_for_the_cert(self):

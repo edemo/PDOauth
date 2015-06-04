@@ -12,6 +12,7 @@ from pdoauth.forms.LoginForm import LoginForm
 
 controller = Controller.getInstance()
 controller.mail = mail
+controller.app = app
 
 @login_manager.unauthorized_handler
 def unauthorized():
