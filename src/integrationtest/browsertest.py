@@ -44,6 +44,7 @@ class JavaScriptUnitTest(Fixture, UserTesting, BrowserSetup):
         user = self.createUserWithCredentials()
         user.activate()
         self.thePassword = self.mkRandomPassword()
+        self.switchToTab("login")
         driver.find_element_by_id("LoginForm_username_input").clear()
         driver.find_element_by_id("LoginForm_username_input").send_keys(self.usercreation_userid)
         driver.find_element_by_id("LoginForm_password_input").clear()
@@ -53,6 +54,7 @@ class JavaScriptUnitTest(Fixture, UserTesting, BrowserSetup):
         driver.get(self.base_url+"/static/login.html")
         body = driver.find_element_by_id("userdata").text
         self.assertEqual(body, '')
+        self.switchToTab("account")
         driver.find_element_by_id("melink").click()
         time.sleep(5)
         body = driver.find_element_by_id("userdata").text

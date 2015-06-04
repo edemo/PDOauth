@@ -5,6 +5,7 @@ from integrationtest.BrowserSetup import BrowserSetup
 from integrationtest.EndUserTesting import EndUserTesting
 from pdoauth.app import app
 import time
+import pdb
 
 class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
     def setUp(self):
@@ -20,11 +21,13 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=False)
         
         digest = self.createHash()
+        self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(0.5)
         userdata = self.driver.find_element_by_id("userdata").text
+        print userdata
         self.assertTrue("hash: {0}".format(digest) in userdata)
 
     @test
@@ -36,10 +39,12 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
         time.sleep(0.5)
         userdata = self.driver.find_element_by_id("userdata").text
+        print userdata
         self.assertTrue("hash: {0}".format(oldDigest) in userdata)
         self.setupRandom()
         digest = self.createHash()
         self.assertTrue(oldDigest != digest)
+        self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
@@ -57,6 +62,7 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         time.sleep(0.5)
         userdata = self.driver.find_element_by_id("userdata").text
         self.assertTrue("hash: {0}".format(oldDigest) in userdata)
+        self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(0.5)

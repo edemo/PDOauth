@@ -27,6 +27,7 @@ class EndUserPasswordResetTest(Fixture, UserTesting, BrowserSetup):
         resetLink = self.the_reset_link_is_in_the_reset_email()
         driver = self.driver
         driver.get(resetLink)
+        self.switchToTab("account")
         driver.find_element_by_id("PasswordResetForm_password_input").clear()
         newPassword = self.mkRandomPassword()
         driver.find_element_by_id("PasswordResetForm_password_input").send_keys(newPassword)

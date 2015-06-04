@@ -63,6 +63,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         self.user.activate()
         driver = self.driver
         driver.get(self.base_url+"/static/login.html")
+        self.switchToTab("login")
         driver.find_element_by_id("Facebook_login_button").click()
         time.sleep(1)
         self._switchWindow(driver)
