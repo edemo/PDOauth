@@ -6,7 +6,7 @@ import time
 from urllib import urlencode
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
 from test.helpers.todeprecate.UserTesting import UserTesting
 
 class NewUserTest(Fixture,UserTesting, BrowserSetup):

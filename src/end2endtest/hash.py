@@ -1,7 +1,7 @@
 import unittest, time
 import config
 from twatson.unittest_annotations import Fixture, test
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
 
 class EndUserObtainingHashTest(Fixture, BrowserSetup):
     def setUp(self):

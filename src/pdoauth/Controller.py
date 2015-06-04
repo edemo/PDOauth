@@ -1,9 +1,9 @@
-from pdoauth.app import mail, app
+from pdoauth.app import app
 import flask
 from pdoauth.models.User import User
 from pdoauth.CredentialManager import CredentialManager
 from flask_login import login_user, logout_user
-from flask.globals import request, session
+from flask.globals import session
 from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.models.Credential import Credential
 from uuid import uuid4
@@ -214,7 +214,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling, CryptoUtils, UserOrBe
 
     @FlaskInterface.exceptionChecked
     def do_ssl_login(self):
-        self._do_ssl_login()
+        return self._do_ssl_login()
 
     def _do_ssl_login(self):
         cert = self.getEnvironmentVariable('SSL_CLIENT_CERT')

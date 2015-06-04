@@ -6,8 +6,8 @@ import urllib3
 from twatson.unittest_annotations import Fixture, test
 import config
 from urllib import urlencode
-from integrationtest.BrowserSetup import BrowserSetup
-from integrationtest.EndUserTesting import EndUserTesting
+from end2endtest.BrowserSetup import BrowserSetup
+from end2endtest.EndUserTesting import EndUserTesting
 
 class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
 

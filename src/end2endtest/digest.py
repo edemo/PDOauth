@@ -1,8 +1,8 @@
 import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
-from integrationtest.BrowserSetup import BrowserSetup
-from integrationtest.EndUserTesting import EndUserTesting
+from end2endtest.BrowserSetup import BrowserSetup
+from end2endtest.EndUserTesting import EndUserTesting
 from pdoauth.app import app
 import time
 import pdb

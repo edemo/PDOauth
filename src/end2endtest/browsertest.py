@@ -3,7 +3,7 @@ import config
 from twatson.unittest_annotations import Fixture, test
 import re
 import os
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
 from test.helpers.todeprecate.UserTesting import UserTesting
 
 class JavaScriptUnitTest(Fixture, UserTesting, BrowserSetup):
