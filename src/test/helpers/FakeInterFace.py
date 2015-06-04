@@ -20,6 +20,7 @@ class FakeResponse(object):
         self.data = message
         self.response = [message]
         self.cookies = {}
+        self.headers = {}
     
     def set_cookie(self,name,value):
         self.cookies[name] = value
@@ -27,6 +28,8 @@ class FakeResponse(object):
 class TestData(object):
     def __init__(self):
         self.headers = dict()
+        self.request_url = ""
+        self.environ = dict()
 
 class FakeInterface(FlaskInterface):
     _testdata = TestData()
@@ -38,6 +41,12 @@ class FakeInterface(FlaskInterface):
         user = self._testdata.current_user
         return user
 
+    def getEnvironmentVariable(self, variableName):
+        return self._testdata.environ.get(variableName, None)
+
+    def getRequestUrl(self):
+        return self._testdata.request_url
+    
     def __init__(self):
         self.headers = dict()
 
@@ -63,9 +72,17 @@ class FakeInterface(FlaskInterface):
         return self.session
 
     def loginUserInFramework(self, user):
-        self.current_user = user
+        self._testdata.current_user = user
         return user
 
     def make_response(self, ret, status):
         r = FakeResponse(status, ret)
         return r
+
+class FakeMailer(object):
+
+    def __init__(self):
+        self.messages = list()
+
+    def send_message(self, **kwargs):
+        self.messages.append(kwargs)

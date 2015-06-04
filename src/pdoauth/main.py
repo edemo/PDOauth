@@ -1,4 +1,4 @@
-from pdoauth.app import app, login_manager
+from pdoauth.app import app, login_manager, mail
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.Controller import Controller
 from flask_login import login_required
@@ -13,6 +13,7 @@ from pdoauth.forms.LoginForm import LoginForm
 Controller.setInterface(FlaskInterface)
 
 controller = Controller.getInstance()
+controller.mail = mail
 
 @login_manager.unauthorized_handler
 def unauthorized():

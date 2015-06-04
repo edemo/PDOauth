@@ -60,6 +60,12 @@ class FlaskInterface(Responses):
     def getCurrentUser(self):
         return current_user
 
+    def getEnvironmentVariable(self, variableName):
+        return request.environ.get(variableName, None)
+
+    def getRequestUrl(self):
+        return request.url
+
     def validate_on_submit(self,form):
         return form.validate_on_submit()
 

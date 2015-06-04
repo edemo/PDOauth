@@ -57,7 +57,7 @@ class EmailHandling(object):
         timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
         uri = "{0}/v1/verify_email/{1}".format(app.config.get('BASE_URL'),secret)
         text = """Hi, click on <a href="{0}">{0}</a> until {1} to verify your email""".format(uri, timeText)
-        mail.send_message(subject="verification", body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
+        self.mail.send_message(subject="verification", body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
     
     def sendPasswordResetMail(self, user, secret, expiry):
         timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
@@ -65,7 +65,7 @@ class EmailHandling(object):
         uri = "{0}?secret={1}".format(app.config.get("PASSWORD_RESET_FORM_URL"), secret, user.email)
         text = """Hi, click on <a href="{0}">{0}</a> until {1} to reset your password""".format(uri, timeText)
         subject = "Password Reset for {0}".format(serverName)
-        mail.send_message(subject=subject, body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
+        self.mail.send_message(subject=subject, body=text, recipients=[user.email], sender=app.config.get('SERVER_EMAIL_ADDRESS'))
 
 class LoginHandling(object):
 
@@ -190,7 +190,7 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
         return resp
 
     def getEmailFromQueryParameters(self):
-        parsed = urlparse.urlparse(request.url)
+        parsed = urlparse.urlparse(self.getRequestUrl())
         email = urlparse.parse_qs(parsed.query).get('email', None)
         return email
 
@@ -211,7 +211,10 @@ class Controller(EmailHandling, LoginHandling, CryptoUtils, UserOrBearerAuthenti
 
     @FlaskInterface.exceptionChecked
     def do_ssl_login(self):
-        cert = request.environ.get('SSL_CLIENT_CERT',None)
+        self._do_ssl_login()
+
+    def _do_ssl_login(self):
+        cert = self.getEnvironmentVariable('SSL_CLIENT_CERT')
         email = self.getEmailFromQueryParameters()
         cred = self.registerCertUser(cert, email)
         resp = self.finishLogin(cred.user)
