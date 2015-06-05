@@ -5,7 +5,6 @@ from test.helpers.UserUtil import UserUtil
 from pdoauth.models.User import User
 from test import config
 from pdoauth.models.Application import Application
-import pdoauth.main  # @UnusedImport
 
 app.extensions["mail"].suppress = True
 

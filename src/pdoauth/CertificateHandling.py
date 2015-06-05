@@ -59,11 +59,7 @@ class CertificateHandling(CryptoUtils):
         cred.user.activate()
         return cred
 
-    @Decorators.exceptionChecked
     def do_ssl_login(self):
-#        return self._do_ssl_login()
-#
-#    def _do_ssl_login(self):
         cert = self.getEnvironmentVariable('SSL_CLIENT_CERT')
         email = self.getEmailFromQueryParameters()
         cred = self.registerCertUser(cert, email)

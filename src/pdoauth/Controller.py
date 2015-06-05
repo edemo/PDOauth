@@ -22,8 +22,8 @@ from pdoauth.CertificateHandling import CertificateHandling
 
 anotherUserUsingYourHash = "another user is using your hash"
 passwordResetCredentialType = 'email_for_password_reset'
-class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling):
 
+class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling):
     def do_login(self,form):
         self.getSession()['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
         if form.credentialType.data == 'password':

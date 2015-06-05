@@ -3,6 +3,7 @@ from pdoauth.models.Assurance import Assurance
 from pdoauth.models.User import User
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from pdoauth.Interfaced import Interfaced
+import logging
 
 class Decorators(Interfaced):
     @classmethod
@@ -51,3 +52,28 @@ class Decorators(Interfaced):
             return func(self, authuser)
         return _f
 
+    @classmethod
+    def interfaceFunc(cls, rule, formClass=None, status=400, **options):
+        def decorator(func):
+            def validated(*args, **kwargs):
+                if formClass is not None:
+                    form = formClass()
+                    if not form.validate_on_submit():
+                        return cls.form_validation_error_response(form, status)
+                    kwargs["form"] = form
+                try:
+                    return func(*args, **kwargs)
+                except ReportedError as e:
+                    resp = cls.errorReport(e)
+                    return resp
+            endpoint = options.pop('endpoint', None)
+            cls.app.add_url_rule(rule, endpoint, validated, **options)
+            return validated
+        return decorator
+
+    @classmethod
+    def errorReport(cls, e):
+        logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))
+        resp = cls.error_response(e.descriptor, e.status)
+        resp.headers['Access-Control-Allow-Origin'] = cls.app.config.get('BASE_URL')
+        return resp

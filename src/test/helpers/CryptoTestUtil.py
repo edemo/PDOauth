@@ -1,6 +1,7 @@
 import os
 from OpenSSL import crypto
 from Crypto.Hash.SHA512 import SHA512Hash
+from pdoauth.models.Credential import Credential
 
 class CryptoTestUtil(object):
     def getCertAttributes(self):
@@ -17,4 +18,17 @@ class CryptoTestUtil(object):
 
     def createHash(self):
         return SHA512Hash(self.randString).hexdigest() * 4
+
+    def sslLoginWithCert(self, cert):
+        self.controller._testdata.environ = dict(SSL_CLIENT_CERT=cert)
+        resp = self.controller.do_ssl_login()
+        return resp
+
+    def createUserAndLoginWithCert(self):
+        identifier, digest, cert = self.getCertAttributes()
+        user = self.createUserWithCredentials()
+        secret = digest
+        cred = Credential.new(user, "certificate", identifier, secret)
+        resp = self.sslLoginWithCert(cert)
+        return resp, cred
 

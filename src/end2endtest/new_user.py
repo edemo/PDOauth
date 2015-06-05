@@ -50,7 +50,7 @@ class NewUserTest(Fixture,UserTesting, BrowserSetup):
         driver.find_element_by_id("RegistrationForm_email_input").clear()
         driver.find_element_by_id("RegistrationForm_email_input").send_keys(email)
         driver.find_element_by_id("RegistrationForm_submitButton").click()
-        time.sleep(1)
+        time.sleep(2)
         self.assertTrue(driver.current_url.startswith(self.redirect_uri.lower()))
 
     @test

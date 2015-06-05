@@ -7,12 +7,13 @@ from pdoauth.models.User import User
 import os
 from flask.globals import request
 from urllib import urlencode
-from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.forms.LoginForm import LoginForm
+from pdoauth.Decorators import Decorators
 
 controller = Controller.getInstance()
 controller.mail = mail
 controller.app = app
+Decorators.app = app
 
 @login_manager.unauthorized_handler
 def unauthorized():
@@ -31,11 +32,13 @@ def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
     return AuthProvider.auth_interface()
 
-@FlaskInterface.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
+@Decorators.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
 def login(form):
     return controller.do_login(form)
 
 @app.route("/ssl_login", methods=["GET"])
+@Decorators.exceptionChecked
+#@Decorators.interfaceFunc("/ssl_login", methods=["GET"])
 def ssl_login():
     return controller.do_ssl_login()
 

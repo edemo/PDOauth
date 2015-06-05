@@ -7,7 +7,6 @@ from pdoauth.models.User import User
 from end2endtest.BrowserSetup import BrowserSetup
 import time
 from test.helpers.todeprecate.UserTesting import UserTesting
-import pdb
 
 class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
 
@@ -28,6 +27,7 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
+        time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
         self.assertTrue('{"credentialType": "certificate", "identifier": ' in body)
         self.assertTrue('/{0}"}}'.format(self.usercreation_email) in
