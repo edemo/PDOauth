@@ -27,8 +27,8 @@ class CertificateHandling(CryptoUtils):
         resp.headers["Content-Type"] = "application/x-x509-user-cert"
         return resp
 
-    @Decorators.formValidated(KeygenForm)
-    @Decorators.exceptionChecked
+#    @Decorators.exceptionChecked
+#    @Decorators.formValidated(KeygenForm)
     def do_keygen(self, form):
         email = form.email.data
         certAsPem, certObj = self.extractCertFromForm(form)

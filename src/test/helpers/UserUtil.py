@@ -31,3 +31,8 @@ class UserUtil(ResponseInfo, RandomUtil):
         self.assertTrue("@example.com" in data['email'])
         self.assertTrue(data.has_key('userid'))
         return data
+
+    def showUserByCurrentUser(self, userid):
+        self.controller.session['auth_user'] =  (self.controller.getCurrentUser().userid, True)
+        resp = self.controller.do_show_user(userid=userid)
+        return resp

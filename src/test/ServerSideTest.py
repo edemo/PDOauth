@@ -53,7 +53,7 @@ class ServerSideTest(PDUnitTest, ServerSide, UserUtil):
                     data['access_token']
                 )
         }
-        resp = self.controller._do_show_user('me')
+        resp = self.showUserByCurrentUser('me')
         self.assertEquals(resp.status_code, 200)
         data = self.fromJson(resp)
         self.assertTrue(data.has_key('userid'))

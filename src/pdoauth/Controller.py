@@ -2,20 +2,11 @@ from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance, emailVerification
 from pdoauth.CredentialManager import CredentialManager
-from pdoauth.forms.RegistrationForm import RegistrationForm
-from pdoauth.forms.AssuranceForm import AssuranceForm
-from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
-from pdoauth.forms.PasswordResetForm import PasswordResetForm
-from pdoauth.forms.CredentialForm import CredentialForm
-from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
-from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
-from pdoauth.forms.DeregisterForm import DeregisterForm
 from uuid import uuid4
 import time
 from flask import json
 from pdoauth.ReportedError import ReportedError
 from pdoauth.Interfaced import Interfaced
-from pdoauth.Decorators import Decorators
 from pdoauth.EmailHandling import EmailHandling
 from pdoauth.LoginHandling import LoginHandling
 from pdoauth.CertificateHandling import CertificateHandling
@@ -31,13 +22,10 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         if form.credentialType.data == 'facebook':
             return self.facebookLogin(form)
 
-    @Decorators.exceptionChecked
     def do_logout(self):
         self.LogOut()
         return self.simple_response('logged out')
 
-    @Decorators.formValidated(DeregisterForm, 400)
-    @Decorators.exceptionChecked
     def do_deregister(self,form):
         if not self.isLoginCredentials(form):
             raise ReportedError(["You should use your login credentials to deregister"], 400)
@@ -59,8 +47,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
                     return True        
         return False
 
-    @Decorators.formValidated(RegistrationForm)
-    @Decorators.exceptionChecked
     def do_registration(self, form):
         return self._do_registration(form)
 
@@ -88,10 +74,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         if r:
             return self.returnUserAndLoginCookie(user, additionalInfo)
     
-    @Decorators.exceptionChecked
-    def do_change_password(self):
-        form = PasswordChangeForm()
-        if form.validate_on_submit():
+    def do_change_password(self, form):
             user = self.getCurrentUser()
             cred = Credential.getByUser(user, 'password')
             oldSecret = CredentialManager.protect_secret(form.oldPassword.data)
@@ -101,9 +84,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
             cred.secret = secret
             cred.save()
             return self.simple_response('password changed succesfully')
-        return self.form_validation_error_response(form)
     
-    @Decorators.exceptionChecked
     def do_get_by_email(self, email):
         return self._do_get_by_email(email)
 
@@ -151,23 +132,35 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         if not (assurances.has_key('assurer') and assurances.has_key(assurerAssurance)):
             raise ReportedError(["no authorization"], 403)
 
-    @Decorators.formValidated(AssuranceForm)
-    @Decorators.exceptionChecked
     def do_add_assurance(self, form):
         neededAssurance = form.assurance.data
         self.assureUserHaveTheGivingAssurancesFor(neededAssurance)
         user = self.getUserForEmailAndOrHash(form.digest.data, form.email.data)                  
         Assurance.new(user, neededAssurance, self.getCurrentUser())
         return self.simple_response("added assurance {0} for {1}".format(neededAssurance, user.email))
-    
-    @Decorators.authenticateUserOrBearer
-    def _do_show_user(self, authuser):
-        ret = self.as_dict(authuser)
-        return ret
 
-    @Decorators.exceptionChecked
+    def getShownUser(self, userid, authuser, isHerself):
+        if userid == 'me':
+            shownUser = authuser
+        elif isHerself:
+            if Assurance.getByUser(authuser).has_key('assurer'):
+                shownUser = User.get(userid)
+            else:
+                raise ReportedError(["no authorization to show other users"], status=403)
+        else:
+            raise ReportedError(["no authorization to show other users"], status=403)
+        return shownUser
+
+
+    def getAuthenticatedUser(self):
+        authid, isHerself = self.getSession()['auth_user']
+        authuser = User.get(authid)
+        return authuser, isHerself
+
     def do_show_user(self, userid):
-        return self. _do_show_user(userid)
+        authuser, isHerself = self.getAuthenticatedUser()
+        shownUser = self.getShownUser(userid, authuser, isHerself)
+        return self.as_dict(shownUser)
     
     def checkEmailverifyCredential(self, cred):
         if cred is None:
@@ -179,7 +172,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         cred = Credential.getBySecret('emailcheck', token)
         return cred
 
-    @Decorators.exceptionChecked
     def do_verify_email(self, token):
         cred = self.getCredentialForEmailverifyToken(token)
         self.checkEmailverifyCredential(cred)
@@ -188,7 +180,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         cred.rm()
         return self.simple_response("email verified OK")
     
-    @Decorators.exceptionChecked
     def do_send_password_reset_email(self, email):
         user = User.getByEmail(email)
         if user is None:
@@ -200,8 +191,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         self.sendPasswordResetMail(user, secret, expirationTime)
         return self.simple_response("Password reset email has successfully sent.")
     
-    @Decorators.formValidated(PasswordResetForm)
-    @Decorators.exceptionChecked
     def do_password_reset(self, form):
         cred = Credential.get(passwordResetCredentialType, form.secret.data)
         if cred is None or (float(cred.secret) < time.time()):
@@ -216,8 +205,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         session = self.getSession()
         return session['logincred']['credentialType'] == form.credentialType.data and session['logincred']['identifier'] == form.identifier.data
 
-    @Decorators.formValidated(CredentialIdentifierForm)
-    @Decorators.exceptionChecked
     def do_remove_credential(self, form):
         if self.isLoginCredentials(form):
             raise ReportedError(["You cannot delete the login you are using"], 400)            
@@ -227,8 +214,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         cred.rm()
         return self.simple_response('credential removed')
 
-    @Decorators.formValidated(CredentialForm)
-    @Decorators.exceptionChecked
     def do_add_credential(self, form):
         user = self.getCurrentUser()
         Credential.new(user,
@@ -242,8 +227,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
             if assurance.name != emailVerification:
                 assurance.rm()
 
-    @Decorators.formValidated(DigestUpdateForm)
-    @Decorators.exceptionChecked
     def do_update_hash(self,form):
         digest = form.digest.data
         if digest == '':

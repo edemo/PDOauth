@@ -38,7 +38,7 @@ class SSLLoginTest(PDUnitTest, UserTesting):
         self.assertEquals(resp.status_code, 200)
         self.assertTrue('{"credentialType": "certificate", "identifier": "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"}' in
             self.getResponseText(resp))
-        resp = self.controller._do_show_user('me')
+        resp = self.showUserByCurrentUser('me')
         self.assertEqual(200, resp.status_code)
         cred.rm()
 

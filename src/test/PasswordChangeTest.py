@@ -5,6 +5,7 @@ from pdoauth.CredentialManager import CredentialManager
 import config
 from test.helpers.CSRFMixin import CSRFMixin
 from test.helpers.todeprecate.UserTesting import UserTesting
+from pdoauth import main  # @UnusedImport
 
 class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
 
