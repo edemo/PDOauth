@@ -5,6 +5,7 @@ from twatson.unittest_annotations import Fixture, test
 import config
 from end2endtest.BrowserSetup import BrowserSetup
 from test.helpers.todeprecate.UserTesting import UserTesting
+from pdoauth import main  # @UnusedImport
 
 class EndUserPasswordResetTest(Fixture, UserTesting, BrowserSetup):
     def setUp(self):

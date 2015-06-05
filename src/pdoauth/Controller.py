@@ -10,11 +10,33 @@ from pdoauth.Interfaced import Interfaced
 from pdoauth.EmailHandling import EmailHandling
 from pdoauth.LoginHandling import LoginHandling
 from pdoauth.CertificateHandling import CertificateHandling
+from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 
 anotherUserUsingYourHash = "another user is using your hash"
 passwordResetCredentialType = 'email_for_password_reset'
 
 class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling):
+
+    def setAuthUser(self, userid, isHerself):
+        self.getSession()['auth_user']=(userid, isHerself)
+
+    def authenticateUserOrBearer(self):
+        authHeader = self.getHeader('Authorization')
+        current_user = self.getCurrentUser()
+        if current_user.is_authenticated():
+            self.setAuthUser(current_user.userid, True)
+        elif authHeader:
+            token = authHeader.split(" ")[1]
+            data = TokenInfoByAccessKey.find(token)
+            targetuserid = data.tokeninfo.user_id
+            self.setAuthUser(targetuserid, False)
+        else:
+            raise ReportedError(["no authorization"], status=403)
+
+    def checkLogin(self):
+        if not self.getCurrentUser().is_authenticated():
+            return self.app.login_manager.unauthorized()
+
     def do_login(self,form):
         self.getSession()['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
         if form.credentialType.data == 'password':

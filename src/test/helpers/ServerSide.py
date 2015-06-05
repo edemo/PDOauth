@@ -8,7 +8,7 @@ class ServerSide(object):
             'client_secret':self.appsecret, 
             'redirect_uri':'https://test.app/redirecturi'}
         self.controller._testdata.postdata = postData
-        resp = AuthProvider.token_interface()
+        resp = AuthProvider().token_interface()
         data = self.fromJson(resp)
         self.assertTrue(data.has_key('access_token'))
         self.assertTrue(data.has_key('refresh_token'))

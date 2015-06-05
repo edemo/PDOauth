@@ -35,11 +35,9 @@ class FakeInterface(FlaskInterface):
     _testdata = TestData()
     session = dict()
 
-    @classmethod
     def getHeader(self, header):
         return self._testdata.headers.get(header)
 
-    @classmethod
     def getCurrentUser(self):
         user = self._testdata.current_user
         return user
@@ -47,11 +45,9 @@ class FakeInterface(FlaskInterface):
     def getEnvironmentVariable(self, variableName):
         return self._testdata.environ.get(variableName, None)
 
-    @classmethod
     def getRequestForm(self):
         return self._testdata.postdata
 
-    @classmethod
     def getRequestUrl(self):
         return self._testdata.request_url
     
@@ -72,7 +68,6 @@ class FakeInterface(FlaskInterface):
         else:
             return FakeResponse(404,"fooo")
 
-    @classmethod
     def getSession(self):
         return self.session
 
@@ -80,7 +75,6 @@ class FakeInterface(FlaskInterface):
         self._testdata.current_user = user
         return user
 
-    @classmethod
     def make_response(self, ret, status):
         r = FakeResponse(status, ret)
         return r

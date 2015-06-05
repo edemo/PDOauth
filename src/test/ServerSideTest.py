@@ -26,7 +26,7 @@ class ServerSideTest(PDUnitTest, ServerSide, UserUtil):
         application, redirect_uri = self.createApplication()
         self.appid = application.appid
         self.buildAuthUrl(redirect_uri)
-        resp = AuthProvider.auth_interface()
+        resp = AuthProvider().auth_interface()
         self.assertEqual(302, resp.status_code)
         location = resp.headers['Location']
         self.assertTrue(location.startswith('https://test.app/redirecturi?code='))

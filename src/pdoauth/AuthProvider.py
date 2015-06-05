@@ -66,22 +66,20 @@ class AuthProvider(AuthorizationProvider,Interfaced):
         keydata = self.from_authorization_code(client_id, code, '')
         keydata.rm()
         
-    @classmethod
-    def auth_interface(cls):
+    def auth_interface(self):
         provider = AuthProvider()
-        response = provider.get_authorization_code_from_uri(cls.getRequestUrl())
-        flask_res = cls.make_response(response.text, response.status_code)
+        response = provider.get_authorization_code_from_uri(self.getRequestUrl())
+        flask_res = self.make_response(response.text, response.status_code)
         for k, v in response.headers.iteritems():
             flask_res.headers[k] = v
         return flask_res
 
-    @classmethod
-    def token_interface(cls):
+    def token_interface(self):
         provider = AuthProvider()
-        requestForm = cls.getRequestForm()
+        requestForm = self.getRequestForm()
         data = {k:requestForm[k] for k in requestForm.iterkeys()}
         response = provider.get_token_from_post_data(data)
-        flask_res = cls.make_response(response.text, response.status_code)
+        flask_res = self.make_response(response.text, response.status_code)
         for k, v in response.headers.iteritems():
             flask_res.headers[k] = v
         

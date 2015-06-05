@@ -103,6 +103,7 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         body = self.driver.find_element_by_id("PasswordResetForm_password_label").text
         self.assertEqual(body, u'Új jelszó:')
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
+        time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
         self.assertEqual('{"errors": ["No certificate given"]}', body)
 

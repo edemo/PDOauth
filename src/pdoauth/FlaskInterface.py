@@ -6,22 +6,18 @@ from pdoauth.Responses import Responses
 
 class FlaskInterface(Responses):
 
-    @classmethod
     def getHeader(self, header):
         return request.headers.get(header)
 
-    @classmethod
     def getCurrentUser(self):
         return current_user
 
     def getEnvironmentVariable(self, variableName):
         return request.environ.get(variableName, None)
 
-    @classmethod
     def getRequestForm(self):
         return request.form
 
-    @classmethod
     def getRequestUrl(self):
         return request.url
 
@@ -42,7 +38,6 @@ class FlaskInterface(Responses):
         resp = http.request('GET', "https://graph.facebook.com/v2.2/me", args)
         return resp
 
-    @classmethod
     def getSession(self):
         return session
 
@@ -50,6 +45,5 @@ class FlaskInterface(Responses):
         r = login_user(user)
         return r
 
-    @classmethod
     def make_response(self, ret, status):
         return flask.make_response(ret, status)
