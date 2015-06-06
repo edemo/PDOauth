@@ -12,4 +12,6 @@ git config user.name "travis on behalf of mag"
 git add $branch
 git commit -m "$commit"
 echo ${GH_TOKEN}|md5sum
-git push  "https://${GH_TOKEN}@github.com/edemo/PDOauth.git" gh-pages
+git_uri="https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git"
+echo ${git_uri}
+git push  "${git_uri}" gh-pages
