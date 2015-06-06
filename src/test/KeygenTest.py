@@ -1,9 +1,9 @@
-from test.TestUtil import UserTesting
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from OpenSSL import crypto
 from pdoauth.models.User import User
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 spkac = """MIICSTCCATEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDt66ujL7Qi
 gKPRoJzI7cdMFgxoNE7u5aKhAMLC7EE9Npn7Ig1Y6G5NIfjdWZy+Ryrw3/HdYRsS
@@ -55,7 +55,7 @@ class KeygenTest(Fixture, UserTesting):
             identifier, cn = self._getCertId(cert)
             self.assertEqual(self.usercreation_email,cn)
             cred = Credential.get("certificate", identifier)
-            self.assertEqual(None, cred)
+            cred.rm()
 
     @test
     def if_the_user_is_logged_in__a_credential_is_added_to_the_user_for_the_cert(self):

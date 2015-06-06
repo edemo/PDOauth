@@ -1,10 +1,11 @@
 import unittest, time
-from test.TestUtil import UserTesting
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
 from twatson.unittest_annotations import Fixture, test
 import config
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
+from test.helpers.todeprecate.UserTesting import UserTesting
+from pdoauth import main  # @UnusedImport
 
 class EndUserPasswordResetTest(Fixture, UserTesting, BrowserSetup):
     def setUp(self):

@@ -14,32 +14,32 @@ static/qunit-reporter-junit.js:
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js
 
-alltests: tests integrationtest
+alltests: tests end2endtest
 
-onlyintegrationtest: install testsetup runserver runemail testsetup chrometest firefoxtest
+onlyend2endtest: install testsetup runserver runemail testsetup chrometest firefoxtest
 
 firefoxtest:
-	PYTHONPATH=src python -m unittest discover -s src/integrationtest -p "*.py"
+	PYTHONPATH=src python -m unittest discover -f -s src/end2endtest -p "*.py"
 
 chrometest:
-	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -s src/integrationtest -p "*.py"
+	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -f -s src/end2endtest -p "*.py"
 
-integrationtest: onlyintegrationtest killall
+end2endtest: onlyend2endtest killall
 
 runserver:
-	mkdir -p tmp; apache2 -X -f $$(pwd)/src/integrationtest/apache2.conf&
+	mkdir -p tmp; apache2 -X -f $$(pwd)/src/end2endtest/apache2.conf&
 
 killserver:
 	kill $$(cat tmp/httpd.pid)
 
 runemail:
-	python -m smtpd -n -c DebuggingServer localhost:1025&
+	python -m smtpd -n -c DebuggingServer localhost:1025 >tmp/smtpd.log&
 
 killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
 
 tests: testsetup
-	PYTHONPATH=src python -m unittest discover -s src/test -p "*.py"
+	PYTHONPATH=src python -m unittest discover -f -s src/test -p "*.py"
 
 testsetup:
 	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade ; mkdir -p doc/screenshots

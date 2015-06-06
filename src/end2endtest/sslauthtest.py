@@ -2,11 +2,11 @@
 import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting
 from pdoauth.app import app
 from pdoauth.models.User import User
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
 import time
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
 
@@ -27,8 +27,8 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
+        time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
-        print body
         self.assertTrue('{"credentialType": "certificate", "identifier": ' in body)
         self.assertTrue('/{0}"}}'.format(self.usercreation_email) in
             body)
@@ -103,6 +103,7 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         body = self.driver.find_element_by_id("PasswordResetForm_password_label").text
         self.assertEqual(body, u'Új jelszó:')
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
+        time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
         self.assertEqual('{"errors": ["No certificate given"]}', body)
 
