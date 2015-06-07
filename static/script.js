@@ -242,13 +242,19 @@ function PageScript(debug) {
 		self.idCallback = function(status,text, xml) {
 			if (status==200) {
 		    	document.getElementById(self.formName + "_digest_input").value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
+				document.getElementById(self.formName + "_predigest_input").value = "";
+				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>A titkosítás sikeres</p>"
 			} else {
-				document.getElementById("errorMsg").innerHTML=text
+				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>" + text + "</p>"
 			}
 		}
 	
 		self.getDigest = function() {
 			personalId = document.getElementById(this.formName+"_predigest_input").value;
+			if ( personalId == "") {
+				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>A személyi szám nincs megadva</p>"
+				return;
+			}
 			text = "<id>"+personalId+"</id>"
 			http = this.ajaxBase(this.idCallback);
 			http.open("POST",'https://anchor.edemokraciagep.org/anchor',true);

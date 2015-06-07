@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="qunit-1.18.0.css">
 <style type="text/css">
 	      body, html {
-	          height: 100%;
+	          height: 1500px;
 	          margin: 0;
 	          -webkit-font-smoothing: antialiased;
 	          font-weight: 100;
@@ -80,7 +80,7 @@
 	          transition: all 0.2s ease-in-out;
 	      }
 	      .tabs label:hover {
-	        background: rgba(255,255,255,0.5);
+	        background: rgba(255,255,200,0.5);
 	        top: 0;
 	      }
 	      
@@ -115,12 +115,29 @@
 	        -moz-animation-duration: 0.5s;
 	        animation-duration: 0.5s;
 	      }
-		  
+		  a.link {color: orange;}
+		  p.note {font-size: 0.8em; line-height: 1.2em; margin: 5px 0px; }
+		  p.warning {
+			font-size: 0.8em;
+			color:red;
+			margin: 5px 0px;
+			background-color: white;
+			opacity: .8;
+			border-radius: 5px;
+			padding: 0px 10px;
+			text-align: center;
+			}
 		  div.label {
 			color: yellow;
 			padding: 10px,0,10px,10px;
 			font-size: 20px;
 		  }
+		  table.content {
+			  font-size: 20px;
+			    color: white;
+		  }
+		  .button, textarea.digest{width: 100%;}
+		  
 	    </style></head>
 <body onload="pageScript.main()" >
 
@@ -142,7 +159,7 @@
 						</tr>
 						<tr>
 							<td>
-								<p>Hibaüzenet</p>
+								<p>A szerver válaszüzenete</p>
 							</td>
 							<td>
 								<div id="errorMsg">
@@ -175,18 +192,62 @@
 			          <label for="tab-login">Login</label>
 			          <div id="tab-content-login" class="tab-content animated fadeIn">
 						<p>Bejelentkezési lehetőségek</p>
-			            <button type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
+						<hr>
+							<table class="content">
+								<tr>
+									<td width="90%">
+										Facebook fiókkal: 
+									</td>
+									<td>
+										<button class="button" type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
+									</td>
+								</tr>
+								<td>
+									<td>
+										<div id="sslLoginDiv"></div>
+									</td>
+								</tr>
+							</table>
 						<hr/>
-						<div class="formrow">
-							<button type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL Login</button>
-							<div id="sslLoginDiv"></div>
-						</div>
+							<table class="content">
+								<tr>
+									<td width="90%">
+										Google+ fiókkal:
+									</td>
+									<td>
+										hamarosan
+									</td>
+								</tr>
+								<td>
+									<td>
+										<div id="sslLoginDiv"></div>
+									</td>
+								</tr>
+							</table>
 						<hr/>
-						<div>
+							<table class="content">
+								<tr>
+									<td width="90%">
+										SSL jogosítvánnyal:
+									</td>
+									<td>
+										<button type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL Login</button>
+									</td>
+								</tr>
+								<td>
+									<td>
+										<div id="sslLoginDiv"></div>
+									</td>
+								</tr>
+							</table>
+						<hr/>
 							<form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
-								<table>
+								<table class="content">
 									<tr>
-										<td width="30%">
+										<td width="40%">
+										Felhasználónév és jelszó segítségével
+										</td>
+										<td width="25%">
 											<div class="formrow">
 												<div class="label" id="LoginForm_username_label">
 													Felhasználó név:
@@ -194,7 +255,7 @@
 												<input name="username" type="text" id="LoginForm_username_input"/>
 											</div>
 										</td>
-										<td width="30%">
+										<td width="25%">
 											<div class="formrow">
 												<div class="label" id="LoginForm_password_label">
 													Jelszó:
@@ -204,13 +265,13 @@
 										</td>
 										<td>
 											<div class="formrow">
-												<input type="submit" value="Login" id="LoginForm_submitButton">
+												<input class="button" type="submit" value="Login" id="LoginForm_submitButton">
 											</div>
 										</td>
 									</tr>
 								</table>
+								<div id="LoginForm_errorMsg"></div>
 							</form>
-						</div>
 			          </div>
 			        </li>
 					<li>
@@ -242,11 +303,14 @@
 								<input name="email" type="text" id="RegistrationForm_email_input"/>
 							</div>
 							<div class="formrow">
+							<p class="note">A személyi számot nem tárolja a rendszer. Az "anchor" szolgáltatással egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza. 
+							A titkos kódot magad is előállíthatod <a class="link" href="https://anchor.edemokraciagep.org"> itt</a>, és akkor be kell másolnod a "tikos kód" mezőbe</p>
 								<div class="label" id="RegistrationForm_predigest_label">
 									személyi szám:
 								</div>
 								<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
 								<button type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Generate Hash</button>
+								<div id="RegistrationForm_errorMsg"></div>
 							</div>
 							<div class="formrow">
 								<div class="label" id="RegistrationForm_digest_label">
@@ -255,6 +319,7 @@
 								<input name="email" type="text" id="RegistrationForm_digest_input"/>
 							</div>
 							<div class="formrow">
+							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p>
 								<div class="label" id="RegistrationForm_secret_label">
 									jelszó:
 								</div>
@@ -314,6 +379,7 @@
 								<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
 								<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Titkos kód generálása</button>
 							</div>
+							<div id="AddAssuranceForm_errorMsg"></div>
 							<div class="formrow">
 								<div class="label" id="AddAssuranceForm_digest_label">
 									titkós kód:
@@ -351,8 +417,8 @@
 							</div>
 						<hr/>
 						<p>Titkos kód cseréje/hozzáadása</p>
-						A személyi számot nem tárolja a rendszer. Egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza
-						<p>Figyelmeztetés! A hash megváltoztatásával az összes eddigi validálási információ elvész.</p>
+						<p class="warning">Figyelmeztetés! A hash megváltoztatásával az összes eddigi validálási információ elvész.</p>
+						<p class="note">A személyi számot nem tárolja a rendszer. Egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza.</p>
 						<form id="ChangeHashForm" action="javascript:pageScript.changeHash()" method="post" name="addAssurance">
 							<div class="formrow">
 								<div class="label" id="ChangeHashForm_predigest_label">
@@ -361,11 +427,12 @@
 								<input name="digest" type="text" id="ChangeHashForm_predigest_input"></input>
 								<button type="button" id="ChangeHashForm_getDigestButton" onclick="pageScript.digestGetter('ChangeHashForm').getDigest()">Titkos kód előállítása</button>
 							</div>
+							<div id="ChangeHashForm_errorMsg"></div>
 							<div class="formrow">
 								<div class="label" id="ChangeHashForm_digest_label">
 								titkos kód:
 								</div>
-								<input name="digest" type="text" id="ChangeHashForm_digest_input"/>
+								<textarea class="digest" name="digest" type="text" id="ChangeHashForm_digest_input" rows="5"></textarea>
 							</div>
 							<div class="formrow">
 								<input type="submit" value="Mehet" id="ChangeHashForm_submitButton"></input>
