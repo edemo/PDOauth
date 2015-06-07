@@ -5,10 +5,10 @@ from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 import re
 from pdoauth.models.Assurance import Assurance, emailVerification
-from test.TestUtil import UserTesting
 from flask_login import logout_user
 import config
 import time
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 app.extensions["mail"].suppress = True
 

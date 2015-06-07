@@ -1,10 +1,13 @@
-from test.TestUtil import UserTesting, CSRFMixin
+
 from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
 from pdoauth.forms import credErr
+from pdoauth.models.Assurance import Assurance
+from test.helpers.CSRFMixin import CSRFMixin
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class DeregisterTest(Fixture, UserTesting, CSRFMixin):
 
@@ -21,6 +24,59 @@ class DeregisterTest(Fixture, UserTesting, CSRFMixin):
             resp = c.post(config.base_url+'/deregister', data=data)
             self.assertEquals(resp.status_code, 200)
             self.assertEqual('{"message": "deregistered"}', self.getResponseText(resp))
+
+    @test
+    def your_credentials_are_deleted_in_deregistration(self):
+        with app.test_client() as c:
+            self.login(c)
+            user = User.getByEmail(self.usercreation_email)
+            creds = Credential.getByUser(user)
+            self.assertTrue(len(creds) > 0)
+            data = dict(
+                csrf_token = self.getCSRF(c),
+                credentialType= "password",
+                identifier= self.usercreation_userid,
+                secret = self.usercreation_password
+            )
+            c.post(config.base_url+'/deregister', data=data)
+            user = User.getByEmail(self.usercreation_email)
+            creds = Credential.getByUser(user)
+            self.assertTrue(len(creds) == 0)
+            
+    @test
+    def your_assurances_are_deleted_in_deregistration(self):
+        with app.test_client() as c:
+            self.login(c)
+            user = User.getByEmail(self.usercreation_email)
+            Assurance.new(user, "test", user)
+            assurances = Assurance.getByUser(user)
+            self.assertTrue(len(assurances) > 0)
+            data = dict(
+                csrf_token = self.getCSRF(c),
+                credentialType= "password",
+                identifier= self.usercreation_userid,
+                secret = self.usercreation_password
+            )
+            c.post(config.base_url+'/deregister', data=data)
+            user = User.getByEmail(self.usercreation_email)
+            assurances = Assurance.getByUser(user)
+            self.assertTrue(len(assurances) == 0)
+
+    @test
+    def your_user_is_deleted_in_deregistration(self):
+        with app.test_client() as c:
+            self.login(c)
+            user = User.getByEmail(self.usercreation_email)
+            self.assertTrue(user is not None)
+            data = dict(
+                csrf_token = self.getCSRF(c),
+                credentialType= "password",
+                identifier= self.usercreation_userid,
+                secret = self.usercreation_password
+            )
+            c.post(config.base_url+'/deregister', data=data)
+            user = User.getByEmail(self.usercreation_email)
+            self.assertTrue(user is None)
 
     @test
     def you_have_to_use_the_credentials_used_for_login_to_deregister(self):

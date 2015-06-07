@@ -18,7 +18,6 @@ class User(db.Model, ModelUtils):
     active = Column(BOOLEAN)
     authenticated = Column(BOOLEAN)
 
-    
     @classmethod
     def getByEmail(cls, email):
         u= cls.query.filter_by(email=email).first()

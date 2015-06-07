@@ -3,8 +3,8 @@ import config
 from twatson.unittest_annotations import Fixture, test
 import re
 import os
-from test.TestUtil import UserTesting
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class JavaScriptUnitTest(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
@@ -53,13 +53,11 @@ class JavaScriptUnitTest(Fixture, UserTesting, BrowserSetup):
         time.sleep(1)
         driver.get(self.base_url+"/static/login.html")
         body = driver.find_element_by_id("userdata").text
-        print body
         self.assertEqual(body, '')
         self.switchToTab("account")
         driver.find_element_by_id("melink").click()
         time.sleep(5)
         body = driver.find_element_by_id("userdata").text
-        print body
         self.assertRegexpMatches(body, r"^[\s\S]*@example.com[\s\S]*$")
 
 
