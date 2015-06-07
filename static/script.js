@@ -111,7 +111,8 @@ function PageScript(debug) {
 
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_username_input").value;
-	    onerror=false;
+	    var onerror=false;
+		document.getElementById("LoginForm_errorMsg").innerHTML="";
 		if (username=="") {
 			document.getElementById("LoginForm_errorMsg").innerHTML+="<p class='warning'>A felhasználónév nincs megadva</p>";
 			onerror=true;
@@ -121,12 +122,12 @@ function PageScript(debug) {
 			document.getElementById("LoginForm_errorMsg").innerHTML+="<p class='warning'>A jelszó nincs megadva</p>";
 			onerror=true; 
 		}
-		if (onerror) return;
-		
-		username = encodeURIComponent(username);	
-	    password = encodeURIComponent(password);
-		
-	    this.ajaxpost("/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
+		if (onerror==true) return;
+		else {
+			username = encodeURIComponent(username);	
+			password = encodeURIComponent(password);
+			this.ajaxpost("/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
+		}
 	}
 
 	PageScript.prototype.login_with_facebook = function(userId, accessToken) {

@@ -218,11 +218,6 @@
 										hamarosan
 									</td>
 								</tr>
-								<td>
-									<td>
-										<div id="sslLoginDiv"></div>
-									</td>
-								</tr>
 							</table>
 						<hr/>
 							<table class="content">
@@ -231,10 +226,10 @@
 										SSL jogosítvánnyal:
 									</td>
 									<td>
-										<button type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL Login</button>
+										<button class="button" type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL Login</button>
 									</td>
 								</tr>
-								<td>
+								<tr>
 									<td>
 										<div id="sslLoginDiv"></div>
 									</td>
@@ -279,55 +274,130 @@
 			          <label for="tab-registration">Regisztráció</label>
 			          <div id="tab-content-registration" class="tab-content animated fadeIn">
 						<p>Regisztrálási lehetőségek</p>
-						<button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
+						<hr>
+						<table class="content">
+							<tr>
+								<td width="90%">
+									Facebook fiókkal: 
+								</td>
+								<td>
+									<button type="button" id="Facebook_registration_button" onclick="facebook.fbregister()">Facebook Registration</button>
+								</td>
+							</tr>
+							<td>
+								<td>
+									<div id="sslLoginDiv"></div>
+								</td>
+							</tr>
+						</table>
+						<hr/>
+						<table class="content">
+							<tr>
+								<td width="90%">
+									Google+ fiókkal:
+								</td>
+								<td>
+									hamarosan
+								</td>
+							</tr>
+							<td>
+								<td>
+									<div id="sslLoginDiv"></div>
+								</td>
+							</tr>
+						</table>
 						<hr/>
 						<form id="RegistrationForm" action="javascript:pageScript.register()" method="post" name="register">
-							<div class="formrow">
-								<div class="label" id="RegistrationForm_credentialType_label" style="visibility: hidden;">
-									A hitelesítés típusa:
-								</div>
-								<select name="credentialType" type="text" id="RegistrationForm_credentialType_input" style="visibility: hidden;" value="password">
-									<option selected="selected">password</option>
-								</select>
-							</div>
-							<div class="formrow">
-								<div class="label" id="RegistrationForm_identifier_label">
-									* felhasználónév:
-								</div>
-								<input name="identifier" type="text" id="RegistrationForm_identifier_input"/>
-							</div>
-							<div class="formrow">
-								<div class="label" id="RegistrationForm_email_label">
-									* e-mail cím:
-								</div>
-								<input name="email" type="text" id="RegistrationForm_email_input"/>
-							</div>
-							<div class="formrow">
-							<p class="note">A személyi számot nem tárolja a rendszer. Az "anchor" szolgáltatással egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza. 
+							<select name="credentialType" type="text" id="RegistrationForm_credentialType_input" style="display: none">
+								<option selected="selected">password</option>
+							</select>
+							<table class="content">
+								<tr>
+									<td colspan="5" >
+										Felhasználónév és jelszó segítségével
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<p class="note">A személyi számot nem tárolja a rendszer. Az "anchor" szolgáltatással egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza. 
 							A titkos kódot magad is előállíthatod <a class="link" href="https://anchor.edemokraciagep.org"> itt</a>, és akkor be kell másolnod a "tikos kód" mezőbe</p>
-								<div class="label" id="RegistrationForm_predigest_label">
-									személyi szám:
-								</div>
-								<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
-								<button type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Generate Hash</button>
-								<div id="RegistrationForm_errorMsg"></div>
-							</div>
-							<div class="formrow">
-								<div class="label" id="RegistrationForm_digest_label">
-									titkos kód:
-								</div>
-								<input name="email" type="text" id="RegistrationForm_digest_input"/>
-							</div>
-							<div class="formrow">
-							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p>
-								<div class="label" id="RegistrationForm_secret_label">
-									jelszó:
-								</div>
-								<input name="secret" type="password" id="RegistrationForm_secret_input"/>
-							</div>
-							<div class="formrow">
-								<input type="submit" value="Register" id="RegistrationForm_submitButton">
-							</div>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+									</td>
+									<td>
+										<div class="formrow">
+											<div class="label" id="RegistrationForm_predigest_label">
+												személyi szám:
+											</div>
+											<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
+
+										</div>
+									</td>
+									<td>
+										<button class="button" type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Titkos kód létrehozása</button>
+									</td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<div id="RegistrationForm_errorMsg"></div>
+									</td>
+									<td>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<div class="formrow">
+											<div class="label" id="RegistrationForm_digest_label">
+												titkos kód:
+											</div>
+											<textarea class="digest" name="digest" type="text" id="RegistrationForm_digest_input"></textarea>
+										</div>
+									</td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is. A felhasználónév minimum 4 max 255 karakter hosszú</p>
+									</td>
+									<td></td>
+								</tr>
+								<tr>
+									<td width="15%"></td>
+									<td width="25%">
+										<div class="formrow">
+											<div class="label" id="RegistrationForm_identifier_label">
+												* felhasználónév:
+											</div>
+											<input name="identifier" type="text" id="RegistrationForm_identifier_input"/>
+										</div>
+									</td>
+									<td width="25%">
+										<div class="formrow">
+											<div class="label" id="RegistrationForm_email_label">
+												* e-mail cím:
+											</div>
+											<input name="email" type="text" id="RegistrationForm_email_input"/>
+										</div>
+									</td>
+									<td width="25%">
+										<div class="formrow">
+												<div class="label" id="RegistrationForm_secret_label">
+													jelszó:
+												</div>
+											<input name="secret" type="password" id="RegistrationForm_secret_input"/>
+										</div>
+									</td>
+									<td >
+										<input class="button" type="submit" value="Register" id="RegistrationForm_submitButton">
+									</td>
+								</tr>
+
+							</table>
 						</form>
 						<hr/>
 						<p>Regisztráció böngészőben tárolt SSL jogosítvánnyal</p>
