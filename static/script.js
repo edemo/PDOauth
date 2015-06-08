@@ -119,7 +119,7 @@ function PageScript(debug) {
 			self.ajaxget("/v1/users/"+data.email+"/passwordreset", self.PWresetCallback)
 		}
 		else {
-			document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>Nincs bejelentkezett user</p>";
+			document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>Nincs bejelentkezett felhasználó</p>";
 		}
 	}
 	

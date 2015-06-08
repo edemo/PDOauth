@@ -485,6 +485,7 @@
 						  	<div class="formrow">
 								<button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</button>
 							</div>
+							<div id="me_Msg"></div>
 						<hr/>
 						<p>Titkos kód cseréje/hozzáadása</p>
 						<p class="warning">Figyelmeztetés! A hash megváltoztatásával az összes eddigi validálási információ elvész.</p>
@@ -510,24 +511,49 @@
 						</form>
 						<hr/>
 						<p>Jelszó csere</p>
-						Négy órád van az e-mailben érkező linkre kattintani, utána törlődik a kérés.
-						<button class="button" type="button" id="PasswordResetForm_InitiatePasswordReset" onclick="pageScript.InitiatePasswordReset()">Új jelszót szeretnék</button>
-						<div id="InitiatePasswordReset_ErrorMsg"></div>
+						<table class="content">
+							<tr>
+								<td width="90%" >
+									<p class="note" >
+										A gombra kattintva kezdeményezhető a jelszó cseréje. 
+										A rendszer e-mailben elküldi az aktíváló kódot, 
+										a levélben található linkre kattintva visszajutsz ide, és megadhatod az új jelszót.
+									<p>
+								</td>
+								<td>								
+									<button class="button" type="button" id="PasswordResetForm_InitiatePasswordReset" onclick="pageScript.InitiatePasswordReset()">
+										Új jelszót szeretnék
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5">
+									<div id="InitiatePasswordReset_ErrorMsg"></div>
+								</td>
+							</tr>
+						</table>
 						<form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
-							<div class="label" id="PasswordResetForm_secret_input_label">
-								A kapott e-mailből jövő titok:
-							</div>
-							<input name="secret" type="text" id="PasswordResetForm_secret_input" disabled/>
-							<div class="formrow">
-								<div class="label" id="PasswordResetForm_password_label">
-								Új jelszó:
-								</div>
-								<input name="password" type="password" id="PasswordResetForm_password_input"/>
-							</div>
-							<div class="formrow">
-								<input type="submit" value="Mehet" id="PasswordResetForm_submitButton">
-							</div>
+							<table class="content" width="100%">
+								<tr>
+									<td width="65%">
+										<div class="label" id="PasswordResetForm_secret_input_label">
+											Az e-mailből jövő titok:
+										</div>
+										<input style="width:100%" name="secret" type="text" id="PasswordResetForm_secret_input" disabled/>
+									</td>
+									<td width="25%">
+										<div class="label" id="PasswordResetForm_password_label">
+											Új jelszó:
+										</div>
+										<input name="password" type="password" id="PasswordResetForm_password_input"/>
+									</td>
+									<td>
+										<input class="button "type="submit" value="Mehet" id="PasswordResetForm_submitButton">
+									</td>
+								</tr>
+							</table>
 						</form>
+						<div id="PasswordResetForm_ErrorMsg"></div>
 			          </div>
 			        </li>
 			    </ul>
