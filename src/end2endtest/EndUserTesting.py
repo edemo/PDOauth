@@ -1,4 +1,4 @@
-from test.TestUtil import UserTesting
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class EndUserTesting(UserTesting):
     def fillInAndSubmitRegistrationForm(self, driver, email=None, userid=None, password=None, digest=None):
@@ -9,7 +9,6 @@ class EndUserTesting(UserTesting):
         if password is None:
             password=self.usercreation_password
         if digest is None:
-            print "creating hash"
             digest = self.createHash()
         driver.find_element_by_id("RegistrationForm_digest_input").clear()
         if digest is not False:

@@ -6,8 +6,8 @@ import urllib3
 from twatson.unittest_annotations import Fixture, test
 import config
 from urllib import urlencode
-from integrationtest.BrowserSetup import BrowserSetup
-from integrationtest.EndUserTesting import EndUserTesting
+from end2endtest.BrowserSetup import BrowserSetup
+from end2endtest.EndUserTesting import EndUserTesting
 
 class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
 
@@ -69,6 +69,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
 
     def for_some_forms_you_need_a_csrf_token__you_can_obtain_it_by_logging_in(self, driver):
         driver.get(self.base_url + "/static/login.html")
+        self.switchToTab("login")
         driver.find_element_by_id("LoginForm_username_input").clear()
         driver.find_element_by_id("LoginForm_username_input").send_keys(self.assurer)
         driver.find_element_by_id("LoginForm_password_input").clear()
@@ -86,6 +87,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
     def an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(self, driver,):
         driver.get(self.base_url  + "/static/login.html")
         driver.refresh()
+        self.switchToTab("assurer")
         driver.find_element_by_id("AddAssuranceForm_digest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_digest_input").send_keys(self.createHash())
         driver.find_element_by_id("AddAssuranceForm_email_input").clear()
@@ -104,6 +106,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
     def an_assurer_can_get_user_information_using_the_users_email(self, driver):
         driver.get(self.base_url  + "/static/login.html")
         driver.refresh()
+        self.switchToTab("assurer")
         driver.find_element_by_id("ByEmailForm_email_input").clear()
         driver.find_element_by_id("ByEmailForm_email_input").send_keys(self.email)
         driver.find_element_by_id("ByEmailForm_submitButton").click()
@@ -119,7 +122,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
         self.appsecret = ''.join(random.choice(string.ascii_letters) for _ in range(32))
         appname = "app_{0}".format(''.join(random.choice(string.ascii_letters) for _ in range(6)))
         self.redirect_uri = 'https://demokracia.rulez.org/'
-        applicationtool.do_main(2, appname, self.appsecret, self.redirect_uri)
+        applicationtool.do_main(0, appname, self.appsecret, self.redirect_uri)
         app = Application.find(appname)
         self.appid = app.appid
 
@@ -167,7 +170,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
         self.if_you_are_not_logged_in__the_authorization_uri_redirects_to_login_page_such_that_after_login_you_can_continue(driver)
         self.registration_is_done_by_filling_out_the_registration_form(driver)
         self._register_assurer(driver)
-        assurancetool.do_main(2, self.assurer_email, 'self', ["assurer", "assurer.test"])
+        assurancetool.do_main(0, self.assurer_email, 'self', ["assurer", "assurer.test"])
         self.you_can_check_your_data_in_the_ME_url(driver)
         self.for_some_forms_you_need_a_csrf_token__you_can_obtain_it_by_logging_in(driver)
         self.an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(driver)

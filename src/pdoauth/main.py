@@ -1,15 +1,35 @@
-from pdoauth.app import app, login_manager
+from pdoauth.app import app, login_manager, mail
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.Controller import Controller
-from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
 import os
 from flask.globals import request
 from urllib import urlencode
-from pdoauth.FlaskInterface import FlaskInterface
+from pdoauth.forms.LoginForm import LoginForm
+from pdoauth.Decorators import Decorators
+from pdoauth.forms.KeygenForm import KeygenForm
+from pdoauth.forms.DeregisterForm import DeregisterForm
+from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
+from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
+from pdoauth.forms.PasswordResetForm import PasswordResetForm
+from pdoauth.forms.RegistrationForm import RegistrationForm
+from pdoauth.forms.AssuranceForm import AssuranceForm
+from pdoauth.forms.CredentialForm import CredentialForm
+from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 
-controller = Controller(FlaskInterface)
+controller = Controller.getInstance()
+controller.mail = mail
+controller.app = app
+decorator = Decorators(app)
+
+def getStaticPath():
+    mainpath = os.path.abspath(__file__)
+    up = os.path.dirname
+    ret = os.path.join(up(up(up(mainpath))), 'static')
+    return ret
+
+staticPath=getStaticPath()
 
 @login_manager.unauthorized_handler
 def unauthorized():
@@ -22,99 +42,92 @@ def unauthorized():
 def load_user(userid):
     return User.get(userid)
 
-@app.route("/v1/oauth2/auth", methods=["GET"])
-@login_required
-def authorization_code():
-    "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
-    return AuthProvider.auth_interface()
+@decorator.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
+def login(form):
+    return controller.do_login(form)
 
-@app.route("/login", methods=["POST"])
-def login():
-    return controller.do_login()
-
-@app.route("/ssl_login", methods=["GET"])
+@decorator.interfaceFunc("/ssl_login", methods=["GET"])
 def ssl_login():
     return controller.do_ssl_login()
 
-@app.route("/keygen", methods=["POST"])
-def keygen():
-    return controller.do_keygen()
+@decorator.interfaceFunc("/v1/oauth2/auth", methods=["GET"], checkLoginFunction=controller.checkLogin)
+def authorization_code():
+    "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
+    return AuthProvider().auth_interface()
 
-@app.route("/deregister", methods=["POST"])
-def deregister():
-    return controller.do_deregister()
+@decorator.interfaceFunc("/keygen", methods=["POST"], formClass=KeygenForm)
+def keygen(form):
+    return controller.do_keygen(form)
 
-@app.route("/logout", methods=["GET"])
-@login_required
+@decorator.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm)
+def deregister(form):
+    return controller.do_deregister(form)
+
+@decorator.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=controller.checkLogin)
 def logout():
     return controller.do_logout()
 
-@app.route("/v1/oauth2/token", methods=["POST"])
+@decorator.interfaceFunc("/v1/oauth2/token", methods=["POST"])
 def token():
-    return AuthProvider.token_interface()
+    return AuthProvider().token_interface()
 
-@app.route("/v1/users/<userid>", methods=["GET"])
+@decorator.interfaceFunc("/v1/users/<userid>", methods=["GET"],
+    checkLoginFunction=controller.authenticateUserOrBearer)
 def showUser(userid):
     return controller.do_show_user(userid)
 
-@app.route("/v1/users/me/change_password", methods=["POST"])
-def changePassword():
-    return controller.do_change_password()
+@decorator.interfaceFunc("/v1/users/me/change_password", methods=["POST"],
+    formClass=PasswordChangeForm, checkLoginFunction=controller.checkLogin)
+def changePassword(form):
+    return controller.do_change_password(form)
 
-@app.route("/v1/users/<email>/passwordreset", methods=["GET"])
+@decorator.interfaceFunc("/v1/users/<email>/passwordreset", methods=["GET"])
 def sendPasswordResetEmail(email):
     return controller.do_send_password_reset_email(email)
 
-@app.route("/v1/users/me/update_hash", methods=["POST"])
-@login_required
-def updateHash():
-    return controller.do_update_hash()
+@decorator.interfaceFunc("/v1/users/me/update_hash", methods=["POST"],
+    formClass=DigestUpdateForm, checkLoginFunction=controller.checkLogin)
+def updateHash(form):
+    return controller.do_update_hash(form)
 
-@app.route("/v1/password_reset", methods=["POST"])
-def passwordReset():
-    return controller.do_password_reset()
+@decorator.interfaceFunc("/v1/password_reset", methods=["POST"],
+    formClass=PasswordResetForm)
+def passwordReset(form):
+    return controller.do_password_reset(form)
 
-@app.route("/v1/register", methods=["POST"])
-def register():
-    return controller.do_registration()
+@decorator.interfaceFunc("/v1/register", methods=["POST"],
+    formClass=RegistrationForm)
+def register(form):
+    return controller.do_registration(form)
 
-@app.route("/v1/verify_email/<token>", methods=["GET"])
+@decorator.interfaceFunc("/v1/verify_email/<token>", methods=["GET"])
 def verifyEmail(token):
     return controller.do_verify_email(token)
 
-@app.route('/v1/user_by_email/<email>', methods=["GET"])
-@login_required
+@decorator.interfaceFunc("/v1/user_by_email/<email>", methods=["GET"],
+    checkLoginFunction=controller.checkLogin)
 def get_by_email(email):
     return controller.do_get_by_email(email)
 
-@app.route('/v1/add_assurance', methods=["POST"])
-@login_required
-def add_assurance():
-    return controller.do_add_assurance()
+@decorator.interfaceFunc("/v1/add_assurance", methods=["POST"],
+    formClass=AssuranceForm, checkLoginFunction=controller.checkLogin)
+def add_assurance(form):
+    return controller.do_add_assurance(form)
 
-@app.route('/v1/add_credential', methods=["POST"])
-@login_required
-def add_credential():
-    return controller.do_add_credential()
+@decorator.interfaceFunc("/v1/add_credential", methods=["POST"],
+    formClass=CredentialForm, checkLoginFunction=controller.checkLogin)
+def add_credential(form):
+    return controller.do_add_credential(form)
 
-@app.route('/v1/remove_credential', methods=["POST"])
-@login_required
-def remove_credential():
-    return controller.do_remove_credential()
+@decorator.interfaceFunc("/v1/remove_credential", methods=["POST"],
+    formClass=CredentialIdentifierForm, checkLoginFunction=controller.checkLogin)
+def remove_credential(form):
+    return controller.do_remove_credential(form)
 
-@app.route('/uris', methods=["GET"])
+@decorator.interfaceFunc("/uris", methods=["GET"])
 def uriservice():
     return controller.do_uris()
 
-def getStaticPath():
-    mainpath = os.path.abspath(__file__)
-    up = os.path.dirname
-    ret = os.path.join(up(up(up(mainpath))), 'static')
-    return ret
-
-@app.route('/static/<path:path>')
+@decorator.interfaceFunc("/static/<path:path>", methods=["GET"])
 def send_static(path):
-    return send_from_directory(getStaticPath(), path)
-
-if __name__ == '__main__':
-    app.run("localhost", 8888)
+    return send_from_directory(staticPath, path)

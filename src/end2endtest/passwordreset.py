@@ -1,10 +1,11 @@
 import unittest, time
-from test.TestUtil import UserTesting
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
 from twatson.unittest_annotations import Fixture, test
 import config
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
+from test.helpers.todeprecate.UserTesting import UserTesting
+from pdoauth import main  # @UnusedImport
 
 class EndUserPasswordResetTest(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
@@ -27,6 +28,7 @@ class EndUserPasswordResetTest(Fixture, UserTesting, BrowserSetup):
         resetLink = self.the_reset_link_is_in_the_reset_email()
         driver = self.driver
         driver.get(resetLink)
+        self.switchToTab("account")
         driver.find_element_by_id("PasswordResetForm_password_input").clear()
         newPassword = self.mkRandomPassword()
         driver.find_element_by_id("PasswordResetForm_password_input").send_keys(newPassword)

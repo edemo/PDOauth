@@ -11,7 +11,7 @@
 	<xsl:template match="/">
 		<documentation>
 			<interfaces>
-				<xsl:for-each select="//decorator[starts-with(.,'app.route')]">
+				<xsl:for-each select="//decorator[starts-with(.,'app.route') or starts-with(.,'FlaskInterface.interfaceFunc')]">
 					<xsl:copy-of select=".."/>
 				</xsl:for-each>
 			</interfaces>

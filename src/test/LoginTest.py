@@ -1,8 +1,9 @@
-from test.TestUtil import UserTesting
+
 from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
 from pdoauth.forms import credErr
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class LoginTest(Fixture, UserTesting):
 
