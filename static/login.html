@@ -510,6 +510,9 @@
 						</form>
 						<hr/>
 						<p>Jelszó csere</p>
+						Négy órád van az e-mailben érkező linkre kattintani, utána törlődik a kérés.
+						<button class="button" type="button" id="PasswordResetForm_InitiatePasswordReset" onclick="pageScript.InitiatePasswordReset()">Új jelszót szeretnék</button>
+						<div id="InitiatePasswordReset_ErrorMsg"></div>
 						<form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
 							<div class="label" id="PasswordResetForm_secret_input_label">
 								A kapott e-mailből jövő titok:

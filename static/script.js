@@ -108,7 +108,26 @@ function PageScript(debug) {
 	    password = document.getElementById("PasswordResetForm_password_input").value;
 	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.myCallback)
 	}
+	
+	PageScript.prototype.InitiatePasswordReset = function() {
+		this.ajaxget("/v1/users/me", this.PWresetInitCallback)
+	}
 
+	PageScript.prototype.PWresetInitCallback = function(status, text){
+		var data = JSON.parse(text);
+		if (status == 200) {
+			self.ajaxget("/v1/users/"+data.email+"/passwordreset", self.PWresetCallback)
+		}
+		else {
+			document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>Nincs bejelentkezett user</p>";
+		}
+	}
+	
+	PageScript.prototype.PWresetCallback = function(status, text) {
+		var data = JSON.parse(text);
+		if (data.message) document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>"+data.message+"</p>";
+	} 
+	
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_username_input").value;
 	    var onerror=false;
@@ -291,7 +310,10 @@ function PageScript(debug) {
 		else {
 			document.getElementById("tab-account").checked = true; 
 			var data = JSON.parse(text);
-			if (data.assurances) document.getElementById("me_Msg").innerHTML=this.parse_userdata(data);
+			if (data.assurances) {
+				this.logged_in_user_Id=data.userid;
+				document.getElementById("me_Msg").innerHTML=this.parse_userdata(data);
+			}
 		}
 	}
 	
@@ -300,6 +322,7 @@ function PageScript(debug) {
 		this.ajaxget("/v1/users/me", this.meCallback)
 		if (QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
+			document.getElementById("tab-account").checked = true;
 		}
 		
 	}
