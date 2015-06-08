@@ -1,4 +1,4 @@
-from integrationtest.config import Config as IntegrationTestConfig
+from end2endtest.config import Config as IntegrationTestConfig
 
 class Config(IntegrationTestConfig):
     pass

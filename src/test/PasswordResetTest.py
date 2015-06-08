@@ -1,5 +1,4 @@
 from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
 import re
@@ -8,8 +7,10 @@ import time
 from uuid import uuid4
 from pdoauth.models.User import User
 from pdoauth.CredentialManager import CredentialManager
+from test.helpers.UserUtil import UserUtil
+from pdoauth import main  # @UnusedImport
 
-class PasswordResetTest(Fixture, UserTesting):
+class PasswordResetTest(Fixture, UserUtil):
 
     def setUp(self):
         self.createUserWithCredentials()

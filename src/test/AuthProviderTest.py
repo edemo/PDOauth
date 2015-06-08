@@ -9,8 +9,10 @@ from pdoauth.models.KeyData import KeyData
 from pyoauth2_shift.provider import utils
 from flask_login import current_user
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from test.TestUtil import AuthenticatedSessionMixin
 from urllib import urlencode
+from test.helpers.AuthenticatedSessionMixin import AuthenticatedSessionMixin
+from test.helpers.RandomUtil import RandomUtil
+from pdoauth import main  # @UnusedImport
 
 class FakeData(object):
     
@@ -18,7 +20,7 @@ class FakeData(object):
         self.client_id = client_id
         self.user_id = user_id
 
-class AuthProviderTest(Fixture, AuthenticatedSessionMixin):
+class AuthProviderTest(Fixture, AuthenticatedSessionMixin, RandomUtil):
 
     def setUp(self):
         self.setupRandom()

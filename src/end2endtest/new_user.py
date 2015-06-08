@@ -2,12 +2,12 @@ import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.Application import Application
-from test.TestUtil import UserTesting
 import time
 from urllib import urlencode
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class NewUserTest(Fixture,UserTesting, BrowserSetup):
     def setUp(self):
@@ -43,6 +43,7 @@ class NewUserTest(Fixture,UserTesting, BrowserSetup):
         userid = "user_{0}".format(self.randString)
         email = "user_{0}@example.com".format(self.randString)
         self.thePassword = self.mkRandomPassword()
+        self.switchToTab('registration')
         driver.find_element_by_id("RegistrationForm_identifier_input").clear()
         driver.find_element_by_id("RegistrationForm_identifier_input").send_keys(userid)
         driver.find_element_by_id("RegistrationForm_secret_input").clear()
@@ -50,8 +51,7 @@ class NewUserTest(Fixture,UserTesting, BrowserSetup):
         driver.find_element_by_id("RegistrationForm_email_input").clear()
         driver.find_element_by_id("RegistrationForm_email_input").send_keys(email)
         driver.find_element_by_id("RegistrationForm_submitButton").click()
-        time.sleep(1)
-        print driver.current_url
+        time.sleep(2)
         self.assertTrue(driver.current_url.startswith(self.redirect_uri.lower()))
 
     @test
@@ -60,6 +60,7 @@ class NewUserTest(Fixture,UserTesting, BrowserSetup):
             return
         driver = self.driver
         self._gotoOauthPage(driver)
+        self.switchToTab('registration')
         driver.find_element_by_id("Facebook_registration_button").click()
         time.sleep(1)
         self.master = driver.current_window_handle
@@ -79,7 +80,6 @@ class NewUserTest(Fixture,UserTesting, BrowserSetup):
         driver.find_element_by_id("u_0_2").click()
         driver.switch_to.window(self.master)
         time.sleep(5)
-        print driver.current_url
         self.assertTrue(driver.current_url.startswith(self.redirect_uri.lower()))
         self.user = User.getByEmail(config.fbuser2)
         Credential.getByUser(self.user, "facebook").rm()

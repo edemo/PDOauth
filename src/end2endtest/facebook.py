@@ -1,10 +1,10 @@
 import unittest, time
 import config
 from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
@@ -18,6 +18,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
             return
         driver = self.driver
         driver.get(self.base_url+"/static/login.html")
+        self.switchToTab('registration')
         driver.find_element_by_id("Facebook_registration_button").click()
         time.sleep(1)
         self._switchWindow(driver)
@@ -38,6 +39,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
             return
         driver = self.driver
         driver.get(self.base_url+"/static/login.html")
+        self.switchToTab('registration')
         driver.find_element_by_id("Facebook_registration_button").click()
         time.sleep(1)
         self._switchWindow(driver)
@@ -50,7 +52,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
         time.sleep(5)
         body = driver.find_element_by_id("userdata").text
-        self.assertTrue("email: mag+elekne@magwas.rulez.org"in body)
+        self.assertTrue("mag+elekne@magwas.rulez.org"in body)
         self.user = User.getByEmail(config.fbuser2)
         Credential.getByUser(self.user, "facebook").rm()
         self.user.rm()
@@ -63,6 +65,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         self.user.activate()
         driver = self.driver
         driver.get(self.base_url+"/static/login.html")
+        self.switchToTab("login")
         driver.find_element_by_id("Facebook_login_button").click()
         time.sleep(1)
         self._switchWindow(driver)
@@ -77,8 +80,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         body = driver.find_element_by_id("message").text
         self.assertEqual("", body)
         body = driver.find_element_by_id("userdata").text
-        print body
-        self.assertTrue("email: mag+tesztelek@magwas.rulez.org"in body)
+        self.assertTrue("mag+tesztelek@magwas.rulez.org"in body)
         Credential.getByUser(self.user, "facebook").rm()
         self.user.rm()
 

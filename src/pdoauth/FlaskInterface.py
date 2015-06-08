@@ -1,15 +1,32 @@
-from pdoauth.models.Assurance import Assurance
-from pdoauth.models.Credential import Credential
-from flask import json
 import urllib3
 import flask
-from pdoauth.app import app, logging
+from flask.globals import session, request
+from flask_login import login_user, current_user, logout_user
+from pdoauth.Responses import Responses
 
-class FlaskInterface(object):
-    @classmethod
-    def make_response(self, ret, status):
-        return flask.make_response(ret, status)
-    
+class FlaskInterface(Responses):
+
+    def getHeader(self, header):
+        return request.headers.get(header)
+
+    def getCurrentUser(self):
+        return current_user
+
+    def getEnvironmentVariable(self, variableName):
+        return request.environ.get(variableName, None)
+
+    def getRequestForm(self):
+        return request.form
+
+    def getRequestUrl(self):
+        return request.url
+
+    def LogOut(self):
+        return logout_user()
+
+    def getConfig(self, name):
+        return self.app.config.get(name)
+
     def validate_on_submit(self,form):
         return form.validate_on_submit()
 
@@ -21,57 +38,12 @@ class FlaskInterface(object):
         resp = http.request('GET', "https://graph.facebook.com/v2.2/me", args)
         return resp
 
-    @classmethod
-    def exceptionChecked(cls,func):
-        def f(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except ReportedError as e:
-                logging.log(logging.INFO,"status={0}, descriptor={1}".format(e.status, e.descriptor))
-                resp = cls.error_response(e.descriptor, e.status)   
-                resp.headers['Access-Control-Allow-Origin'] = app.config.get('BASE_URL')
-                return resp      
-        return f
+    def getSession(self):
+        return session
 
-    @classmethod
-    def _make_response(self, descriptor,status=200):
-        ret = json.dumps(descriptor)
-        return self.make_response(ret, status)
-    
-    @classmethod
-    def error_response(self,descriptor, status=400):
-        return self._make_response(dict(errors=descriptor), status)
+    def loginUserInFramework(self, user):
+        r = login_user(user)
+        return r
 
-class ReportedError(Exception):
-    def __init__(self, descriptor, status=400):
-        self.descriptor = descriptor
-        self.status = status
-
-
-class Responses(object):
-
-    def errors_to_json(self, form):
-        errs = []
-        for field, errors in form.errors.items():
-            for error in errors:
-                fieldname = getattr(form, field).label.text
-                errs.append("{0}: {1}".format(fieldname,error))
-        return errs
-
-    def simple_response(self,text):
-        return self._make_response(dict(message=text))
-    
-    def form_validation_error_response(self, form, status=400):
-        errdict = self.errors_to_json(form)
-        return self.error_response(errdict, status)
-    
-    def as_dict(self, user, **kwargs):
-        kwargs.update({
-            'email':user.email, 
-            'userid':user.userid, 
-            'hash': user.hash,
-            'assurances':Assurance.getByUser(user),
-            'credentials': Credential.getByUser_as_dictlist(user)
-        })
-        ret = json.dumps(kwargs)
-        return self.make_response(ret,200)
+    def make_response(self, ret, status):
+        return flask.make_response(ret, status)

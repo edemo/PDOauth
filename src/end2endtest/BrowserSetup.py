@@ -7,6 +7,12 @@ import logging
 
 class BrowserSetup(object):
 
+    def switchToTab(self,tab):
+        for i in ['login', 'registration', 'account', 'assurer']:
+            self.driver.execute_script("document.getElementById('tab-content-{0}').style.visibility = 'hidden'".format(i))
+            self.driver.execute_script("document.getElementById('tab-content-{0}').style.visibility = 'visible'".format(tab))
+
+
     def getDriver(self):
         if os.environ.get("WEBDRIVER", None) == "chrome":
             os.environ['PATH'] += ":/usr/lib/chromium-browser"
@@ -24,7 +30,7 @@ class BrowserSetup(object):
     def setupDriver(self):
         self.driver = self.getDriver()
         self.driver.implicitly_wait(5)
-        self.driver.set_page_load_timeout(10)
+        self.driver.set_page_load_timeout(20)
         return self.driver
 
     def _switchWindow(self,driver):

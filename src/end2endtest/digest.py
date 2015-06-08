@@ -1,8 +1,8 @@
 import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
-from integrationtest.BrowserSetup import BrowserSetup
-from integrationtest.EndUserTesting import EndUserTesting
+from end2endtest.BrowserSetup import BrowserSetup
+from end2endtest.EndUserTesting import EndUserTesting
 from pdoauth.app import app
 import time
 
@@ -17,13 +17,15 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         self.assertEqual(len(config.testSignatureAllOne),512)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
+        self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=False)
         
         digest = self.createHash()
+        self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
-        time.sleep(0.5)
+        time.sleep(1)
         userdata = self.driver.find_element_by_id("userdata").text
         self.assertTrue("hash: {0}".format(digest) in userdata)
 
@@ -32,18 +34,20 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         self.assertEqual(len(config.testSignatureAllOne),512)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
+        self.switchToTab('registration')
         oldDigest=self.createHash()
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
-        time.sleep(0.5)
+        time.sleep(1)
         userdata = self.driver.find_element_by_id("userdata").text
         self.assertTrue("hash: {0}".format(oldDigest) in userdata)
         self.setupRandom()
         digest = self.createHash()
         self.assertTrue(oldDigest != digest)
+        self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
-        time.sleep(0.5)
+        time.sleep(1)
         userdata = self.driver.find_element_by_id("userdata").text
         self.assertTrue("hash: {0}".format(digest) in userdata)
 
@@ -53,13 +57,15 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
         oldDigest=self.createHash()
+        self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
-        time.sleep(0.5)
+        time.sleep(1)
         userdata = self.driver.find_element_by_id("userdata").text
         self.assertTrue("hash: {0}".format(oldDigest) in userdata)
+        self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
-        time.sleep(0.5)
+        time.sleep(1)
         userdata = self.driver.find_element_by_id("userdata").text
         self.assertTrue("hash: null" in userdata)
     

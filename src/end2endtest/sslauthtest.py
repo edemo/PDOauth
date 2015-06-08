@@ -1,11 +1,12 @@
+# -*- coding: UTF-8 -*-
 import unittest
 import config
 from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting
 from pdoauth.app import app
 from pdoauth.models.User import User
-from integrationtest.BrowserSetup import BrowserSetup
+from end2endtest.BrowserSetup import BrowserSetup
 import time
+from test.helpers.todeprecate.UserTesting import UserTesting
 
 class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
 
@@ -17,17 +18,17 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
 
     def _keygenAndLogin(self):
         self.driver.get(app.config.get("START_URL"))
+        self.driver.execute_script("document.getElementById('tab-content-registration').style.visibility = 'visible'")
         self.driver.find_element_by_id("KeygenForm_email_input").clear()
         self.driver.find_element_by_id("KeygenForm_email_input").send_keys(self.usercreation_email)
         self.driver.find_element_by_id("KeygenForm_createuser_input").click()
         self.driver.find_element_by_id("KeygenForm_submit").click()
-        print self.driver.find_element_by_css_selector("BODY").text
+        time.sleep(1)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
-        print self.driver.find_element_by_css_selector("BODY").text
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
+        time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
-        print body
         self.assertTrue('{"credentialType": "certificate", "identifier": ' in body)
         self.assertTrue('/{0}"}}'.format(self.usercreation_email) in
             body)
@@ -35,9 +36,11 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
 
     def _logoutAfterKeygen(self):
         self.driver.get(app.config.get("START_URL"))
+        self.switchToTab("account")
         self.driver.find_element_by_id("logout_button").click()
         time.sleep(1)
         self.driver.get(app.config.get("START_URL"))
+        self.switchToTab("account")
         self.driver.find_element_by_id("melink").click()
         body = self.driver.find_element_by_id("errorMsg").text
         self.assertEqual(body, "no authorization")
@@ -48,11 +51,13 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self._keygenAndLogin()
         self._logoutAfterKeygen()
         self.driver.get(app.config.get("START_URL"))
+        self.switchToTab("login")
         self.driver.find_element_by_id("ssl_login").click()
+        self.switchToTab("account")
         self.driver.find_element_by_id("melink").click()
         self.assertEqual(self.driver.find_element_by_id("errorMsg").text, "")
         userData = self.driver.find_element_by_id("userdata").text
-        self.assertTrue("email: {0}\nuserid: ".format(self.usercreation_email) in
+        self.assertTrue("{0}".format(self.usercreation_email) in
                 userData)
         self.deleteCerts()
         
@@ -94,9 +99,11 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         testUrl = startUrl.replace(baseUrl, sslLoginBaseUrl)
         self.driver.get(testUrl)
+        self.switchToTab("account")
         body = self.driver.find_element_by_id("PasswordResetForm_password_label").text
-        self.assertEqual(body, u'New password:')
+        self.assertEqual(body, u'Új jelszó:')
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
+        time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
         self.assertEqual('{"errors": ["No certificate given"]}', body)
 
@@ -106,8 +113,9 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self._logoutAfterKeygen()
         startUrl = app.config.get("START_URL")
         self.driver.get(startUrl)
+        self.switchToTab("account")
         body = self.driver.find_element_by_id("PasswordResetForm_password_label").text
-        self.assertEqual(body, u'New password:')
+        self.assertEqual(body, u'Új jelszó:')
         self.deleteCerts()
 
     def tearDown(self):
