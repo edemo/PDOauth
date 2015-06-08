@@ -57,7 +57,7 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self.driver.find_element_by_id("melink").click()
         self.assertEqual(self.driver.find_element_by_id("errorMsg").text, "")
         userData = self.driver.find_element_by_id("userdata").text
-        self.assertTrue("email: {0}\nuserid: ".format(self.usercreation_email) in
+        self.assertTrue("{0}".format(self.usercreation_email) in
                 userData)
         self.deleteCerts()
         

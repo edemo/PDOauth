@@ -28,6 +28,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
     def registration_is_done_by_filling_out_the_registration_form(self, driver):
         driver.get(self.base_url  + "/static/login.html?next=/v1/users/me")
         driver.refresh()
+        self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver, password=self.thePassword, userid=self.normaluser, email=self.email)
         driver.save_screenshot("doc/screenshots/registration.png")
         time.sleep(1)
@@ -49,6 +50,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
     def _register_assurer(self, driver):
         driver.get(self.base_url  + "/static/login.html?next=/v1/users/me")
         driver.refresh()
+        self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver, password=self.thePassword, userid=self.assurer, email=self.assurer_email)
         time.sleep(1)
         self.assertEqual(self.base_url  + "/v1/users/me", driver.current_url)
@@ -140,8 +142,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
         self.http = urllib3.PoolManager(
             cert_reqs='CERT_REQUIRED',
             ca_certs=config.ca_certs,
-    )
-
+        )
 
     def the_server_can_get_your_access_tokens_using_your_authorization_code(self):
         resp = self.http.request("POST", self.base_url + "/v1/oauth2/token", fields=dict(code=self.code, 

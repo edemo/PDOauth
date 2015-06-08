@@ -17,6 +17,7 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         self.assertEqual(len(config.testSignatureAllOne),512)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
+        self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=False)
         
         digest = self.createHash()
@@ -33,6 +34,7 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         self.assertEqual(len(config.testSignatureAllOne),512)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
+        self.switchToTab('registration')
         oldDigest=self.createHash()
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
         time.sleep(1)
@@ -55,6 +57,7 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
         oldDigest=self.createHash()
+        self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
         time.sleep(1)
         userdata = self.driver.find_element_by_id("userdata").text
