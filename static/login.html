@@ -133,10 +133,11 @@
 			font-size: 20px;
 		  }
 		  table.content {
-			  font-size: 20px;
-			    color: white;
+			font-size: 20px;
+			color: white;
+			width: 100%;	
 		  }
-		  .button, textarea.digest{width: 100%;}
+		  .button, textarea.digest{width: 100%; white-space: normal; height:100%}
 		  
 	    </style></head>
 <body onload="pageScript.main()" >
@@ -415,7 +416,7 @@
 							</div>
 							<input name="email" type="text" id="KeygenForm_email_input"/>
 							<div class="formrow">
-								<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true">Create User<br>
+								<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true">Felhasználó létrehozása<br>
 							</div>
 							<div class="formrow">
 								<input id="KeygenForm_submit" type="submit" name="createcert" value="Jogosítvány előállítása">
@@ -447,7 +448,9 @@
 									személyi szám:
 								</div>
 								<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
-								<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">Titkos kód generálása</button>
+								<button type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">
+									Titkos kód generálása
+								</button>
 							</div>
 							<div id="AddAssuranceForm_errorMsg"></div>
 							<div class="formrow">
@@ -469,7 +472,7 @@
 								<input name="email" type="text" id="AddAssuranceForm_email_input"/>
 							</div>
 							<div class="formrow">
-								<input type="submit" value="Add Assurance" id="AddAssuranceForm_submitButton">
+								<input type="submit" value="Tanusítvány kiadása" id="AddAssuranceForm_submitButton">
 							</div>
 						</form>
 			          </div>
@@ -485,9 +488,10 @@
 						  	<div class="formrow">
 								<button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</button>
 							</div>
+							<div id="me_Msg"></div>
 						<hr/>
 						<p>Titkos kód cseréje/hozzáadása</p>
-						<p class="warning">Figyelmeztetés! A hash megváltoztatásával az összes eddigi validálási információ elvész.</p>
+						<p class="warning">Figyelmeztetés! A hash megváltoztatásával a felhasználó összes eddigi SSO tanusítványa elvész.</p>
 						<p class="note">A személyi számot nem tárolja a rendszer. Egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza.</p>
 						<form id="ChangeHashForm" action="javascript:pageScript.changeHash()" method="post" name="addAssurance">
 							<div class="formrow">
@@ -505,28 +509,78 @@
 								<textarea class="digest" name="digest" type="text" id="ChangeHashForm_digest_input" rows="5"></textarea>
 							</div>
 							<div class="formrow">
-								<input type="submit" value="Mehet" id="ChangeHashForm_submitButton"></input>
+								<input type="submit" value="A hash mentése" id="ChangeHashForm_submitButton"></input>
 							</div>
 						</form>
 						<hr/>
 						<p>Jelszó csere</p>
-						Négy órád van az e-mailben érkező linkre kattintani, utána törlődik a kérés.
-						<button class="button" type="button" id="PasswordResetForm_InitiatePasswordReset" onclick="pageScript.InitiatePasswordReset()">Új jelszót szeretnék</button>
-						<div id="InitiatePasswordReset_ErrorMsg"></div>
+						<table class="content">
+							<tr>
+								<td width="90%" >
+									<p class="note" >
+										A gombra kattintva kezdeményezhető a jelszó cseréje. 
+										A rendszer e-mailben elküldi az aktíváló kódot, 
+										a levélben található linkre kattintva visszajutsz ide, és megadhatod az új jelszót.
+									<p>
+								</td>
+								<td>								
+									<button class="button" type="button" id="PasswordResetForm_InitiatePasswordReset" onclick="pageScript.InitiatePasswordReset()">
+										Új jelszót szeretnék
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="5">
+									<div id="InitiatePasswordReset_ErrorMsg"></div>
+								</td>
+							</tr>
+						</table>
 						<form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
-							<div class="label" id="PasswordResetForm_secret_input_label">
-								A kapott e-mailből jövő titok:
-							</div>
-							<input name="secret" type="text" id="PasswordResetForm_secret_input" disabled/>
-							<div class="formrow">
-								<div class="label" id="PasswordResetForm_password_label">
-								Új jelszó:
-								</div>
-								<input name="password" type="password" id="PasswordResetForm_password_input"/>
-							</div>
-							<div class="formrow">
-								<input type="submit" value="Mehet" id="PasswordResetForm_submitButton">
-							</div>
+							<table class="content" width="100%">
+								<tr>
+									<td width="65%">
+										<div class="label" id="PasswordResetForm_secret_input_label">
+											Az e-mailből jövő titok:
+										</div>
+										<input style="width:100%" name="secret" type="text" id="PasswordResetForm_secret_input" disabled/>
+									</td>
+									<td width="25%">
+										<div class="label" id="PasswordResetForm_password_label">
+											Új jelszó:
+										</div>
+										<input name="password" type="password" id="PasswordResetForm_password_input"/>
+									</td>
+									<td>
+										<input class="button "type="submit" value="Cserélem" id="PasswordResetForm_submitButton">
+									</td>
+								</tr>
+							</table>
+						</form>
+						<div id="PasswordResetForm_ErrorMsg"></div>
+						<hr/>
+						<p>Fiók törlése</p>
+						<form id="DeRegisterForm" action="javascript:pageScript.deRegister()" method="post" name="deRegister">
+							<table class="content" width="100%">
+								<tr>
+									<td width="65%">
+										<p class="note" >
+											A fiók törlésével a felhasználó összes felhasználói adata, tanusítványa, belépési jogosultsága törlődni fog.
+											A gomb megnyomásával ezzel a fiókkal sem az SSO felületére, sem azokra a weboldalakra nem lehet majd belépni, 
+											amelyekbe az SSO szolgáltatás segítségével regisztráltak.
+										</p>
+									</td>
+									<td width="25%">
+										<div class="label" id="DeRegisterForm_password_label">
+											Jelszó:
+										</div>
+										<input name="password" type="password" id="DeRegisterForm_password_input"/>
+									</td>
+									<td width="10%">
+										<input class="Button" type="submit" value="Törlöm a fiókom" id="DeRegisterForm_submitButton"></input>
+									</td>
+								</tr>
+							</table>
+							<div id="DeRegisterForm_ErrorMsg"></div>
 						</form>
 			          </div>
 			        </li>
