@@ -276,7 +276,7 @@
 							</table>
 						</form>
 						<hr/>
-						<p>Regisztráció böngészőben tárolt SSL jogosítvánnyal</p>
+						<p>Regisztráció böngészőben tárolt SSL kulccsal</p>
 						<form id="keygenform" method="post" action="/keygen">
 							<div class="formrow">
 								<div class="label" id="KeygenForm_pubkey_label">
@@ -367,7 +367,7 @@
 									<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button>
 									<hr/>
 									<p>Adataim megjelenítése</p>
-									<button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</button>
+									<button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.Init_Callback)">Adataim</button>
 								</td>
 								<td width="15px">
 									<div class="msg" id="me_Msg" style="max-width: 600px;"></div>
@@ -377,7 +377,7 @@
 
 						<hr/>
 						
-						<p>Titkos kód cseréje/hozzáadása</p>
+						<p>Titkosított kód cseréje/hozzáadása</p>
 						<p class="warning">Figyelmeztetés! A titkosított kód megváltoztatásával a felhasználó összes eddigi SSO tanusítása elvész.</p>
 						<p class="note">A személyi számot nem tárolja a rendszer. Egy titkosított kódot generálunk belőle, amiből a személyi szám nem nyerhető vissza.</p>
 						<form id="ChangeHashForm" action="javascript:pageScript.changeHash()" method="post" name="addAssurance">
@@ -452,7 +452,82 @@
 						<hr/>
 						</div>
 						
-					
+						<div id="Add_Credential_Container">
+						<p>Hitelesítési módok hozzáadása</p>
+						<table class="content">
+							<tr>
+							
+								<td width="25%" style="vertical-align:top">
+									<p class="note" >
+										A gombra kattintva hozzárendelhetsz a fiókodhoz egy Facebook fiókot, amit később használhatsz a bejelentkezéshez.
+									<p>
+									<button class="button" type="button" id="FB_CredentialForm_AddFbCredential" onclick="facebook.add_fb_credential()">
+										Facebook fiók hozzárendelése
+									</button>
+								</td>
+								
+								<td width="25%" style="vertical-align:top">
+									<p class="note" >
+										A gombra kattintva hozzárendelhetsz a fiókodhoz egy Google+ fiókot, amit később használhatsz a bejelentkezéshez.
+									<p>
+									<button class="button" type="button" id="FB_CredentialForm_AddFbCredential" onclick="javascript:pageScript.addGoogleCredential()">
+										Google+ fiók hozzárendelése
+									</button>
+								</td>
+								
+								<td width="25%" style="vertical-align:top">
+									<form id="AddSslCredentialForm" method="post" action="/keygen">
+										<p class="note" >
+											Böngészőkulcs generálása SSL bejelentkezéshez. 
+											A tárolt kulccsal csak az adott számítógép adott böngészőjével lehet bejelentkezni.
+										<p>
+										<div class="formrow">
+											<div class="label" id="KeygenForm_pubkey_label">
+												a kulcs mérete:
+											</div>
+											<keygen name="pubkey" challenge="123456789" keytype="RSA">
+										</div>
+										<div class="formrow">
+											<div class="label" id="KeygenForm_email_label">
+												e-mail cím:
+											</div>
+										</div>
+											<input name="email" type="text" id="AddSslCredentialForm_email_input" disabled/>
+										<p>
+											<input class="button" id="AddSslCredentialForm" type="submit" name="AddSslCredential_createcert" value="SSL kulcs elkészítése">
+										</p>
+									</form>
+								</td>
+								
+								<td width="25%" style="vertical-align:top">
+									<form id="AddPasswordCredentialForm" action="javascript:pageScript.addPassowrdCredential()" method="post" name="addPasswordCredential">
+										<p class="note" >
+											Felhasználónév és jelszó megadása a bejelentkezéshez
+										<p>
+											<div class="formrow">
+											<div class="label" id="AddPasswordCredentialForm_username_label">
+												Felhasználó név:
+											</div>
+											<input name="username" type="text" id="AddPasswordCredentialForm_username_input"/>
+										</div>
+										<div class="formrow">
+											<div class="label" id="AddPasswordCredentialForm_password_label">
+												Jelszó:
+											</div>
+											<input name="username" type="password" id="AddPasswordCredentialForm_password_input"/>
+										</div>
+										<p>
+											<input class="button" type="submit" value="Felhasználónév és jelszó megadása" id="AddPasswordCredentialForm_submitButton">
+										</p>
+									</form>
+								</td>
+								
+							</tr>
+						</table>
+						<div id="AddCredentialForm_ErrorMsg"></div>
+						<hr/>
+						</div>
+				
 						<p>Jelszó csere</p>
 						<table class="content">
 							<tr>
