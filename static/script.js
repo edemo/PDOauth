@@ -328,8 +328,8 @@ function PageScript(debug) {
 			document.getElementById("tab-account").checked = true; 
 			var data = JSON.parse(text);
 			if (data.assurances) {
-				self.logged_in_user_Id=data.userid;
 				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
+				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
 			}
 			document.getElementById("tab-login-label").style.display = 'none';
 			document.getElementById("tab-registration-label").style.display = 'none';
