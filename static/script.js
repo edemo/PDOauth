@@ -78,17 +78,17 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.parse_userdata = function(data) {
-		userdata = "e-mail cím: "+data.email
-		userdata +="<br>felhasználó azonosító: "+data.userid
-		userdata +="<br>hash: "+data.hash
-		userdata +="<br>biztosítási szintek:"
+		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
+		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
+		userdata +="<p><b>hash:</b> <pre>"+data.hash+"</pre></p>"
+		userdata +="<p><b>biztosítási szintek:</p>"
 		userdata +="<ul>"
 		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
 		userdata +="</ul>"
-		userdata +="<br>igazolások:"
+		userdata +="<p><b>igazolások:</b>"
 		userdata +="<ul>"
 		for(i in data.credentials) userdata += "<li>"+data.credentials[i].credentialType+"</li>" ;
-		userdata +="</ul>"
+		userdata +="</ul></p>"
 		return userdata;		
 	}
 
@@ -249,11 +249,22 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.hashCallback = function(status,text) {
-		self.myCallback(status,text);
-		self.ajaxget('/v1/users/me',self.myCallback);
+		if (status==200) { 
+			self.ajaxget('/v1/users/me',function(status, text){
+				if (status==200) {
+					var data = JSON.parse(text);
+					document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);	
+				}
+			});
+		}
+		else {
+			var data = JSON.parse(text);
+			document.getElementById("ChangeHashForm_ErrorMsg").innerHTML='<p class="warning">'+data.errors+'</p>';	
+		}
 	}
 
 	PageScript.prototype.changeHash = function() {
+		document.getElementById("ChangeHashForm_ErrorMsg").innerHTML="";
 	    digest = document.getElementById("ChangeHashForm_digest_input").value;
 	    csrf_token = this.getCookie('csrf');
 	    text= {
@@ -303,17 +314,22 @@ function PageScript(debug) {
 		this.loadjs("tests.js")
 	}
 	
-	PageScript.prototype.meCallback = function(status, text) {
+	PageScript.prototype.Init_Callback = function(status, text) {
 		if (status != 200) {
 			document.getElementById("tab-login").checked = true;
+			document.getElementById("tab-account-label").style.display = 'none';
+			document.getElementById("tab-assurer-label").style.display = 'none';
 		}
 		else {
 			document.getElementById("tab-account").checked = true; 
 			var data = JSON.parse(text);
 			if (data.assurances) {
-				this.logged_in_user_Id=data.userid;
-				document.getElementById("me_Msg").innerHTML=this.parse_userdata(data);
+				self.logged_in_user_Id=data.userid;
+				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
 			}
+			document.getElementById("tab-login-label").style.display = 'none';
+			document.getElementById("tab-registration-label").style.display = 'none';
+			if (typeof(data.assurances.assurer)=="undefined") document.getElementById("tab-assurer-label").style.display = 'none';
 		}
 	}
 	
@@ -348,7 +364,7 @@ function PageScript(debug) {
 	
 	PageScript.prototype.main = function() {
 		this.ajaxget("/uris", this.uriCallback)
-		this.ajaxget("/v1/users/me", this.meCallback)
+		this.ajaxget("/v1/users/me", this.Init_Callback)
 		if (QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
 			document.getElementById("tab-account").checked = true;

@@ -1,146 +1,17 @@
 <html>
-<head>
-<meta charset="UTF-8">
-<title>SSO test page</title>
-<script type='text/javascript' src="debug.js"></script>
-<script type='text/javascript' src="script.js"></script>
-<script type='text/javascript' src="fb.js"></script>
-<script type='text/javascript' src="qunit-1.18.0.js"></script>
-<script type='text/javascript' src="qunit-reporter-junit.js"></script>
-<link rel="stylesheet" href="qunit-1.18.0.css">
-<style type="text/css">
-	      body, html {
-	          height: 1500px;
-	          margin: 0;
-	          -webkit-font-smoothing: antialiased;
-	          font-weight: 100;
-	      }
-	      
-	      .tabs input[type=radio] {
-	          position: absolute;
-	          top: -9999px;
-	          left: -9999px;
-	      }
-	      .tabs {
-	        width: 800px;
-	        float: none;
-	        list-style: none;
-	        position: relative;
-	        padding: 0;
-	        margin: 75px auto;
-	      }
-		  
-		  .message_container
-		  {
-	        width: 800px;
-	        float: none;
-	        list-style: none;
-	        position: relative;
-	        padding: 0;
-	        margin: 75px auto;
+ <head>
+  <meta charset="UTF-8">
+  <title>SSO test page</title>
+  <script type='text/javascript' src="debug.js"></script>
+  <script type='text/javascript' src="script.js"></script>
+  <script type='text/javascript' src="fb.js"></script>
+  <script type='text/javascript' src="qunit-1.18.0.js"></script>
+  <script type='text/javascript' src="qunit-reporter-junit.js"></script>
+  <link rel="stylesheet" href="qunit-1.18.0.css">
+  <link rel="stylesheet" href="main.css">
+ </head>
 
-			margin-top: 5px;
-			margin-bottom: 5px;
-		  }
-		  
-		  .message_container table {
-		  border-width: 0px;
-		  }
-		  
-		  div.message_container td {
-		  border-width: 0px;
-		  padding: 5px;
-		  }
-		  
-		  .message_container table tr {
-		  background: rgba(253, 242, 217, 1);
-		  border-color: rgba(253, 242, 217, 1);
-		  padding 5px;
-		  }
-		  
-	      .tabs li{
-	        float: left;
-	      }
-		  
-	      .tabs label {
-	          display: block;
-	          padding: 10px 20px;
-	          border-radius: 2px 2px 0 0;
-	          color: #08C;
-	          font-size: 24px;
-	          font-weight: normal;
-	          font-family: 'Roboto', helveti;
-	          background: rgba(255,255,255,0.2);
-	          cursor: pointer;
-	          position: relative;
-	          top: 3px;
-	          -webkit-transition: all 0.2s ease-in-out;
-	          -moz-transition: all 0.2s ease-in-out;
-	          -o-transition: all 0.2s ease-in-out;
-	          transition: all 0.2s ease-in-out;
-	      }
-	      .tabs label:hover {
-	        background: rgba(255,255,200,0.5);
-	        top: 0;
-	      }
-	      
-	      [id^=tab]:checked + label {
-	        background: #08C;
-	        color: white;
-	        top: 0;
-	      }
-	      
-	      [id^=tab]:checked ~ [id^=tab-content] {
-	          display: block;
-			  visibility: visible;
-	      }
-	      .tab-content {
-	        z-index: 2;
-			visibility: hidden;
-<!--	        display: none; -->
-	        text-align: left;
-	        width: 100%;
-	        font-size: 20px;
-	        line-height: 140%;
-	        padding-top: 10px;
-	        background: #08C;
-	        padding: 15px;
-	        color: white;
-	        position: absolute;
-	        top: 53px;
-	        left: 0;
-	        box-sizing: border-box;
-	        -webkit-animation-duration: 0.5s;
-	        -o-animation-duration: 0.5s;
-	        -moz-animation-duration: 0.5s;
-	        animation-duration: 0.5s;
-	      }
-		  a.link {color: orange;}
-		  p.note {font-size: 0.8em; line-height: 1.2em; margin: 5px 0px; }
-		  p.warning {
-			font-size: 0.8em;
-			color:red;
-			margin: 5px 0px;
-			background-color: white;
-			opacity: .8;
-			border-radius: 5px;
-			padding: 0px 10px;
-			text-align: center;
-			}
-		  div.label {
-			color: yellow;
-			padding: 10px,0,10px,10px;
-			font-size: 20px;
-		  }
-		  table.content {
-			font-size: 20px;
-			color: white;
-			width: 100%;	
-		  }
-		  .button, textarea.digest{width: 100%; white-space: normal; height:100%}
-		  
-	    </style></head>
-<body onload="pageScript.main()" >
+ <body onload="pageScript.main()" >
 
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
@@ -188,9 +59,11 @@
 					</table>
 				</div>
 	        	<ul class="tabs">
+				
+<!-- Tab for login -->
 			        <li>
 			          <input type="radio" name="tabs" id="tab-login">
-			          <label for="tab-login">Login</label>
+			          <label for="tab-login" id="tab-login-label">Login</label>
 			          <div id="tab-content-login" class="tab-content animated fadeIn">
 						<p>Bejelentkezési lehetőségek</p>
 						<hr>
@@ -270,9 +143,11 @@
 							</form>
 			          </div>
 			        </li>
+
+<!-- Tab for register users -->
 					<li>
 			          <input type="radio" name="tabs" id="tab-registration">
-			          <label for="tab-registration">Regisztráció</label>
+			          <label for="tab-registration" id="tab-registration-label">Regisztráció</label>
 			          <div id="tab-content-registration" class="tab-content animated fadeIn">
 						<p>Regisztrálási lehetőségek</p>
 						<hr>
@@ -424,9 +299,11 @@
 						</form>
 			          </div>
 			        </li>
+					
+<!-- Tab for functions belongs to the assurers -->
 			        <li>
 			          <input type="radio" name="tabs" id="tab-assurer">
-			          <label for="tab-assurer">Ellenőröknek</label>
+			          <label for="tab-assurer" id="tab-assurer-label">Ellenőröknek</label>
 			          <div id="tab-content-assurer" class="tab-content animated fadeIn">
 						<p>Felhasználó adatainak lekérdezése</p>
 						<form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
@@ -477,19 +354,29 @@
 						</form>
 			          </div>
 			        </li>
+					
+<!-- Tab for account functions -->
 			        <li>
 			          <input type="radio" name="tabs" id="tab-account">
-			          <label for="tab-account">Fiókom</label>
+			          <label for="tab-account" id="tab-account-label">Fiókom</label>
 			          <div id="tab-content-account" class="tab-content animated fadeIn">
-						<p>Kijelentkezés</p>
-						  	<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button>
+						<table class="content">
+							<tr>
+								<td width="20%">
+									<p>Kijelentkezés</p>
+									<button type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button>
+									<hr/>
+									<p>Adataim megjelenítése</p>
+									<button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</button>
+								</td>
+								<td width="15px">
+									<div class="msg" id="me_Msg" style="max-width: 600px;"></div>
+								</td>	
+							</tr>
+						</table>
+
 						<hr/>
-						<p>Adataim megjelenítése</p>
-						  	<div class="formrow">
-								<button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.myCallback)">Adataim</button>
-							</div>
-							<div id="me_Msg"></div>
-						<hr/>
+						
 						<p>Titkos kód cseréje/hozzáadása</p>
 						<p class="warning">Figyelmeztetés! A hash megváltoztatásával a felhasználó összes eddigi SSO tanusítványa elvész.</p>
 						<p class="note">A személyi számot nem tárolja a rendszer. Egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza.</p>
@@ -512,6 +399,7 @@
 								<input type="submit" value="A hash mentése" id="ChangeHashForm_submitButton"></input>
 							</div>
 						</form>
+						<div id="ChangeHashForm_ErrorMsg"></div>
 						<hr/>
 						<p>Jelszó csere</p>
 						<table class="content">
@@ -583,7 +471,32 @@
 							<div id="DeRegisterForm_ErrorMsg"></div>
 						</form>
 			          </div>
-			        </li>
+					</li>
+
+<!-- Tab for registering applications -->
+			        <li>
+						<input type="radio" name="tabs" id="tab-app">
+						<label for="tab-app" id="tab-app-label">Alkalmazások</label>
+						<div id="tab-content-app" class="tab-content animated fadeIn">
+							<p>Alkalmazás regisztrációja</p>
+							<p class="note">
+								Input:
+							</p>
+							<ul>
+								<li>Alkalmazás neve</li>
+								<li>callback URL</li>
+							</ul>
+							<p class="note">
+								Output:
+							</p>
+							<ul>
+								<li>Alkamazás ID</li>
+								<li>Alkalmazás secret</li>
+							</ul>
+						</div>
+
+					</li>
+					
 			    </ul>
 	      	</div>
 			<div id="qunit-xml" class="message_container"></div>
