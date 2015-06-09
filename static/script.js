@@ -80,15 +80,15 @@ function PageScript(debug) {
 	PageScript.prototype.parse_userdata = function(data) {
 		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
 		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
-		userdata +="<p><b>hash:</b> <pre>"+data.hash+"</pre></p>"
-		userdata +="<p><b>hitelesítési szintek:</p>"
+		userdata +="<p><b>hash:</b></p><pre>"+data.hash+"</pre>"
+		userdata +="<p><b>hitelesítési szintek:</b></p>"
 		userdata +="<ul>"
 		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
 		userdata +="</ul>"
-		userdata +="<p><b>igazolások:</b>"
+		userdata +="<p><b>igazolások:</b></p>"
 		userdata +="<ul>"
 		for(i in data.credentials) userdata += "<li>"+data.credentials[i].credentialType+"</li>" ;
-		userdata +="</ul></p>"
+		userdata +="</ul>"
 		return userdata;		
 	}
 
