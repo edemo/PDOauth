@@ -400,7 +400,30 @@
 							</div>
 						</form>
 						<div id="ChangeHashForm_ErrorMsg"></div>
+						
 						<hr/>
+						
+						<p>Regisztrációs email újraküldése</p>
+						<table class="content">
+							<tr>
+								<td width="90%" >
+									<p class="note" >
+										A gombra kattintva kezdeményezhető a regisztrációs email újraküldése. 
+										A rendszer e-mailben elküldi az aktíváló kódot, 
+										a levélben található linkre kattintva visszajutsz ide, így aktiválódik a fiókod.
+									<p>
+								</td>
+								<td>								
+									<button class="button" type="button" id="RegistrationEmailResendForm_InitiateResendRegistrationEmail" onclick="pageScript.InitiateResendRegistrationEmail()">
+										Kérem a levelet
+									</button>
+								</td>
+							</tr>
+						</table>
+						<div id="InitiateResendRegistrationEmail_ErrorMsg"></div>
+						
+						<hr/>
+						
 						<p>Jelszó csere</p>
 						<table class="content">
 							<tr>
@@ -445,7 +468,9 @@
 							</table>
 						</form>
 						<div id="PasswordResetForm_ErrorMsg"></div>
+						
 						<hr/>
+						
 						<p>Fiók törlése</p>
 						<form id="DeRegisterForm" action="javascript:pageScript.deRegister()" method="post" name="deRegister">
 							<table class="content" width="100%">

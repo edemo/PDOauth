@@ -262,7 +262,11 @@ function PageScript(debug) {
 			document.getElementById("ChangeHashForm_ErrorMsg").innerHTML='<p class="warning">'+data.errors+'</p>';	
 		}
 	}
-
+	
+	PageScript.prototype.InitiateResendRegistrationEmail = function() {
+		document.getElementById("InitiateResendRegistrationEmail_ErrorMsg").innerHTML='<p class="warning">Ez a funkció sajnos még nem működik</p>';	
+		}
+	
 	PageScript.prototype.changeHash = function() {
 		document.getElementById("ChangeHashForm_ErrorMsg").innerHTML="";
 	    digest = document.getElementById("ChangeHashForm_digest_input").value;
