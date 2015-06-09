@@ -378,8 +378,8 @@
 						<hr/>
 						
 						<p>Titkos kód cseréje/hozzáadása</p>
-						<p class="warning">Figyelmeztetés! A hash megváltoztatásával a felhasználó összes eddigi SSO tanusítványa elvész.</p>
-						<p class="note">A személyi számot nem tárolja a rendszer. Egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza.</p>
+						<p class="warning">Figyelmeztetés! A titkosított kód megváltoztatásával a felhasználó összes eddigi SSO tanusítása elvész.</p>
+						<p class="note">A személyi számot nem tárolja a rendszer. Egy titkosított kódot generálunk belőle, amiből a személyi szám nem nyerhető vissza.</p>
 						<form id="ChangeHashForm" action="javascript:pageScript.changeHash()" method="post" name="addAssurance">
 							<div class="formrow">
 								<div class="label" id="ChangeHashForm_predigest_label">
@@ -391,20 +391,47 @@
 							<div id="ChangeHashForm_errorMsg"></div>
 							<div class="formrow">
 								<div class="label" id="ChangeHashForm_digest_label">
-								titkos kód:
+								titkosított kód:
 								</div>
 								<textarea class="digest" name="digest" type="text" id="ChangeHashForm_digest_input" rows="5"></textarea>
 							</div>
 							<div class="formrow">
-								<input type="submit" value="A hash mentése" id="ChangeHashForm_submitButton"></input>
+								<input type="submit" value="A titkosított kód mentése" id="ChangeHashForm_submitButton"></input>
 							</div>
 						</form>
 						<div id="ChangeHashForm_ErrorMsg"></div>
 						
 						<hr/>
-						
+
+						<p>E-mail cím megváltoztatása</p>
+						<form id="ChangeEmailAddressForm" action="javascript:pageScript.changeEmailAddress()" method="post" name="changeEmail">
+							<table class="content">
+								<tr>
+									<td width="65%" >
+										<p class="note" >
+											A jelszócsere kezdeményezését követően a felhasználó egy validáló e-mailt kap. 
+											Az abban lévő linkre kattintva ellenőrzötté válik az e-mail cím. 
+											Bizonyos szolgáltatások csak ellenőrzött e-mail címmel érhetők el.
+										<p>
+									</td>
+									<td width="25%">
+										<div class="label" id="ChangeEmailAddressForm_email_label">
+											új email cím:
+										</div>
+										<input name="email" type="text" id="ChangeEmailAddressForm_email_input"></input>
+									</td>
+									<td>								
+										<input type="submit" class="button" value="Cserélem" id="ChangeEmailAddressForm_submitButton" >
+										</input>
+									</td>
+								</tr>
+							</form>
+						</table>
+						<div id="ChangeEmailAddressForm_ErrorMsg"></div>
+						<hr/>						
+	
 						<div id="InitiateResendRegistrationEmail_Container">
-						<p>Regisztrációs email újraküldése</p>
+						<p>Regisztrációs/validáló email újraküldése</p>
 						<table class="content">
 							<tr>
 								<td width="90%" >

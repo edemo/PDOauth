@@ -81,7 +81,7 @@ function PageScript(debug) {
 		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
 		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
 		userdata +="<p><b>hash:</b> <pre>"+data.hash+"</pre></p>"
-		userdata +="<p><b>biztosítási szintek:</p>"
+		userdata +="<p><b>hitelesítési szintek:</p>"
 		userdata +="<ul>"
 		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
 		userdata +="</ul>"
@@ -316,6 +316,12 @@ function PageScript(debug) {
 	
 	PageScript.prototype.unittest = function() {
 		this.loadjs("tests.js")
+	}
+	
+	PageScript.prototype.changeEmailAddress = function() {
+	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
+		if (email=="") document.getElementById("ChangeEmailAddressForm_ErrorMsg").innerHTML="<p class='warning'>Nincs megadva érvényes e-mail cím</p>";
+		else document.getElementById("ChangeEmailAddressForm_ErrorMsg").innerHTML="<p class='warning'>Ez a funkció sajnos még nem elérhető</p>";
 	}
 	
 	PageScript.prototype.Init_Callback = function(status, text) {
