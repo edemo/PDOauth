@@ -43,6 +43,7 @@ class NewUserTest(Fixture,UserTesting, BrowserSetup):
         userid = "user_{0}".format(self.randString)
         email = "user_{0}@example.com".format(self.randString)
         self.thePassword = self.mkRandomPassword()
+        self.switchToTab('registration')
         driver.find_element_by_id("RegistrationForm_identifier_input").clear()
         driver.find_element_by_id("RegistrationForm_identifier_input").send_keys(userid)
         driver.find_element_by_id("RegistrationForm_secret_input").clear()
@@ -59,6 +60,7 @@ class NewUserTest(Fixture,UserTesting, BrowserSetup):
             return
         driver = self.driver
         self._gotoOauthPage(driver)
+        self.switchToTab('registration')
         driver.find_element_by_id("Facebook_registration_button").click()
         time.sleep(1)
         self.master = driver.current_window_handle

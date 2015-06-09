@@ -69,33 +69,27 @@ function PageScript(debug) {
 	PageScript.prototype.processErrors = function(data) {
 			t = "<ul>"
 			console.log(data)
-			if (data.message) {
-				document.getElementById("message").innerHTML=data.message
-			}
-			if (data.assurances) {
-				userdata = "email: "+data.email
-				userdata +="<br/>userid: "+data.userid
-				userdata +="<br/>hash: "+data.hash
-				userdata +="<br/>assurances:"
-				userdata +="<ul>"
-				for(ass in data.assurances) {
-					userdata += "<li>"+ass+"</li>"
-				}
-				userdata +="</ul>"
-				userdata +="<br/>credentials:"
-				userdata +="<ul>"
-				for(i in data.credentials) {
-					userdata += "<li>"+data.credentials[i].credentialType+"</li>"
-				}
-				userdata +="</ul>"
-				document.getElementById("userdata").innerHTML=userdata			
-			}
+			if (data.message) document.getElementById("message").innerHTML=data.message;
+			if (data.assurances) document.getElementById("userdata").innerHTML=this.parse_userdata(data);
 			errs = data.errors
-			for ( err in errs ) {
-				t += "<li>"+ errs[err] +"</li>"
-			}
+			for ( err in errs ) t += "<li>"+ errs[err] +"</li>" ;
 			t += "</ul>"
 			document.getElementById("errorMsg").innerHTML=t
+	}
+	
+	PageScript.prototype.parse_userdata = function(data) {
+		userdata = "e-mail cím: "+data.email
+		userdata +="<br>felhasználó azonosító: "+data.userid
+		userdata +="<br>hash: "+data.hash
+		userdata +="<br>biztosítási szintek:"
+		userdata +="<ul>"
+		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
+		userdata +="</ul>"
+		userdata +="<br>igazolások:"
+		userdata +="<ul>"
+		for(i in data.credentials) userdata += "<li>"+data.credentials[i].credentialType+"</li>" ;
+		userdata +="</ul>"
+		return userdata;		
 	}
 
 	PageScript.prototype.myCallback = function(status, text) {
@@ -114,13 +108,45 @@ function PageScript(debug) {
 	    password = document.getElementById("PasswordResetForm_password_input").value;
 	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.myCallback)
 	}
+	
+	PageScript.prototype.InitiatePasswordReset = function() {
+		this.ajaxget("/v1/users/me", this.PWresetInitCallback)
+	}
 
+	PageScript.prototype.PWresetInitCallback = function(status, text){
+		var data = JSON.parse(text);
+		if (status == 200) {
+			self.ajaxget("/v1/users/"+data.email+"/passwordreset", self.PWresetCallback)
+		}
+		else {
+			document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>Nincs bejelentkezett user</p>";
+		}
+	}
+	
+	PageScript.prototype.PWresetCallback = function(status, text) {
+		var data = JSON.parse(text);
+		if (data.message) document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>"+data.message+"</p>";
+	} 
+	
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_username_input").value;
-	    username = encodeURIComponent(username)
+	    var onerror=false;
+		document.getElementById("LoginForm_errorMsg").innerHTML="";
+		if (username=="") {
+			document.getElementById("LoginForm_errorMsg").innerHTML+="<p class='warning'>A felhasználónév nincs megadva</p>";
+			onerror=true;
+		}
 	    password = document.getElementById("LoginForm_password_input").value;
-	    password = encodeURIComponent(password)
-	    this.ajaxpost("/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
+	    if (password=="") {
+			document.getElementById("LoginForm_errorMsg").innerHTML+="<p class='warning'>A jelszó nincs megadva</p>";
+			onerror=true; 
+		}
+		if (onerror==true) return;
+		else {
+			username = encodeURIComponent(username);	
+			password = encodeURIComponent(password);
+			this.ajaxpost("/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
+		}
 	}
 
 	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
@@ -242,13 +268,19 @@ function PageScript(debug) {
 		self.idCallback = function(status,text, xml) {
 			if (status==200) {
 		    	document.getElementById(self.formName + "_digest_input").value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
+				document.getElementById(self.formName + "_predigest_input").value = "";
+				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>A titkosítás sikeres</p>"
 			} else {
-				document.getElementById("errorMsg").innerHTML=text
+				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>" + text + "</p>"
 			}
 		}
 	
 		self.getDigest = function() {
 			personalId = document.getElementById(this.formName+"_predigest_input").value;
+			if ( personalId == "") {
+				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>A személyi szám nincs megadva</p>"
+				return;
+			}
 			text = "<id>"+personalId+"</id>"
 			http = this.ajaxBase(this.idCallback);
 			http.open("POST",'https://anchor.edemokraciagep.org/anchor',true);
@@ -271,11 +303,28 @@ function PageScript(debug) {
 		this.loadjs("tests.js")
 	}
 	
+	PageScript.prototype.meCallback = function(status, text) {
+		if (status != 200) {
+			document.getElementById("tab-login").checked = true;
+		}
+		else {
+			document.getElementById("tab-account").checked = true; 
+			var data = JSON.parse(text);
+			if (data.assurances) {
+				this.logged_in_user_Id=data.userid;
+				document.getElementById("me_Msg").innerHTML=this.parse_userdata(data);
+			}
+		}
+	}
+	
 	PageScript.prototype.main = function() {
 		this.ajaxget("/uris", this.uriCallback)
+		this.ajaxget("/v1/users/me", this.meCallback)
 		if (QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
+			document.getElementById("tab-account").checked = true;
 		}
+		
 	}
 
 }
