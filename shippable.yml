@@ -6,12 +6,12 @@ env:
     - secure: "AgFID7Zfh65cwfqveYJXUT8q7xcBDA6+gNCmV90ihmvips5Uxrb7aGHQYVxPPGQy1pbv2fMnxWHjj5HR7gVp9W06HhN6kTqseGYABPWk0Tmyd0rNdDcvSMfXx9yy4jc+f2tqdmMcNOhdJ+feBaFq7uZOkqlTndkdD8m1XBMZUVs="
 before_install:
 - ./tools/setupdoc
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
 - cp /etc/hosts /tmp
 - echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
 - sudo cp /tmp/hosts /etc/hosts
-- sudo apt-get -y install python make python-pip firefox openjdk-7-jre curl docbook-xsl apache2 libapache2-mod-wsgi swig chromium-browser chromium-chromedriver libnss3-tools
+- sudo apt-get -y install python make python-pip firefox openjdk-7-jre curl docbook-xsl apache2 libapache2-mod-wsgi swig chromium-browser chromium-chromedriver libnss3-tools xvfb
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
 - sudo cp src/end2endtest/certs.json /etc/chromium-browser/policies/managed/
 - sudo pip install -r requirements.txt
 script:
