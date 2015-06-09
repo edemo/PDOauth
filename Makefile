@@ -19,10 +19,10 @@ alltests: tests end2endtest
 onlyend2endtest: install testsetup runserver runemail testsetup chrometest firefoxtest
 
 firefoxtest:
-	PYTHONPATH=src python -m unittest discover -f -s src/end2endtest -p "*.py"
+	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*.py"
 
 chrometest:
-	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -f -s src/end2endtest -p "*.py"
+	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -f -s src/end2endtest -p "*.py"
 
 end2endtest: onlyend2endtest killall
 
@@ -39,7 +39,7 @@ killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
 
 tests: testsetup
-	PYTHONPATH=src python -m unittest discover -f -s src/test -p "*.py"
+	PYTHONPATH=src python -m unittest discover -v -f -s src/test -p "*.py"
 
 testsetup:
 	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade ; mkdir -p doc/screenshots
