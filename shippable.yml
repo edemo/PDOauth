@@ -3,7 +3,6 @@ env:
   global: 
     - NSS_DEFAULT_DB_TYPE="sql"
     - I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
-    - secure: "AgFID7Zfh65cwfqveYJXUT8q7xcBDA6+gNCmV90ihmvips5Uxrb7aGHQYVxPPGQy1pbv2fMnxWHjj5HR7gVp9W06HhN6kTqseGYABPWk0Tmyd0rNdDcvSMfXx9yy4jc+f2tqdmMcNOhdJ+feBaFq7uZOkqlTndkdD8m1XBMZUVs="
 before_install:
 - id
 - ./tools/setupdoc
@@ -16,6 +15,7 @@ before_install:
 - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/cucumber_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1024x768x24
 - sudo cp src/end2endtest/certs.json /etc/chromium-browser/policies/managed/
 - sudo pip install -r requirements.txt
+- pip show -f SQLAlchemy
 script:
 - make checkall
 - ./tools/commitdocs
