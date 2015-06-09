@@ -119,7 +119,7 @@ function PageScript(debug) {
 			self.ajaxget("/v1/users/"+data.email+"/passwordreset", self.PWresetCallback)
 		}
 		else {
-			document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>Nincs bejelentkezett user</p>";
+			document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>Nincs bejelentkezett felhasználó</p>";
 		}
 	}
 	
@@ -314,6 +314,35 @@ function PageScript(debug) {
 				this.logged_in_user_Id=data.userid;
 				document.getElementById("me_Msg").innerHTML=this.parse_userdata(data);
 			}
+		}
+	}
+	
+	PageScript.prototype.deRegister = function() {
+		if (document.getElementById("DeRegisterForm_password_input").value=="") {
+			document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>Nincs megadva a jelszó</p>";
+			return;
+		}
+		else {
+			self.ajaxget("/v1/users/me", function(status, text){
+				if (status != 200) {
+					document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>Hibás autentikáció</p>";
+					return;
+				}
+				else {
+					var data = JSON.parse(text);
+					text = {
+						csrf_token: self.getCookie("csrf"),
+						credentialType: "password",
+						identifier: data.userid,
+						secret: document.getElementById("DeRegisterForm_password_input").value
+					}
+					self.ajaxpost("/deregister", text, function(status, text){
+						var data = JSON.parse(text);
+						if (status != 200) document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>"+data.errors+"</p>";
+						else document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>A fiók törlése megtörtént.</p>";
+					})
+				}
+			})
 		}
 	}
 	
