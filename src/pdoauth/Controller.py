@@ -33,9 +33,13 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         else:
             raise ReportedError(["no authorization"], status=403)
 
-    def checkLogin(self):
+    def redirectIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
             return self.app.login_manager.unauthorized()
+
+    def jsonErrorIfNotLoggedIn(self):
+        if not self.getCurrentUser().is_authenticated():
+            raise ReportedError(["not logged in"], status=403)
 
     def do_login(self,form):
         self.getSession()['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
