@@ -120,6 +120,16 @@
 			padding: 0px 10px;
 			text-align: center;
 			}
+		p.succes {
+			font-size: 0.8em;
+			color: green;
+			margin: 5px 0px;
+			background-color: white;
+			opacity: .8;
+			border-radius: 5px;
+			padding: 0px 10px;
+			text-align: center;
+			}
 		div.msg {
 			font-size: 0.8em;
 			color:black;
@@ -145,3 +155,9 @@
 			width: 100%;	
 		  }
 		  .button, textarea.digest{width: 100%; white-space: normal; height:100%}
+		table.content_{
+			font-size: 16px;
+			color: black;
+			width: 100%;	
+		  }
+		

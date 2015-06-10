@@ -183,7 +183,7 @@ function PageScript(debug) {
 		loc = '' + window.location
 		if(loc.indexOf(QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
 			console.log("ssl login");
-			self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.myCallback)
+			self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.Init_Callback)
 		}		
 		
 	}
@@ -340,6 +340,8 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.Init_Callback = function(status, text) {
+		console.log('Init_Callback');
+		console.log(JSON.parse(text));
 		if (status != 200) {
 			document.getElementById("tab-login").checked = true;
 			document.getElementById("tab-account-label").style.display = 'none';
@@ -356,8 +358,54 @@ function PageScript(debug) {
 			document.getElementById("tab-login-label").style.display = 'none';
 			document.getElementById("tab-registration-label").style.display = 'none';
 			if (typeof(data.assurances.assurer)=="undefined") document.getElementById("tab-assurer-label").style.display = 'none';
+			self.fill_RemoveCredentialContainer(data);
 		}
 	}
+	
+	PageScript.prototype.fill_RemoveCredentialContainer = function(data) {
+		var container = '<div class="msg">';
+		var i=0;
+		for(CR in data.credentials) {
+			container += '<div id="RemoveCredential_'+i+'">';
+			container += '<table class="content_" "><tr><td width="25%"><p id="RemoveCredential_'+i+'_credentialType">';
+			container += data.credentials[CR].credentialType+'</p></td>';
+			container += '<td style="max-width: 100px;"><pre id="RemoveCredential_'+i+'_identifier">'
+			container += data.credentials[CR].identifier+'</pre></td>';
+			container += '<td width="10%"><div><button class="button" type="button" id="RemoveCredential_'+i+'_button" ';
+			container += 'onclick="javascript:pageScript.RemoveCredential(';
+			container += "'RemoveCredential_"+i+"').doRemove()";
+			container += '">Törlöm</button></div></td>';
+			container += '</tr></table></div>' ;
+			i++;
+		}
+		container += "</div>";
+		document.getElementById("Remove_Credential_Container").innerHTML=container;
+	}
+	
+	PageScript.prototype.RemoveCredential = function(formName) {
+		self.formName = formName
+		self.rmCredential_Callback = function(status,text) {
+			if (status==200) {
+		    	document.getElementById(self.formName).innerHTML = "<p class='success'>Ezt a hitelesítési módot töröltük</p>";
+			} else {
+				var data=JSON.parse(text);
+				document.getElementById("RemoveCredential_ErrorMsg").innerHTML="<p class='warning'>" + data.errors + "</p>"
+			}
+		}
+	
+		self.doRemove = function() {
+			credentialType = document.getElementById(this.formName+"_credentialType").innerHTML;
+			identifier = document.getElementById(this.formName+"_identifier").innerHTML;
+			text = {
+				credentialType: credentialType,
+				identifier: identifier
+			}
+			this.ajaxpost("/v1/remove_credential", text, this.rmCredential_Callback);
+		}
+
+		return self
+	}
+
 	
 	PageScript.prototype.addGoogleCredential = function(){
 		document.getElementById("AddCredentialForm_ErrorMsg").innerHTML="<p class='warning'>Ez a funkció sajnos még nem működik</p>";
