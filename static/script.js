@@ -80,7 +80,7 @@ function PageScript(debug) {
 	PageScript.prototype.parse_userdata = function(data) {
 		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
 		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
-		userdata +="<p><b>hash:</b></p><pre>"+data.hash+"</pre>"
+		userdata +='<p><b>hash:</b></p><pre id="my_Hash">'+data.hash+"</pre>"
 		userdata +="<p><b>tanusítványok:</b></p>"
 		userdata +="<ul>"
 		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
@@ -347,18 +347,20 @@ function PageScript(debug) {
 	PageScript.prototype.Init_Callback = function(status, text) {
 		console.log('Init_Callback');
 		console.log(JSON.parse(text));
+		var data = JSON.parse(text);
 		if (status != 200) {
 			document.getElementById("tab-login").checked = true;
 			document.getElementById("tab-account-label").style.display = 'none';
 			document.getElementById("tab-assurer-label").style.display = 'none';
 			document.getElementById("tab-login-label").style.display = 'block';
 			document.getElementById("tab-registration-label").style.display = 'block';
+			self.processErrors(data)
 		}
 		else {
 			document.getElementById("tab-account").checked = true; 
-			var data = JSON.parse(text);
 			if (data.assurances) {
 				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
+//				console.log(document.getElementById("my_Hash").innerHTML);
 				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
 				if (data.email) document.getElementById("AddSslCredentialForm_email_input").value=data.email;
 			}
