@@ -485,7 +485,7 @@
 												e-mail cím:
 											</div>
 										</div>
-											<input name="email" type="text" id="AddSslCredentialForm_email_input" disabled/>
+											<input name="email" type="text" id="AddSslCredentialForm_email_input"/>
 										<p>
 											<input class="button" id="AddSslCredentialForm" type="submit" name="AddSslCredential_createcert" value="SSL kulcs elkészítése">
 										</p>
@@ -585,10 +585,14 @@
 										</p>
 									</td>
 									<td width="25%">
-										<div class="label" id="DeRegisterForm_password_label">
-											Jelszó:
+										<div class="label" id="DeRegisterForm_identifier_label">
+											Azonosító:
 										</div>
-										<input name="password" type="password" id="DeRegisterForm_password_input"/>
+										<input name="password" type="text" id="DeRegisterForm_identifier_input" disabled/>
+										<div class="label" id="DeRegisterForm_secret_label">
+											Titok:
+										</div>
+										<input name="secret" type="password" id="DeRegisterForm_secret_input" disabled/>
 									</td>
 									<td width="10%">
 										<input class="Button" type="submit" value="Törlöm a fiókom" id="DeRegisterForm_submitButton"></input>

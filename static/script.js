@@ -101,6 +101,7 @@ function PageScript(debug) {
 			}
 		}
 		self.processErrors(data)
+		self.Init_Callback(status, text)
 	}
 
 	PageScript.prototype.passwordReset = function() {
@@ -146,6 +147,8 @@ function PageScript(debug) {
 			username = encodeURIComponent(username);	
 			password = encodeURIComponent(password);
 			this.ajaxpost("/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
+			document.getElementById("DeRegisterForm_identifier_input").value=username;
+			document.getElementById("DeRegisterForm_secret_input").value=password;
 		}
 	}
 
@@ -158,6 +161,8 @@ function PageScript(debug) {
 	    	secret: password
 	    }
 	    this.ajaxpost("/login", data , this.myCallback)
+		document.getElementById("DeRegisterForm_identifier_input").value=username;
+		document.getElementById("DeRegisterForm_secret_input").value=password;
 	}
 
 	PageScript.prototype.byEmail = function() {
@@ -346,6 +351,8 @@ function PageScript(debug) {
 			document.getElementById("tab-login").checked = true;
 			document.getElementById("tab-account-label").style.display = 'none';
 			document.getElementById("tab-assurer-label").style.display = 'none';
+			document.getElementById("tab-login-label").style.display = 'block';
+			document.getElementById("tab-registration-label").style.display = 'block';
 		}
 		else {
 			document.getElementById("tab-account").checked = true; 
@@ -357,7 +364,12 @@ function PageScript(debug) {
 			}
 			document.getElementById("tab-login-label").style.display = 'none';
 			document.getElementById("tab-registration-label").style.display = 'none';
-			if (typeof(data.assurances.assurer)=="undefined") document.getElementById("tab-assurer-label").style.display = 'none';
+			document.getElementById("tab-account-label").style.display = 'block';
+			document.getElementById("tab-assurer-label").style.display = 'block';			
+			if (data.assurances) {
+				if (!(data.assurances.assurer)) document.getElementById("tab-assurer-label").style.display = 'none';
+				else document.getElementById("tab-assurer-label").style.display = 'block';
+			}
 			self.fill_RemoveCredentialContainer(data);
 		}
 	}
@@ -445,12 +457,7 @@ function PageScript(debug) {
 	}	
 	
 	PageScript.prototype.deRegister = function() {
-		if (document.getElementById("DeRegisterForm_password_input").value=="") {
-			document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>Nincs megadva a jelszó</p>";
-			return;
-		}
-		else {
-			self.ajaxget("/v1/users/me", function(status, text){
+		self.ajaxget("/v1/users/me", function(status, text){
 				if (status != 200) {
 					document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>Hibás autentikáció</p>";
 					return;
@@ -460,8 +467,8 @@ function PageScript(debug) {
 					text = {
 						csrf_token: self.getCookie("csrf"),
 						credentialType: "password",
-						identifier: data.userid,
-						secret: document.getElementById("DeRegisterForm_password_input").value
+						identifier: document.getElementById("DeRegisterForm_identifier_input").value,
+						secret: document.getElementById("DeRegisterForm_secret_input").value
 					}
 					self.ajaxpost("/deregister", text, function(status, text){
 						var data = JSON.parse(text);
@@ -470,7 +477,7 @@ function PageScript(debug) {
 					})
 				}
 			})
-		}
+		
 	}
 
 		
