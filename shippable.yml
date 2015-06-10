@@ -10,7 +10,7 @@ before_install:
 - echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
 - cp /tmp/hosts /etc/hosts
 - apt-get update
-- apt-get -y install python make python-pip firefox openjdk-7-jre curl docbook-xsl apache2 libapache2-mod-wsgi swig chromium-browser chromium-chromedriver libnss3-tools xvfb python-dev
+- apt-get -y install python make python-pip firefox openjdk-7-jre curl docbook-xsl apache2 libapache2-mod-wsgi swig chromium-browser chromium-chromedriver libnss3-tools xvfb python-dev unzip
 - export DISPLAY=:99.0
 - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/cucumber_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1024x768x24
 - cp src/end2endtest/certs.json /etc/chromium-browser/policies/managed/
