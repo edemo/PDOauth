@@ -17,5 +17,6 @@ before_install:
 - pip install -r requirements.txt
 - pip show -f SQLAlchemy
 script:
-- make checkall
+- make handtest
+- make chrometest
 - ./tools/commitdocs
