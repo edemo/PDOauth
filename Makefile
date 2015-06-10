@@ -22,7 +22,7 @@ firefoxtest:
 	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*.py"
 
 chrometest:
-	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -s src/end2endtest -p "*.py"
+	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -f -s src/end2endtest -p "*.py"
 
 end2endtest: onlyend2endtest killall
 
