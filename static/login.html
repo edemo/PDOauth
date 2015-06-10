@@ -62,11 +62,11 @@
 				
 <!-- Tab for login -->
 			        <li>
-			          <input type="radio" name="tabs" id="tab-login">
-			          <label for="tab-login" id="tab-login-label">Login</label>
-			          <div id="tab-content-login" class="tab-content animated fadeIn">
-						<p>Bejelentkezési lehetőségek</p>
-						<hr>
+						<input type="radio" name="tabs" id="tab-login">
+						<label for="tab-login" id="tab-login-label">Login</label>
+						<div id="tab-content-login" class="tab-content animated fadeIn">
+							<p>Bejelentkezési lehetőségek</p>
+							<hr>
 							<table class="content">
 								<tr>
 									<td width="90%">
@@ -82,7 +82,8 @@
 									</td>
 								</tr>
 							</table>
-						<hr/>
+							<div id="FacebookLogin-ErrorMsg"></div>
+							<hr/>
 							<table class="content">
 								<tr>
 									<td width="90%">
@@ -93,7 +94,10 @@
 									</td>
 								</tr>
 							</table>
-						<hr/>
+							<div id="GoogleLogin-ErrorMsg"></div>
+							
+							<hr/>
+							
 							<table class="content">
 								<tr>
 									<td width="90%">
@@ -103,13 +107,12 @@
 										<button class="button" type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL Login</button>
 									</td>
 								</tr>
-								<tr>
-									<td>
-										<div id="sslLoginDiv"></div>
-									</td>
-								</tr>
 							</table>
-						<hr/>
+							<div id="sslLoginDiv"></div>
+							<div id="SslLogin-ErrorMsg"></div>
+							
+							<hr/>
+							
 							<form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
 								<table class="content">
 									<tr>
