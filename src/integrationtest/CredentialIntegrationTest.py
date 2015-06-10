@@ -44,7 +44,7 @@ class CredentialIntegrationTest(Fixture, UserTesting):
             }
             uri = config.base_url + "/v1/add_credential"
             resp = c.post(uri, data=data)
-            self.assertEqual(302, resp.status_code)
+            self.assertEqual(403, resp.status_code)
 
     @test
     def the_added_credential_should_contain_credentialType(self):

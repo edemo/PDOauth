@@ -50,7 +50,7 @@ def login(form):
 def ssl_login():
     return controller.do_ssl_login()
 
-@decorator.interfaceFunc("/v1/oauth2/auth", methods=["GET"], checkLoginFunction=controller.checkLogin)
+@decorator.interfaceFunc("/v1/oauth2/auth", methods=["GET"], checkLoginFunction=controller.redirectIfNotLoggedIn)
 def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
     return AuthProvider().auth_interface()
@@ -63,7 +63,7 @@ def keygen(form):
 def deregister(form):
     return controller.do_deregister(form)
 
-@decorator.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=controller.checkLogin)
+@decorator.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def logout():
     return controller.do_logout()
 
@@ -77,7 +77,7 @@ def showUser(userid):
     return controller.do_show_user(userid)
 
 @decorator.interfaceFunc("/v1/users/me/change_password", methods=["POST"],
-    formClass=PasswordChangeForm, checkLoginFunction=controller.checkLogin)
+    formClass=PasswordChangeForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def changePassword(form):
     return controller.do_change_password(form)
 
@@ -86,7 +86,7 @@ def sendPasswordResetEmail(email):
     return controller.do_send_password_reset_email(email)
 
 @decorator.interfaceFunc("/v1/users/me/update_hash", methods=["POST"],
-    formClass=DigestUpdateForm, checkLoginFunction=controller.checkLogin)
+    formClass=DigestUpdateForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def updateHash(form):
     return controller.do_update_hash(form)
 
@@ -105,22 +105,22 @@ def verifyEmail(token):
     return controller.do_verify_email(token)
 
 @decorator.interfaceFunc("/v1/user_by_email/<email>", methods=["GET"],
-    checkLoginFunction=controller.checkLogin)
+    checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def get_by_email(email):
     return controller.do_get_by_email(email)
 
 @decorator.interfaceFunc("/v1/add_assurance", methods=["POST"],
-    formClass=AssuranceForm, checkLoginFunction=controller.checkLogin)
+    formClass=AssuranceForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def add_assurance(form):
     return controller.do_add_assurance(form)
 
 @decorator.interfaceFunc("/v1/add_credential", methods=["POST"],
-    formClass=CredentialForm, checkLoginFunction=controller.checkLogin)
+    formClass=CredentialForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def add_credential(form):
     return controller.do_add_credential(form)
 
 @decorator.interfaceFunc("/v1/remove_credential", methods=["POST"],
-    formClass=CredentialIdentifierForm, checkLoginFunction=controller.checkLogin)
+    formClass=CredentialIdentifierForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def remove_credential(form):
     return controller.do_remove_credential(form)
 
