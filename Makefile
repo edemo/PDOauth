@@ -33,7 +33,7 @@ killserver:
 	kill $$(cat tmp/httpd.pid)
 
 runemail:
-	python -m smtpd -n -c DebuggingServer localhost:1025 >tmp/smtpd.log&
+	mkdir -p tmp; python -m smtpd -n -c DebuggingServer localhost:1025 >tmp/smtpd.log&
 
 killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
