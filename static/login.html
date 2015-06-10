@@ -69,76 +69,60 @@
 							<hr>
 							<table class="content">
 								<tr>
-									<td width="90%">
+									<td width="25%">
 										Facebook fiókkal: 
+										<div>
+										<button class="button" type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook bejelentkzés</button>
+										</div>
 									</td>
-									<td>
-										<button class="button" type="button" id="Facebook_login_button" onclick="facebook.fblogin()">Facebook Login</button>
-									</td>
-								</tr>
-								<td>
-									<td>
-										<div id="sslLoginDiv"></div>
-									</td>
-								</tr>
-							</table>
-							<div id="FacebookLogin-ErrorMsg"></div>
-							<hr/>
-							<table class="content">
-								<tr>
-									<td width="90%">
+
+									<td width="25%">
 										Google+ fiókkal:
+										<div>
+											<button class="button" type="button" id="Google_login_button" onclick="pageScript.GoogleLogin()">Google bejelentkzés</button>
+										</div>
 									</td>
-									<td>
-										hamarosan
+									
+									<td width="25%">
+										Twitter fiókkal:
+										<div>
+											<button class="button" type="button" id="Twitter_login_button" onclick="pageScript.TwitterLogin()">Twitter bejelentkzés</button>
+										</div>
+									</td>
+
+									<td width="25%">
+										SSL kulccsal:
+										<div>
+											<button class="button" type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL bejelentkezés</button>
+										</div>
 									</td>
 								</tr>
 							</table>
-							<div id="GoogleLogin-ErrorMsg"></div>
-							
-							<hr/>
-							
-							<table class="content">
-								<tr>
-									<td width="90%">
-										SSL jogosítvánnyal:
-									</td>
-									<td>
-										<button class="button" type="button" id="ssl_login" onclick="pageScript.sslLogin()">SSL Login</button>
-									</td>
-								</tr>
-							</table>
-							<div id="sslLoginDiv"></div>
-							<div id="SslLogin-ErrorMsg"></div>
+
+							<div id="Login-ErrorMsg"></div>
 							
 							<hr/>
 							
 							<form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
 								<table class="content">
 									<tr>
-										<td width="40%">
+										<td width="35%">
 										Felhasználónév és jelszó segítségével
 										</td>
 										<td width="25%">
-											<div class="formrow">
-												<div class="label" id="LoginForm_username_label">
-													Felhasználó név:
-												</div>
-												<input name="username" type="text" id="LoginForm_username_input"/>
+											<div class="label" id="LoginForm_username_label">
+												Felhasználó név:
 											</div>
+											<input name="username" type="text" id="LoginForm_username_input"/>
 										</td>
 										<td width="25%">
-											<div class="formrow">
-												<div class="label" id="LoginForm_password_label">
-													Jelszó:
-												</div>
-												<input name="username" type="password" id="LoginForm_password_input"/>
+											<div class="label" id="LoginForm_password_label">
+												Jelszó:
 											</div>
+											<input name="username" type="password" id="LoginForm_password_input"/>
 										</td>
 										<td>
-											<div class="formrow">
-												<input class="button" type="submit" value="Login" id="LoginForm_submitButton">
-											</div>
+											<input class="button" type="submit" value="Jelszavas bejelentkezés" id="LoginForm_submitButton">
 										</td>
 									</tr>
 								</table>
@@ -165,11 +149,14 @@
 							</tr>
 							<td>
 								<td>
-									<div id="sslLoginDiv"></div>
+
 								</td>
 							</tr>
 						</table>
+						<div id="FacebookRegistration_ErrorMsg"></div>
+						
 						<hr/>
+						
 						<table class="content">
 							<tr>
 								<td width="90%">
@@ -198,8 +185,12 @@
 								</tr>
 								<tr>
 									<td colspan="4">
-										<p class="note">A személyi számot nem tárolja a rendszer. Az "anchor" szolgáltatással egy titkosított un. hash-t (titkos kódot) generálunk belőle, amiből a személyi szám nem nyerhető vissza. 
-							A titkos kódot magad is előállíthatod <a class="link" href="https://anchor.edemokraciagep.org"> itt</a>, és akkor be kell másolnod a "tikos kód" mezőbe</p>
+										<p class="note">
+											A személyi számot nem tárolja a rendszer. 
+											Az "anchor" szolgáltatással egy titkosított kódot generálunk belőle, amiből a személyi szám nem nyerhető vissza. 
+											A titkosított kódot magad is előállíthatod 
+											<a class="link" href="https://anchor.edemokraciagep.org"> itt</a>
+											, és akkor be kell másolnod a "tikosított kód" mezőbe</p>
 									</td>
 									<td>
 									</td>
@@ -232,7 +223,7 @@
 									<td colspan="4">
 										<div class="formrow">
 											<div class="label" id="RegistrationForm_digest_label">
-												titkos kód:
+												titkosított kód:
 											</div>
 											<textarea class="digest" name="digest" type="text" id="RegistrationForm_digest_input"></textarea>
 										</div>

@@ -167,7 +167,7 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.logoutCallback = function(status, text) {
-		self.myCallback(status,text);
+		self.myCallback(status,text);					// Ez ide minek, ha amúgy is újratöltünk
 	    window.location = QueryString.uris.START_URL		
 	}
 	
@@ -361,6 +361,14 @@ function PageScript(debug) {
 	
 	PageScript.prototype.addGoogleCredential = function(){
 		document.getElementById("AddCredentialForm_ErrorMsg").innerHTML="<p class='warning'>Ez a funkció sajnos még nem működik</p>";
+	}
+	
+	PageScript.prototype.GoogleLogin = function(){
+		document.getElementById("Login-ErrorMsg").innerHTML="<p class='warning'>A google bejelentkezés funkció sajnos még nem működik</p>";
+	}
+	
+	PageScript.prototype.TwitterLogin = function(){
+		document.getElementById("Login-ErrorMsg").innerHTML="<p class='warning'>A twitter bejelentkezés funkció sajnos még nem működik</p>";
 	}
 	
 	PageScript.prototype.addPassowrdCredential = function(){

@@ -76,7 +76,7 @@ function FaceBook(pageScript) {
 	    	self.loggedIn = response;
 	    	self.pageScript.login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
 	    } else {
-	    	self.doc.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
+	    	self.doc.getElementById('Login-ErrorMsg').innerHTML = '<p class="warning">A facebook bejelentkezés sikertelen</p>';
 	    } 
 	  }
 
