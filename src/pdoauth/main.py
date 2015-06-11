@@ -18,7 +18,7 @@ from pdoauth.forms.AssuranceForm import AssuranceForm
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 
-controller = Controller.getInstance()
+controller = Controller()
 controller.mail = mail
 controller.app = app
 decorator = Decorators(app)
@@ -31,15 +31,14 @@ def getStaticPath():
 
 staticPath=getStaticPath()
 
-@login_manager.unauthorized_handler
-def unauthorized():
-    resp = controller.error_response(["authentication needed"], 302)
-    uri = "{1}?{0}".format(urlencode({"next": request.url}), app.config.get("START_URL"))
-    resp.headers['Location'] = uri
-    return resp
-
+#@login_manager.unauthorized_handler
+#def unauthorized():
+#    resp = controller.error_response(["authentication needed"], 302)
+#    uri = "{1}?{0}".format(urlencode({"next": request.url}), app.config.get("START_URL"))
+#    resp.headers['Location'] = uri
+#    return resp
 @login_manager.user_loader
-def load_user(userid):
+def getUser(userid):
     return User.get(userid)
 
 @decorator.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)

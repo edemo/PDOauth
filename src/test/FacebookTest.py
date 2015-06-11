@@ -11,14 +11,15 @@ class FacebookTest(PDUnitTest, UserTesting):
         PDUnitTest.setUp(self)
         self.user = self.createUserWithCredentials(credType="facebook")
         self.user.activate()
-        self.controller.facebook_id = self.usercreation_userid
-        self.controller.access_token = self.usercreation_password
+        interface = self.controller.interface
+        interface.facebook_id = self.usercreation_userid
+        interface.access_token = self.usercreation_password
         data = {
                 'credentialType': 'facebook',
-                'identifier': self.controller.facebook_id,
-                'secret': self.controller.access_token
+                'identifier': interface.facebook_id,
+                'secret': interface.access_token
         }
-        self.request_data = FakeForm(data)
+        self.form = FakeForm(data)
 
 
     def tearDown(self):
@@ -26,22 +27,23 @@ class FacebookTest(PDUnitTest, UserTesting):
 
     @test
     def facebook_login_needs_facebook_id_and_access_token(self):
-        resp = self.controller.do_login(self.request_data)
+        resp = self.controller.do_login(self.form)
         self.assertEqual(resp.status_code, 200)
 
     @test
     def facebook_login_needs_facebook_id_as_username(self):
-        self.request_data.set('identifier','badid')
+        form = self.form
+        form.set('identifier','badid')
         with self.assertRaises(ReportedError) as e:
-            self.controller.do_login(self.request_data)
+            self.controller.do_login(form)
         self.assertEqual(e.exception.status, 403)
         self.assertEqual(e.exception.descriptor,["bad facebook id"])
 
     @test
     def facebook_login_needs_correct_access_token_as_password(self):
-        self.request_data.set('secret',self.mkRandomPassword())
+        self.form.set('secret',self.mkRandomPassword())
         with self.assertRaises(ReportedError) as e:
-            self.controller.do_login(self.request_data)
+            self.controller.do_login(self.form)
         self.assertEqual(e.exception.status, 403)
         self.assertEqual(e.exception.descriptor, ["Cannot login to facebook"])
 
@@ -50,7 +52,7 @@ class FacebookTest(PDUnitTest, UserTesting):
         cred = Credential.getByUser(self.user, "facebook")
         cred.rm()
         with self.assertRaises(ReportedError) as e:
-            self.controller.do_login(self.request_data)
+            self.controller.do_login(self.form)
         self.assertEqual(e.exception.status, 403)
         self.assertEqual(e.exception.descriptor,["You have to register first"])
 

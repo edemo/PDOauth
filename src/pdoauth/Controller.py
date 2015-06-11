@@ -6,7 +6,7 @@ from uuid import uuid4
 import time
 from flask import json
 from pdoauth.ReportedError import ReportedError
-from pdoauth.Interfaced import Interfaced
+from pdoauth.WebInterface import WebInterface
 from pdoauth.EmailHandling import EmailHandling
 from pdoauth.LoginHandling import LoginHandling
 from pdoauth.CertificateHandling import CertificateHandling
@@ -15,8 +15,8 @@ from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 anotherUserUsingYourHash = "another user is using your hash"
 passwordResetCredentialType = 'email_for_password_reset'
 
-class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling):
-
+class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandling):
+    LOGIN_CREDENTIAL_ATTRIBUTE = 'logincred'
     def setAuthUser(self, userid, isHerself):
         self.getSession()['auth_user']=(userid, isHerself)
 
@@ -41,11 +41,17 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         if not self.getCurrentUser().is_authenticated():
             raise ReportedError(["not logged in"], status=403)
 
+
+    def setLoginCredentialIntoSession(self, credentialType, identifier):
+        self.getSession()[self.LOGIN_CREDENTIAL_ATTRIBUTE] = dict(credentialType=credentialType, identifier=identifier)
+        return credentialType
+
     def do_login(self,form):
-        self.getSession()['logincred'] = dict(credentialType=form.credentialType.data, identifier = form.identifier.data)
-        if form.credentialType.data == 'password':
+        credentialType = form.credentialType.data
+        credentialType = self.setLoginCredentialIntoSession(credentialType, form.identifier.data)
+        if credentialType == 'password':
             return self.passwordLogin(form)
-        if form.credentialType.data == 'facebook':
+        if credentialType == 'facebook':
             return self.facebookLogin(form)
 
     def do_logout(self):
@@ -229,7 +235,9 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
 
     def isLoginCredentials(self, form):
         session = self.getSession()
-        return session['logincred']['credentialType'] == form.credentialType.data and session['logincred']['identifier'] == form.identifier.data
+        if not session.has_key(self.LOGIN_CREDENTIAL_ATTRIBUTE):
+            raise ReportedError(["Internal error: no login credential found"], 500)
+        return session[self.LOGIN_CREDENTIAL_ATTRIBUTE]['credentialType'] == form.credentialType.data and session[self.LOGIN_CREDENTIAL_ATTRIBUTE]['identifier'] == form.identifier.data
 
     def do_remove_credential(self, form):
         if self.isLoginCredentials(form):

@@ -9,7 +9,7 @@ import config
 from test.helpers.CSRFMixin import CSRFMixin
 from test.helpers.todeprecate.UserTesting import UserTesting
 
-class AssuranceTest(Fixture, CSRFMixin, UserTesting):
+class AssuranceIntegrationTest(Fixture, CSRFMixin, UserTesting):
 
 
     def _createUserWithHash(self):

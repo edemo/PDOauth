@@ -7,6 +7,7 @@ class UserUtil(ResponseInfo, RandomUtil):
     def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
         userid, password, email = self.setupUserCreationData(userid, password, email)
         user = CredentialManager.create_user_with_creds(credType, userid, password, email)
+        user.activate()
         self.assertTrue(user)
         return user
     
