@@ -14,7 +14,7 @@ static/qunit-reporter-junit.js:
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js
 
-alltests: tests end2endtest
+alltests: tests integrationtests end2endtest
 
 onlyend2endtest: install testsetup runserver runemail testsetup chrometest firefoxtest
 
@@ -33,10 +33,13 @@ killserver:
 	kill $$(cat tmp/httpd.pid)
 
 runemail:
-	python -m smtpd -n -c DebuggingServer localhost:1025 >tmp/smtpd.log&
+	mkdir -p tmp; python -m smtpd -n -c DebuggingServer localhost:1025 >tmp/smtpd.log&
 
 killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
+
+integrationtests: testsetup
+	PYTHONPATH=src python -m unittest discover -v -f -s src/integrationtest -p "*.py"
 
 tests: testsetup
 	PYTHONPATH=src python -m unittest discover -v -f -s src/test -p "*.py"
