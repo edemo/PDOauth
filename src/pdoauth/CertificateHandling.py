@@ -1,6 +1,4 @@
 from pdoauth.models.Credential import Credential
-from pdoauth.forms.KeygenForm import KeygenForm
-from pdoauth.Decorators import Decorators
 import urlparse
 from pdoauth.ReportedError import ReportedError
 from pdoauth.CredentialManager import CredentialManager
@@ -63,6 +61,7 @@ class CertificateHandling(CryptoUtils):
         cert = self.getEnvironmentVariable('SSL_CLIENT_CERT')
         email = self.getEmailFromQueryParameters()
         cred = self.registerCertUser(cert, email)
+        self.setLoginCredentialIntoSession(cred.credentialType, cred.identifier)
         resp = self.finishLogin(cred.user)
         resp.headers['Access-Control-Allow-Origin']="*"
         return resp

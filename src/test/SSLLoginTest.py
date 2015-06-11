@@ -4,8 +4,14 @@ from test.helpers.todeprecate.UserTesting import UserTesting
 from test.helpers.PDUnitTest import PDUnitTest, test
 
 from test.config import Config
+testuserIdentifier = "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"
+testCredentialRepresentation = '{{"credentialType": "certificate", "identifier": "{0}"}}'.format(testuserIdentifier)
 
 class SSLLoginTest(PDUnitTest, UserTesting):
+
+    def tearDown(self):
+        PDUnitTest.tearDown(self)
+        self.removeCertUser()
 
     @test
     def there_is_a_SSL_LOGIN_BASE_URL_config_option_containing_the_base_url_of_the_site_with_the_optional_no_ca_config(self):
@@ -26,21 +32,20 @@ class SSLLoginTest(PDUnitTest, UserTesting):
 
     @test
     def you_can_login_using_a_registered_ssl_cert(self):
-        resp, cred = self.createUserAndLoginWithCert()
+        resp = self.createUserAndLoginWithCert()
         self.assertEquals(resp.status_code, 200)
-        self.assertTrue('{"credentialType": "certificate", "identifier": "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"}' in
+        self.assertTrue(testCredentialRepresentation in
             self.getResponseText(resp))
-        cred.rm()
 
     @test
     def with_cert_login_you_get_actually_logged_in(self):
-        resp, cred = self.createUserAndLoginWithCert()
+        resp = self.createUserAndLoginWithCert()
         self.assertEquals(resp.status_code, 200)
-        self.assertTrue('{"credentialType": "certificate", "identifier": "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"}' in
-            self.getResponseText(resp))
+        body = self.getResponseText(resp)
+        self.assertTrue(testCredentialRepresentation in
+            body)
         resp = self.showUserByCurrentUser('me')
         self.assertEqual(200, resp.status_code)
-        cred.rm()
 
     @test
     def you_cannot_login_using_an_unregistered_ssl_cert_without_email(self):
@@ -61,10 +66,15 @@ class SSLLoginTest(PDUnitTest, UserTesting):
 
     @test
     def ssl_login_is_cors_enabled(self):
-        resp, cred = self.createUserAndLoginWithCert()
+        resp = self.createUserAndLoginWithCert()
         self.assertEquals(resp.status_code, 200)
         self.assertEqual(resp.headers['Access-Control-Allow-Origin'], "*")
-        cred.rm()
+
+    def removeCertUser(self):
+        cred = Credential.get('certificate', testuserIdentifier)
+        if cred:
+            cred.rm()
+            cred.user.rm()
 
     @test
     def you_can_register_and_login_using_an_unregistered_ssl_cert_with_email(self):
@@ -76,7 +86,18 @@ class SSLLoginTest(PDUnitTest, UserTesting):
         self.deleteUser(cred.user)
         self.assertEquals(resp.status_code, 200)
         responseText = self.getResponseText(resp)
-        self.assertTrue('{"credentialType": "certificate", "identifier": "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"}' in
+        self.assertTrue(testCredentialRepresentation in
             responseText)
         self.assertTrue('{"credentialType": "emailcheck", "identifier":' in
             responseText)
+
+    @test
+    def when_you_log_in_with_a_cert_login_credential_gets_set(self):
+        identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
+        params=dict(email="certuser@example.com")
+        self.controller._testdata.request_url = Config.BASE_URL+"?"+urlencode(params)
+        resp = self.sslLoginWithCert(cert)
+        self.assertEquals(resp.status_code, 200)
+        sessionLoginCredential = self.controller.getSession()[self.controller.LOGIN_CREDENTIAL_ATTRIBUTE]
+        self.assertEqual(sessionLoginCredential['credentialType'],'certificate')
+        self.assertEqual(sessionLoginCredential['identifier'],testuserIdentifier)
