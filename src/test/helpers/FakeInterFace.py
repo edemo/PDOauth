@@ -1,5 +1,11 @@
 from flask import json
 from pdoauth.FlaskInterface import FlaskInterface
+from test.config import Config
+
+class FakeApp(object):
+    def __init__(self):
+        self.config=Config
+
 class FakeField(object):
     def __init__(self,value):
         self.data = value
@@ -78,6 +84,10 @@ class FakeInterface(FlaskInterface):
     def make_response(self, ret, status):
         r = FakeResponse(status, ret)
         return r
+
+    def getConfig(self, name):
+        return getattr(self.app.config,name)
+
 
 class FakeMailer(object):
 
