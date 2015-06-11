@@ -146,7 +146,7 @@ class HashTest(Fixture, UserTesting, CSRFMixin):
                 csrf_token= csrf
             )
             resp = c.post(config.base_url+'/v1/users/me/update_hash', data=data)
-            self.assertEqual(302,resp.status_code)
+            self.assertEqual(403,resp.status_code)
 
     @test
     def the_hash_update_request_should_contain_csrf_token(self):
