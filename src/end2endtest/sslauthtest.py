@@ -23,7 +23,7 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self.driver.find_element_by_id("KeygenForm_email_input").send_keys(self.usercreation_email)
         self.driver.find_element_by_id("KeygenForm_createuser_input").click()
         self.driver.find_element_by_id("KeygenForm_submit").click()
-        time.sleep(1)
+        time.sleep(3)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
