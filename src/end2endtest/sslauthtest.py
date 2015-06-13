@@ -4,6 +4,7 @@ from pdoauth.app import app
 from pdoauth.models.User import User
 import time
 from end2endtest.helpers.EndUserTesting import EndUserTesting, test
+import pdb
 
 class SSLAuthTest(EndUserTesting):
 
@@ -46,12 +47,17 @@ class SSLAuthTest(EndUserTesting):
     def ssl_login_logs_in_if_you_are_registered_and_have_cert(self):
         identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
         self._keygenAndLogin()
+        time.sleep(1)
         self._logoutAfterKeygen()
+        time.sleep(1)
         self.driver.get(app.config.get("START_URL"))
         self.switchToTab("login")
         self.driver.find_element_by_id("ssl_login").click()
+        time.sleep(1)
+        self.driver.refresh()
         self.switchToTab("account")
         self.driver.find_element_by_id("melink").click()
+        time.sleep(1)
         self.assertEqual(self.driver.find_element_by_id("errorMsg").text, "")
         userData = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("{0}".format(self.usercreation_email) in
