@@ -28,7 +28,7 @@ class CryptoTestUtil(object):
         identifier, digest, cert = self.getCertAttributes()
         user = self.createUserWithCredentials()
         secret = digest
-        cred = Credential.new(user, "certificate", identifier, secret)
+        Credential.new(user, "certificate", identifier, secret)
         resp = self.sslLoginWithCert(cert)
-        return resp, cred
+        return resp
 

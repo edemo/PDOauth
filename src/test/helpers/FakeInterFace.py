@@ -15,6 +15,13 @@ class FakeApp(object):
 
 class FakeRecord(object):
     def __init__(self, value):
+
+class FakeApp(object):
+    def __init__(self):
+        self.config=Config
+
+class FakeField(object):
+    def __init__(self,value):
         self.data = value
 
 class FakeForm(object):
@@ -102,6 +109,10 @@ class FakeInterface(object):
 
     def logOut(self):
         self.current_user = None
+
+    def getConfig(self, name):
+        return getattr(self.app.config,name)
+
 
     def getCurrentUser(self):
         return self.current_user

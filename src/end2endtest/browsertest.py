@@ -55,7 +55,7 @@ class JavaScriptUnitTest(EndUserTesting):
         self.switchToTab("account")
         driver.find_element_by_id("melink").click()
         time.sleep(5)
-        body = driver.find_element_by_id("userdata").text
+        body = driver.find_element_by_id("me_Msg").text
         self.assertRegexpMatches(body, r"^[\s\S]*@example.com[\s\S]*$")
 
 

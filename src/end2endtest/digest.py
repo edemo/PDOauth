@@ -20,8 +20,8 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
-        userdata = self.driver.find_element_by_id("userdata").text
-        self.assertTrue("hash: {0}".format(digest) in userdata)
+        userdata = self.driver.find_element_by_id("me_Msg").text
+        self.assertTrue("hash:\n{0}".format(digest) in userdata)
 
     @test
     def you_can_change_the_digest_as_a_logged_in_user(self):
@@ -32,18 +32,18 @@ class EndUserDigestManagementTest(EndUserTesting):
         oldDigest=self.createHash()
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
         time.sleep(1)
-        userdata = self.driver.find_element_by_id("userdata").text
-        self.assertTrue("hash: {0}".format(oldDigest) in userdata)
+        self.switchToTab("account")
+        userdata = self.driver.find_element_by_id("me_Msg").text
+        self.assertTrue("hash:\n{0}".format(oldDigest) in userdata)
         self.setupRandom()
         digest = self.createHash()
         self.assertTrue(oldDigest != digest)
-        self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
-        userdata = self.driver.find_element_by_id("userdata").text
-        self.assertTrue("hash: {0}".format(digest) in userdata)
+        userdata = self.driver.find_element_by_id("me_Msg").text
+        self.assertTrue("hash:\n{0}".format(digest) in userdata)
 
     @test
     def you_can_delete_the_digest_as_a_logged_in_user_by_giving_empty_one(self):
@@ -54,14 +54,14 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
         time.sleep(1)
-        userdata = self.driver.find_element_by_id("userdata").text
-        self.assertTrue("hash: {0}".format(oldDigest) in userdata)
         self.switchToTab("account")
+        userdata = self.driver.find_element_by_id("me_Msg").text
+        self.assertTrue("{0}".format(oldDigest) in userdata)
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
-        userdata = self.driver.find_element_by_id("userdata").text
-        self.assertTrue("hash: null" in userdata)
+        userdata = self.driver.find_element_by_id("me_Msg").text
+        self.assertTrue("hash:\nnull" in userdata)
     
     def tearDown(self):
         self.driver.quit()

@@ -13,11 +13,12 @@ from pdoauth.CertificateHandling import CertificateHandling
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from urllib import urlencode
 
-anotherUserUsingYourHash = "another user is using your hash"
-passwordResetCredentialType = 'email_for_password_reset'
 
 class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandling):
     LOGIN_CREDENTIAL_ATTRIBUTE = 'logincred'
+    anotherUserUsingYourHash = "another user is using your hash"
+    passwordResetCredentialType = 'email_for_password_reset'
+
     def setAuthUser(self, userid, isHerself):
         self.getSession()['auth_user']=(userid, isHerself)
 
@@ -41,6 +42,9 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
             resp.headers['Location'] = uri
             return resp
 
+
+    def setLoginCredentialIntoSession(self, credentialType, identifier):
+        self.getSession()[self.LOGIN_CREDENTIAL_ATTRIBUTE] = dict(credentialType=credentialType, identifier=identifier)
 
     def jsonErrorIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
@@ -96,8 +100,8 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
             anotherUsers = User.getByDigest(form.digest.data)
             if anotherUsers:
                 if self.isAnyoneHandAssurredOf(anotherUsers):
-                    raise ReportedError([anotherUserUsingYourHash], 400)
-                additionalInfo["message"] = anotherUserUsingYourHash
+                    raise ReportedError([self.anotherUserUsingYourHash], 400)
+                additionalInfo["message"] = self.anotherUserUsingYourHash
         user = CredentialManager.create_user_with_creds(
             form.credentialType.data,
             form.identifier.data,
@@ -224,14 +228,14 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
         passwordResetEmailExpiration = 14400
         secret=unicode(uuid4())
         expirationTime = time.time() + passwordResetEmailExpiration
-        Credential.new(user, passwordResetCredentialType, secret, unicode(expirationTime))
+        Credential.new(user, self.passwordResetCredentialType, secret, unicode(expirationTime))
         self.sendPasswordResetMail(user, secret, expirationTime)
         return self.simple_response("Password reset email has successfully sent.")
     
     def do_password_reset(self, form):
-        cred = Credential.get(passwordResetCredentialType, form.secret.data)
+        cred = Credential.get(self.passwordResetCredentialType, form.secret.data)
         if cred is None or (float(cred.secret) < time.time()):
-            Credential.deleteExpired(passwordResetCredentialType)
+            Credential.deleteExpired(self.passwordResetCredentialType)
             raise ReportedError(['The secret has expired'], 404)
         passcred = Credential.getByUser(cred.user, 'password')
         passcred.secret = CredentialManager.protect_secret(form.password.data)

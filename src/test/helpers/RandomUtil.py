@@ -18,7 +18,8 @@ class RandomUtil(object):
 
     def createRandomUserId(self):
         self.setupRandom()
-        return "aaa_{0}".format(self.randString)
+        userid = "aaa_{0}".format(self.randString)
+        return userid
 
     def setupUserCreationData(self, userid=None, password=None, email=None):
         self.setupRandom()
