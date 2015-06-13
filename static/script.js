@@ -431,6 +431,10 @@ function PageScript(debug) {
 		document.getElementById("Login-ErrorMsg").innerHTML="<p class='warning'>A google bejelentkezés funkció sajnos még nem működik</p>";
 	}
 	
+	PageScript.prototype.GoogleRegister = function(){
+		self.displayMsg("<p class='warning'>A google bejelentkezés funkció sajnos még nem működik</p>",'','');
+	}
+	
 	PageScript.prototype.TwitterLogin = function(){
 		document.getElementById("Login-ErrorMsg").innerHTML="<p class='warning'>A twitter bejelentkezés funkció sajnos még nem működik</p>";
 	}
