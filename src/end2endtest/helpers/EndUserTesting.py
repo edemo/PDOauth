@@ -1,6 +1,14 @@
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.UserTesting import UserTesting
+from twatson.unittest_annotations import Fixture, test  # @UnusedImport
+from end2endtest.helpers.BrowserSetup import BrowserSetup
+from end2endtest import config
 
-class EndUserTesting(UserTesting):
+class EndUserTesting(Fixture, UserTesting, BrowserSetup):
+    def setUp(self):
+        self.setupDriver()
+        self.base_url = config.Config.BASE_URL
+        self.verificationErrors = []
+
     def fillInAndSubmitRegistrationForm(self, driver, email=None, userid=None, password=None, digest=None):
         if email is None:
             email=self.usercreation_email

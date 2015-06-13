@@ -1,12 +1,10 @@
 import unittest, time
 import config
-from twatson.unittest_annotations import Fixture, test
 import re
 import os
-from end2endtest.BrowserSetup import BrowserSetup
-from test.helpers.todeprecate.UserTesting import UserTesting
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 
-class JavaScriptUnitTest(Fixture, UserTesting, BrowserSetup):
+class JavaScriptUnitTest(EndUserTesting):
     def setUp(self):
         self.setupDriver()
         self.base_url = config.Config.BASE_URL

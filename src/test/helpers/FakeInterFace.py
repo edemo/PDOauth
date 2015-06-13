@@ -1,98 +1,127 @@
 from flask import json
-from pdoauth.FlaskInterface import FlaskInterface
-from test.config import Config
+from test import config
 
+class FakeMail(object):
+    def __init__(self):
+        self.outbox = list()
+    def send_message(self, subject, body, recipients, sender):
+        self.outbox.append(dict(subject=subject, body=body, recipients=recipients, sender=sender))
 class FakeApp(object):
     def __init__(self):
-        self.config=Config
+        self.config = config.Config()
+        def get(value):
+            return getattr(self.config, value)
+        self.config.get = get
 
-class FakeField(object):
-    def __init__(self,value):
+class FakeRecord(object):
+    def __init__(self, value):
         self.data = value
-        
+
 class FakeForm(object):
-    def __init__(self, theDict):
+
+    def set(self, key, value):
+        return setattr(self, key, FakeRecord(value))
+
+    def __init__(self,theDict):
         for key, value in theDict.items():
             self.set(key, value)
 
-    def set(self, key, value):
-        field = FakeField(value)
-        setattr(self, key, field)
+    def __repr__(self, *args, **kwargs):
+        values = []
+        for key, value in self.__dict__.items():
+            values.append("{0}={1}".format(key,value.data))
+        return "FakeForm({0})".format(",".join(values))
+class FakeRequest():
+    def __init__(self):
+        self.url='http://localhost/'
+        self.environ = dict()
+        self.form = dict()
+        self.method = 'GET'
+        
+    def setUrl(self, url):
+        self.url = 'http://localhost'+url
+    def getUrl(self):
+        return self.url
+    def setEnviron(self, environ):
+        self.environ = environ
+    def getEnviron(self):
+        return self.environ
+    def setForm(self, form):
+        self.form = form
+    
+    def setMethod(self, method):
+        self.method = method
 
-class FakeResponse(object):
-    def __init__(self,status,message):
+class FakeSession(dict):
+    pass
+
+class FakeResponse(object):  
+    def __init__(self, message, status):
+        self.response = message
+        self.data = message
         self.status_code = status
         self.status = status
-        self.data = message
-        self.response = [message]
-        self.cookies = {}
-        self.headers = {}
-    
-    def set_cookie(self,name,value):
-        self.cookies[name] = value
-
-class TestData(object):
-    def __init__(self):
+        self.cookies = dict()
         self.headers = dict()
-        self.request_url = ""
-        self.environ = dict()
-
-class FakeInterface(FlaskInterface):
-    _testdata = TestData()
-    session = dict()
-
-    def getHeader(self, header):
-        return self._testdata.headers.get(header)
-
-    def getCurrentUser(self):
-        user = self._testdata.current_user
-        return user
-
-    def getEnvironmentVariable(self, variableName):
-        return self._testdata.environ.get(variableName, None)
-
-    def getRequestForm(self):
-        return self._testdata.postdata
-
-    def getRequestUrl(self):
-        return self._testdata.request_url
     
+    def set_cookie(self,name,value,path="/", domain = None):
+        domainpart = ""
+        if domain is not None:
+            domainpart = " Domain={0};".format(domain)
+        header = "{0}={1}; {3}Path={2}".format(name,value, path, domainpart)
+        self.headers['Set-Cookie']=header
+
+class ContextUrlIsAlreadySet(object):
+    pass
+
+
+class FakeInterface(object):
     def __init__(self):
-        self.headers = dict()
+        self._request = FakeRequest()
+        self._session = FakeSession()
+        self.urlSet = False
 
-    def getRequestHeader(self, header):
-        return self.headers.get(header)
+    def setEnviron(self, environ):
+        if environ is None:
+            environ = dict()
+        self._request.setEnviron(environ)
 
-    def validate_on_submit(self,form):
-        for k in self.request_data.keys():
-            getattr(form,k).data = self.request_data[k]
-        return form.validate()
+    def set_request_context(self, url=None, data=None, method = 'GET', environ = None):
+        request = self.getRequest()
+        if url is not None:
+            if self.urlSet is False:
+                request.setUrl(url)
+                self.urlSet = True
+            else:
+                raise ContextUrlIsAlreadySet()
+        self._request.setForm(data)
+        self._request.setMethod(method)
+        self.setEnviron(environ)
 
-    def _facebookMe(self, code):
-        if self.access_token == code:
-            return FakeResponse(200, json.dumps(dict(id=self.facebook_id)))
-        else:
-            return FakeResponse(404,"fooo")
+    def getRequest(self):
+        return self._request
 
     def getSession(self):
-        return self.session
+        return self._session
 
     def loginUserInFramework(self, user):
-        self._testdata.current_user = user
-        return user
+        self.current_user = user
+        return True
 
-    def make_response(self, ret, status):
-        r = FakeResponse(status, ret)
-        return r
+    def logOut(self):
+        self.current_user = None
 
     def getConfig(self, name):
         return getattr(self.app.config,name)
 
 
-class FakeMailer(object):
-
-    def __init__(self):
-        self.messages = list()
-
-    def send_message(self, **kwargs):
-        self.messages.append(kwargs)
+    def getCurrentUser(self):
+        return self.current_user
+    
+    def make_response(self, message, status):
+        return FakeResponse(message,status)
+    
+    def _facebookMe(self, code):
+        if self.access_token == code:
+            return FakeResponse(json.dumps(dict(id=self.facebook_id)), 200)
+        return FakeResponse('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}', 400)

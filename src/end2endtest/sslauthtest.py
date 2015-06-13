@@ -1,21 +1,17 @@
 # -*- coding: UTF-8 -*-
 import unittest
-import config
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.User import User
-from end2endtest.BrowserSetup import BrowserSetup
 import time
-from test.helpers.todeprecate.UserTesting import UserTesting
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
+import pdb
 
-class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
+class SSLAuthTest(EndUserTesting):
 
     def setUp(self):
-        self.setupDriver()
+        EndUserTesting.setUp(self)
         self.setupUserCreationData()
-        self.base_url = config.Config.BASE_URL
-        self.verificationErrors = []
-
+ 
     def _keygenAndLogin(self):
         self.driver.get(app.config.get("START_URL"))
         self.driver.execute_script("document.getElementById('tab-content-registration').style.visibility = 'visible'")
@@ -24,6 +20,8 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self.driver.find_element_by_id("KeygenForm_createuser_input").click()
         self.driver.find_element_by_id("KeygenForm_submit").click()
         time.sleep(3)
+        user = User.getByEmail(self.usercreation_email)
+        self.assertTrue(user)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
@@ -49,12 +47,17 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
     def ssl_login_logs_in_if_you_are_registered_and_have_cert(self):
         identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
         self._keygenAndLogin()
+        time.sleep(1)
         self._logoutAfterKeygen()
+        time.sleep(1)
         self.driver.get(app.config.get("START_URL"))
         self.switchToTab("login")
         self.driver.find_element_by_id("ssl_login").click()
+        time.sleep(1)
+        self.driver.refresh()
         self.switchToTab("account")
         self.driver.find_element_by_id("melink").click()
+        time.sleep(1)
         self.assertEqual(self.driver.find_element_by_id("errorMsg").text, "")
         userData = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("{0}".format(self.usercreation_email) in
@@ -94,6 +97,7 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
 
     @test
     def SSl_LOGIN_BASE_URL_works_if_no_cert_is_given(self):
+        self.deleteCerts()
         startUrl = app.config.get("START_URL")
         baseUrl = app.config.get("BASE_URL")
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")

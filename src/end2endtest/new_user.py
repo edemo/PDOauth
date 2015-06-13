@@ -1,19 +1,15 @@
 import unittest
 import config
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.Application import Application
 import time
 from urllib import urlencode
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
-from end2endtest.BrowserSetup import BrowserSetup
-from test.helpers.todeprecate.UserTesting import UserTesting
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 
-class NewUserTest(Fixture,UserTesting, BrowserSetup):
+class NewUserTest(EndUserTesting):
     def setUp(self):
-        self.setupDriver()
-        self.base_url = config.Config.BASE_URL
-        self.verificationErrors = []
+        EndUserTesting.setUp(self)
         self._setupApp()
 
     def _setupApp(self):

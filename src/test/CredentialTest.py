@@ -20,14 +20,19 @@ class CredentialTest(PDUnitTest, UserUtil):
     @test
     def credential_removal_is_resistant_to_no_login_credential_in_session(self):
         form = FakeForm(dict(credentialType='password', identifier=self.usercreation_userid))
-        self.assertReportedError(self.controller.do_remove_credential, [form], 500, ["Internal error: no login credential found"])
+        self.assertReportedError(
+            self.controller.do_remove_credential, 
+            [form], 
+            500,
+            ["Internal error: no login credential found"])
 
     @test
     def Credential_representation_is_readable(self):
         secretdigest=SHA256Hash(self.usercreation_password).hexdigest()
-        representation = "Credential(user={0},credentialType=password,secret={1})".format(
+        representation = "Credential(user={0},credentialType=password,identifier={2},secret={1})".format(
             self.usercreation_email,
-            secretdigest)
+            secretdigest,
+            self.usercreation_userid)
         self.assertEquals("{0}".format(self.cred),representation)
 
     @test
@@ -72,6 +77,14 @@ class CredentialTest(PDUnitTest, UserUtil):
         self.assertTrue(Credential.get("facebook", myUserid))
         resp = self.controller.do_remove_credential(FakeForm(data))
         return resp
+
+    @test
+    def password_is_stored_using_sha256_hash(self):
+        resp = self.createPasswordCredential()
+        self.assertEqual(resp.status_code, 200)
+        cred = Credential.get('password', self.usercreation_userid)
+        self.assertEqual(cred.secret, SHA256Hash(self.usercreation_password).hexdigest())
+
 
     def createPasswordCredential(self, userid=None):
         self.controller.loginUserInFramework(self.cred.user)

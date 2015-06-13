@@ -1,11 +1,10 @@
-from twatson.unittest_annotations import Fixture, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from pdoauth.models.Application import Application
 from pdoauth.app import app
-from pdoauth import main  # @UnusedImport
 import config
 from test.helpers.RandomUtil import RandomUtil
 
-class Integration(Fixture, RandomUtil):
+class Integration(IntegrationTest, RandomUtil):
     @test
     def Unauthenticated_user_is_redirected_to_login_page_when_tries_to_do_oauth_with_us(self):
         redirectUri = 'https://client.example.com/oauth/redirect'
