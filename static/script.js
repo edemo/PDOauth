@@ -224,7 +224,7 @@ function PageScript(debug) {
 		}
 		self.ajaxpost("/v1/add_credential", text, function(status, text){
 			var data = JSON.parse(text);
-			condole.log(data);
+			console.log(data);
 			if (status==200) {
 				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
 			}
