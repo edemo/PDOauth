@@ -13,6 +13,15 @@
 
  <body onload="pageScript.main()" >
 
+	<div id="popup" class="popup-frame">
+		<div class="popup">
+			<div class="error" id="errorMsg"></div>
+			<div class="message" id="message"></div>
+			<div class="success" id="successMsg"></div>
+			<button class="pbutton" type="button" onclick = "javascript:pageScript.closePopup()">Close</button>
+		</div>
+	</div>
+	<div id="fade" class="black_overlay"></div>	
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
 <!--script type='text/javascript' src="tests.js"></script-->
@@ -58,13 +67,21 @@
 						</tr>
 					</table>
 				</div>
-	        	<ul class="tabs">
+
+
+<!-- Menu bar -->
+				<div class="menu-bar" id="mainMenu">
+					<a id="login-menu" onclick="javascript:pageScript.menuHandler('login').menuActivate()">Bejelentkezés</a>
+					<a id="registration-menu" onclick="javascript:pageScript.menuHandler('registration').menuActivate()">Regisztráció</a>
+					<a id="assurer-menu" onclick="javascript:pageScript.menuHandler('assurer').menuActivate()">Ellenőröknek</a>
+					<a id="account-menu" onclick="javascript:pageScript.menuHandler('account').menuActivate()">Fiókom</a>
+					<a id="application-menu" onclick="javascript:pageScript.menuHandler('application').menuActivate()">Alkalmazások</a>
+				</div>
 				
+				<div class="tab-container">
 <!-- Tab for login -->
-			        <li>
-						<input type="radio" name="tabs" id="tab-login">
-						<label for="tab-login" id="tab-login-label">Login</label>
-						<div id="tab-content-login" class="tab-content animated fadeIn">
+
+				<div id="tab-content-login" class="tab-content animated fadeIn">
 							<p>Bejelentkezési lehetőségek</p>
 							<hr>
 							<table class="content">
@@ -129,13 +146,9 @@
 								<div id="LoginForm_errorMsg"></div>
 							</form>
 			          </div>
-			        </li>
 
 <!-- Tab for register users -->
-					<li>
-			          <input type="radio" name="tabs" id="tab-registration">
-			          <label for="tab-registration" id="tab-registration-label">Regisztráció</label>
-			          <div id="tab-content-registration" class="tab-content animated fadeIn">
+				<div id="tab-content-registration" class="tab-content animated fadeIn">
 						<p>Regisztrálási lehetőségek</p>
 						<hr>
 						<table class="content">
@@ -292,13 +305,9 @@
 							</div>
 						</form>
 			          </div>
-			        </li>
 					
 <!-- Tab for functions belongs to the assurers -->
-			        <li>
-			          <input type="radio" name="tabs" id="tab-assurer">
-			          <label for="tab-assurer" id="tab-assurer-label">Ellenőröknek</label>
-			          <div id="tab-content-assurer" class="tab-content animated fadeIn">
+				<div id="tab-content-assurer" class="tab-content animated fadeIn">
 						<p>Felhasználó adatainak lekérdezése</p>
 						<form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
 							<div class="formrow">
@@ -347,13 +356,9 @@
 							</div>
 						</form>
 			          </div>
-			        </li>
 					
 <!-- Tab for account functions -->
-			        <li>
-			          <input type="radio" name="tabs" id="tab-account">
-			          <label for="tab-account" id="tab-account-label">Fiókom</label>
-			          <div id="tab-content-account" class="tab-content animated fadeIn">
+				<div id="tab-content-account" class="tab-content animated fadeIn">
 						<table class="content">
 							<tr>
 								<td width="20%">
@@ -602,13 +607,10 @@
 							<div id="DeRegisterForm_ErrorMsg"></div>
 						</form>
 			          </div>
-					</li>
+
 
 <!-- Tab for registering applications -->
-			        <li>
-						<input type="radio" name="tabs" id="tab-app">
-						<label for="tab-app" id="tab-app-label">Alkalmazások</label>
-						<div id="tab-content-app" class="tab-content animated fadeIn">
+				<div id="tab-content-application" class="tab-content animated fadeIn">
 							<p>Alkalmazás regisztrációja</p>
 							<p class="note">
 								Input:
@@ -625,21 +627,10 @@
 								<li>Alkalmazás secret</li>
 							</ul>
 						</div>
-
-					</li>
-					
-			    </ul>
+				</div>
 	      	</div>
 			<div id="qunit-xml" class="message_container"></div>
-			    <style>
 
-</style>
-	<div id="popup" class="popup">
-		<div class="error" id="errorMsg"></div>
-		<div class="message" id="message"></div>
-		<div class="success" id="successMsg"></div>
-	<button class="button" type="button" onclick = "javascript:pageScript.closePopup()">Close</button>
-	</div>
-    <div id="fade" class="black_overlay"></div>
+
 	</body>
 </html>

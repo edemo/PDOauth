@@ -98,7 +98,6 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.myCallback = function(status, text) {
-		document.getElementById("errorMsg").innerHTML=text
 		var data = JSON.parse(text);
 		if (status == 200) {
 			if(QueryString.next) {
@@ -186,7 +185,6 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.uriCallback = function(status,text) {
-		document.getElementById("errorMsg").innerHTML=text
 		var data = JSON.parse(text);
 		QueryString.uris = data
 		self.processErrors(data)
@@ -354,28 +352,26 @@ function PageScript(debug) {
 		console.log(JSON.parse(text));
 		var data = JSON.parse(text);
 		if (status != 200) {
-			document.getElementById("tab-login").checked = true;
-			document.getElementById("tab-account-label").style.display = 'none';
-			document.getElementById("tab-assurer-label").style.display = 'none';
-			document.getElementById("tab-login-label").style.display = 'block';
-			document.getElementById("tab-registration-label").style.display = 'block';
+			self.menuHandler("login").menuActivate();
+			self.menuHandler("account").menuHide();
+			self.menuHandler("assurer").menuHide();
+			self.menuHandler("registration").menuUnhide();
 			self.processErrors(data);
 		}
 		else {
-			document.getElementById("tab-account").checked = true; 
+			if (!self.activeButton)	self.menuHandler("account").menuActivate();
+			else {
+				var a=["login", "register"];
+				if ( a.indexOf(self.activeButtonName) > -1 ) self.menuHandler("account").menuActivate();
+			}
+			self.menuHandler("login").menuHide();
+			self.menuHandler("registration").menuHide();
 			if (data.assurances) {
 				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
-//				console.log(document.getElementById("my_Hash").innerHTML);
 				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
 				if (data.email) document.getElementById("AddSslCredentialForm_email_input").value=data.email;
-			}
-			document.getElementById("tab-login-label").style.display = 'none';
-			document.getElementById("tab-registration-label").style.display = 'none';
-			document.getElementById("tab-account-label").style.display = 'block';
-			document.getElementById("tab-assurer-label").style.display = 'block';			
-			if (data.assurances) {
-				if (!(data.assurances.assurer)) document.getElementById("tab-assurer-label").style.display = 'none';
-				else document.getElementById("tab-assurer-label").style.display = 'block';
+				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
+				else self.menuHandler("assurer").menuUnhide();
 			}
 			self.fill_RemoveCredentialContainer(data);
 		}
@@ -406,9 +402,10 @@ function PageScript(debug) {
 		self.rmCredential_Callback = function(status,text) {
 			if (status==200) {
 		    	document.getElementById(self.formName).innerHTML = "<p class='success'>Ezt a hitelesítési módot töröltük</p>";
+				self.displayMsg('','',"<p>"+text+"</p><p class='success'>Ezt a hitelesítési módot töröltük</p>")
 			} else {
 				var data=JSON.parse(text);
-				document.getElementById("RemoveCredential_ErrorMsg").innerHTML="<p class='warning'>" + data.errors + "</p>"
+				self.displayMsg("<p class='warning'>" + data.errors + "</p>","","")
 			}
 		}
 	
@@ -488,21 +485,58 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.displayMsg = function(errorMsg,messageMsg,successMsg) {
-		document.getElementById("popup").style.display  = "block";
+		if (errorMsg+messageMsg+successMsg=="") return;
+		document.getElementById("popup").style.display  = "flex";
 		document.getElementById("errorMsg").innerHTML   = "<p class='warning'>"+errorMsg+"</p>";
-		console.log(errorMsg);
 		document.getElementById("message").innerHTML    = "<p class='message'>"+messageMsg+"</p>";
-		console.log(messageMsg);
 		document.getElementById("successMsg").innerHTML = "<p class='success'>"+successMsg+"</p>";
-		console.log(successMsg);
 		document.getElementById('fade').style.display='block';
 		document.getElementById('fade').style.filter='alpha(opacity=50)';
 		document.getElementById('fade').style.opacity='0.5';
 	}
 	
 	PageScript.prototype.closePopup = function() {
+		document.getElementById("errorMsg").innerHTML   = "";
+		document.getElementById("message").innerHTML    = "";
+		document.getElementById("successMsg").innerHTML = "";
 		document.getElementById('popup').style.display='none';
 		document.getElementById('fade').style.display='none';
+	}
+	
+	PageScript.prototype.menuHandler = function(menu_item) {
+		self.menuName=menu_item;
+		self.menuButton=document.getElementById(self.menuName+"-menu");
+		self.menuTab=document.getElementById("tab-content-"+self.menuName);
+		if (typeof(theMenu=document.getElementsByClassName("active-menu")[0])!="undefined") {
+			self.activeButton=theMenu;
+			self.activeButtonName=self.activeButton.id.split("-")[0];
+			self.activeTab=document.getElementById("tab-content-"+self.activeButtonName);
+		}
+		
+		self.menuActivate = function() {
+			if (self.activeButton) { 
+				self.activeButton.className="";
+				self.activeTab.style.display="none";
+			}
+			self.menuButton.style.display="block";
+			self.menuButton.className="active-menu";
+			self.menuTab.style.display="block";
+		}
+
+		self.menuDeactivate = function() {
+			self.menuButton.className="";
+			self.menuTab.style.display="none";
+		}
+		
+		self.menuHide = function() {
+			self.menuButton.style.display="none";
+		}
+		
+		self.menuUnhide = function() {
+			self.menuButton.style.display="block";
+		}
+		console.log(self);
+		return self;
 	}
 
 	PageScript.prototype.main = function() {
