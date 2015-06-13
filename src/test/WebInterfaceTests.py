@@ -91,3 +91,25 @@ class WebInterfaceTests(Fixture, UserUtil):
     def response_cookie_can_be_set(self, interface):
         response = interface.make_response("foo", 400)
         response.set_cookie('csrf', '42')
+
+    @testForBothInterfaces()
+    def cookie_setting_sets_the_header(self, interface):
+        response = interface.make_response("foo", 400)
+        response.set_cookie('csrf', '42')
+        cookieparts = self.getCookieParts(response)
+        self.assertEqual(cookieparts['csrf'], '42')
+
+    @testForBothInterfaces()
+    def cookie_domain_can_be_set(self, interface):
+        response = interface.make_response("foo", 400)
+        response.set_cookie('csrf', '42', domain="foo.bar.com")
+        cookieparts = self.getCookieParts(response)
+        self.assertEqual(cookieparts['Domain'], 'foo.bar.com')
+
+    @testForBothInterfaces()
+    def cookie_path_can_be_set(self, interface):
+        response = interface.make_response("foo", 400)
+        response.set_cookie('csrf', '42', path="/foo")
+        cookieparts = self.getCookieParts(response)
+        self.assertEqual(cookieparts['Path'], '/foo')
+        

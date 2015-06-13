@@ -17,7 +17,7 @@ class LoginHandling(object):
         resp = self.as_dict(user, **additionalInfo)
         token = unicode(uuid4())
         self.getSession()['csrf_token'] = token
-        resp.set_cookie("csrf", token)
+        resp.set_cookie("csrf", token, domain=self.getConfig('COOKIE_DOMAIN'))
         return resp
 
     def finishLogin(self, user):

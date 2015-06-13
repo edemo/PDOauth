@@ -41,6 +41,24 @@ class SSLLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
             self.getResponseText(resp))
 
     @test
+    def ssl_login_sets_csrf_cookie(self):
+        resp = self.createUserAndLoginWithCert()
+        cookieParts = self.getCookieParts(resp)
+        self.assertTrue(cookieParts.has_key('csrf'))
+
+    @test
+    def login_cookie_have_path_set_to_root(self):
+        resp = self.createUserAndLoginWithCert()
+        cookieParts = self.getCookieParts(resp)
+        self.assertEquals(cookieParts['Path'], '/')
+
+    @test
+    def login_cookie_have_domain_set_to_COOKIE_DOMAIN(self):
+        resp = self.createUserAndLoginWithCert()
+        cookieParts = self.getCookieParts(resp)
+        self.assertEquals(cookieParts['Domain'], self.controller.app.config.get('COOKIE_DOMAIN'))
+
+    @test
     def with_cert_login_you_get_actually_logged_in(self):
         resp = self.createUserAndLoginWithCert()
         self.assertEquals(resp.status_code, 200)

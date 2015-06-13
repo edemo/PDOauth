@@ -64,9 +64,12 @@ class FakeResponse(object):
         self.cookies = dict()
         self.headers = dict()
     
-    def set_cookie(self,name,value):
-        self.cookies[name] = value
-
+    def set_cookie(self,name,value,path="/", domain = None):
+        domainpart = ""
+        if domain is not None:
+            domainpart = " Domain={0};".format(domain)
+        header = "{0}={1}; {3}Path={2}".format(name,value, path, domainpart)
+        self.headers['Set-Cookie']=header
 
 class ContextUrlIsAlreadySet(object):
     pass

@@ -4,6 +4,16 @@ from test.helpers.ResponseInfo import ResponseInfo
 from test.helpers.RandomUtil import RandomUtil
 
 class UserUtil(ResponseInfo, RandomUtil):
+
+    def getCookieParts(self, response):
+        cookieHeader = response.headers['Set-Cookie']
+        cookieparts = cookieHeader.split(';')
+        cookieDict = dict()
+        for part in cookieparts:
+            key,value = part.split("=")
+            cookieDict[key.strip()] = value.strip()
+        return cookieDict
+
     def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
         userid, password, email = self.setupUserCreationData(userid, password, email)
         user = CredentialManager.create_user_with_creds(credType, userid, password, email)

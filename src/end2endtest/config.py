@@ -13,6 +13,7 @@ class Config(object):
     MAIL_PORT = 1025
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
     BASE_URL = "https://local.sso.edemokraciagep.org:8888"
+    COOKIE_DOMAIN = "local.sso.edemokraciagep.org"
     SSL_LOGIN_BASE_URL = "https://local.sso.edemokraciagep.org:8889"
     SSL_LOGOUT_URL = "https://local.sso.edemokraciagep.org:8889/ssl_logout/"
     START_URL = "{0}/static/login.html".format(BASE_URL)

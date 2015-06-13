@@ -33,7 +33,9 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
         time.sleep(1)
         self.switchToTab("account")
+        time.sleep(1)
         userdata = self.driver.find_element_by_id("me_Msg").text
+        print userdata
         self.assertTrue("hash:\n{0}".format(oldDigest) in userdata)
         self.setupRandom()
         digest = self.createHash()
