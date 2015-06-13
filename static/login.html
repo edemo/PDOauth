@@ -34,7 +34,7 @@
 								<p>A szerver válaszüzenete</p>
 							</td>
 							<td>
-								<div id="errorMsg">
+								<div id="">
 								</div>
 							</td>
 						</tr>
@@ -631,5 +631,15 @@
 			    </ul>
 	      	</div>
 			<div id="qunit-xml" class="message_container"></div>
-</body>
+			    <style>
+
+</style>
+	<div id="popup" class="popup">
+		<div class="error" id="errorMsg"></div>
+		<div class="message" id="message"></div>
+		<div class="success" id="successMsg"></div>
+	<button class="button" type="button" onclick = "javascript:pageScript.closePopup()">Close</button>
+	</div>
+    <div id="fade" class="black_overlay"></div>
+	</body>
 </html>

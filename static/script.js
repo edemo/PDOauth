@@ -67,20 +67,25 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.processErrors = function(data) {
-			t = "<ul>"
 			console.log(data)
-			if (data.message) document.getElementById("message").innerHTML=data.message;
-			if (data.assurances) document.getElementById("userdata").innerHTML=this.parse_userdata(data);
-			errs = data.errors
-			for ( err in errs ) t += "<li>"+ errs[err] +"</li>" ;
-			t += "</ul>"
-			document.getElementById("errorMsg").innerHTML=t
+			error="";
+			messageMsg="";
+			userdata="";
+			if (data.message) messageMsg="<p>message</p>"+data.message;
+			if (data.assurances) userdata="<p>success</p>"+self.parse_userdata(data);
+			if (data.errors) {
+				error = "<p>error</p><ul>";
+				errs = data.errors;
+				for ( err in errs ) error += "<li>"+ errs[err] +"</li>" ;
+				error += "</ul>";
+			}
+			self.displayMsg(error,messageMsg,userdata);
 	}
 	
 	PageScript.prototype.parse_userdata = function(data) {
 		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
 		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
-		userdata +='<p><b>hash:</b></p><pre id="my_Hash">'+data.hash+"</pre>"
+		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
 		userdata +="<p><b>tanusítványok:</b></p>"
 		userdata +="<ul>"
 		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
@@ -224,7 +229,7 @@ function PageScript(debug) {
 		}
 		self.ajaxpost("/v1/add_credential", text, function(status, text){
 			var data = JSON.parse(text);
-			condole.log(data);
+			console.log(data);
 			if (status==200) {
 				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
 			}
@@ -354,7 +359,7 @@ function PageScript(debug) {
 			document.getElementById("tab-assurer-label").style.display = 'none';
 			document.getElementById("tab-login-label").style.display = 'block';
 			document.getElementById("tab-registration-label").style.display = 'block';
-			self.processErrors(data)
+			self.processErrors(data);
 		}
 		else {
 			document.getElementById("tab-account").checked = true; 
@@ -481,9 +486,24 @@ function PageScript(debug) {
 			})
 		
 	}
-
-		
-
+	
+	PageScript.prototype.displayMsg = function(errorMsg,messageMsg,successMsg) {
+		document.getElementById("popup").style.display  = "block";
+		document.getElementById("errorMsg").innerHTML   = "<p class='warning'>"+errorMsg+"</p>";
+		console.log(errorMsg);
+		document.getElementById("message").innerHTML    = "<p class='message'>"+messageMsg+"</p>";
+		console.log(messageMsg);
+		document.getElementById("successMsg").innerHTML = "<p class='success'>"+successMsg+"</p>";
+		console.log(successMsg);
+		document.getElementById('fade').style.display='block';
+		document.getElementById('fade').style.filter='alpha(opacity=50)';
+		document.getElementById('fade').style.opacity='0.5';
+	}
+	
+	PageScript.prototype.closePopup = function() {
+		document.getElementById('popup').style.display='none';
+		document.getElementById('fade').style.display='none';
+	}
 
 	PageScript.prototype.main = function() {
 		this.ajaxget("/uris", this.uriCallback)
