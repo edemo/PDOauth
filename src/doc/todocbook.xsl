@@ -4,9 +4,27 @@
 
 	<xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes" omit-xml-declaration="yes"/>
 	
+	<xsl:variable name="buildinfo" select="document('../../doc/xml/buildinfo.xml')"/>
 	<xsl:template match="documentation">
 		<article>
 			<title>PDOauth documentation</title>
+			<variablelist>
+				<varlistentry>
+					<term>Branch:</term>
+					<listitem><xsl:value-of select="$buildinfo//branch"/></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Commit:</term>
+					<listitem><xsl:value-of select="$buildinfo//commit"/></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Build:</term>
+					<listitem><xsl:value-of select="$buildinfo//build"/></listitem>
+				</varlistentry>
+			</variablelist>
+			<para>
+				See commit log <ulink url="commitlog.html">here</ulink>.
+			</para>
 		      <xsl:apply-templates select="*"/>
 		</article>
 	</xsl:template>
