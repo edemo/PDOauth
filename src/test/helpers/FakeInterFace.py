@@ -15,13 +15,6 @@ class FakeApp(object):
 
 class FakeRecord(object):
     def __init__(self, value):
-
-class FakeApp(object):
-    def __init__(self):
-        self.config=Config
-
-class FakeField(object):
-    def __init__(self,value):
         self.data = value
 
 class FakeForm(object):

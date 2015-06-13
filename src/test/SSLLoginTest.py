@@ -99,7 +99,7 @@ class SSLLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
     def when_you_log_in_with_a_cert_login_credential_gets_set(self):
         identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
         params=dict(email="certuser@example.com")
-        self.controller._testdata.request_url = Config.BASE_URL+"?"+urlencode(params)
+        self.controller.interface.set_request_context(Config.BASE_URL+"?"+urlencode(params))
         resp = self.sslLoginWithCert(cert)
         self.assertEquals(resp.status_code, 200)
         sessionLoginCredential = self.controller.getSession()[self.controller.LOGIN_CREDENTIAL_ATTRIBUTE]

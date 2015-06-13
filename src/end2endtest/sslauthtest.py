@@ -19,6 +19,8 @@ class SSLAuthTest(EndUserTesting):
         self.driver.find_element_by_id("KeygenForm_createuser_input").click()
         self.driver.find_element_by_id("KeygenForm_submit").click()
         time.sleep(3)
+        user = User.getByEmail(self.usercreation_email)
+        self.assertTrue(user)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
@@ -89,6 +91,7 @@ class SSLAuthTest(EndUserTesting):
 
     @test
     def SSl_LOGIN_BASE_URL_works_if_no_cert_is_given(self):
+        self.deleteCerts()
         startUrl = app.config.get("START_URL")
         baseUrl = app.config.get("BASE_URL")
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")

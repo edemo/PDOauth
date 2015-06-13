@@ -5,4 +5,9 @@ then
     exit -1
 fi
 export NSS_DEFAULT_DB_TYPE="sql"
-certutil -d ~/.pki/nssdb -L |grep ID|sed 's/ID.*$/ID/' |xargs -d '\n' -n 1 certutil -d ~/.pki/nssdb -D -n  
+certlist=$(certutil -d ~/.pki/nssdb -L |grep ID|sed 's/ID.*$/ID/')
+if [ -z "$certlist" ]
+then
+    exit 0
+fi
+echo $certlist |xargs -d '\n' -n 1 certutil -d ~/.pki/nssdb -D -n  
