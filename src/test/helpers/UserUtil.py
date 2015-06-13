@@ -7,7 +7,6 @@ class UserUtil(ResponseInfo, RandomUtil):
     def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
         userid, password, email = self.setupUserCreationData(userid, password, email)
         user = CredentialManager.create_user_with_creds(credType, userid, password, email)
-        user.activate()
         self.assertTrue(user)
         return user
     
@@ -16,7 +15,7 @@ class UserUtil(ResponseInfo, RandomUtil):
         user = self.createUserWithCredentials()
         user.activate()
         user.authenticated = True
-        self.controller._testdata.current_user = user
+        self.controller.loginUserInFramework(user)
         return user
     
     def deleteUser(self, user):
@@ -34,6 +33,6 @@ class UserUtil(ResponseInfo, RandomUtil):
         return data
 
     def showUserByCurrentUser(self, userid):
-        self.controller.session['auth_user'] =  (self.controller.getCurrentUser().userid, True)
+        self.controller.getSession()['auth_user'] =  (self.controller.getCurrentUser().userid, True)
         resp = self.controller.do_show_user(userid=userid)
         return resp

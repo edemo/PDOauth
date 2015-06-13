@@ -11,6 +11,7 @@ from pdoauth.EmailHandling import EmailHandling
 from pdoauth.LoginHandling import LoginHandling
 from pdoauth.CertificateHandling import CertificateHandling
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
+from urllib import urlencode
 
 anotherUserUsingYourHash = "another user is using your hash"
 passwordResetCredentialType = 'email_for_password_reset'
@@ -35,7 +36,11 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
 
     def redirectIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
-            return self.app.login_manager.unauthorized()
+            resp = self.error_response(["authentication needed"], 302)
+            uri = "{1}?{0}".format(urlencode({"next": self.getRequest().url}), self.app.config.get("START_URL"))
+            resp.headers['Location'] = uri
+            return resp
+
 
     def jsonErrorIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
@@ -55,7 +60,7 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
             return self.facebookLogin(form)
 
     def do_logout(self):
-        self.LogOut()
+        self.logOut()
         return self.simple_response('logged out')
 
     def do_deregister(self,form):

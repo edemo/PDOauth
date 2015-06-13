@@ -5,6 +5,7 @@ import logging
 class Decorators(WebInterface):
     def __init__(self, app):
         self.app = app
+        WebInterface.__init__(self)
 
     def runInterfaceFunc(self, func, args, kwargs, formClass, status, checkLoginFunction):
         try:

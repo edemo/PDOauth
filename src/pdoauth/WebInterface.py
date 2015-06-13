@@ -28,10 +28,11 @@ class WebInterface(FlaskInterface, Dummy):
         return self.getRequest().form
 
     def getRequestUrl(self):
-        return self.getRequest().url
+        request = self.getRequest()
+        return request.url
 
-    def LogOut(self):
-        return self.interface.LogOut()
+    def logOut(self):
+        return self.interface.logOut()
 
     def getConfig(self, name):
         return self.app.config.get(name)

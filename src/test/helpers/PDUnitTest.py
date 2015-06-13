@@ -1,6 +1,6 @@
 from twatson.unittest_annotations import Fixture, test  # @UnusedImport
 from pdoauth.Controller import Controller
-from test.helpers.FakeInterFace import FakeInterface
+from test.helpers.FakeInterFace import FakeInterface, FakeApp
 from pdoauth.ReportedError import ReportedError
 
 class PDUnitTest(Fixture):
@@ -9,6 +9,8 @@ class PDUnitTest(Fixture):
 
     def setUpController(self):
         self.controller = Controller(FakeInterface)
+        self.controller.app = FakeApp()
+
 
     def assertReportedError(self, funct, args, status, descriptor):
         with self.assertRaises(ReportedError) as e:

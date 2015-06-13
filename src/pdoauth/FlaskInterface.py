@@ -11,7 +11,7 @@ class FlaskInterface(Responses):
     def getCurrentUser(self):
         return current_user
 
-    def LogOut(self):
+    def logOut(self):
         return logout_user()
 
     def getSession(self):

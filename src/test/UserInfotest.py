@@ -2,11 +2,12 @@
 from pdoauth.models.User import User
 from pdoauth.models.Assurance import Assurance
 import time
-from test.helpers.todeprecate.UserTesting import UserTesting
 from test.helpers.PDUnitTest import PDUnitTest, test
 from pdoauth.ReportedError import ReportedError
+from test.helpers.UserUtil import UserUtil
+from test.helpers.CryptoTestUtil import CryptoTestUtil
 
-class UserInfoTest(PDUnitTest, UserTesting):
+class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
     def setUp(self):
         PDUnitTest.setUp(self)
@@ -57,7 +58,6 @@ class UserInfoTest(PDUnitTest, UserTesting):
         self.assertEquals(resp.status_code, 200)
         data = self.fromJson(resp)
         self.assertEquals(data['hash'],current_user.hash)
-        self.tearDownController()
 
     @test
     def users_with_assurer_assurance_can_get_email_and_digest_for_anyone(self):
@@ -113,7 +113,7 @@ class UserInfoTest(PDUnitTest, UserTesting):
 
     @test
     def users_without_login_cannot_get_user_by_email(self):
-        self.controller._testdata.current_user = None
+        self.controller.logOut()
         self.createUserWithCredentials()
         target = User.getByEmail(self.usercreation_email)
         with self.assertRaises(ReportedError) as e:

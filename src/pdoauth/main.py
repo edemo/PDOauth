@@ -4,8 +4,6 @@ from pdoauth.Controller import Controller
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
 import os
-from flask.globals import request
-from urllib import urlencode
 from pdoauth.forms.LoginForm import LoginForm
 from pdoauth.Decorators import Decorators
 from pdoauth.forms.KeygenForm import KeygenForm
@@ -31,12 +29,6 @@ def getStaticPath():
 
 staticPath=getStaticPath()
 
-#@login_manager.unauthorized_handler
-#def unauthorized():
-#    resp = controller.error_response(["authentication needed"], 302)
-#    uri = "{1}?{0}".format(urlencode({"next": request.url}), app.config.get("START_URL"))
-#    resp.headers['Location'] = uri
-#    return resp
 @login_manager.user_loader
 def getUser(userid):
     return User.get(userid)

@@ -1,21 +1,16 @@
 # -*- coding: UTF-8 -*-
 import unittest
-import config
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.User import User
-from end2endtest.BrowserSetup import BrowserSetup
 import time
-from test.helpers.todeprecate.UserTesting import UserTesting
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 
-class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
+class SSLAuthTest(EndUserTesting):
 
     def setUp(self):
-        self.setupDriver()
+        EndUserTesting.setUp(self)
         self.setupUserCreationData()
-        self.base_url = config.Config.BASE_URL
-        self.verificationErrors = []
-
+ 
     def _keygenAndLogin(self):
         self.driver.get(app.config.get("START_URL"))
         self.driver.execute_script("document.getElementById('tab-content-registration').style.visibility = 'visible'")

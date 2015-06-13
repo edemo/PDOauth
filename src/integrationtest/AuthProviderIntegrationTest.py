@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from twatson.unittest_annotations import Fixture, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from pdoauth.AuthProvider import AuthProvider, ScopeMustBeEmpty
 from pdoauth.models.Application import Application
 from pdoauth.app import db, app
@@ -11,7 +11,6 @@ from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from urllib import urlencode
 from test.helpers.AuthenticatedSessionMixin import AuthenticatedSessionMixin
 from test.helpers.RandomUtil import RandomUtil
-from pdoauth import main  # @UnusedImport
 
 class FakeData(object):
     
@@ -19,7 +18,7 @@ class FakeData(object):
         self.client_id = client_id
         self.user_id = user_id
 
-class AuthProviderIntegrationTest(Fixture, AuthenticatedSessionMixin, RandomUtil):
+class AuthProviderIntegrationTest(IntegrationTest, AuthenticatedSessionMixin, RandomUtil):
 
     def setUp(self):
         self.setupRandom()

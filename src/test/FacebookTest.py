@@ -2,10 +2,10 @@ from pdoauth.models.Credential import Credential
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.ReportedError import ReportedError
 from test.helpers.FakeInterFace import FakeForm
-from test.helpers.todeprecate.UserTesting import UserTesting
 from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.UserUtil import UserUtil
 
-class FacebookTest(PDUnitTest, UserTesting):
+class FacebookTest(PDUnitTest, UserUtil):
 
     def setUp(self):
         PDUnitTest.setUp(self)

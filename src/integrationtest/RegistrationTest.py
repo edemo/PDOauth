@@ -1,4 +1,3 @@
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from flask_login import logout_user
 import config
@@ -6,9 +5,10 @@ from pdoauth.models.Assurance import Assurance, emailVerification
 import time
 from pdoauth.models.User import User
 import re
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.UserTesting import UserTesting
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class RegistrationTest(Fixture, UserTesting):
+class RegistrationTest(IntegrationTest, UserTesting):
 
     def setUp(self):
         self.setupRandom()

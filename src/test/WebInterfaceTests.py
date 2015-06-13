@@ -54,6 +54,7 @@ class WebInterfaceTests(Fixture, UserUtil):
     @testForBothInterfaces()
     def logged_in_user_can_be_obtained_with_getCurrentUser(self, interface):
         user = self.createUserWithCredentials()
+        user.activate()
         interface.loginUserInFramework(user)
         self.assertEqual(user, interface.getCurrentUser())
 
@@ -85,3 +86,8 @@ class WebInterfaceTests(Fixture, UserUtil):
         user.activate()
         r = interface.loginUserInFramework(user)
         self.assertEqual(True, r)
+
+    @testForBothInterfaces()
+    def response_cookie_can_be_set(self, interface):
+        response = interface.make_response("foo", 400)
+        response.set_cookie('csrf', '42')

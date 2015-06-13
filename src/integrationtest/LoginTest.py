@@ -1,11 +1,11 @@
 
-from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
 from pdoauth.forms import credErr
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.UserTesting import UserTesting
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class LoginTest(Fixture, UserTesting):
+class LoginTest(IntegrationTest, UserTesting):
 
     @test
     def login_does_not_accept_get(self):

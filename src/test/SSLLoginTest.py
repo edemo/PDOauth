@@ -1,11 +1,13 @@
 from pdoauth.models.Credential import Credential
 from urllib import urlencode
-from test.helpers.todeprecate.UserTesting import UserTesting
 from test.helpers.PDUnitTest import PDUnitTest, test
 
 from test.config import Config
+from test.helpers.FakeInterFace import FakeMail
+from test.helpers.CryptoTestUtil import CryptoTestUtil
+from test.helpers.UserUtil import UserUtil
 
-class SSLLoginTest(PDUnitTest, UserTesting):
+class SSLLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
 
     @test
     def there_is_a_SSL_LOGIN_BASE_URL_config_option_containing_the_base_url_of_the_site_with_the_optional_no_ca_config(self):
@@ -70,7 +72,8 @@ class SSLLoginTest(PDUnitTest, UserTesting):
     def you_can_register_and_login_using_an_unregistered_ssl_cert_with_email(self):
         identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
         params=dict(email="certuser@example.com")
-        self.controller._testdata.request_url = Config.BASE_URL+"?"+urlencode(params)
+        self.controller.interface.set_request_context(Config.BASE_URL+"?"+urlencode(params))
+        self.controller.mail = FakeMail()
         resp = self.sslLoginWithCert(cert)
         cred = Credential.get("certificate", identifier)
         self.deleteUser(cred.user)
