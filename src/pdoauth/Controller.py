@@ -89,9 +89,6 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
         return False
 
     def do_registration(self, form):
-        return self._do_registration(form)
-
-    def _do_registration(self, form):
         additionalInfo = {}
         digest = form.digest.data
         if digest == '':
@@ -259,7 +256,7 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
 
     def do_add_credential(self, form):
         user = self.getCurrentUser()
-        Credential.new(user,
+        CredentialManager.addCredToUser(user,
             form.credentialType.data,
             form.identifier.data,
             form.secret.data)

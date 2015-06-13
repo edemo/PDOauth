@@ -26,6 +26,11 @@ class FakeForm(object):
         for key, value in theDict.items():
             self.set(key, value)
 
+    def __repr__(self, *args, **kwargs):
+        values = []
+        for key, value in self.__dict__.items():
+            values.append("{0}={1}".format(key,value.data))
+        return "FakeForm({0})".format(",".join(values))
 class FakeRequest():
     def __init__(self):
         self.url='http://localhost/'

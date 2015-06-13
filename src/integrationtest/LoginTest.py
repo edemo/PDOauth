@@ -5,7 +5,7 @@ from pdoauth.forms import credErr
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class LoginTest(IntegrationTest, UserTesting):
+class RegistrationTest(IntegrationTest, UserTesting):
 
     @test
     def login_does_not_accept_get(self):
