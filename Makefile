@@ -60,10 +60,16 @@ sql:
 
 killall: killserver killemail
 
-xmldoc: doc/html/documentation.html
+xmldoc: doc/html/documentation.html doc/html/commitlog.html
 
-doc/xml/doc.xml: doc/xml
+doc/xml/doc.xml: doc/xml/commitlog.xml doc/xml/buildinfo.xml doc/xml
 	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
+
+doc/xml/commitlog.xml: doc/xml
+	(echo "<commitlog>";git log --pretty=format:'<commit id="%h" author="%an" date="%ad">%f</commit>'|cat;echo "</commitlog>")|sed 's/-/ /g' >doc/xml/commitlog.xml
+
+doc/xml/buildinfo.xml: doc/xml
+	 echo "<buildinfo><branch>${TRAVIS_BRANCH}</branch><commit>${TRAVIS_COMMIT}</commit><build>${TRAVIS_BUILD_ID}</build></buildinfo>" >doc/xml/buildinfo.xml
 
 doc/html:
 	mkdir -p doc/html
@@ -79,6 +85,12 @@ lib/saxon9he.jar: tmp/saxon.zip
 
 doc/xml/intermediate.xml: lib/saxon9he.jar doc/xml/doc.xml doc/screenshots/unittests.xml
 	java -jar lib/saxon9he.jar -xsl:src/doc/intermediate.xsl -s:doc/xml/doc.xml >doc/xml/intermediate.xml
+
+doc/html/commitlog.docbook: doc/xml/commitlog.xml doc/html
+	java -jar lib/saxon9he.jar -xsl:src/doc/commitlog.xsl -s:doc/xml/commitlog.xml >doc/html/commitlog.docbook
+
+doc/html/commitlog.html: doc/html/commitlog.docbook doc/static/docbook.css
+	java -jar lib/saxon9he.jar -xsl:src/doc/docbook2html.xslt -s:doc/html/commitlog.docbook >doc/html/commitlog.html
 
 doc/html/documentation.docbook: doc/xml/intermediate.xml doc/html
 	java -jar lib/saxon9he.jar -xsl:src/doc/todocbook.xsl -s:doc/xml/intermediate.xml >doc/html/documentation.docbook
