@@ -38,7 +38,8 @@ class CertificateHandling(CryptoUtils):
         return self.createCertResponse(certObj)
 
     def getEmailFromQueryParameters(self):
-        parsed = urlparse.urlparse(self.getRequestUrl())
+        requestUrl = self.getRequestUrl()
+        parsed = urlparse.urlparse(requestUrl)
         email = urlparse.parse_qs(parsed.query).get('email', None)
         return email
 

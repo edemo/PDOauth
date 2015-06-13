@@ -3,7 +3,7 @@ from pyoauth2_shift.provider import AuthorizationProvider
 from pdoauth.models.Application import Application
 from pdoauth.models.KeyData import KeyData
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from pdoauth.Controller import Interfaced
+from pdoauth.Controller import WebInterface
 
 class ScopeMustBeEmpty(Exception):
     pass
@@ -11,7 +11,7 @@ class ScopeMustBeEmpty(Exception):
 class DiscardingNonexistingToken(Exception):
     pass
 
-class AuthProvider(AuthorizationProvider,Interfaced):
+class AuthProvider(AuthorizationProvider,WebInterface):
 
     def validate_client_id(self,client_id):
         if client_id is None:

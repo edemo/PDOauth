@@ -1,14 +1,13 @@
-from twatson.unittest_annotations import Fixture, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from pdoauth.app import app
 import config
 from pdoauth.models.User import User
 from pdoauth.models.Assurance import Assurance, emailVerification
 import time
-from test.helpers.CSRFMixin import CSRFMixin
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.CSRFMixin import CSRFMixin
+from integrationtest.helpers.UserTesting import UserTesting
 
-
-class HashTest(Fixture, UserTesting, CSRFMixin):
+class HashTest(IntegrationTest, UserTesting, CSRFMixin):
 
     @test
     def a_logged_in_user_can_record_its_hash(self):

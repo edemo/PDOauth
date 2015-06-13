@@ -9,10 +9,16 @@ class CredentialManager(object):
         return protected
 
     @classmethod
+    def addCredToUser(cls, user, credtype, identifier, secret):
+        protected = cls.protect_secret(secret)
+        cred = Credential.new(user, credtype, identifier, protected)
+        cred.save()
+        return user
+
+    @classmethod
     def create_user_with_creds(cls, credtype, identifier, secret, email, digest=None):
         user = User.new(email, digest)
-        protected = cls.protect_secret(secret)
-        Credential.new(user, credtype, identifier, protected)
+        user = cls.addCredToUser(user, credtype, identifier, secret)
         return user
 
     

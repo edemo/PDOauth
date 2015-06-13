@@ -1,15 +1,15 @@
 
-from twatson.unittest_annotations import Fixture, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 import config
 from pdoauth.app import app
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
 from pdoauth.forms import credErr
 from pdoauth.models.Assurance import Assurance
-from test.helpers.CSRFMixin import CSRFMixin
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.CSRFMixin import CSRFMixin
+from integrationtest.helpers.UserTesting import UserTesting
 
-class DeregisterTest(Fixture, UserTesting, CSRFMixin):
+class DeregisterTest(IntegrationTest, UserTesting, CSRFMixin):
 
     @test
     def you_can_deregister_with_your_login_credentials_and_csrf(self):

@@ -1,13 +1,11 @@
-from pdoauth.app import db
+from pdoauth.app import db, login_manager
 from pdoauth.ModelUtils import ModelUtils
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String, BOOLEAN, Integer
 import uuid
 
-
 class AlreadyExistingUser(Exception):
     pass
-
 
 class User(db.Model, ModelUtils):
     __tablename__ = 'user'
@@ -61,9 +59,11 @@ class User(db.Model, ModelUtils):
     def is_anonymous(self):
         return False
     
-    @classmethod
-    def get(cls, userid):
-        return User.query.filter_by(userid=userid).first()
+    @login_manager.user_loader
+    @staticmethod
+    def get(userid):
+        user = User.query.filter_by(userid=userid).first()
+        return user
 
     
     @classmethod

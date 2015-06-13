@@ -1,16 +1,10 @@
 import unittest, time
 import config
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
-from end2endtest.BrowserSetup import BrowserSetup
-from test.helpers.todeprecate.UserTesting import UserTesting
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 
-class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserSetup):
-    def setUp(self):
-        self.setupDriver()
-        self.base_url = config.Config.BASE_URL
-        self.verificationErrors = []
+class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
 
     @test
     def if_a_user_without_public_email_tries_to_register_to_facebook_we_ask_for_email_address(self):
