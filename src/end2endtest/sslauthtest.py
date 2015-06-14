@@ -4,7 +4,6 @@ from pdoauth.app import app
 from pdoauth.models.User import User
 import time
 from end2endtest.helpers.EndUserTesting import EndUserTesting, test
-import pdb
 
 class SSLAuthTest(EndUserTesting):
 
@@ -19,7 +18,7 @@ class SSLAuthTest(EndUserTesting):
         self.driver.find_element_by_id("KeygenForm_email_input").send_keys(self.usercreation_email)
         self.driver.find_element_by_id("KeygenForm_createuser_input").click()
         self.driver.find_element_by_id("KeygenForm_submit").click()
-        time.sleep(3)
+        time.sleep(4)
         user = User.getByEmail(self.usercreation_email)
         self.assertTrue(user)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
