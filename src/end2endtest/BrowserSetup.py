@@ -8,10 +8,14 @@ import logging
 class BrowserSetup(object):
 
     def switchToTab(self,tab):
-        for i in ['login', 'registration', 'account', 'assurer']:
-            self.driver.execute_script("document.getElementById('tab-content-{0}').style.visibility = 'hidden'".format(i))
-            self.driver.execute_script("document.getElementById('tab-content-{0}').style.visibility = 'visible'".format(tab))
+        self.driver.find_element_by_id("{0}-menu".format(tab)).click()
+		
+    def logout(self):
+        self.switchToTab("account")
+        self.driver.find_element_by_id("logout_button").click()
 
+    def closePopup(self):
+        self.driver.find_element_by_id("PopupWindow_CloseButton").click()
 
     def getDriver(self):
         if os.environ.get("WEBDRIVER", None) == "chrome":

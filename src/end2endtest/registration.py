@@ -28,6 +28,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
     def registration_is_done_by_filling_out_the_registration_form(self, driver):
         driver.get(self.base_url  + "/static/login.html?next=/v1/users/me")
         driver.refresh()
+        self.closePopup()
         self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver, password=self.thePassword, userid=self.normaluser, email=self.email)
         driver.save_screenshot("doc/screenshots/registration.png")
@@ -50,9 +51,14 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
     def _register_assurer(self, driver):
         driver.get(self.base_url  + "/static/login.html?next=/v1/users/me")
         driver.refresh()
+        self.logout()
+        time.sleep(1)
+        driver.get(self.base_url  + "/static/login.html?next=/v1/users/me")
+        driver.refresh()
+        self.closePopup()
         self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver, password=self.thePassword, userid=self.assurer, email=self.assurer_email)
-        time.sleep(1)
+        time.sleep(3)
         self.assertEqual(self.base_url  + "/v1/users/me", driver.current_url)
         body = driver.find_element_by_css_selector("BODY").text
         self.assertRegexpMatches(body, r"^[\s\S]*assurances[\s\S]*$")
@@ -71,6 +77,9 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
 
     def for_some_forms_you_need_a_csrf_token__you_can_obtain_it_by_logging_in(self, driver):
         driver.get(self.base_url + "/static/login.html")
+        self.logout()
+        time.sleep(1)
+        self.closePopup()
         self.switchToTab("login")
         driver.find_element_by_id("LoginForm_username_input").clear()
         driver.find_element_by_id("LoginForm_username_input").send_keys(self.assurer)
@@ -79,7 +88,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
         driver.find_element_by_id("LoginForm_submitButton").click()
         time.sleep(1)
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
-        body = driver.find_element_by_id("userdata").text
+        body = driver.find_element_by_id("successMsg").text
         self.assertRegexpMatches(body, r"^[\s\S]*{0}[\s\S]*$".format(self.assurer_email))
         self.assertRegexpMatches(body, r"^[\s\S]*assurer[\s\S]*$")
         self.assertRegexpMatches(body, r"^[\s\S]*assurer.test[\s\S]*$")
@@ -101,7 +110,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
         time.sleep(1)
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
         body = driver.find_element_by_id("message").text
-        self.assertEqual("added assurance test for {0}".format(self.email), body)
+        self.assertEqual("message\nadded assurance test for {0}".format(self.email), body)
         return body
 
 
@@ -115,7 +124,7 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
         driver.save_screenshot("doc/screenshots/get_user_data_by_email.png")
         time.sleep(1)
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
-        body = driver.find_element_by_id("userdata").text
+        body = driver.find_element_by_id("successMsg").text
         self.assertRegexpMatches(body, r"^[\s\S]*{0}[\s\S]*$".format(self.email))
         self.assertRegexpMatches(body, r"^[\s\S]*test[\s\S]*$")
 

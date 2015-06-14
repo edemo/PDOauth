@@ -18,7 +18,7 @@
 			<div class="error" id="errorMsg"></div>
 			<div class="message" id="message"></div>
 			<div class="success" id="successMsg"></div>
-			<button class="pbutton" type="button" onclick = "javascript:pageScript.closePopup()">Close</button>
+			<button id="PopupWindow_CloseButton" class="pbutton" type="button" onclick = "javascript:pageScript.closePopup()">Close</button>
 		</div>
 	</div>
 	<div id="fade" class="black_overlay"></div>	
@@ -27,47 +27,6 @@
 <!--script type='text/javascript' src="tests.js"></script-->
 			<button type="button" id="Unit_test_button" onclick="javascript:pageScript.unittest()">Run unit tests</button>
 			<div class="main">
-				<div class="message_container"> <!-- Output container -->
-					<table width="100%" >
-						<tr>
-							<td>
-								<p>Státusz</p>
-							</td>
-							<td>
-								<div id="status">
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<p>A szerver válaszüzenete</p>
-							</td>
-							<td>
-								<div id="">
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<p>Üzenet</p>
-							</td>
-							<td>
-								<div id="message">
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<p>Felhasználói adatok</p>
-							</td>
-							<td>
-								<div id="userdata">
-								</div>
-							</td>
-						</tr>
-					</table>
-				</div>
-
 
 <!-- Menu bar -->
 				<div class="menu-bar" id="mainMenu">
