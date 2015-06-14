@@ -1,13 +1,8 @@
 import unittest, time
 import config
-from twatson.unittest_annotations import Fixture, test
-from end2endtest.BrowserSetup import BrowserSetup
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 
-class EndUserObtainingHashTest(Fixture, BrowserSetup):
-    def setUp(self):
-        self.setupDriver()
-        self.base_url = config.Config.BASE_URL
-        self.verificationErrors = []
+class EndUserObtainingHashTest(EndUserTesting):
 
     @test
     def you_can_obtain_the_hash_by_filling_in_your_personal_id_and_pushing_the_button_near_it(self):

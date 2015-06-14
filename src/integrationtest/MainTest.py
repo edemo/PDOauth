@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 import config
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.UserTesting import UserTesting
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class MainTest(Fixture, UserTesting):
+class MainTest(IntegrationTest, UserTesting):
 
     @test
     def NoRootUri(self):

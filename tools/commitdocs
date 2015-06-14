@@ -1,10 +1,16 @@
 #!/bin/bash
 set -e
+if [ x${GH_TOKEN} = x ]
+then
+    exit 0
+fi
+cd doc
+git fetch $(git config remote.origin.url)
+git merge origin/gh-pages
 branch=${TRAVIS_BRANCH}
 commit=${TRAVIS_COMMIT}
 echo working on $branch/$commit
 
-cd doc
 mkdir -p $branch
 mv html/* $branch
 git config user.email "mag@magwas.rulez.org"

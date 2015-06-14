@@ -1,11 +1,10 @@
 
-from twatson.unittest_annotations import Fixture, test
 import config
 from pdoauth.app import app
-from test.helpers.todeprecate.UserTesting import UserTesting
-from pdoauth import main  # @UnusedImport
+from integrationtest.helpers.UserTesting import UserTesting
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class LogoutTest(Fixture, UserTesting):
+class LogoutTest(IntegrationTest, UserTesting):
 
     @test
     def you_can_log_out(self):

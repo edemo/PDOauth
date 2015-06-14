@@ -6,17 +6,18 @@ from uuid import uuid4
 import time
 from flask import json
 from pdoauth.ReportedError import ReportedError
-from pdoauth.Interfaced import Interfaced
+from pdoauth.WebInterface import WebInterface
 from pdoauth.EmailHandling import EmailHandling
 from pdoauth.LoginHandling import LoginHandling
 from pdoauth.CertificateHandling import CertificateHandling
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
+from urllib import urlencode
 
 
-class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling):
+class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandling):
+    LOGIN_CREDENTIAL_ATTRIBUTE = 'logincred'
     anotherUserUsingYourHash = "another user is using your hash"
     passwordResetCredentialType = 'email_for_password_reset'
-    LOGIN_CREDENTIAL_ATTRIBUTE = 'logincred'
 
     def setAuthUser(self, userid, isHerself):
         self.getSession()['auth_user']=(userid, isHerself)
@@ -36,7 +37,11 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
 
     def redirectIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
-            return self.app.login_manager.unauthorized()
+            resp = self.error_response(["authentication needed"], 302)
+            uri = "{1}?{0}".format(urlencode({"next": self.getRequest().url}), self.app.config.get("START_URL"))
+            resp.headers['Location'] = uri
+            return resp
+
 
     def setLoginCredentialIntoSession(self, credentialType, identifier):
         self.getSession()[self.LOGIN_CREDENTIAL_ATTRIBUTE] = dict(credentialType=credentialType, identifier=identifier)
@@ -45,17 +50,21 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         if not self.getCurrentUser().is_authenticated():
             raise ReportedError(["not logged in"], status=403)
 
+
+    def setLoginCredentialIntoSession(self, credentialType, identifier):
+        self.getSession()[self.LOGIN_CREDENTIAL_ATTRIBUTE] = dict(credentialType=credentialType, identifier=identifier)
+        return credentialType
+
     def do_login(self,form):
         credentialType = form.credentialType.data
-        identifier = form.identifier.data
-        self.setLoginCredentialIntoSession(credentialType, identifier)
+        credentialType = self.setLoginCredentialIntoSession(credentialType, form.identifier.data)
         if credentialType == 'password':
             return self.passwordLogin(form)
         if credentialType == 'facebook':
             return self.facebookLogin(form)
 
     def do_logout(self):
-        self.LogOut()
+        self.logOut()
         return self.simple_response('logged out')
 
     def do_deregister(self,form):
@@ -80,9 +89,6 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
         return False
 
     def do_registration(self, form):
-        return self._do_registration(form)
-
-    def _do_registration(self, form):
         additionalInfo = {}
         digest = form.digest.data
         if digest == '':
@@ -250,7 +256,7 @@ class Controller(Interfaced, EmailHandling, LoginHandling,  CertificateHandling)
 
     def do_add_credential(self, form):
         user = self.getCurrentUser()
-        Credential.new(user,
+        CredentialManager.addCredToUser(user,
             form.credentialType.data,
             form.identifier.data,
             form.secret.data)

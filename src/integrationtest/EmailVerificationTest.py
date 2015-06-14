@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from twatson.unittest_annotations import Fixture, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
@@ -8,11 +8,11 @@ from pdoauth.models.Assurance import Assurance, emailVerification
 from flask_login import logout_user
 import config
 import time
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.UserTesting import UserTesting
 
 app.extensions["mail"].suppress = True
 
-class EmailVerificationTests(Fixture, UserTesting):
+class EmailVerificationTests(IntegrationTest, UserTesting):
 
     @test
     def email_validation_gives_emailverification_assurance(self):

@@ -20,7 +20,7 @@ class CryptoTestUtil(object):
         return SHA512Hash(self.randString).hexdigest() * 4
 
     def sslLoginWithCert(self, cert):
-        self.controller._testdata.environ = dict(SSL_CLIENT_CERT=cert)
+        self.controller.interface.set_request_context(environ = dict(SSL_CLIENT_CERT=cert))
         resp = self.controller.do_ssl_login()
         return resp
 

@@ -1,21 +1,21 @@
 # -*- coding: UTF-8 -*-
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.User import User
 from pdoauth.models.Assurance import Assurance
 from uuid import uuid4
 from flask_login import current_user
 import config
-from test.helpers.CSRFMixin import CSRFMixin
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.CSRFMixin import CSRFMixin
+from integrationtest.helpers.UserTesting import UserTesting
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class AssuranceTest(Fixture, CSRFMixin, UserTesting):
+class AssuranceIntegrationTest(IntegrationTest, CSRFMixin, UserTesting):
 
 
     def _createUserWithHash(self):
-        self.createUserWithCredentials()
-        target = User.getByEmail(self.usercreation_email)
+        target = self.createUserWithCredentials()
         target.hash = self.createHash()
+        target.activate()
         target.save()
         return target
 
