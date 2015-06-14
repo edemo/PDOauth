@@ -108,30 +108,16 @@ function PageScript(debug) {
 		self.Init_Callback(status, text)
 	}
 
-	PageScript.prototype.passwordReset = function() {
-	    secret = document.getElementById("PasswordResetForm_secret_input").value;
-	    password = document.getElementById("PasswordResetForm_password_input").value;
+	PageScript.prototype.passwordReset = function(myForm) {
+		
+	    secret = document.getElementById(myForm+"_secret_input").value;
+	    password = document.getElementById(myForm+"_password_input").value;
 	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.myCallback)
 	}
 	
-	PageScript.prototype.InitiatePasswordReset = function() {
-		this.ajaxget("/v1/users/me", this.PWresetInitCallback)
+	PageScript.prototype.InitiatePasswordReset = function(myForm) {
+		self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.myCallback)
 	}
-
-	PageScript.prototype.PWresetInitCallback = function(status, text){
-		var data = JSON.parse(text);
-		if (status == 200) {
-			self.ajaxget("/v1/users/"+data.email+"/passwordreset", self.PWresetCallback)
-		}
-		else {
-			document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>Nincs bejelentkezett felhasználó</p>";
-		}
-	}
-	
-	PageScript.prototype.PWresetCallback = function(status, text) {
-		var data = JSON.parse(text);
-		if (data.message) document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>"+data.message+"</p>";
-	} 
 	
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_username_input").value;
@@ -369,7 +355,10 @@ function PageScript(debug) {
 			if (data.assurances) {
 				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
 				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
-				if (data.email) document.getElementById("AddSslCredentialForm_email_input").value=data.email;
+				if (data.email) {
+					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
+					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
+				}
 				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
 				else self.menuHandler("assurer").menuUnhide();
 			}
@@ -548,7 +537,7 @@ function PageScript(debug) {
 		this.ajaxget("/v1/users/me", this.Init_Callback)
 		if (QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
-			document.getElementById("tab-account").checked = true;
+			document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value=QueryString.secret
 		}
 		
 	}

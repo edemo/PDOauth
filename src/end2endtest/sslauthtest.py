@@ -99,8 +99,10 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         testUrl = startUrl.replace(baseUrl, sslLoginBaseUrl)
         self.driver.get(testUrl)
-        self.switchToTab("account")
-        body = self.driver.find_element_by_id("PasswordResetForm_password_label").text
+        time.sleep(1)
+        self.closePopup()
+        self.switchToTab("login")
+        body = self.driver.find_element_by_id("PasswordResetForm_OnLoginTab_password_label").text
         self.assertEqual(body, u'Új jelszó:')
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         time.sleep(1)

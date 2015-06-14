@@ -103,7 +103,54 @@
 									</tr>
 								</table>
 								<div id="LoginForm_errorMsg"></div>
+								
 							</form>
+						<hr/>
+						
+						<p>Elfelejtett jelszó</p>
+						<form id="PasswordResetInitiateForm_OnLoginTab" action="javascript:pageScript.InitiatePasswordReset('PasswordResetInitiateForm_OnLoginTab')" method="post" name="PasswordResetInitiateForm_OnLoginTab">
+							<table class="content">
+								<tr>
+									<td width="65%" >
+										<p class="note" >
+											A gombra kattintva kezdeményezhető a jelszó cseréje. 
+											A rendszer e-mailben elküldi az aktíváló kódot, 
+											a levélben található linkre kattintva visszajutsz ide, és megadhatod az új jelszót.
+										<p>
+									</td>
+									<td width="25%">
+										<div class="label" id="PasswordResetInitiateForm_OnLoginTab_OnLoginTab_email_label">
+											E-mail cím:
+										</div>
+										<input name="email" type="text" id="PasswordResetInitiateForm_OnLoginTab_email_input"/>
+									</td>
+									<td>
+										<input class="button "type="submit" value="Új jelszót szeretnék" id="PasswordResetInitiateForm_OnLoginTab_submitButton">									
+									</td>
+								</tr>
+							</table>
+						</form>
+						<form id="PasswordResetForm_OnLoginTab" action="javascript:pageScript.passwordReset('PasswordResetForm_OnLoginTab')" method="post" name="PasswordResetForm_OnLoginTab">
+							<table class="content" width="100%">
+								<tr>
+									<td width="65%">
+										<div class="label" id="PasswordResetForm_OnLoginTab_secret_input_label">
+											Az e-mailből jövő titok:
+										</div>
+										<input style="width:100%" name="secret" type="text" id="PasswordResetForm_OnLoginTab_secret_input" disabled/>
+									</td>
+									<td width="25%">
+										<div class="label" id="PasswordResetForm_OnLoginTab_password_label">
+											Új jelszó:
+										</div>
+										<input name="password" type="password" id="PasswordResetForm_OnLoginTab_password_input"/>
+									</td>
+									<td>
+										<input class="button "type="submit" value="Cserélem" id="PasswordResetForm_OnLoginTab_submitButton">
+									</td>
+								</tr>
+							</table>
+						</form>
 			          </div>
 
 <!-- Tab for register users -->
@@ -495,28 +542,29 @@
 						<hr/>
 						
 						<p>Jelszó csere</p>
-						<table class="content">
-							<tr>
-								<td width="90%" >
-									<p class="note" >
-										A gombra kattintva kezdeményezhető a jelszó cseréje. 
-										A rendszer e-mailben elküldi az aktíváló kódot, 
-										a levélben található linkre kattintva visszajutsz ide, és megadhatod az új jelszót.
-									<p>
-								</td>
-								<td>								
-									<button class="button" type="button" id="PasswordResetForm_InitiatePasswordReset" onclick="pageScript.InitiatePasswordReset()">
-										Új jelszót szeretnék
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="5">
-									<div id="InitiatePasswordReset_ErrorMsg"></div>
-								</td>
-							</tr>
-						</table>
-						<form id="PasswordResetForm" action="javascript:pageScript.passwordReset()" method="post" name="PasswordResetForm">
+						<form id="PasswordResetInitiateForm" action="javascript:pageScript.InitiatePasswordReset('PasswordResetInitiateForm')" method="post" name="PasswordResetInitiateForm">
+							<table class="content">
+								<tr>
+									<td width="65%" >
+										<p class="note" >
+											A gombra kattintva kezdeményezhető a jelszó cseréje. 
+											A rendszer e-mailben elküldi az aktíváló kódot, 
+											a levélben található linkre kattintva visszajutsz ide, és megadhatod az új jelszót.
+										<p>
+									</td>
+									<td width="25%">
+										<div class="label" id="PasswordResetInitiateForm_OnLoginTab_email_label">
+											E-mail cím:
+										</div>
+										<input name="email" type="text" id="PasswordResetInitiateForm_email_input" />
+									</td>
+									<td>
+										<input class="button "type="submit" value="Új jelszót szeretnék" id="PasswordResetInitiateForm_submitButton">									
+									</td>
+								</tr>
+							</table>
+						</form>
+						<form id="PasswordResetForm" action="javascript:pageScript.passwordReset('PasswordResetForm')" method="post" name="PasswordResetForm">
 							<table class="content" width="100%">
 								<tr>
 									<td width="65%">
