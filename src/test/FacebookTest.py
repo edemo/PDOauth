@@ -62,4 +62,11 @@ class FacebookTest(PDUnitTest, UserUtil):
         self.assertEqual(400, resp.status)
         self.assertTrue(resp.headers.has_key('x-fb-rev'))
         self.assertEqual('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}', resp.data)
-        
+    
+    @test
+    def facebook_login_records_login_credential(self):
+        self.controller.do_login(self.form)
+        session = self.controller.getSession()
+        loginCred = session[self.controller.LOGIN_CREDENTIAL_ATTRIBUTE]
+        self.assertEqual(loginCred['credentialType'], 'facebook')
+        self.assertEqual(loginCred['identifier'], self.usercreation_userid)

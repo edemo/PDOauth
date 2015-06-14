@@ -123,3 +123,11 @@ class SSLLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
         sessionLoginCredential = self.controller.getSession()[self.controller.LOGIN_CREDENTIAL_ATTRIBUTE]
         self.assertEqual(sessionLoginCredential['credentialType'],'certificate')
         self.assertEqual(sessionLoginCredential['identifier'],testuserIdentifier)
+
+    @test
+    def facebook_login_records_login_credential(self):
+        self.createUserAndLoginWithCert()
+        session = self.controller.getSession()
+        loginCred = session[self.controller.LOGIN_CREDENTIAL_ATTRIBUTE]
+        self.assertEqual(loginCred['identifier'], self.identifier)
+        self.assertEqual(loginCred['credentialType'], 'certificate')

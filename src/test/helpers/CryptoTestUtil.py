@@ -25,10 +25,10 @@ class CryptoTestUtil(object):
         return resp
 
     def createUserAndLoginWithCert(self):
-        identifier, digest, cert = self.getCertAttributes()
+        self.identifier, digest, cert = self.getCertAttributes()
         user = self.createUserWithCredentials()
         secret = digest
-        Credential.new(user, "certificate", identifier, secret)
+        Credential.new(user, "certificate", self.identifier, secret)
         resp = self.sslLoginWithCert(cert)
         return resp
 
