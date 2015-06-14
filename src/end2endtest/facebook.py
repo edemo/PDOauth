@@ -30,7 +30,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         driver.switch_to.window(self.master)
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
         time.sleep(5)
-        body = driver.find_element_by_id("message").text
+        body = driver.find_element_by_id("PopupWindow_MessageDiv").text
         self.assertEqual("please give us an email in the registration form", body)
 
     @test

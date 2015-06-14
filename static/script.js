@@ -72,7 +72,7 @@ function PageScript(debug) {
 			var msg = {};
 			if (data.message) {
 				msg.title="A szerver üzenete";
-				msg.message="<p>message</p>"+data.message;
+				msg.message="<p>message</p><p>"+data.message+"</p>";
 			}
 			if (data.assurances) {
 				msg.title="A felhasználó adatai:";

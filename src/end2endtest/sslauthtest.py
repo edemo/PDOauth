@@ -39,9 +39,9 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self.switchToTab("account")
         self.driver.find_element_by_id("logout_button").click()
         time.sleep(1)
-        self.driver.get(app.config.get("START_URL"))
         body = self.driver.find_element_by_id("PopupWindow_MessageDiv").text
-        self.assertEqual(body, "logged out")
+        self.assertEqual(body, "message\nlogged out")
+        self.closePopup()
 
     @test
     def ssl_login_logs_in_if_you_are_registered_and_have_cert(self):
@@ -53,7 +53,7 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self.driver.find_element_by_id("ssl_login").click()
         self.switchToTab("account")
         self.driver.find_element_by_id("melink").click()
-        self.assertEqual(self.driver.find_element_by_id("errorMsg").text, "")
+        self.assertEqual(self.driver.find_element_by_id("PopupWindow_ErrorDiv").text, "")
         userData = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("{0}".format(self.usercreation_email) in
                 userData)
@@ -97,16 +97,14 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         testUrl = startUrl.replace(baseUrl, sslLoginBaseUrl)
         self.driver.get(testUrl)
-        self.logout()
         time.sleep(1)
-        self.closePopup
         self.switchToTab("login")
         body = self.driver.find_element_by_id("PasswordResetForm_OnLoginTab_password_label").text
         self.assertEqual(body, u'Új jelszó:')
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
-        self.assertEqual('{"errors": ["You have to register first"]}', body)
+        self.assertEqual('{"errors": ["No certificate given"]}', body)
 
     @test
     def normal_pages_do_not_ask_for_cert(self):
@@ -114,8 +112,8 @@ class SSLAuthTest(Fixture, UserTesting, BrowserSetup):
         self._logoutAfterKeygen()
         startUrl = app.config.get("START_URL")
         self.driver.get(startUrl)
-        self.switchToTab("account")
-        body = self.driver.find_element_by_id("PasswordResetForm_password_label").text
+        self.switchToTab("login")
+        body = self.driver.find_element_by_id("PasswordResetForm_OnLoginTab_password_label").text
         self.assertEqual(body, u'Új jelszó:')
         self.deleteCerts()
 

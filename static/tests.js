@@ -76,20 +76,22 @@ QUnit.test( "ajaxget can be mocked", function( assert ) {
 	assert.equal(pageScript.method, "GET");
 });
 
-QUnit.test( "with processErrors message is shown in the message element", function( assert ) {
+QUnit.test( "with processErrors message is shown in the PopupWindow_MessageDiv element", function( assert ) {
 	pageScript = new PageScript(true)
-	pageScript.processErrors({message: "hello world"})
-	assert.equal(document.getElementById("message").innerHTML,"hello world");
-	document.getElementById("message").innerHTML = "";
+	msg=pageScript.processErrors({message: "hello world"})
+	pageScript.displayMsg(msg)
+	assert.equal(document.getElementById("PopupWindow_MessageDiv").innerHTML,"<p class=\"message\"></p><p>message</p><p>hello world</p><p></p>");
+	document.getElementById("PopupWindow_MessageDiv").innerHTML = "";
 });
 
-QUnit.test( "with processErrors errors are shown in the errorMsg element", function( assert ) {
+QUnit.test( "with processErrors errors are shown in the PopupWindow_ErrorDiv element", function( assert ) {
 	pageScript = new PageScript(true)
-	pageScript.processErrors({errors: ["hello world"]})
-	assert.equal(document.getElementById("errorMsg").innerHTML,"<ul><li>hello world</li></ul>");	
+	msg=pageScript.processErrors({errors: ["hello world"]})
+	pageScript.displayMsg(msg)
+	assert.equal(document.getElementById("PopupWindow_ErrorDiv").innerHTML,"<p class=\"warning\"></p><ul><li>hello world</li></ul><p></p>");	
 });
 
-QUnit.test( "with processErrors assurances, email and userid are shown in the userdata element", function( assert ) {
+QUnit.test( "with processErrors assurances, email and userid are shown in the PopupWindow_SuccessDiv element", function( assert ) {
 	pageScript = new PageScript(true)
 	data = {
                 'assurances': {
@@ -100,15 +102,15 @@ QUnit.test( "with processErrors assurances, email and userid are shown in the us
                 'userid': 'theuserid'
         }
 	
-	pageScript.processErrors(data)
-	assert.equal(document.getElementById("userdata").innerHTML, pageScript.parse_userdata(data));	
+	pageScript.displayMsg(pageScript.processErrors(data))
+	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\"></p>"+pageScript.parse_userdata(data)+"<p></p>");	
 });
 
 QUnit.test( "MyCallback processes the data through processErrors", function( assert ) {
 	pageScript = new PageScript(true)
 	data = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	pageScript.myCallback(200,data)
-	assert.equal(document.getElementById("userdata").innerHTML, pageScript.parse_userdata(JSON.parse(data)));	
+	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\"></p>"+pageScript.parse_userdata(JSON.parse(data))+"<p></p>");	
 });
 
 QUnit.test( "passwordReset calls /v1/password_reset with secret and password", function( assert ) {
@@ -118,7 +120,7 @@ QUnit.test( "passwordReset calls /v1/password_reset with secret and password", f
 	pageScript.ajaxBase = ajaxBase
 	pageScript.status = 200;
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
-	pageScript.passwordReset()
+	pageScript.passwordReset("PasswordResetForm")
 	assert.equal(pageScript.uri, "/v1/password_reset");
 	assert.equal(pageScript.data, "secret=thesecret&password=thepassword");
 	assert.equal(pageScript.method, "POST");
