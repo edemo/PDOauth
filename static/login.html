@@ -1,31 +1,36 @@
 <html>
- <head>
-  <meta charset="UTF-8">
-  <title>SSO test page</title>
-  <script type='text/javascript' src="debug.js"></script>
-  <script type='text/javascript' src="script.js"></script>
-  <script type='text/javascript' src="fb.js"></script>
-  <script type='text/javascript' src="qunit-1.18.0.js"></script>
-  <script type='text/javascript' src="qunit-reporter-junit.js"></script>
-  <link rel="stylesheet" href="qunit-1.18.0.css">
-  <link rel="stylesheet" href="main.css">
- </head>
+	<head>
+		<meta charset="UTF-8">
+			<title>SSO test page</title>
+			<script type='text/javascript' src="debug.js"></script>
+			<script type='text/javascript' src="script.js"></script>
+			<script type='text/javascript' src="fb.js"></script>
+			<script type='text/javascript' src="qunit-1.18.0.js"></script>
+			<script type='text/javascript' src="qunit-reporter-junit.js"></script>
+			<link rel="stylesheet" href="qunit-1.18.0.css">
+			<link rel="stylesheet" href="main.css">
+	</head>
 
- <body onload="pageScript.main()" >
+	<body onload="pageScript.main()" >
 
-	<div id="popup" class="popup-frame">
-		<div class="popup">
-			<div class="error" id="errorMsg"></div>
-			<div class="message" id="message"></div>
-			<div class="success" id="successMsg"></div>
-			<button id="PopupWindow_CloseButton" class="pbutton" type="button" onclick = "javascript:pageScript.closePopup()">Close</button>
-		</div>
-	</div>
-	<div id="fade" class="black_overlay"></div>	
-  <div id="qunit"></div>
-  <div id="qunit-fixture"></div>
+<!-- Message container and popup -->
+			<div id="popup" class="popup-frame">
+				<div class="popup">
+					<div class="msg" id="PopupWindow_TitleDiv"></div>
+					<div class="msg" id="PopupWindow_ErrorDiv"></div>
+					<div class="msg" id="PopupWindow_MessageDiv"></div>
+					<div class="msg" id="PopupWindow_SuccessDiv"></div>
+					<button id="PopupWindow_CloseButton" class="pbutton" type="button" onclick = "javascript:pageScript.closePopup()">Close</button>
+				</div>
+			</div>
+			<div id="fade" class="black_overlay"></div>	
+	
+<!-- javascript unittest container -->	
+			<div id="qunit"></div>
+			<div id="qunit-fixture"></div>
 <!--script type='text/javascript' src="tests.js"></script-->
 			<button type="button" id="Unit_test_button" onclick="javascript:pageScript.unittest()">Run unit tests</button>
+			
 			<div class="main">
 
 <!-- Menu bar -->
@@ -36,10 +41,12 @@
 					<a id="account-menu" onclick="javascript:pageScript.menuHandler('account').menuActivate()">Fiókom</a>
 					<a id="application-menu" onclick="javascript:pageScript.menuHandler('application').menuActivate()">Alkalmazások</a>
 				</div>
+
+<!-- Tb container -->
 				
 				<div class="tab-container">
-<!-- Tab for login -->
 
+<!-- Tab for login -->
 				<div id="tab-content-login" class="tab-content animated fadeIn">
 							<p>Bejelentkezési lehetőségek</p>
 							<hr>
@@ -75,8 +82,6 @@
 								</tr>
 							</table>
 
-							<div id="Login-ErrorMsg"></div>
-							
 							<hr/>
 							
 							<form id="loginform" action="javascript:pageScript.login()" method="post" name="login">
@@ -102,7 +107,6 @@
 										</td>
 									</tr>
 								</table>
-								<div id="LoginForm_errorMsg"></div>
 								
 							</form>
 						<hr/>
@@ -174,7 +178,6 @@
 								</td>
 							</tr>
 						</table>
-						<div id="FacebookRegistration_ErrorMsg"></div>
 						
 						<hr/>
 						
@@ -195,7 +198,9 @@
 								</td>
 							</tr>
 						</table>
+						
 						<hr/>
+						
 						<form id="RegistrationForm" action="javascript:pageScript.register()" method="post" name="register">
 							<select name="credentialType" type="text" id="RegistrationForm_credentialType_input" style="display: none">
 								<option selected="selected">password</option>
@@ -329,8 +334,11 @@
 									<input class="pbutton" type="submit" value="Mutasd" id="ByEmailForm_submitButton"></input>
 								</div>
 							</div>
+							<div class="msg" id="userdata" style="max-width: 600px;  margin-left: 10px;"></div>
 						</form>
+						
 						<hr/>
+						
 						<p>Felhasználó ellenőrzése</p>
 						<form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
 							<div class="formrow">
@@ -342,7 +350,6 @@
 									Titkos kód generálása
 								</button>
 							</div>
-							<div id="AddAssuranceForm_errorMsg"></div>
 							<div class="formrow">
 								<div class="label" id="AddAssuranceForm_digest_label">
 									titkós kód:
@@ -397,7 +404,6 @@
 								<input name="digest" type="text" id="ChangeHashForm_predigest_input"></input>
 								<button class="pbutton" type="button" id="ChangeHashForm_getDigestButton" onclick="pageScript.digestGetter('ChangeHashForm').getDigest()">Titkos kód előállítása</button>
 							</div>
-							<div id="ChangeHashForm_errorMsg"></div>
 							<div class="formrow">
 								<div class="label" id="ChangeHashForm_digest_label">
 								titkosított kód:
@@ -408,7 +414,6 @@
 								<input class="pbutton" type="submit" value="A titkosított kód mentése" id="ChangeHashForm_submitButton"></input>
 							</div>
 						</form>
-						<div id="ChangeHashForm_ErrorMsg"></div>
 						
 						<hr/>
 
@@ -436,7 +441,7 @@
 								</tr>
 							</form>
 						</table>
-						<div id="ChangeEmailAddressForm_ErrorMsg"></div>
+						
 						<hr/>						
 	
 						<div id="InitiateResendRegistrationEmail_Container">
@@ -457,7 +462,7 @@
 								</td>
 							</tr>
 						</table>
-						<div id="InitiateResendRegistrationEmail_ErrorMsg"></div>
+
 						<hr/>
 						</div>
 						
@@ -532,13 +537,12 @@
 								
 							</tr>
 						</table>
-						<div id="AddCredentialForm_ErrorMsg"></div>
 						
 						<hr/>
 
 						<p>Hitelesítési módjaim törlése</p>
 						<div id="Remove_Credential_Container"></div>
-						<div id="RemoveCredential_ErrorMsg"></div>
+
 						<hr/>
 						
 						<p>Jelszó csere</p>
@@ -585,7 +589,6 @@
 								</tr>
 							</table>
 						</form>
-						<div id="PasswordResetForm_ErrorMsg"></div>
 						
 						<hr/>
 						
@@ -615,7 +618,6 @@
 									</td>
 								</tr>
 							</table>
-							<div id="DeRegisterForm_ErrorMsg"></div>
 						</form>
 			          </div>
 
