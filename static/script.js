@@ -71,15 +71,15 @@ function PageScript(debug) {
 			console.log(data)
 			var msg = {};
 			if (data.message) {
-				msg.title="A szerver üzenete";
+				msg.title="Szerverüzenet";
 				msg.message="<p>message</p><p>"+data.message+"</p>";
 			}
 			if (data.assurances) {
-				msg.title="A felhasználó adatai:";
+				msg.title="A felhasználó adatai";
 				msg.success=self.parse_userdata(data);
 			}
 			if (data.errors) {
-				msg.title = "Hibaüzenet:"
+				msg.title = "Hibaüzenet"
 				msg.error = "<ul>";
 				errs = data.errors;
 				for ( err in errs ) msg.error += "<li>"+ errs[err] +"</li>" ;
@@ -165,7 +165,7 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.closePopup = function(popupCallback) {
-		console.log("popopup: callback="+popupCallback);
+
 		document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
@@ -173,11 +173,11 @@ function PageScript(debug) {
 		document.getElementById('popup').style.display='none';
 		document.getElementById('fade').style.display='none';
 		if (popupCallback) popupCallback();
+		return "closePopup";
 	}
 
 	PageScript.prototype.passwordReset = function(myForm) {
-		
-	    secret = document.getElementById(myForm+"_secret_input").value;
+		secret = document.getElementById(myForm+"_secret_input").value;
 	    password = document.getElementById(myForm+"_password_input").value;
 	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.myCallback)
 	}

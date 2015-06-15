@@ -76,22 +76,23 @@ QUnit.test( "ajaxget can be mocked", function( assert ) {
 	assert.equal(pageScript.method, "GET");
 });
 
-QUnit.test( "with processErrors message is shown in the PopupWindow_MessageDiv element", function( assert ) {
+// msg=processErrors(data={})
+
+QUnit.test( "with processErrors - message is returned in message property", function( assert ) {
 	pageScript = new PageScript(true)
 	msg=pageScript.processErrors({message: "hello world"})
-	pageScript.displayMsg(msg)
-	assert.equal(document.getElementById("PopupWindow_MessageDiv").innerHTML,"<p class=\"message\"></p><p>message</p><p>hello world</p><p></p>");
-	document.getElementById("PopupWindow_MessageDiv").innerHTML = "";
+	assert.equal(msg.message,"<p>message</p><p>hello world</p>");
+	assert.equal(msg.title,"Szerverüzenet");
 });
 
-QUnit.test( "with processErrors errors are shown in the PopupWindow_ErrorDiv element", function( assert ) {
+QUnit.test( "with processErrors - errors is returned in error property", function( assert ) {
 	pageScript = new PageScript(true)
 	msg=pageScript.processErrors({errors: ["hello world"]})
-	pageScript.displayMsg(msg)
-	assert.equal(document.getElementById("PopupWindow_ErrorDiv").innerHTML,"<p class=\"warning\"></p><ul><li>hello world</li></ul><p></p>");	
+	assert.equal(msg.error, "<ul><li>hello world</li></ul>");
+	assert.equal(msg.title,"Hibaüzenet");	
 });
 
-QUnit.test( "with processErrors assurances, email and userid are shown in the PopupWindow_SuccessDiv element", function( assert ) {
+QUnit.test( "with processErrors - assurances, email and userid are returned in success property", function( assert ) {
 	pageScript = new PageScript(true)
 	data = {
                 'assurances': {
@@ -101,10 +102,73 @@ QUnit.test( "with processErrors assurances, email and userid are shown in the Po
                 'email': 'my@email.com',
                 'userid': 'theuserid'
         }
-	
-	pageScript.displayMsg(pageScript.processErrors(data))
-	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\"></p>"+pageScript.parse_userdata(data)+"<p></p>");	
+	msg=pageScript.processErrors(data)
+	assert.equal(msg.success, "<p><b>e-mail cím:</b> my@email.com</p><p><b>felhasználó azonosító:</b> theuserid</p><p><b>hash:</b></p><pre>undefined</pre><p><b>tanusítványok:</b></p><ul><li>test</li><li>foo</li></ul><p><b>hitelesítési módok:</b></p><ul></ul>");	
+	assert.equal(msg.title,"A felhasználó adatai");	
 });
+
+// displayMsg(msg={})
+
+QUnit.test( "with displayMsg the popup div apears", function( assert ) {
+	pageScript = new PageScript(true)
+	assert.equal(document.getElementById("popup").style.display,"");
+	pageScript.displayMsg({title: "hello world"});
+	assert.equal(document.getElementById("popup").style.display,"flex");
+});
+
+QUnit.test( "with displayMsg string in message property is shown in the PopupWindow_MessageDiv element", function( assert ) {
+	pageScript = new PageScript(true)
+	pageScript.displayMsg({message: "hello world"})
+	assert.equal(document.getElementById("PopupWindow_MessageDiv").innerHTML,"<p class=\"message\">hello world</p>");
+});
+
+QUnit.test( "with displayMsg string in error property is shown in the PopupWindow_ErrorDiv element", function( assert ) {
+	pageScript = new PageScript(true)
+	pageScript.displayMsg({error: "hello world"})
+	assert.equal(document.getElementById("PopupWindow_ErrorDiv").innerHTML,"<p class=\"warning\">hello world</p>");	
+});
+
+QUnit.test( "with displayMsg string in success property is shown in the PopupWindow_SuccessDiv element", function( assert ) {
+	pageScript = new PageScript(true)
+	pageScript.displayMsg({success: "hello world"})
+	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\">hello world</p>");	
+});
+
+QUnit.test( "with displayMsg string in title property is shown in the PopupWindow_TitleDiv element", function( assert ) {
+	pageScript = new PageScript(true)
+	pageScript.displayMsg({title: "hello world"})
+	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "<h2>hello world</h2>");	
+});
+
+// closePopup(callback=function(){})
+
+QUnit.test( "with closePopup the popup div hides and a callback function is calling", function( assert ) {
+	pageScript = new PageScript(true)
+	assert.equal(document.getElementById("popup").style.display,"flex");
+	pageScript.closePopup( function () {
+		document.getElementById("PopupWindow_TitleDiv").innerHTML="hello popup"
+	})
+	assert.equal(document.getElementById("popup").style.display,"none");
+	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "hello popup");
+});
+
+QUnit.test( "with displayMsg a callback function is injected into the PopupWindow_CloseButton button onclick propoerty callback function", function( assert ) {
+	pageScript = new PageScript(true)
+	pageScript.displayMsg( 
+		{ 
+			title: "hello world", 
+			callback: function() {
+				document.getElementById("PopupWindow_TitleDiv").innerHTML="world hello"
+			} 
+		} )
+	assert.equal(document.getElementById("popup").style.display,"flex");
+	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "<h2>hello world</h2>");
+	document.getElementById("PopupWindow_CloseButton").onclick()
+	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "world hello");
+	assert.equal(document.getElementById("popup").style.display,"none");
+});
+
+// myCallback( htmlstatus, JSON )
 
 QUnit.test( "MyCallback processes the data through processErrors", function( assert ) {
 	pageScript = new PageScript(true)
@@ -112,6 +176,8 @@ QUnit.test( "MyCallback processes the data through processErrors", function( ass
 	pageScript.myCallback(200,data)
 	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\"></p>"+pageScript.parse_userdata(JSON.parse(data))+"<p></p>");	
 });
+
+// passwordReset("formName")
 
 QUnit.test( "passwordReset calls /v1/password_reset with secret and password", function( assert ) {
 	document.getElementById("PasswordResetForm_secret_input").value = "thesecret"
@@ -126,6 +192,8 @@ QUnit.test( "passwordReset calls /v1/password_reset with secret and password", f
 	assert.equal(pageScript.method, "POST");
 });
 
+// login()
+
 QUnit.test( "login calls /login with password as credential type, username and password", function( assert ) {
 	document.getElementById("LoginForm_username_input").value = "theuser"
 	document.getElementById("LoginForm_password_input").value = "thepassword"
@@ -138,6 +206,8 @@ QUnit.test( "login calls /login with password as credential type, username and p
 	assert.equal(pageScript.data, "credentialType=password&identifier=theuser&secret=thepassword");
 	assert.equal(pageScript.method, "POST");
 });
+
+// login_with_facebook
 
 QUnit.test( "login_with_facebook calls /login with facebook as credential type, userid and access token", function( assert ) {
 	pageScript = new PageScript(true)
@@ -224,4 +294,30 @@ QUnit.test( "digestGetter puts the result for the predigest input to the digest 
 	assert.equal(pageScript.uri, "https://anchor.edemokraciagep.org/anchor");
 	assert.equal(pageScript.data, "<id>xxpredigestxx</id>");
 	assert.equal(pageScript.method, "POST");
+});
+
+// menuHandler("menuName")
+
+QUnit.test( "menuHandler can hide and display the tabs", function( assert ) {
+	document.getElementById("login-menu").style.display="block";
+	pageScript = new PageScript(true)
+	pageScript.menuHandler("login").menuHide();
+	assert.equal(document.getElementById("login-menu").style.display,"none");
+	pageScript.menuHandler("login").menuUnhide();
+	assert.equal(document.getElementById("login-menu").style.display,"block");
+	document.getElementById("login-menu").className="";
+	document.getElementById("tab-content-login").style.display="none";
+	pageScript.menuHandler("login").menuActivate();
+	assert.equal(document.getElementById("login-menu").className,"active-menu");
+	assert.equal(document.getElementById("tab-content-login").style.display,"block");
+	assert.equal(pageScript.activeButtonName,"login");
+	assert.equal(pageScript.activeButton.id,"login-menu");
+	assert.equal(pageScript.activeTab.id,"tab-content-login");
+	pageScript.menuHandler("registration").menuActivate();
+	assert.equal(document.getElementById("login-menu").className,"");
+	assert.equal(document.getElementById("tab-content-login").style.display,"none");
+	pageScript.menuHandler("registration");
+	assert.equal(pageScript.activeButtonName,"registration");
+	assert.equal(pageScript.activeButton.id,"registration-menu");
+	assert.equal(pageScript.activeTab.id,"tab-content-registration");
 });

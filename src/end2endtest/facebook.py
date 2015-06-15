@@ -51,7 +51,11 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         driver.switch_to.window(self.master)
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
         time.sleep(5)
-        body = driver.find_element_by_id("userdata").text
+        body = driver.find_element_by_id("PopupWindow_SuccessDiv").text
+        self.assertTrue("mag+elekne@magwas.rulez.org"in body)
+        self.closePopup()
+        self.switchToTab("account")
+        body = driver.find_element_by_id("me_Msg").text
         self.assertTrue("mag+elekne@magwas.rulez.org"in body)
         self.user = User.getByEmail(config.fbuser2)
         Credential.getByUser(self.user, "facebook").rm()
@@ -77,9 +81,11 @@ class EndUserRegistrationAndLoginWithFacebookTest(Fixture, UserTesting, BrowserS
         driver.switch_to.window(self.master)
         time.sleep(1)
         self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
-        body = driver.find_element_by_id("message").text
+        body = driver.find_element_by_id("PopupWindow_MessageDiv").text
         self.assertEqual("", body)
-        body = driver.find_element_by_id("userdata").text
+        self.closePopup()
+        self.switchToTab("account")
+        body = driver.find_element_by_id("me_Msg").text
         self.assertTrue("mag+tesztelek@magwas.rulez.org"in body)
         Credential.getByUser(self.user, "facebook").rm()
         self.user.rm()
