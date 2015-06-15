@@ -4,13 +4,12 @@ from test.helpers.PDUnitTest import PDUnitTest, test
 
 from test.config import Config
 from test.helpers.FakeInterFace import FakeMail
-from test.helpers.CryptoTestUtil import CryptoTestUtil
+from test.helpers.CryptoTestUtil import CryptoTestUtil, testuserIdentifier
 from test.helpers.UserUtil import UserUtil
 
-testuserIdentifier = "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"
 testCredentialRepresentation = '{{"credentialType": "certificate", "identifier": "{0}"}}'.format(testuserIdentifier)
 
-class SSLLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
+class SslLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
 
     def tearDown(self):
         PDUnitTest.tearDown(self)
@@ -91,12 +90,6 @@ class SSLLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
         self.assertEquals(resp.status_code, 200)
         self.assertEqual(resp.headers['Access-Control-Allow-Origin'], "*")
 
-    def removeCertUser(self):
-        cred = Credential.get('certificate', testuserIdentifier)
-        if cred:
-            cred.rm()
-            cred.user.rm()
-
     @test
     def you_can_register_and_login_using_an_unregistered_ssl_cert_with_email(self):
         identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
@@ -112,22 +105,3 @@ class SSLLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
             responseText)
         self.assertTrue('{"credentialType": "emailcheck", "identifier":' in
             responseText)
-
-    @test
-    def when_you_log_in_with_a_cert_login_credential_gets_set(self):
-        identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
-        params=dict(email="certuser@example.com")
-        self.controller.interface.set_request_context(Config.BASE_URL+"?"+urlencode(params))
-        resp = self.sslLoginWithCert(cert)
-        self.assertEquals(resp.status_code, 200)
-        sessionLoginCredential = self.controller.getSession()[self.controller.LOGIN_CREDENTIAL_ATTRIBUTE]
-        self.assertEqual(sessionLoginCredential['credentialType'],'certificate')
-        self.assertEqual(sessionLoginCredential['identifier'],testuserIdentifier)
-
-    @test
-    def facebook_login_records_login_credential(self):
-        self.createUserAndLoginWithCert()
-        session = self.controller.getSession()
-        loginCred = session[self.controller.LOGIN_CREDENTIAL_ATTRIBUTE]
-        self.assertEqual(loginCred['identifier'], self.identifier)
-        self.assertEqual(loginCred['credentialType'], 'certificate')

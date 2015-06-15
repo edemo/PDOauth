@@ -55,7 +55,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
     def you_can_login_using_facebook(self):
         if config.skipFacebookTests:
             return
-        self.user = self.createUserWithCredentials("facebook", config.fbuserid, None, config.fbuser)
+        self.user = self.createUserWithCredentials("facebook", config.fbuserid, None, config.fbuser).user
         self.user.activate()
         driver = self.driver
         driver.get(self.base_url+"/static/login.html")

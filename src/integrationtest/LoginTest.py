@@ -5,7 +5,7 @@ from pdoauth.forms import credErr
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class RegistrationTest(IntegrationTest, UserTesting):
+class LoginTest(IntegrationTest, UserTesting):
 
     @test
     def login_does_not_accept_get(self):
@@ -62,7 +62,7 @@ class RegistrationTest(IntegrationTest, UserTesting):
 
     @test
     def password_login_works_with_correct_identifier_and_secret(self):
-        user = self.createUserWithCredentials()
+        user = self.createUserWithCredentials().user
         user.activate()
         with app.test_client() as c:
             data = dict(identifier=self.usercreation_userid, secret=self.usercreation_password, credentialType='password')
@@ -97,7 +97,6 @@ class RegistrationTest(IntegrationTest, UserTesting):
                 'credentialType': 'password',
                 'identifier': 'baduser',
                 'secret': self.usercreation_password,
-                'next': '/foo'
         }
         with app.test_client() as c:
             resp = c.post(config.base_url + '/login', data=data)
@@ -112,7 +111,6 @@ class RegistrationTest(IntegrationTest, UserTesting):
                 'credentialType': 'password',
                 'identifier': self.usercreation_userid,
                 'secret': self.mkRandomPassword(),
-                'next': '/foo'
         }
         with app.test_client() as c:
             resp = c.post(config.base_url + '/login', data=data)

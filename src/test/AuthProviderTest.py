@@ -8,6 +8,7 @@ from pdoauth.models.KeyData import KeyData
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from test.helpers.AuthenticatedSessionMixin import AuthenticatedSessionMixin
 from test.helpers.RandomUtil import RandomUtil
+from test.helpers.FakeInterFace import FakeInterface
 
 class AuthProviderTest(Fixture, AuthenticatedSessionMixin, RandomUtil):
 
@@ -16,7 +17,7 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin, RandomUtil):
         Application.query.delete()  # @UndefinedVariable
         KeyData.query.delete()  # @UndefinedVariable
         TokenInfoByAccessKey.query.delete()  # @UndefinedVariable
-        self.ap = AuthProvider()
+        self.ap = AuthProvider(FakeInterface)
         self.session = db.session
         self.app = Application.new("test app 5", "secret5", "https://test.app/redirecturi")
         self.session.add(self.app)

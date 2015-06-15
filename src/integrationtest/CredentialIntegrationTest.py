@@ -4,14 +4,14 @@ from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 from pdoauth.forms import credErr
-from pdoauth.ReportedError import ReportedError
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from integrationtest.helpers.UserTesting import UserTesting
+from integrationtest.helpers.CSRFMixin import CSRFMixin
 
-class CredentialIntegrationTest(IntegrationTest, UserTesting):
+class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
     def setUp(self):
         self.setupRandom()
-        self.user = self.createUserWithCredentials()
+        self.user = self.createUserWithCredentials().user
         self.cred=Credential.get('password', self.usercreation_userid)
     
     @test
@@ -24,6 +24,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.login(c)
             self.setupRandom()
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "identifier": "user_{0}".format(self.randString),
                 "secret": "secret is {0}".format(self.mkRandomPassword())
@@ -37,6 +38,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
         with app.test_client() as c:
             self.setupRandom()
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "identifier": "user_{0}".format(self.randString),
                 "secret": "secret is {0}".format(self.randString)
@@ -52,6 +54,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.setupRandom()
             username = "user_{0}".format(self.randString)
             data = {
+                "csrf_token": self.getCSRF(c),
                 "identifier": username,
                 "secret": "secret is {0}".format(self.mkRandomPassword())
             }
@@ -71,6 +74,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.setupRandom()
             username = "user_{0}".format(self.randString)
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "invalid",
                 "identifier": username,
                 "secret": "secret is {0}".format(self.mkRandomPassword())
@@ -90,6 +94,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.login(c)
             self.setupRandom()
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "secret": "secret is {0}".format(self.mkRandomPassword())
             }
@@ -104,6 +109,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.login(c)
             self.setupRandom()
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "identifier": "aaa",
                 "secret": "secret is {0}".format(self.mkRandomPassword())
@@ -120,6 +126,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.setupRandom()
             username = "user_{0}".format(self.randString)
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "identifier": username,
             }
@@ -136,6 +143,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.setupRandom()
             username = "user_{0}".format(self.randString)
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "identifier": username,
                 "secret": "sH0rt"
@@ -152,6 +160,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.setupRandom()
             username = "user_{0}".format(self.randString)
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "identifier": username,
                 "secret": "THIS P4SSWORD IS UPPERCASE"
@@ -168,6 +177,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.setupRandom()
             username = "user_{0}".format(self.randString)
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "identifier": username,
                 "secret": "th1s p4ssw0rd 15 10w3rc453"
@@ -182,6 +192,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
         with app.test_client() as c:
             self.login(c)
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "password",
                 "identifier": self.usercreation_userid,
                 "secret": self.mkRandomPassword()
@@ -200,6 +211,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             Credential.new(user, "facebook", credId, "testsecret")
             self.assertTrue(Credential.get("facebook", credId))
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "facebook",
                 "identifier": credId,
             }
@@ -216,6 +228,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             Credential.new(user, "facebook", credId, "testsecret")
             self.assertTrue(Credential.get("facebook", credId))
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "facebook",
                 "identifier": credId,
             }
@@ -228,6 +241,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.login(c)
             credId = self.randString
             data = {
+                "csrf_token": self.getCSRF(c),
                 "identifier": credId,
             }
             resp = c.post(config.base_url + "/v1/remove_credential", data=data)
@@ -240,6 +254,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             self.login(c)
             credId = self.randString
             data = {
+                "csrf_token": self.getCSRF(c),
                 "identifier": credId,
                 "credentialType": "test",
             }
@@ -252,6 +267,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
         with app.test_client() as c:
             self.login(c)
             data = {
+                "csrf_token": self.getCSRF(c),
                 "credentialType": "facebook",
             }
             resp = c.post(config.base_url + "/v1/remove_credential", data=data)
@@ -267,31 +283,10 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting):
             Credential.new(user, "facebook", credId, "testsecret")
             self.assertTrue(Credential.get("facebook", credId))
             data = {
+                "csrf_token": self.getCSRF(c),
                 "identifier": credId+"no",
                 "credentialType": "facebook",
             }
             resp = c.post(config.base_url + "/v1/remove_credential", data=data)
             self.assertEqual(404, resp.status_code)
             self.assertEqual('{"errors": ["No such credential"]}', self.getResponseText(resp))
-
-    @test
-    def the_credential_used_for_login_cannot_be_cleared(self):
-        with app.test_client() as c:
-            self.login(c)
-            self.assertTrue(Credential.get("password", self.usercreation_userid))
-            data = {
-                "identifier": self.usercreation_userid,
-                "credentialType": "password",
-            }
-            resp = c.post(config.base_url + "/v1/remove_credential", data=data)
-            self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["You cannot delete the login you are using"]}', self.getResponseText(resp))
-            self.assertTrue(Credential.get("password", self.usercreation_userid))
-
-    @test
-    def an_already_existing_credential_cannot_be_addedd(self):
-        self.createUserWithCredentials(userid="existinguser")
-        with self.assertRaises(ReportedError):
-            self.createUserWithCredentials(userid="existinguser")
-        cred = Credential.get("password", "existinguser")
-        cred.rm()

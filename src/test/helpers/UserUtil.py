@@ -5,6 +5,14 @@ from test.helpers.RandomUtil import RandomUtil
 
 class UserUtil(ResponseInfo, RandomUtil):
 
+    def addDataBasedOnOptionValue(self, name, optval, default):
+        if optval is not False:
+            if optval is None:
+                token = default
+            else:
+                token = optval
+            self.data[name] = token
+
     def getCookieParts(self, response):
         cookieHeader = response.headers['Set-Cookie']
         cookieparts = cookieHeader.split(';')
@@ -16,17 +24,16 @@ class UserUtil(ResponseInfo, RandomUtil):
 
     def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
         userid, password, email = self.setupUserCreationData(userid, password, email)
-        user = CredentialManager.create_user_with_creds(credType, userid, password, email)
-        self.assertTrue(user)
-        return user
+        cred = CredentialManager.create_user_with_creds(credType, userid, password, email)
+        cred.user.activate()
+        return cred
     
     def createLoggedInUser(self):
         self.setupRandom()
-        user = self.createUserWithCredentials()
-        user.activate()
-        user.authenticated = True
-        self.controller.loginUserInFramework(user)
-        return user
+        self.cred = self.createUserWithCredentials()
+        self.cred.user.authenticated = True
+        self.controller.loginInFramework(self.cred)
+        return self.cred
     
     def deleteUser(self, user):
         for cred in Credential.getByUser(user):

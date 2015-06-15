@@ -1,11 +1,7 @@
-from pdoauth.FlaskInterface import FlaskInterface
-class Dummy(object):
-    pass
-class WebInterface(FlaskInterface, Dummy):
-    
-    def __init__(self, interfaceClass=None):
-        if interfaceClass is None:
-            interfaceClass = FlaskInterface
+from uuid import uuid4
+class WebInterface(object):
+
+    def __init__(self, interfaceClass):
         self.setInterface(interfaceClass)
 
     def setInterface(self, interfaceClass):
@@ -46,8 +42,16 @@ class WebInterface(FlaskInterface, Dummy):
     def getSession(self):
         return self.interface.getSession()
 
-    def loginUserInFramework(self, user):
+    def getCSRF(self):
+        return self.getSession()['csrf_token']
+
+    def loginInFramework(self, credential):
+        user = credential.user
         user.set_authenticated()
+        token = unicode(uuid4())
+        session = self.getSession()
+        session['csrf_token'] = token
+        session['login_credential'] = (credential.credentialType, credential.identifier)
         return self.interface.loginUserInFramework(user)
 
     def make_response(self, ret, status):

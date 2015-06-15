@@ -1,11 +1,12 @@
 from pdoauth.ReportedError import ReportedError
 from pdoauth.WebInterface import WebInterface
 import logging
+from pdoauth.Responses import Responses
 
-class Decorators(WebInterface):
-    def __init__(self, app):
+class Decorators(WebInterface, Responses):
+    def __init__(self, app, interface):
         self.app = app
-        WebInterface.__init__(self)
+        WebInterface.__init__(self, interface)
 
     def runInterfaceFunc(self, func, args, kwargs, formClass, status, checkLoginFunction):
         try:

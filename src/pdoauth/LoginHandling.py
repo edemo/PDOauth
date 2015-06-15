@@ -1,4 +1,3 @@
-from uuid import uuid4
 from pdoauth.ReportedError import ReportedError
 from pdoauth.CredentialManager import CredentialManager
 from flask import json
@@ -6,28 +5,26 @@ from pdoauth.models.Credential import Credential
 
 class LoginHandling(object):
 
-    def loginUser(self, user):
-        user.set_authenticated()
-        r = self.loginUserInFramework(user)
+    def loginUser(self, cred):
+        cred.user.set_authenticated()
+        r = self.loginInFramework(cred)
         return r
 
     def returnUserAndLoginCookie(self, user, additionalInfo=None):
         if additionalInfo is None:
             additionalInfo={}
         resp = self.as_dict(user, **additionalInfo)
-        token = unicode(uuid4())
-        self.getSession()['csrf_token'] = token
-        resp.set_cookie("csrf", token, domain=self.getConfig('COOKIE_DOMAIN'))
+        resp.set_cookie("csrf", self.getCSRF(), domain=self.getConfig('COOKIE_DOMAIN'))
         return resp
 
-    def finishLogin(self, user):
-        r = self.loginUser(user)
+    def finishLogin(self, cred):
+        r = self.loginUser(cred)
         if r:
-            return self.returnUserAndLoginCookie(user)
+            return self.returnUserAndLoginCookie(cred.user)
         raise ReportedError(["Inactive or disabled user"], status=403)
 
     def passwordLogin(self, form):
-        user = CredentialManager.validate_from_form(form)
+        user = CredentialManager.getCredentialFromForm(form)
         if user is None:
             raise ReportedError(["Bad username or password"], status=403)
         return self.finishLogin(user)
@@ -46,4 +43,4 @@ class LoginHandling(object):
         cred = Credential.get("facebook", form.identifier.data)
         if cred is None:
             raise ReportedError(["You have to register first"], 403)
-        return self.finishLogin(cred.user)
+        return self.finishLogin(cred)

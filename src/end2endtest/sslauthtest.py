@@ -5,7 +5,7 @@ from pdoauth.models.User import User
 import time
 from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 
-class SSLAuthTest(EndUserTesting):
+class SslAuthTest(EndUserTesting):
 
     def setUp(self):
         EndUserTesting.setUp(self)

@@ -6,6 +6,7 @@ import urllib3
 import config
 from urllib import urlencode
 from end2endtest.helpers.EndUserTesting import EndUserTesting, test
+import pdb
 
 class EndUserRegistrationTest(EndUserTesting):
 
@@ -25,7 +26,8 @@ class EndUserRegistrationTest(EndUserTesting):
         driver.get(self.base_url  + "/static/login.html?next=/v1/users/me")
         driver.refresh()
         self.switchToTab('registration')
-        self.fillInAndSubmitRegistrationForm(driver, password=self.thePassword, userid=self.normaluser, email=self.email)
+        self.theHash = self.createHash()
+        self.fillInAndSubmitRegistrationForm(driver, password=self.thePassword, userid=self.normaluser, email=self.email, digest=self.theHash)
         driver.save_screenshot("doc/screenshots/registration.png")
         time.sleep(1)
         self.assertEqual(self.base_url  + "/v1/users/me", driver.current_url)
@@ -87,7 +89,7 @@ class EndUserRegistrationTest(EndUserTesting):
         driver.refresh()
         self.switchToTab("assurer")
         driver.find_element_by_id("AddAssuranceForm_digest_input").clear()
-        driver.find_element_by_id("AddAssuranceForm_digest_input").send_keys(self.createHash())
+        driver.find_element_by_id("AddAssuranceForm_digest_input").send_keys(self.theHash)
         driver.find_element_by_id("AddAssuranceForm_email_input").clear()
         driver.find_element_by_id("AddAssuranceForm_email_input").send_keys(self.email)
         driver.find_element_by_id("AddAssuranceForm_assurance_input").clear()

@@ -34,7 +34,7 @@ class PasswordResetTest(IntegrationTest, UserUtil):
         with app.test_client() as c:
             with mail.record_messages() as outbox:
                 c.get("/v1/users/{0}/passwordreset".format(self.usercreation_email))
-                self.assertEqual(outbox[0].subject, "Password Reset for {0}".format(app.config.get('SERVER_NAME')))
+                self.assertEqual(outbox[0].subject, "Password Reset for {0}".format(app.config.get('SERVICE_NAME')))
 
     def the_reset_link_is_in_the_reset_email(self):
         with app.test_client() as c:

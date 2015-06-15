@@ -3,6 +3,8 @@ from OpenSSL import crypto
 from Crypto.Hash.SHA512 import SHA512Hash
 from pdoauth.models.Credential import Credential
 
+testuserIdentifier = "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"
+
 class CryptoTestUtil(object):
     def getCertAttributes(self):
         certFileName = os.path.join(os.path.dirname(__file__), "..","..", "end2endtest", "client.crt")
@@ -17,6 +19,7 @@ class CryptoTestUtil(object):
         return identifier, digest, cert
 
     def createHash(self):
+        self.setupRandom()
         return SHA512Hash(self.randString).hexdigest() * 4
 
     def sslLoginWithCert(self, cert):
@@ -26,9 +29,16 @@ class CryptoTestUtil(object):
 
     def createUserAndLoginWithCert(self):
         self.identifier, digest, cert = self.getCertAttributes()
-        user = self.createUserWithCredentials()
+        cred = self.createUserWithCredentials()
         secret = digest
-        Credential.new(user, "certificate", self.identifier, secret)
+        Credential.new(cred.user, "certificate", self.identifier, secret)
         resp = self.sslLoginWithCert(cert)
         return resp
+
+    def removeCertUser(self):
+        cred = Credential.get('certificate', testuserIdentifier)
+        if cred:
+            cred.rm()
+            cred.user.rm()
+
 

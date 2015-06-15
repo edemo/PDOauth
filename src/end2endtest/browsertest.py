@@ -39,7 +39,7 @@ class JavaScriptUnitTest(EndUserTesting):
     def the_me_link_works(self):
         driver = self.driver
         driver.get(self.base_url+"/static/login.html")
-        user = self.createUserWithCredentials()
+        user = self.createUserWithCredentials().user
         user.activate()
         self.thePassword = self.mkRandomPassword()
         self.switchToTab("login")

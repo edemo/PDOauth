@@ -1,15 +1,15 @@
 from pdoauth.app import app
 from test.helpers.UserUtil import UserUtil
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.WebInterface import WebInterface
 from test.helpers.FakeInterFace import FakeInterface
 from pdoauth.FlaskInterface import FlaskInterface
 from flask import json
+from test.helpers.PDUnitTest import PDUnitTest, test
 
 def testForBothInterfaces(*args,**kwargs):
     def decorator(func):
         def f(self):
-            interface = WebInterface()
+            interface = WebInterface(FlaskInterface)
             with app.test_request_context(*args,**kwargs):
                 func(self, interface)
             fakeInterface = WebInterface(FakeInterface)
@@ -20,11 +20,11 @@ def testForBothInterfaces(*args,**kwargs):
         return f
     return decorator
 
-class WebInterfaceTests(Fixture, UserUtil):
+class WebInterfaceTests(PDUnitTest, UserUtil):
 
     @test
     def WebInterface_initializes_with_the_given_interface(self):
-        interface = WebInterface()
+        interface = WebInterface(FlaskInterface)
         self.assertEqual(interface.interface.__class__, FlaskInterface)
         interface = WebInterface(FakeInterface)
         self.assertEqual(interface.interface.__class__, FakeInterface)
@@ -46,17 +46,15 @@ class WebInterfaceTests(Fixture, UserUtil):
         self.assertEqual(request.url, 'http://localhost/foo')
 
     @testForBothInterfaces()
-    def user_can_be_logged_in_with_loginUserInFramework(self, interface):
-        #FIXME: should be done by credential
-        user = self.createUserWithCredentials()
-        interface.loginUserInFramework(user)
+    def user_can_be_logged_in_with_loginInFramework_using_credential(self, interface):
+        cred = self.createUserWithCredentials()
+        interface.loginInFramework(cred)
 
     @testForBothInterfaces()
     def logged_in_user_can_be_obtained_with_getCurrentUser(self, interface):
-        user = self.createUserWithCredentials()
-        user.activate()
-        interface.loginUserInFramework(user)
-        self.assertEqual(user, interface.getCurrentUser())
+        cred = self.createUserWithCredentials()
+        interface.loginInFramework(cred)
+        self.assertEqual(cred.user, interface.getCurrentUser())
 
     @testForBothInterfaces(data=dict(foo='foo'), method='POST')
     def postdata_can_be_put_into_request_context(self, interface):
@@ -81,10 +79,9 @@ class WebInterfaceTests(Fixture, UserUtil):
         self.assertEqual(resp.status_code, 200)
 
     @testForBothInterfaces()
-    def loginUserInFramework_returns_true_for_active_user(self, interface):
-        user = self.createUserWithCredentials()
-        user.activate()
-        r = interface.loginUserInFramework(user)
+    def loginInFramework_returns_true_for_active_user(self, interface):
+        cred = self.createUserWithCredentials()
+        r = interface.loginInFramework(cred)
         self.assertEqual(True, r)
 
     @testForBothInterfaces()
@@ -112,4 +109,10 @@ class WebInterfaceTests(Fixture, UserUtil):
         response.set_cookie('csrf', '42', path="/foo")
         cookieparts = self.getCookieParts(response)
         self.assertEqual(cookieparts['Path'], '/foo')
-        
+    
+    @testForBothInterfaces()
+    def returnUserAndLoginCookie_sets_csrf_cookie(self, interface):
+        cred = self.createLoggedInUser()
+        resp = self.controller.returnUserAndLoginCookie(cred.user)
+        cookieparts = self.getCookieParts(resp)
+        self.assertTrue(cookieparts.has_key('csrf'))

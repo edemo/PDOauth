@@ -1,5 +1,6 @@
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.app import app
+from pdoauth.FlaskInterface import FlaskInterface
 
 class ServerSide(object):
     def doServerSideRequest(self, code):
@@ -9,7 +10,7 @@ class ServerSide(object):
             'client_secret':self.appsecret, 
             'redirect_uri':'https://test.app/redirecturi'}
         with app.test_request_context(data = postData):
-            resp = AuthProvider().token_interface()
+            resp = AuthProvider(FlaskInterface).token_interface()
         data = self.fromJson(resp)
         self.assertTrue(data.has_key('access_token'))
         self.assertTrue(data.has_key('refresh_token'))

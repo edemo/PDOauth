@@ -11,6 +11,7 @@ from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from urllib import urlencode
 from test.helpers.AuthenticatedSessionMixin import AuthenticatedSessionMixin
 from test.helpers.RandomUtil import RandomUtil
+from pdoauth.FlaskInterface import FlaskInterface
 
 class FakeData(object):
     
@@ -25,7 +26,7 @@ class AuthProviderIntegrationTest(IntegrationTest, AuthenticatedSessionMixin, Ra
         Application.query.delete()  # @UndefinedVariable
         KeyData.query.delete()  # @UndefinedVariable
         TokenInfoByAccessKey.query.delete()  # @UndefinedVariable
-        self.ap = AuthProvider()
+        self.ap = AuthProvider(FlaskInterface)
         self.session = db.session
         self.app = Application.new("test app 5", "secret5", "https://test.app/redirecturi")
         self.session.add(self.app)
@@ -109,7 +110,7 @@ class AuthProviderIntegrationTest(IntegrationTest, AuthenticatedSessionMixin, Ra
                                redirectUri, scope='')
         self.assertTrue(resp.headers['Location'].startswith('https://test.app/redirecturi?error=access_denied'))
 
-    def getAuthorizationCode(self):
+    def _getAuthorizationCode(self):
         with app.test_request_context('/'):
             redirect_uri = 'https://test.app/redirecturi'
             uri = 'https://localhost.local/v1/oauth2/auth?response_type=code&client_id={0}&redirect_uri={1}'.format(self.app.appid, 
@@ -134,13 +135,13 @@ class AuthProviderIntegrationTest(IntegrationTest, AuthenticatedSessionMixin, Ra
 
     @test
     def authorization_code_can_be_obtained_from_uri(self):
-        self.getAuthorizationCode()
+        self._getAuthorizationCode()
             
 
     @test
     def authorization_code_can_be_discarded(self):
         appid = self.app.appid
-        code = self.getAuthorizationCode()
+        code = self._getAuthorizationCode()
         self.assertFalse(self.ap.from_authorization_code(appid, code, '') is None)
         self.ap.discard_authorization_code(appid, code)
         self.assertTrue(self.ap.from_authorization_code(appid, code, '') is None)

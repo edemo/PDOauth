@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
-from twatson.unittest_annotations import Fixture, test
-from pdoauth.models.User import User, AlreadyExistingUser
 from pdoauth.CredentialManager import CredentialManager
 from test.helpers.UserUtil import UserUtil
+from test.helpers.PDUnitTest import PDUnitTest, test
+from pdoauth.models.User import User
+from test.helpers.CryptoTestUtil import CryptoTestUtil
 
-class UserTest(Fixture, UserUtil):
+class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
     def setUp(self):
         self.User_can_be_created()
@@ -62,30 +63,31 @@ class UserTest(Fixture, UserUtil):
         self.assertEqual(self.user, User.get(self.user.userid))
     
     @test
-    def User_email_can_be_stored(self):
-        self.setupRandom()
-        email = "email{0}@example.com".format(self.randString)
-        userid = "aaa_{0}".format(self.randString)
-        password = "bbb_{0}".format(self.randString)
-
-        user = CredentialManager.create_user_with_creds('password', userid, password, email)
-        self.assertEquals(user.email, email)
+    def User_email_is_be_stored(self):
+        self.setupUserCreationData()
+        cred = CredentialManager.create_user_with_creds(
+            'password',
+            self.usercreation_userid,
+            self.usercreation_password,
+            self.usercreation_email)
+        self.assertEquals(cred.user.email, self.usercreation_email)
     
     @test
     def User_hash_can_be_stored(self):
-        self.setupRandom()
-        email = "email{0}@example.com".format(self.randString)
-        userid = "aaa_{0}".format(self.randString)
-        password = "bbb_{0}".format(self.randString)
-        digest = "digest_{0}".format(self.randString)
-        user = CredentialManager.create_user_with_creds('password', userid, password, email, digest)
-        self.assertEquals(user.email, email)
-        self.assertEquals(user.hash, digest)
+        self.setupUserCreationData()
+        digest = self.createHash()
+        cred = CredentialManager.create_user_with_creds(
+            'password',
+            self.usercreation_userid,
+            self.usercreation_password,
+            self.usercreation_email,
+            digest)
+        self.assertEquals(cred.user.hash, digest)
 
     @test
     def cannot_create_user_with_already_existing_email(self):
         self.createUserWithCredentials()
-        self.assertRaises(AlreadyExistingUser, User.new,self.usercreation_email)
+        self.assertReportedError(User.new, [self.usercreation_email], 400, ['there is already a user with this email'])
 
     @test
     def getByDigest_does_not_allow_empty_digest(self):

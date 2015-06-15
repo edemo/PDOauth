@@ -12,10 +12,9 @@ from pdoauth.LoginHandling import LoginHandling
 from pdoauth.CertificateHandling import CertificateHandling
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from urllib import urlencode
+from pdoauth.Responses import Responses
 
-
-class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandling):
-    LOGIN_CREDENTIAL_ATTRIBUTE = 'logincred'
+class Controller(WebInterface, Responses, EmailHandling, LoginHandling,  CertificateHandling):
     anotherUserUsingYourHash = "another user is using your hash"
     passwordResetCredentialType = 'email_for_password_reset'
 
@@ -42,22 +41,12 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
             resp.headers['Location'] = uri
             return resp
 
-
-    def setLoginCredentialIntoSession(self, credentialType, identifier):
-        self.getSession()[self.LOGIN_CREDENTIAL_ATTRIBUTE] = dict(credentialType=credentialType, identifier=identifier)
-
     def jsonErrorIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
             raise ReportedError(["not logged in"], status=403)
 
-
-    def setLoginCredentialIntoSession(self, credentialType, identifier):
-        self.getSession()[self.LOGIN_CREDENTIAL_ATTRIBUTE] = dict(credentialType=credentialType, identifier=identifier)
-        return credentialType
-
     def do_login(self,form):
         credentialType = form.credentialType.data
-        credentialType = self.setLoginCredentialIntoSession(credentialType, form.identifier.data)
         if credentialType == 'password':
             return self.passwordLogin(form)
         if credentialType == 'facebook':
@@ -68,18 +57,34 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
         return self.simple_response('logged out')
 
     def do_deregister(self,form):
-        if not self.isLoginCredentials(form):
-            raise ReportedError(["You should use your login credentials to deregister"], 400)
-        cred = Credential.get(form.credentialType.data, form.identifier.data)
-        user = cred.user
+        self.sendDeregisterMail(self.getCurrentUser())
+        return self.simple_response('deregistration email has been sent')
+
+    def removeCredentials(self, user):
         creds = Credential.getByUser(user)
         for cred in creds:
             cred.rm()
+
+    def removeAssurances(self, user):
         assurances = Assurance.listByUser(user)
         for assurance in assurances:
             assurance.rm()
+
+    def removeUser(self, user):
+        self.removeCredentials(user)
+        self.removeAssurances(user)
         user.rm()
-        return self.simple_response('deregistered')
+
+    def do_deregistration_doit(self, form):
+        secret = form.deregister_secret.data
+        if secret is not None:
+            deregistrationCredential = Credential.getBySecret('deregister', secret)
+            if deregistrationCredential is None:
+                raise ReportedError(["bad deregistration secret"],400)
+            user = deregistrationCredential.user
+            self.removeUser(user)
+            return self.simple_response('you are deregistered')
+        raise ReportedError(["secret is needed for deregistration_doit"],400)
 
     def isAnyoneHandAssurredOf(self, anotherUsers):
         for anotherUser in anotherUsers:
@@ -99,16 +104,17 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
                 if self.isAnyoneHandAssurredOf(anotherUsers):
                     raise ReportedError([self.anotherUserUsingYourHash], 400)
                 additionalInfo["message"] = self.anotherUserUsingYourHash
-        user = CredentialManager.create_user_with_creds(
+        cred = CredentialManager.create_user_with_creds(
             form.credentialType.data,
             form.identifier.data,
             form.secret.data,
             form.email.data,
             digest)
+        user = cred.user
         self.sendPasswordVerificationEmail(user)
         user.set_authenticated()
         user.activate()
-        r = self.loginUserInFramework(user)
+        r = self.loginInFramework(cred)
         if r:
             return self.returnUserAndLoginCookie(user, additionalInfo)
     
@@ -124,10 +130,8 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
             return self.simple_response('password changed succesfully')
     
     def do_get_by_email(self, email):
-        return self._do_get_by_email(email)
-
-    def _do_get_by_email(self, email):
-        assurances = Assurance.getByUser(self.getCurrentUser())
+        current_user = self.getCurrentUser()
+        assurances = Assurance.getByUser(current_user)
         if assurances.has_key('assurer'):
             user = User.getByEmail(email)
             if user is None:
@@ -145,14 +149,14 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
 
     def assureExactlyOneUserInList(self, users):
         if len(users) == 0:
-            raise ReportedError('No user with this hash', 400)
+            raise ReportedError(['No user with this hash'], 400)
         if len(users) > 1:
             raise ReportedError(["More users with the same hash; specify both hash and email"], 400)
 
 
     def checkUserAgainsDigest(self, digest, user):
         if digest is not None and user.hash != digest:
-            raise ReportedError('This user does not have that digest', 400)
+            raise ReportedError(['This user does not have that digest'], 400)
 
     def getUserForEmailAndOrHash(self, digest, email):
         if email:
@@ -239,15 +243,10 @@ class Controller(WebInterface, EmailHandling, LoginHandling,  CertificateHandlin
         cred.rm()
         return self.simple_response('Password successfully changed')
 
-    def isLoginCredentials(self, form):
-        session = self.getSession()
-        if not session.has_key(self.LOGIN_CREDENTIAL_ATTRIBUTE):
-            raise ReportedError(["Internal error: no login credential found"], 500)
-        return session[self.LOGIN_CREDENTIAL_ATTRIBUTE]['credentialType'] == form.credentialType.data and session[self.LOGIN_CREDENTIAL_ATTRIBUTE]['identifier'] == form.identifier.data
-
     def do_remove_credential(self, form):
-        if self.isLoginCredentials(form):
-            raise ReportedError(["You cannot delete the login you are using"], 400)            
+        session = self.getSession()
+        if session['login_credential'] == (form.credentialType.data, form.identifier.data):
+            raise ReportedError(["You cannot delete the login you are using"],400)
         cred=Credential.get(form.credentialType.data, form.identifier.data)
         if cred is None:
             raise ReportedError(['No such credential'], 404)

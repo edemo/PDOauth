@@ -15,12 +15,14 @@ from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.forms.AssuranceForm import AssuranceForm
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
+from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
+from pdoauth.FlaskInterface import FlaskInterface
 
-controller = Controller()
+controller = Controller(FlaskInterface)
 controller.mail = mail
 controller.app = app
-decorator = Decorators(app)
-
+decorator = Decorators(app, FlaskInterface)
+authprovider = AuthProvider(FlaskInterface)
 def getStaticPath():
     mainpath = os.path.abspath(__file__)
     up = os.path.dirname
@@ -44,15 +46,19 @@ def ssl_login():
 @decorator.interfaceFunc("/v1/oauth2/auth", methods=["GET"], checkLoginFunction=controller.redirectIfNotLoggedIn)
 def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
-    return AuthProvider().auth_interface()
+    return authprovider.auth_interface()
 
 @decorator.interfaceFunc("/keygen", methods=["POST"], formClass=KeygenForm)
 def keygen(form):
     return controller.do_keygen(form)
 
-@decorator.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm)
+@decorator.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def deregister(form):
     return controller.do_deregister(form)
+
+@decorator.interfaceFunc("/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
+def deregister_doit(form):
+    return controller.do_deregistration_doit(form)
 
 @decorator.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
 def logout():
@@ -60,7 +66,7 @@ def logout():
 
 @decorator.interfaceFunc("/v1/oauth2/token", methods=["POST"])
 def token():
-    return AuthProvider().token_interface()
+    return authprovider.token_interface()
 
 @decorator.interfaceFunc("/v1/users/<userid>", methods=["GET"],
     checkLoginFunction=controller.authenticateUserOrBearer)

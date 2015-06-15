@@ -9,14 +9,15 @@ from pdoauth.models.Application import Application
 app.extensions["mail"].suppress = True
 
 class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
+
     def login(self, c, activate = True, createUser = True):
         self.setupRandom()
         if createUser:
-            user = self.createUserWithCredentials()
+            user = self.createUserWithCredentials().user
         else:
             user = User.getByEmail(self.usercreation_email)
-        if activate:
-            user.activate()
+        if not activate:
+            user.active = False
         data = {
                 'credentialType': 'password',
                 'identifier': self.usercreation_userid,

@@ -1,5 +1,6 @@
 from flask import json
 from test import config
+from flask_login import AnonymousUserMixin
 
 class FakeMail(object):
     def __init__(self):
@@ -80,6 +81,7 @@ class FakeInterface(object):
         self._request = FakeRequest()
         self._session = FakeSession()
         self.urlSet = False
+        self.logOut()
 
     def setEnviron(self, environ):
         if environ is None:
@@ -109,7 +111,7 @@ class FakeInterface(object):
         return True
 
     def logOut(self):
-        self.current_user = None
+        self.current_user = AnonymousUserMixin()
 
     def getConfig(self, name):
         return getattr(self.app.config,name)
