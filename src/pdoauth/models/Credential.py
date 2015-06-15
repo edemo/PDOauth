@@ -58,9 +58,8 @@ class Credential(db.Model, ModelUtils):
             if float(c.secret) < now:
                 c.rm()
 
-    
     def __repr__(self, *args, **kwargs):
-        return "Credential(user={0.user.email},credentialType={0.credentialType},secret={0.secret})".format(self)
+        return "Credential(user={0.user.email},credentialType={0.credentialType},identifier={0.identifier},secret={0.secret})".format(self)
 
     
     @classmethod

@@ -5,11 +5,10 @@ from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 from pdoauth.forms import credErr
 from pdoauth.ReportedError import ReportedError
-from test.helpers.todeprecate.UserTesting import UserTesting
-from twatson.unittest_annotations import Fixture, test
-from pdoauth import main  # @UnusedImport
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.UserTesting import UserTesting
 
-class CredentialIntegrationTest(Fixture, UserTesting):
+class CredentialIntegrationTest(IntegrationTest, UserTesting):
     def setUp(self):
         self.setupRandom()
         self.user = self.createUserWithCredentials()

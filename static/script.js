@@ -280,7 +280,17 @@ function PageScript(debug) {
 			identifier: userId,
 			secret: accessToken
 		}
+<<<<<<< HEAD
 		self.ajaxpost("/v1/add_credential", text, self.myCallback )
+=======
+		self.ajaxpost("/v1/add_credential", text, function(status, text){
+			var data = JSON.parse(text);
+			console.log(data);
+			if (status==200) {
+				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
+			}
+		})
+>>>>>>> 8bb325dd7eff860edaf3bbf8205827347448f2e5
 	}
 	
 	PageScript.prototype.register_with_facebook = function(userId, accessToken, email) {

@@ -1,13 +1,13 @@
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.CredentialManager import CredentialManager
 import config
-from test.helpers.CSRFMixin import CSRFMixin
-from test.helpers.todeprecate.UserTesting import UserTesting
-from pdoauth import main  # @UnusedImport
 
-class PasswordChangeTest(Fixture, UserTesting, CSRFMixin):
+from integrationtest.helpers.CSRFMixin import CSRFMixin
+from integrationtest.helpers.UserTesting import UserTesting
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+
+class PasswordChangeTest(IntegrationTest, UserTesting, CSRFMixin):
 
     def _preparePasswordChangeTest(self, c):
         resp = self.login(c)

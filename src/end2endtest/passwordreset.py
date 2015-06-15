@@ -1,17 +1,12 @@
 import unittest, time
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
-from twatson.unittest_annotations import Fixture, test
-import config
-from end2endtest.BrowserSetup import BrowserSetup
-from test.helpers.todeprecate.UserTesting import UserTesting
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 from pdoauth import main  # @UnusedImport
 
-class EndUserPasswordResetTest(Fixture, UserTesting, BrowserSetup):
+class EndUserPasswordResetTest(EndUserTesting):
     def setUp(self):
-        self.setupDriver()
-        self.base_url = config.Config.BASE_URL
-        self.verificationErrors = []
+        EndUserTesting.setUp(self)
         self.createUserWithCredentials()
 
     def the_reset_link_is_in_the_reset_email(self):

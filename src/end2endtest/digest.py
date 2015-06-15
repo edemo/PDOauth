@@ -1,16 +1,10 @@
 import unittest
 import config
-from twatson.unittest_annotations import Fixture, test
-from end2endtest.BrowserSetup import BrowserSetup
-from end2endtest.EndUserTesting import EndUserTesting
 from pdoauth.app import app
 import time
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 
-class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
-    def setUp(self):
-        self.setupDriver()
-        self.base_url = config.Config.BASE_URL
-        self.verificationErrors = []
+class EndUserDigestManagementTest(EndUserTesting):
 
     @test
     def you_can_add_a_digest_as_a_logged_in_user(self):
@@ -41,6 +35,7 @@ class EndUserDigestManagementTest(Fixture, EndUserTesting, BrowserSetup):
         time.sleep(2)
         self.closePopup()
         self.switchToTab("account")
+        time.sleep(1)
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\n{0}".format(oldDigest) in userdata)
         self.setupRandom()

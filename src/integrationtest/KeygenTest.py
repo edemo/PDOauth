@@ -1,9 +1,9 @@
-from twatson.unittest_annotations import Fixture, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from OpenSSL import crypto
 from pdoauth.models.User import User
-from test.helpers.todeprecate.UserTesting import UserTesting
+from integrationtest.helpers.UserTesting import UserTesting
 
 spkac = """MIICSTCCATEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDt66ujL7Qi
 gKPRoJzI7cdMFgxoNE7u5aKhAMLC7EE9Npn7Ig1Y6G5NIfjdWZy+Ryrw3/HdYRsS
@@ -19,7 +19,7 @@ N8v6i3mEYWeRnsIXDfWpWZoejEm3cdlCr2sstFQ4GIzTw/KIHnEnkCOZWz8uQVIE
 FiFJjirn+7QTlDjctU89Y4OqX2pufBxULSLMVnc8aM1/vXUDwtQKFuS1hr2DrUbb
 JA3SM6HtjlWWGuocNw=="""
 
-class KeygenTest(Fixture, UserTesting):
+class KeygenTest(IntegrationTest, UserTesting):
 
     def _getCertId(self, cert):
         x509 = crypto.load_certificate(crypto.FILETYPE_ASN1, cert)

@@ -1,4 +1,3 @@
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.app import app, mail
 from bs4 import BeautifulSoup
 import re
@@ -8,9 +7,11 @@ from uuid import uuid4
 from pdoauth.models.User import User
 from pdoauth.CredentialManager import CredentialManager
 from test.helpers.UserUtil import UserUtil
-from pdoauth import main  # @UnusedImport
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class PasswordResetTest(Fixture, UserUtil):
+app.extensions["mail"].suppress = True
+
+class PasswordResetTest(IntegrationTest, UserUtil):
 
     def setUp(self):
         self.createUserWithCredentials()

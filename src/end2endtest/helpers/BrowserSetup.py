@@ -25,7 +25,7 @@ class BrowserSetup(object):
             options.add_argument("--no-sandbox")
             theDriver = webdriver.Chrome(chrome_options = options)
         else:
-            profile_directory = os.path.join(os.path.dirname(__file__), "firefox-client-nossl-profile")
+            profile_directory = os.path.join(os.path.dirname(__file__),"..", "firefox-client-nossl-profile")
             profile = FirefoxProfile(profile_directory)
             profile.set_preference("security.default_personal_cert", "Select Automatically")
             theDriver = webdriver.Firefox(firefox_profile=profile)
@@ -51,7 +51,7 @@ class BrowserSetup(object):
 
     def deleteCerts(self):
         if os.environ.get("WEBDRIVER", None) == "chrome":
-            delete_script = os.path.join(os.path.dirname(__file__), "..", "..", "tools", "delcerts")
+            delete_script = os.path.join(os.path.dirname(__file__), "..", "..", "..", "tools", "delcerts")
             retcode = subprocess.call(delete_script)
             self.assertEqual(retcode, 0)
 

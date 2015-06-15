@@ -2,11 +2,12 @@
 from pdoauth.models.Application import Application
 import config
 from test.helpers.ServerSide import ServerSide
-from test.helpers.PDUnitTest import PDUnitTest, test
-from test.helpers.UserUtil import UserUtil
 from pdoauth.AuthProvider import AuthProvider
+from integrationtest.helpers.UserTesting import UserTesting
+from pdoauth.app import app
+from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class ServerSideTest(PDUnitTest, ServerSide, UserUtil):
+class ServerSideTest(IntegrationTest, ServerSide, UserTesting):
 
 
     def createApplication(self):
@@ -19,18 +20,19 @@ class ServerSideTest(PDUnitTest, ServerSide, UserUtil):
     def buildAuthUrl(self, redirect_uri):
         uri = config.base_url + '/v1/oauth2/auth'
         query_string = 'response_type=code&client_id={0}&redirect_uri={1}'.format(self.appid, redirect_uri)
-        self.controller._testdata.request_url = uri + "?" + query_string
+        self.controller.interface.set_request_context(uri + "?" + query_string)
 
-    def loginAndGetCode(self):
-        self.current_user = self.createLoggedInUser()
-        application, redirect_uri = self.createApplication()
-        self.appid = application.appid
-        self.buildAuthUrl(redirect_uri)
-        resp = AuthProvider().auth_interface()
-        self.assertEqual(302, resp.status_code)
-        location = resp.headers['Location']
-        self.assertTrue(location.startswith('https://test.app/redirecturi?code='))
-        code = location.split('=')[1]
+    def OOOloginAndGetCode(self):
+        with app.test_client() as c:
+            self.login(c)
+            application, redirect_uri = self.createApplication()
+            self.appid = application.appid
+            self.buildAuthUrl(redirect_uri)
+            resp = AuthProvider().auth_interface()
+            self.assertEqual(302, resp.status_code)
+            location = resp.headers['Location']
+            self.assertTrue(location.startswith('https://test.app/redirecturi?code='))
+            code = location.split('=')[1]
         return code
 
     @test
@@ -46,14 +48,14 @@ class ServerSideTest(PDUnitTest, ServerSide, UserUtil):
     def get_user_info(self):
         code = self.loginAndGetCode()
         data = self.doServerSideRequest(code)
-        self.controller._testdata.current_url = config.base_url + "/v1/users/me"
-        self.controller._testdata.headers = {
+        headers = {
             'Authorization': '{0} {1}'.format(
                     data['token_type'],
                     data['access_token']
                 )
         }
-        resp = self.showUserByCurrentUser('me')
+        with app.test_client() as c:
+            resp = c.get('/v1/users/me', headers = headers)
         self.assertEquals(resp.status_code, 200)
         data = self.fromJson(resp)
         self.assertTrue(data.has_key('userid'))

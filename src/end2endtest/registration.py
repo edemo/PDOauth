@@ -3,18 +3,14 @@ import assurancetool
 import applicationtool
 from pdoauth.models.Application import Application
 import urllib3
-from twatson.unittest_annotations import Fixture, test
 import config
 from urllib import urlencode
-from end2endtest.BrowserSetup import BrowserSetup
-from end2endtest.EndUserTesting import EndUserTesting
+from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 
-class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
+class EndUserRegistrationTest(EndUserTesting):
 
     def setUp(self):
-        self.setupDriver()
-        self.base_url = config.Config.BASE_URL
-        self.verificationErrors = []
+        EndUserTesting.setUp(self)
         self.setupUserCreationData()
         self.thePassword = self.usercreation_password
         self.normaluser = self.usercreation_userid
@@ -153,11 +149,13 @@ class EndUserRegistrationTest(Fixture, BrowserSetup, EndUserTesting):
         )
 
     def the_server_can_get_your_access_tokens_using_your_authorization_code(self):
-        resp = self.http.request("POST", self.base_url + "/v1/oauth2/token", fields=dict(code=self.code, 
-                grant_type='authorization_code', 
-                client_id=self.appid, 
-                client_secret=self.appsecret, 
-                redirect_uri=self.redirect_uri))
+        fields = dict(code=self.code, 
+            grant_type='authorization_code', 
+            client_id=self.appid, 
+            client_secret=self.appsecret, 
+            redirect_uri=self.redirect_uri)
+        url = self.base_url + "/v1/oauth2/token"
+        resp = self.http.request("POST", url, fields=fields)
         self.assertEquals(resp.status, 200)
         answer = json.loads(resp.data)
         self.assertEqual(answer['token_type'], "Bearer")
