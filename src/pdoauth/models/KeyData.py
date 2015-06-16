@@ -1,3 +1,4 @@
+#pylint: disable=invalid-name, no-member, too-many-arguments
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import Integer, String
 from pdoauth.app import db
@@ -12,7 +13,6 @@ class KeyData(db.Model, ModelUtils):
     refresh_key = Column(String)
     authorization_code = Column(String)
 
-    
     @classmethod
     def new(cls, client_id, user_id, access_key, refresh_key):
         keyData = cls.find(client_id, user_id)
@@ -21,11 +21,10 @@ class KeyData(db.Model, ModelUtils):
             keyData.save()
         return keyData
 
-    
     @classmethod
     def find(cls, client_id, user_id):
         return cls.query.filter_by(client_id=client_id, user_id = user_id).first()
-    
+
     def __init__(self, client_id, user_id=None, access_key=None, refresh_key=None, authorization_code=None):
         self.client_id = client_id
         self.access_key = access_key
@@ -33,16 +32,14 @@ class KeyData(db.Model, ModelUtils):
         self.refresh_key = refresh_key
         self.authorization_code = authorization_code
 
-    
     @classmethod
-    def find_by_refresh_token(cls, client_id, refresh_token):
-        return cls.query.filter_by(client_id=client_id, refresh_key = refresh_token).first()
+    def find_by_refresh_token(cls, client_id, refreshToken):
+        return cls.query.filter_by(client_id=client_id, refresh_key = refreshToken).first()
 
-    
     @classmethod
     def find_by_code(cls, client_id, authorization_code):
         return cls.query.filter_by(client_id=client_id, authorization_code = authorization_code).first()
-    
+
     def __repr__(self, *args, **kwargs):
         return "KeyData(client_id={0}, user_id={1}, access_key={2}, refresh_key={3}, authorization_code={4})".format(
             self.client_id,
@@ -50,12 +47,3 @@ class KeyData(db.Model, ModelUtils):
             self.access_key,
             self.refresh_key,
             self.authorization_code)
-    
-    
-    
-    
-    
-    
-
-
-

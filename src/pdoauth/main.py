@@ -15,110 +15,114 @@ from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.forms.AssuranceForm import AssuranceForm
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
+from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
+from pdoauth.FlaskInterface import FlaskInterface
 
-controller = Controller()
-controller.mail = mail
-controller.app = app
-decorator = Decorators(app)
-
+CONTROLLER = Controller(FlaskInterface)
+CONTROLLER.mail = mail
+CONTROLLER.app = app
+DECORATOR = Decorators(app, FlaskInterface)
+AUTHPROVIDER = AuthProvider(FlaskInterface)
 def getStaticPath():
-    mainpath = os.path.abspath(__file__)
-    up = os.path.dirname
-    ret = os.path.join(up(up(up(mainpath))), 'static')
-    return ret
+    staticDirectory = os.path.join(os.path.dirname(__file__),"..", "..", "static")
+    return os.path.abspath(staticDirectory)
 
-staticPath=getStaticPath()
+STATIC_PATH=getStaticPath()
 
 @login_manager.user_loader
 def getUser(userid):
     return User.get(userid)
 
-@decorator.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
+@DECORATOR.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
 def login(form):
-    return controller.do_login(form)
+    return CONTROLLER.doLogin(form)
 
-@decorator.interfaceFunc("/ssl_login", methods=["GET"])
+@DECORATOR.interfaceFunc("/ssl_login", methods=["GET"])
 def ssl_login():
-    return controller.do_ssl_login()
+    return CONTROLLER.do_ssl_login()
 
-@decorator.interfaceFunc("/v1/oauth2/auth", methods=["GET"], checkLoginFunction=controller.redirectIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/oauth2/auth", methods=["GET"], checkLoginFunction=CONTROLLER.redirectIfNotLoggedIn)
 def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
-    return AuthProvider().auth_interface()
+    return AUTHPROVIDER.auth_interface()
 
-@decorator.interfaceFunc("/keygen", methods=["POST"], formClass=KeygenForm)
+@DECORATOR.interfaceFunc("/keygen", methods=["POST"], formClass=KeygenForm)
 def keygen(form):
-    return controller.do_keygen(form)
+    return CONTROLLER.do_keygen(form)
 
-@decorator.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm)
+@DECORATOR.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister(form):
-    return controller.do_deregister(form)
+    return CONTROLLER.doDeregister(form)
 
-@decorator.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def deregister_doit(form):
+    return CONTROLLER.doDeregistrationDot(form)
+
+@DECORATOR.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def logout():
-    return controller.do_logout()
+    return CONTROLLER.doLogout()
 
-@decorator.interfaceFunc("/v1/oauth2/token", methods=["POST"])
+@DECORATOR.interfaceFunc("/v1/oauth2/token", methods=["POST"])
 def token():
-    return AuthProvider().token_interface()
+    return AUTHPROVIDER.token_interface()
 
-@decorator.interfaceFunc("/v1/users/<userid>", methods=["GET"],
-    checkLoginFunction=controller.authenticateUserOrBearer)
+@DECORATOR.interfaceFunc("/v1/users/<userid>", methods=["GET"],
+    checkLoginFunction=CONTROLLER.authenticateUserOrBearer)
 def showUser(userid):
-    return controller.do_show_user(userid)
+    return CONTROLLER.doShowUser(userid)
 
-@decorator.interfaceFunc("/v1/users/me/change_password", methods=["POST"],
-    formClass=PasswordChangeForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/users/me/change_password", methods=["POST"],
+    formClass=PasswordChangeForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def changePassword(form):
-    return controller.do_change_password(form)
+    return CONTROLLER.doChangePassword(form)
 
-@decorator.interfaceFunc("/v1/users/<email>/passwordreset", methods=["GET"])
+@DECORATOR.interfaceFunc("/v1/users/<email>/passwordreset", methods=["GET"])
 def sendPasswordResetEmail(email):
-    return controller.do_send_password_reset_email(email)
+    return CONTROLLER.do_send_password_reset_email(email)
 
-@decorator.interfaceFunc("/v1/users/me/update_hash", methods=["POST"],
-    formClass=DigestUpdateForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/users/me/update_hash", methods=["POST"],
+    formClass=DigestUpdateForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def updateHash(form):
-    return controller.do_update_hash(form)
+    return CONTROLLER.doUpdateHash(form)
 
-@decorator.interfaceFunc("/v1/password_reset", methods=["POST"],
+@DECORATOR.interfaceFunc("/v1/password_reset", methods=["POST"],
     formClass=PasswordResetForm)
 def passwordReset(form):
-    return controller.do_password_reset(form)
+    return CONTROLLER.doPasswordReset(form)
 
-@decorator.interfaceFunc("/v1/register", methods=["POST"],
+@DECORATOR.interfaceFunc("/v1/register", methods=["POST"],
     formClass=RegistrationForm)
 def register(form):
-    return controller.do_registration(form)
+    return CONTROLLER.doRegistration(form)
 
-@decorator.interfaceFunc("/v1/verify_email/<token>", methods=["GET"])
-def verifyEmail(token):
-    return controller.do_verify_email(token)
+@DECORATOR.interfaceFunc("/v1/verify_email/<emailToken>", methods=["GET"])
+def verifyEmail(emailToken):
+    return CONTROLLER.doverifyEmail(emailToken)
 
-@decorator.interfaceFunc("/v1/user_by_email/<email>", methods=["GET"],
-    checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/user_by_email/<email>", methods=["GET"],
+    checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def get_by_email(email):
-    return controller.do_get_by_email(email)
+    return CONTROLLER.doGetByEmail(email)
 
-@decorator.interfaceFunc("/v1/add_assurance", methods=["POST"],
-    formClass=AssuranceForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/add_assurance", methods=["POST"],
+    formClass=AssuranceForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def add_assurance(form):
-    return controller.do_add_assurance(form)
+    return CONTROLLER.doAddAssurance(form)
 
-@decorator.interfaceFunc("/v1/add_credential", methods=["POST"],
-    formClass=CredentialForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/add_credential", methods=["POST"],
+    formClass=CredentialForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def add_credential(form):
-    return controller.do_add_credential(form)
+    return CONTROLLER.doAddCredential(form)
 
-@decorator.interfaceFunc("/v1/remove_credential", methods=["POST"],
-    formClass=CredentialIdentifierForm, checkLoginFunction=controller.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/remove_credential", methods=["POST"],
+    formClass=CredentialIdentifierForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def remove_credential(form):
-    return controller.do_remove_credential(form)
+    return CONTROLLER.doRemoveCredential(form)
 
-@decorator.interfaceFunc("/uris", methods=["GET"])
+@DECORATOR.interfaceFunc("/uris", methods=["GET"])
 def uriservice():
-    return controller.do_uris()
+    return CONTROLLER.doUris()
 
-@decorator.interfaceFunc("/static/<path:path>", methods=["GET"])
+@DECORATOR.interfaceFunc("/static/<path:path>", methods=["GET"])
 def send_static(path):
-    return send_from_directory(staticPath, path)
+    return send_from_directory(STATIC_PATH, path)

@@ -30,10 +30,10 @@ class KeygenTest(IntegrationTest, UserTesting):
 
     def setUp(self):
         self.setupUserCreationData()
-        self.certemail=self.usercreation_email
+        self.certemail=self.userCreationEmail
         self.data = dict(
             pubkey=spkac,
-            email=self.usercreation_email
+            email=self.userCreationEmail
         )
         self.headers = {
             "Content-Type":"application/x-www-form-urlencoded"}
@@ -53,7 +53,7 @@ class KeygenTest(IntegrationTest, UserTesting):
             self.assertEquals(resp.status_code, 200)
             cert = self.getResponseText(resp)
             identifier, cn = self._getCertId(cert)
-            self.assertEqual(self.usercreation_email,cn)
+            self.assertEqual(self.userCreationEmail,cn)
             cred = Credential.get("certificate", identifier)
             cred.rm()
 
@@ -67,15 +67,15 @@ class KeygenTest(IntegrationTest, UserTesting):
             identifier, cn = self._getCertId(cert)  # @UnusedVariable
             cred = Credential.get("certificate", identifier)
             self.assertTrue(cred)
-            self.assertEqual(cred.user.email, self.usercreation_email)
-            self.assertTrue(self.usercreation_email != cn)
+            self.assertEqual(cred.user.email, self.userCreationEmail)
+            self.assertTrue(self.userCreationEmail != cn)
             self.deleteUser(cred.user)
 
     @test
     def if_createUser_is_set__a_new_user_is_created_with_the_cert_and_logged_in(self):
         with app.test_client() as c:
             self.data['createUser']=True
-            self.assertEqual(None, User.getByEmail(self.usercreation_email))
+            self.assertEqual(None, User.getByEmail(self.userCreationEmail))
             resp = c.post("/keygen", data=self.data, headers=self.headers)
             self.assertEquals(resp.status_code, 200)
             cert = self.getResponseText(resp)
@@ -84,7 +84,7 @@ class KeygenTest(IntegrationTest, UserTesting):
             self.assertEqual(200, resp2.status_code)
             cred = Credential.get("certificate", identifier)
             self.assertTrue(cred)
-            self.assertEquals(cred.user.email, self.usercreation_email)
+            self.assertEquals(cred.user.email, self.userCreationEmail)
             self.deleteUser(cred.user)
 
     @test
@@ -98,6 +98,6 @@ class KeygenTest(IntegrationTest, UserTesting):
             identifier, cn = self._getCertId(cert)  # @UnusedVariable
             cred = Credential.get("certificate", identifier)
             self.assertTrue(cred)
-            self.assertEqual(cred.user.email, self.usercreation_email)
-            self.assertTrue(self.usercreation_email != cn)
+            self.assertEqual(cred.user.email, self.userCreationEmail)
+            self.assertTrue(self.userCreationEmail != cn)
             self.deleteUser(cred.user)

@@ -13,7 +13,7 @@ class EndUserObtainingHashTest(EndUserTesting):
         if (config.skipSlowTests):
             return
         driver = self.driver
-        driver.get(self.base_url+"/static/login.html?next=/v1/users/me")
+        driver.get(self.baseUrl+"/static/login.html?next=/v1/users/me")
         driver.find_element_by_id("RegistrationForm_predigest_input").clear()
         driver.find_element_by_id("RegistrationForm_predigest_input").send_keys("11111111110")
         driver.find_element_by_id("RegistrationForm_getDigestButton").click()
@@ -23,7 +23,7 @@ class EndUserObtainingHashTest(EndUserTesting):
         self.assertEqual(digest,config.testSignatureAllOne)
         time.sleep(59)
         driver = self.driver
-        driver.get(self.base_url+"/static/login.html?next=/v1/users/me")
+        driver.get(self.baseUrl+"/static/login.html?next=/v1/users/me")
         driver.find_element_by_id("AddAssuranceForm_predigest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_predigest_input").send_keys("22222222220")
         driver.find_element_by_id("AddAssuranceForm_getDigestButton").click()

@@ -1,20 +1,15 @@
 	      body, html {
-	          height: 2000px;
 	          margin: 0;
 	          -webkit-font-smoothing: antialiased;
 	          font-weight: 100;
 	      }
 	      
-	      .tabs input[type=radio] {
-	          position: absolute;
-	          top: -9999px;
-	          left: -9999px;
-	      }
+
 	      .tabs {
 	        width: 800px;
 	        float: none;
 	        list-style: none;
-	        position: relative;
+
 	        padding: 0;
 	        margin: 75px auto;
 	      }
@@ -24,7 +19,7 @@
 	        width: 800px;
 	        float: none;
 	        list-style: none;
-	        position: relative;
+
 	        padding: 0;
 	        margin: 75px auto;
 
@@ -47,50 +42,9 @@
 		  padding 5px;
 		  }
 		  
-	      .tabs li{
-	        float: left;
-	      }
-		  
-		  .tab-content li {
-			float: none;
-			}
-		  
-	      .tabs label {
-	          display: block;
-	          padding: 10px 20px;
-	          border-radius: 2px 2px 0 0;
-	          color: #08C;
-	          font-size: 24px;
-	          font-weight: normal;
-	          font-family: 'Roboto', helveti;
-	          background: rgba(255,255,255,0.2);
-	          cursor: pointer;
-	          position: relative;
-	          top: 3px;
-	          -webkit-transition: all 0.2s ease-in-out;
-	          -moz-transition: all 0.2s ease-in-out;
-	          -o-transition: all 0.2s ease-in-out;
-	          transition: all 0.2s ease-in-out;
-	      }
-	      .tabs label:hover {
-	        background: rgba(255,255,200,0.5);
-	        top: 0;
-	      }
-	      
-	      [id^=tab]:checked + label {
-	        background: #08C;
-	        color: white;
-	        top: 0;
-	      }
-	      
-	      [id^=tab]:checked ~ [id^=tab-content] {
-	          display: block;
-			  visibility: visible;
-	      }
 	      .tab-content {
 	        z-index: 2;
-			visibility: hidden;
-/*	        display: none; */
+	        display: none; 
 	        text-align: left;
 	        width: 100%;
 	        font-size: 20px;
@@ -99,14 +53,12 @@
 	        background: #08C;
 	        padding: 15px;
 	        color: white;
-	        position: absolute;
-	        top: 53px;
-	        left: 0;
 	        box-sizing: border-box;
 	        -webkit-animation-duration: 0.5s;
 	        -o-animation-duration: 0.5s;
 	        -moz-animation-duration: 0.5s;
 	        animation-duration: 0.5s;
+			clear: both;
 	      }
 		  a.link {color: orange;}
 		  p.note {font-size: 0.8em; line-height: 1.2em; margin: 5px 0px; }
@@ -120,7 +72,17 @@
 			padding: 0px 10px;
 			text-align: center;
 			}
-		p.succes {
+		p.message {
+			font-size: 0.8em;
+			color: black;
+			margin: 5px 0px;
+			background-color: white;
+			opacity: .8;
+			border-radius: 5px;
+			padding: 0px 10px;
+			text-align: center;
+			}
+		p.success {
 			font-size: 0.8em;
 			color: green;
 			margin: 5px 0px;
@@ -154,10 +116,117 @@
 			color: white;
 			width: 100%;	
 		  }
-		  .button, textarea.digest{width: 100%; white-space: normal; height:100%}
+		textarea.digest{width: 100%; white-space: normal;height: 85;}
 		table.content_{
 			font-size: 16px;
 			color: black;
 			width: 100%;	
 		  }
+	.button, .pbutton{
+		background: #CCE7F5;
+		border-radius: 5px;
+		padding: 5px 5px;
+		display: block;
+		font-family: arial;
+		font-weight: bold;
+		color:#333;
+		text-decoration: none;
+		text-shadow:0px 1px 0px #fff;
+		border: 1px solid #ACB7D5;
+		margin; 5px;
+		-webkit-transition:box-shadow 0.2s;
+	}
+	.button:hover, .pbutton:hover{
+		box-shadow: 0px 2px 1px white inset, 0px -2px 10px white, 0px 2px 5px rgba(0, 0, 0, 0.1), 0px 8px 10px rgba(0, 0, 0, 0.1);
+	}
+	.button:active, .pbutton:active{
+		box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5) inset, 0px -2px 10px white, 0px 1px 5px rgba(0, 0, 0, 0.1), 0px 2px 10px rgba(0, 0, 0, 0.1);
+		background:-webkit-linear-gradient(top, #d1d1d1 0%,#ECECEC 100%);
+	}
+	.button{
+		width: 100%;
+		white-space: normal;
+		height:100%;}
+	
+    .black_overlay{
+        display: none;
+        position: fixed;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index:1001;
+        -moz-opacity: 0.8;
+        opacity: 1;
+        filter: alpha(opacity=100);
+        transition: opacity 1s ease-in-out;
+    }
+    .popup {
+        position: static;
+		margin: auto;
+        padding: 16px;
+        border: 1px solid #aaa;
+		border-radius: 10px;
+        background-color: #CCE7F5;
+        z-index:1002;
+        overflow: auto;
+	    font-size: 20px;
+	    line-height: 140%;
+		display: block;
+  		}
+    .popup-frame {
+        display: none;
+        position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		margin: auto;
+        z-index:1003;
+  		}
+		
+	div.menu-bar
+		  {
+	        width: 800px;
+	        float: none;
+	        list-style: none;
+	        padding: 0;
+	        margin: 10px auto;
+		  }
+
+	div.menu-bar a {
+			float: left;
+			display: inline-block;
+	          padding: 10px 20px;
+	          border-radius: 5px 5px 0 0;
+	          color: #08C;
+	          font-size: 24px;
+	          font-weight: normal;
+	          font-family: 'Roboto', helveti;
+	          background: rgba(255,255,255,0.2);
+	          cursor: pointer;
+	          top: 3px;
+	          -webkit-transition: all 0.2s ease-in-out;
+	          -moz-transition: all 0.2s ease-in-out;
+	          -o-transition: all 0.2s ease-in-out;
+	          transition: all 0.2s ease-in-out;
+	    }
+	div.menu-bar a:hover {
+	        background: rgba(255,255,200,0.5);
+	        top: 0;
+	      }
+		  
+	div.menu-bar a.active-menu  {
+	        background: #08C;
+	        color: white;
+	      }		
+	div.tab-container {
+		clear: both;
+		width: 800px;
+	    float: none;
+	    list-style: none;
+	    padding: 0;
+	    margin: 10px auto;
+		}
 		

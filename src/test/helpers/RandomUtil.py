@@ -4,15 +4,16 @@ import string
 class RandomUtil(object):
 
     def mkRandomString(self, length):
-        return ''.join(random.choice(string.ascii_letters) for _ in range(length))
-    
+        return ''.join(
+            random.choice(string.ascii_letters) for _ in range(length))
+
     def mkRandomPassword(self):
         return ''.join((
             random.choice(string.ascii_lowercase) +
             random.choice(string.ascii_uppercase) +
             random.choice(string.digits)
             ) for _ in range(8))
-    
+
     def setupRandom(self):
         self.randString = self.mkRandomString(6)
 
@@ -29,7 +30,6 @@ class RandomUtil(object):
             userid = self.createRandomUserId()
         if password is None:
             password = "{0}".format(self.mkRandomPassword())
-        self.usercreation_email = email
-        self.usercreation_userid = userid
-        self.usercreation_password = password
-        return userid, password, email
+        self.userCreationEmail = email
+        self.userCreationUserid = userid
+        self.usercreationPassword = password
