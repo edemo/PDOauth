@@ -1,3 +1,4 @@
+#pylint: disable=unused-argument, invalid-name
 from wtforms import validators
 from flask.globals import session
 from wtforms.validators import ValidationError
@@ -11,7 +12,7 @@ def csrfCheck(self, field):
 
 def optional(validator):
     return [validators.Optional()] + validator
-credentialTypes = ['password', 'facebook']
+credentialTypes = ['password', 'facebook', 'certificate']
 credErr = '"credentialType: Invalid value, must be one of: {0}."'.format(", ".join(credentialTypes))
 
 credentialValidator = [validators.AnyOf(values=credentialTypes)]
