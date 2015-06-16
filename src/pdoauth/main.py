@@ -39,7 +39,7 @@ def login(form):
 
 @DECORATOR.interfaceFunc("/ssl_login", methods=["GET"])
 def ssl_login():
-    return CONTROLLER.do_ssl_login()
+    return CONTROLLER.doSslLogin()
 
 @DECORATOR.interfaceFunc("/v1/oauth2/auth", methods=["GET"], checkLoginFunction=CONTROLLER.redirectIfNotLoggedIn)
 def authorization_code():
@@ -48,7 +48,7 @@ def authorization_code():
 
 @DECORATOR.interfaceFunc("/keygen", methods=["POST"], formClass=KeygenForm)
 def keygen(form):
-    return CONTROLLER.do_keygen(form)
+    return CONTROLLER.doKeygen(form)
 
 @DECORATOR.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister(form):

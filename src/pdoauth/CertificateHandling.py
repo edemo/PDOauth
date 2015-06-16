@@ -1,3 +1,4 @@
+#pylint: disable=no-member
 from pdoauth.models.Credential import Credential
 import urlparse
 from pdoauth.ReportedError import ReportedError
@@ -14,9 +15,13 @@ class CertificateHandling(CryptoUtils):
         self.loginUser(cred)
 
     def extractCertFromForm(self, form):
-        email = form.email.data
         spkacInput = form.pubkey.data
-        certObj = self.createCertFromSPKAC(spkacInput, email, email)
+        email = form.email.data
+        if email is not None:
+            commonName = email
+        else:
+            commonName = "someone"
+        certObj = self.createCertFromSPKAC(spkacInput, commonName, email)
         certAsPem = certObj.as_pem()
         return certAsPem, certObj
 
@@ -25,7 +30,7 @@ class CertificateHandling(CryptoUtils):
         resp.headers["Content-Type"] = "application/x-x509-user-cert"
         return resp
 
-    def do_keygen(self, form):
+    def doKeygen(self, form):
         email = form.email.data
         certAsPem, certObj = self.extractCertFromForm(form)
         user = self.getCurrentUser()
@@ -61,7 +66,7 @@ class CertificateHandling(CryptoUtils):
         cred.user.activate()
         return cred
 
-    def do_ssl_login(self):
+    def doSslLogin(self):
         cert = self.getEnvironmentVariable('SSL_CLIENT_CERT')
         email = self.getEmailFromQueryParameters()
         cred = self.loginOrRegisterCertUser(cert, email)
