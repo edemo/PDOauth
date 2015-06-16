@@ -67,18 +67,16 @@ class AuthProvider(AuthorizationProvider,WebInterface):
         keydata.rm()
         
     def auth_interface(self):
-        provider = AuthProvider()
-        response = provider.get_authorization_code_from_uri(self.getRequestUrl())
+        response = self.get_authorization_code_from_uri(self.getRequestUrl())
         flask_res = self.make_response(response.text, response.status_code)
         for k, v in response.headers.iteritems():
             flask_res.headers[k] = v
         return flask_res
 
     def token_interface(self):
-        provider = AuthProvider()
         requestForm = self.getRequestForm()
         data = {k:requestForm[k] for k in requestForm.iterkeys()}
-        response = provider.get_token_from_post_data(data)
+        response = self.get_token_from_post_data(data)
         flask_res = self.make_response(response.text, response.status_code)
         for k, v in response.headers.iteritems():
             flask_res.headers[k] = v

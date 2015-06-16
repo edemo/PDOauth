@@ -1,3 +1,4 @@
+#pylint: disable=unused-import, line-too-long, too-many-arguments
 from integrationtest.helpers.UserTesting import UserTesting
 from twatson.unittest_annotations import Fixture, test  # @UnusedImport
 from end2endtest.helpers.BrowserSetup import BrowserSetup
@@ -6,16 +7,16 @@ from end2endtest import config
 class EndUserTesting(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
         self.setupDriver()
-        self.base_url = config.Config.BASE_URL
+        self.baseUrl = config.Config.BASE_URL
         self.verificationErrors = []
 
     def fillInAndSubmitRegistrationForm(self, driver, email=None, userid=None, password=None, digest=None):
         if email is None:
-            email=self.usercreation_email
+            email=self.userCreationEmail
         if userid is None:
-            userid=self.usercreation_userid
+            userid=self.userCreationUserid
         if password is None:
-            password=self.usercreation_password
+            password=self.usercreationPassword
         if digest is None:
             digest = self.createHash()
         driver.find_element_by_id("RegistrationForm_digest_input").clear()
@@ -28,4 +29,4 @@ class EndUserTesting(Fixture, UserTesting, BrowserSetup):
         driver.find_element_by_id("RegistrationForm_email_input").clear()
         driver.find_element_by_id("RegistrationForm_email_input").send_keys(email)
         driver.find_element_by_id("RegistrationForm_submitButton").click()
-    
+

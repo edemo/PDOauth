@@ -1,11 +1,12 @@
 from pdoauth.ReportedError import ReportedError
 from pdoauth.WebInterface import WebInterface
 import logging
+from pdoauth.Responses import Responses
 
-class Decorators(WebInterface):
-    def __init__(self, app):
+class Decorators(WebInterface, Responses):
+    def __init__(self, app, interface):
         self.app = app
-        WebInterface.__init__(self)
+        WebInterface.__init__(self, interface)
 
     def runInterfaceFunc(self, func, args, kwargs, formClass, status, checkLoginFunction):
         try:
@@ -30,11 +31,11 @@ class Decorators(WebInterface):
         return resp
 
     def interfaceFunc(self, rule, formClass=None, status=400, checkLoginFunction=None, **options):
-        def decorator(func):
+        def DECORATOR(func):
             def validated(*args, **kwargs):
                 return self.runInterfaceFunc(func, args, kwargs, formClass, status, checkLoginFunction)
             validated.func_name = func.func_name
             endpoint = options.pop('endpoint', None)
             self.app.add_url_rule(rule, endpoint, validated, **options)
             return validated
-        return decorator
+        return DECORATOR

@@ -3,7 +3,7 @@ from test.helpers.UserUtil import UserUtil
 
 class AuthenticatedSessionMixin(UserUtil):
     def makeSessionAuthenticated(self):
-        user = self.createUserWithCredentials()
+        user = self.createUserWithCredentials().user
         user.activate()
         user.set_authenticated()
         user.save()

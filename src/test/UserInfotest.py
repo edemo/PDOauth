@@ -59,13 +59,17 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil):
         data = self.fromJson(resp)
         self.assertEquals(data['hash'],current_user.hash)
 
-    @test
-    def users_with_assurer_assurance_can_get_email_and_digest_for_anyone(self):
+    def _createAssurer(self):
         current_user = self.controller.getCurrentUser()
         Assurance.new(current_user, 'assurer', current_user)
-        targetuser=self.createUserWithCredentials()
+        return current_user
+
+    @test
+    def users_with_assurer_assurance_can_get_email_and_digest_for_anyone(self):
+        current_user = self._createAssurer()
+        targetuser=self.createUserWithCredentials().user
         Assurance.new(targetuser,'test',current_user)
-        target = User.getByEmail(self.usercreation_email)
+        target = User.getByEmail(self.userCreationEmail)
         resp = self.showUserByCurrentUser(target.userid)
         data = self.fromJson(resp)
         assurances = data['assurances']
@@ -74,48 +78,37 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil):
     @test
     def users_without_assurer_assurance_cannot_get_email_and_digest_for_anyone(self):
         current_user = self.controller.getCurrentUser()
-        targetuser=self.createUserWithCredentials()
+        targetuser=self.createUserWithCredentials().user
         Assurance.new(targetuser,'test',current_user)
-        target = User.getByEmail(self.usercreation_email)
+        target = User.getByEmail(self.userCreationEmail)
         with self.assertRaises(ReportedError) as e:
             self.showUserByCurrentUser(target.userid)
         self.assertTrue(e.exception.status,403)
 
     @test
     def users_with_assurer_assurance_can_get_user_by_email(self):
-        current_user = self.controller.getCurrentUser()
-        Assurance.new(current_user, 'assurer', current_user)
+        self._createAssurer()
         self.setupRandom()
         self.createUserWithCredentials()
-        target = User.getByEmail(self.usercreation_email)
-        resp = self.controller.do_get_by_email(target.email)
+        target = User.getByEmail(self.userCreationEmail)
+        resp = self.controller.doGetByEmail(target.email)
         self.assertUserResponse(resp)
 
     @test
     def no_by_email_with_wrong_email(self):
-        current_user = self.controller.getCurrentUser()
-        Assurance.new(current_user, 'assurer', current_user)
+        self._createAssurer()
         self.setupRandom()
         self.createUserWithCredentials()
-        target = User.getByEmail(self.usercreation_email)
+        target = User.getByEmail(self.userCreationEmail)
         with self.assertRaises(ReportedError) as e:
-            self.controller.do_get_by_email('u'+target.email)
+            self.controller.doGetByEmail('u'+target.email)
         self.assertTrue(e.exception.status,404)
 
     @test
     def users_without_assurer_assurance_cannot_get_user_by_email(self):
         user = self.createUserWithCredentials()
         self.assertTrue(user is not None)
-        target = User.getByEmail(self.usercreation_email)
+        target = User.getByEmail(self.userCreationEmail)
         with self.assertRaises(ReportedError) as e:
-            self.controller.do_get_by_email(target.email)
+            self.controller.doGetByEmail(target.email)
         self.assertTrue(e.exception.status,403)
-
-    @test
-    def users_without_login_cannot_get_user_by_email(self):
-        self.controller.logOut()
-        self.createUserWithCredentials()
-        target = User.getByEmail(self.usercreation_email)
-        with self.assertRaises(ReportedError) as e:
-            self.controller.do_get_by_email(target.email)
-        self.assertEquals(e.exception.status,403)
