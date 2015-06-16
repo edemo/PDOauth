@@ -23,15 +23,15 @@ class EndUserPasswordResetTest(EndUserTesting):
         resetLink = self.the_reset_link_is_in_the_reset_email()
         driver = self.driver
         driver.get(resetLink)
-        self.switchToTab("account")
-        driver.find_element_by_id("PasswordResetForm_password_input").clear()
+        self.switchToTab("login")
+        driver.find_element_by_id("PasswordResetForm_OnLoginTab_password_input").clear()
         newPassword = self.mkRandomPassword()
-        driver.find_element_by_id("PasswordResetForm_password_input").send_keys(newPassword)
-        driver.find_element_by_id("PasswordResetForm_submitButton").click()
+        driver.find_element_by_id("PasswordResetForm_OnLoginTab_password_input").send_keys(newPassword)
+        driver.find_element_by_id("PasswordResetForm_OnLoginTab_submitButton").click()
         driver.save_screenshot("doc/screenshots/using_password_reset.png")
         time.sleep(1)
-        body = driver.find_element_by_id("message").text
-        self.assertEqual("Password successfully changed", body)
+        body = driver.find_element_by_id("PopupWindow_MessageDiv").text
+        self.assertEqual("message\nPassword successfully changed", body)
     
     def tearDown(self):
         self.driver.quit()

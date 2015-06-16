@@ -102,14 +102,14 @@ function FaceBook(pageScript) {
 		     		if (e != '') {
 		     			email = e;
 		     		} else {
-			     		self.doc.getElementById('message').innerHTML = "please give us an email in the registration form"
+			     		self.pageScript.displayMsg({ title:"Facebook",message:"please give us an email in the registration form" })
 			     		return;
 			     	};
 		     	};
 				self.pageScript.register_with_facebook(response.authResponse.userID, response.authResponse.accessToken, email)
 		    });
 		} else {
-		  self.doc.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
+		  self.pageScript.displayMsg({ title:"Facebook", error:'Facebook login is unsuccessful' })
 		} 
 	}
 	

@@ -1,3 +1,4 @@
+#pylint: disable=star-args, unused-argument
 from pdoauth.app import app
 from test.helpers.UserUtil import UserUtil
 from pdoauth.WebInterface import WebInterface
@@ -7,33 +8,33 @@ from flask import json
 from test.helpers.PDUnitTest import PDUnitTest, test
 
 def testForBothInterfaces(*args,**kwargs):
-    def DECORATOR(func):
-        def f(self):
+    def decorator(func):
+        def decorated(self):
             interface = WebInterface(FlaskInterface)
             with app.test_request_context(*args,**kwargs):
                 func(self, interface)
             fakeInterface = WebInterface(FakeInterface)
             fakeInterface.interface.set_request_context(*args,**kwargs)
             func(self, fakeInterface)
-        f.func_name = func.func_name
-        test(f)
-        return f
-    return DECORATOR
+        decorated.func_name = func.func_name
+        test(decorated)
+        return decorated
+    return decorator
 
 class WebInterfaceTests(PDUnitTest, UserUtil):
 
     @test
-    def WebInterface_initializes_with_the_given_interface(self):
+    def webInterface_initializes_with_the_given_interface(self):
         interface = WebInterface(FlaskInterface)
         self.assertEqual(interface.interface.__class__, FlaskInterface)
         interface = WebInterface(FakeInterface)
         self.assertEqual(interface.interface.__class__, FakeInterface)
-        
+
     @testForBothInterfaces()
     def you_can_getSession(self, interface):
-            session = interface.getSession()
-            session['foo'] = 'bar'
-            self.assertEqual(session['foo'], 'bar')
+        session = interface.getSession()
+        session['foo'] = 'bar'
+        self.assertEqual(session['foo'], 'bar')
 
     @testForBothInterfaces()
     def you_can_getRequest(self, interface):
@@ -60,10 +61,10 @@ class WebInterfaceTests(PDUnitTest, UserUtil):
     def postdata_can_be_put_into_request_context(self, interface):
         request = interface.getRequest()
         self.assertEqual(request.form['foo'], 'foo')
-        
+
     @testForBothInterfaces()
     def facebook_interface_gives_error_for_bad_code(self, interface):
-        interface.interface.access_token = 'notjunk'
+        interface.interface.accessToken = 'notjunk'
         resp = interface.facebookMe('junk')
         self.assertEquals(resp.status, 400)
         self.assertEquals(resp.data, '{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}')
@@ -71,7 +72,7 @@ class WebInterfaceTests(PDUnitTest, UserUtil):
     @test
     def fake_facebookMe_returns_okay_if_interface_access_token_equals_code(self):
         interface = WebInterface(FakeInterface)
-        interface.interface.access_token = '42'
+        interface.interface.accessToken = '42'
         interface.interface.facebook_id = 'f4c3b00c'
         resp = interface.facebookMe('42')
         respAsJson = json.loads(resp.data)
@@ -81,8 +82,8 @@ class WebInterfaceTests(PDUnitTest, UserUtil):
     @testForBothInterfaces()
     def loginInFramework_returns_true_for_active_user(self, interface):
         cred = self.createUserWithCredentials()
-        r = interface.loginInFramework(cred)
-        self.assertEqual(True, r)
+        response = interface.loginInFramework(cred)
+        self.assertEqual(True, response)
 
     @testForBothInterfaces()
     def response_cookie_can_be_set(self, interface):
@@ -109,7 +110,7 @@ class WebInterfaceTests(PDUnitTest, UserUtil):
         response.set_cookie('csrf', '42', path="/foo")
         cookieparts = self.getCookieParts(response)
         self.assertEqual(cookieparts['Path'], '/foo')
-    
+
     @testForBothInterfaces()
     def returnUserAndLoginCookie_sets_csrf_cookie(self, interface):
         cred = self.createLoggedInUser()

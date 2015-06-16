@@ -130,7 +130,7 @@ class FakeInterface(object):
         return FakeResponse(message,status)
 
     def facebookMe(self, code):
-        if self.access_token == code:
+        if self.accessToken == code:
             data = dict(id=self.facebook_id)
             return FakeResponse(json.dumps(data), 200)
         #pylint: disable=line-too-long
