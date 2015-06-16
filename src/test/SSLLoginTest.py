@@ -78,7 +78,7 @@ class SslLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
     @test
     def you_cannot_login_without_a_cert(self):
         self.assertReportedError(
-            self.controller.do_ssl_login, [], 403, ["No certificate given"])
+            self.controller.doSslLogin, [], 403, ["No certificate given"])
 
     @test
     def empty_certstring_gives_error(self):

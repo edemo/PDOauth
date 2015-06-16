@@ -7,6 +7,7 @@ from pdoauth.forms import credErr
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.CSRFMixin import CSRFMixin
+from test.helpers.CryptoTestUtil import SPKAC
 
 class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
     def setUp(self):
@@ -234,6 +235,22 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             }
             client.post(config.BASE_URL + "/v1/remove_credential", data=data)
             self.assertFalse(Credential.get("facebook", credId))
+
+    @test
+    def you_can_delete_certificate_credential(self):
+        with app.test_client() as client:
+            self.login(client)
+            user = User.getByEmail(self.userCreationEmail)
+            data = dict(email=self.userCreationEmail, pubkey=SPKAC)
+            client.post(config.BASE_URL + "/keygen", data=data)
+            certCredential = Credential.getByUser(user, 'certificate')
+            data = {
+                "csrf_token": self.getCSRF(client),
+                "credentialType": "certificate",
+                "identifier": certCredential.identifier,
+            }
+            client.post(config.BASE_URL + "/v1/remove_credential", data=data)
+            self.assertFalse(Credential.get("certificate", certCredential.identifier))
 
     @test
     def you_should_give_the_credentialType_for_credential_deletion(self):

@@ -3,16 +3,17 @@ from test.helpers.FakeInterFace import FakeForm
 from Crypto.Hash.SHA256 import SHA256Hash
 from pdoauth.models.Credential import Credential
 from test.helpers.UserUtil import UserUtil
+from test.helpers.CryptoTestUtil import CryptoTestUtil
 
-class CredentialTest(PDUnitTest, UserUtil):
+class CredentialTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
     def setUp(self):
-        self.user = self.createUserWithCredentials()
+        self.createUserWithCredentials()
         self.cred=Credential.get('password', self.userCreationUserid)
         PDUnitTest.setUp(self)
-        
+
     @test
-    def Credential_representation_is_readable(self):
+    def credential_representation_is_readable(self):
         secretdigest=SHA256Hash(self.usercreationPassword).hexdigest()
         representation = "Credential(user={0},credentialType=password,identifier={2},secret={1})".format(
             self.userCreationEmail,
@@ -53,8 +54,8 @@ class CredentialTest(PDUnitTest, UserUtil):
         self.controller.loginInFramework(self.cred)
         user = self.cred.user
         Credential.new(user, "facebook", myUserid, "testsecret")
-        data = {"credentialType":"facebook", 
-            "identifier":myUserid}
+        data = {"credentialType": "facebook",
+            "identifier": myUserid}
         self.assertTrue(Credential.get("facebook", myUserid))
         resp = self.controller.doRemoveCredential(FakeForm(data))
         return resp
@@ -94,3 +95,27 @@ class CredentialTest(PDUnitTest, UserUtil):
         })
         self.assertReportedError(self.controller.doRemoveCredential,[form], 400, ["You cannot delete the login you are using"])
         self.assertTrue(Credential.get("password", self.userCreationUserid))
+
+    def _loginAndAddCertCredential(self, email):
+        self.controller.loginInFramework(self.cred)
+        user = self.cred.user
+        cred = self.addCertCredential(email, user)
+        return cred
+
+    @test
+    def certificate_credential_can_be_added_by_a_logged_in_user_without_email(self):
+        cred = self._loginAndAddCertCredential(None)
+        self.assertEquals(cred.user, self.cred.user)
+
+    @test
+    def certificate_credential_can_be_added_by_a_logged_in_user_with_email(self):
+        cred = self._loginAndAddCertCredential(self.userCreationEmail)
+        self.assertEquals(cred.user, self.cred.user)
+
+    @test
+    def certificate_credential_can_removed(self):
+        cred = self._loginAndAddCertCredential(self.userCreationEmail)
+        form = FakeForm(dict(credentialType=cred.credentialType, identifier=cred.identifier))
+        self.assertTrue(Credential.getByUser(self.cred.user, 'certificate'))
+        self.controller.doRemoveCredential(form)
+        self.assertFalse(Credential.getByUser(self.cred.user, 'certificate'))
