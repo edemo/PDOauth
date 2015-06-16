@@ -44,8 +44,8 @@ function xmlFor(text) {
 	return xmlDoc;
 }
 
-assert_IsPopupShown = function( assert ) { assert.ok(document.getElementById("popup").style.display=="flex", "popup div is shown"); }
-assert_IsPopupHidden = function( assert ) { assert.ok(document.getElementById("popup").style.display!="flex", "popup div is hidden"); }
+assert_IsPopupShown = function( assert ) { assert.ok(document.getElementById("popup").style.display=="flex", "popup div should be shown"); }
+assert_IsPopupHidden = function( assert ) { assert.ok(document.getElementById("popup").style.display!="flex", "popup div should be hidden"); }
 
 QUnit.module( "AJAX" ); 
 QUnit.test( "ajaxpost can be mocked", function( assert ) {
@@ -121,64 +121,68 @@ QUnit.test( "assurances, email and userid are returned in success property", fun
 // displayMsg(msg={})
 
 QUnit.module( "displayMsg()" ); 
-QUnit.test( "with displayMsg the popup div apears", function( assert ) {
+QUnit.test( "the 'popup' div should be appeared", function( assert ) {
 	pageScript = new PageScript(true)
 	assert_IsPopupHidden( assert );
 	pageScript.displayMsg({title: "hello world"});
 	assert_IsPopupShown( assert );
 });
 
-QUnit.test( "with displayMsg string in message property is shown in the PopupWindow_MessageDiv element", function( assert ) {
+QUnit.test( "the strings comes with 'error', 'succes', 'title' and 'messege' property of the input object should be shown in their dedicated div element", function( assert ) {
 	pageScript = new PageScript(true)
-	pageScript.displayMsg({message: "hello world"})
-	assert.equal(document.getElementById("PopupWindow_MessageDiv").innerHTML,"<p class=\"message\">hello world</p>");
-});
+	msg={ 
+		message: "hello world",
+		error: "hello world",
+		success: "hello world",
+		title: "hello world"
+		}
+	message_div_content="<p class=\"message\">hello world</p>"
+	error_div_content="<p class=\"warning\">hello world</p>"
+	success_div_content="<p class=\"success\">hello world</p>"
+	title_div_content="<h2>hello world</h2>"
+	
+	pageScript.displayMsg(msg)
+	assert.equal(document.getElementById("PopupWindow_MessageDiv").innerHTML, message_div_content, "string in message property should be shown in the PopupWindow_MessageDiv element");
+	assert.equal(document.getElementById("PopupWindow_ErrorDiv").innerHTML,error_div_content, "string in error property should be shown in the PopupWindow_ErrorDiv element");	
+	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML,success_div_content, "string in success property should be shown in the PopupWindow_SuccessDiv element");	
+	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, title_div_content, "string in title property should be shown in the PopupWindow_TitleDiv element");		
+	});
 
-QUnit.test( "with displayMsg string in error property is shown in the PopupWindow_ErrorDiv element", function( assert ) {
-	pageScript = new PageScript(true)
-	pageScript.displayMsg({error: "hello world"})
-	assert.equal(document.getElementById("PopupWindow_ErrorDiv").innerHTML,"<p class=\"warning\">hello world</p>");	
-});
 
-QUnit.test( "with displayMsg string in success property is shown in the PopupWindow_SuccessDiv element", function( assert ) {
+QUnit.test( "the callback function should be injected into the PopupWindow_CloseButton button onclick propoerty", function( assert ) {
 	pageScript = new PageScript(true)
-	pageScript.displayMsg({success: "hello world"})
-	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\">hello world</p>");	
-});
-
-QUnit.test( "with displayMsg string in title property is shown in the PopupWindow_TitleDiv element", function( assert ) {
-	pageScript = new PageScript(true)
-	pageScript.displayMsg({title: "hello world"})
-	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "<h2>hello world</h2>");	
+	callback = function() { return "world hello" } 
+	msg={ 
+			title: "hello world", 
+			callback: callback
+		}
+	button_function = function() { pageScript.closePopup(callback) }
+	
+	pageScript.displayMsg( msg )
+	assert_IsPopupShown( assert );
+	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "<h2>hello world</h2>", "the popup window's title div should get its value");
+	assert.equal(document.getElementById("PopupWindow_CloseButton").onclick.toString, button_function.toString, "the onclick property should get the function")
 });
 
 // closePopup(callback=function(){})
 
 QUnit.module( "closePopup()" ); 
-QUnit.test( "the popup div hides and a callback function is calling", function( assert ) {
+QUnit.test( "the popup div should hide, erase its child divs and the callback function should be callable", function( assert ) {
 	pageScript = new PageScript(true)
-	assert_IsPopupShown( assert );
-	pageScript.closePopup( function () {
-		document.getElementById("PopupWindow_TitleDiv").innerHTML="hello popup"
-	})
+	pageScript.assert = assert
+	callback = function () { pageScript.assert.ok( true, "should true if callback is called" )}
+	document.getElementById("PopupWindow_TitleDiv").innerHTML='valami'
+	document.getElementById("PopupWindow_SuccessDiv").innerHTML='valami'
+	document.getElementById("PopupWindow_ErrorDiv").innerHTML='valami'
+	document.getElementById("PopupWindow_MessageDiv").innerHTML='valami'
+	
+	assert.expect( 6 )
+	pageScript.closePopup( callback )
 	assert_IsPopupHidden( assert )
-	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "hello popup");
-});
-
-QUnit.test( "with displayMsg a callback function is injected into the PopupWindow_CloseButton button onclick propoerty", function( assert ) {
-	pageScript = new PageScript(true)
-	pageScript.displayMsg( 
-		{ 
-			title: "hello world", 
-			callback: function() {
-				document.getElementById("PopupWindow_TitleDiv").innerHTML="world hello"
-			} 
-		} )
-	assert_IsPopupShown( assert );
-	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "<h2>hello world</h2>");
-	document.getElementById("PopupWindow_CloseButton").onclick()
-	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "world hello");
-	assert_IsPopupHidden( assert )
+	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "", "the 'PopupWindow_TitleDiv' should be empty");
+	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "", "the 'PopupWindow_SuccessDiv' should be empty");
+	assert.equal(document.getElementById("PopupWindow_MessageDiv").innerHTML, "", "the 'PopupWindow_MessageDiv' should be empty");
+	assert.equal(document.getElementById("PopupWindow_ErrorDiv").innerHTML, "", "the 'PopupWindow_ErrorDiv' should be empty");
 });
 
 // parseUserdata( userdata_object )
@@ -238,8 +242,12 @@ QUnit.test( "passwordReset calls /v1/password_reset with secret and password", f
 	assert.equal(pageScript.method, "POST");
 });
 
+// InitiatePasswordReset(formName)
+QUnit.module( "InitiatePasswordReset()" ); 
+
 // login()
 
+QUnit.module( "login()" ); 
 QUnit.test( "login calls /login with password as credential type, username and password", function( assert ) {
 	document.getElementById("LoginForm_username_input").value = "theuser"
 	document.getElementById("LoginForm_password_input").value = "thepassword"
@@ -255,6 +263,7 @@ QUnit.test( "login calls /login with password as credential type, username and p
 
 // login_with_facebook
 
+QUnit.module( "login_with_facebook()" ); 
 QUnit.test( "login_with_facebook calls /login with facebook as credential type, userid and access token", function( assert ) {
 	pageScript = new PageScript(true)
 	pageScript.ajaxBase = ajaxBase
@@ -266,6 +275,9 @@ QUnit.test( "login_with_facebook calls /login with facebook as credential type, 
 	assert.equal(pageScript.method, "POST");
 });
 
+// byEmail
+
+QUnit.module( "byEmail()" ); 
 QUnit.test( "byEmail calls /v1/user_by_email/[email address]", function( assert ) {
 	document.getElementById("ByEmailForm_email_input").value = "email@address.com"
 	pageScript = new PageScript(true)
@@ -277,6 +289,25 @@ QUnit.test( "byEmail calls /v1/user_by_email/[email address]", function( assert 
 	assert.equal(pageScript.method, "GET");
 });
 
+// logoutCallback()
+
+QUnit.module( "logoutCallback()" ); 
+
+// logout()
+
+QUnit.module( "logout()" ); 
+
+// uriCallback()
+
+QUnit.module( "uriCallback()" ); 
+
+// sslLogin()
+
+QUnit.module( "sslLogin()" ); 
+
+// register
+
+QUnit.module( "register()" ); 
 QUnit.test( "register calls /v1/register with all the data needed for registration", function( assert ) {
 	document.getElementById("RegistrationForm_credentialType_input").value = "password";
 	document.getElementById("RegistrationForm_identifier_input").value = "identifier";
@@ -293,6 +324,13 @@ QUnit.test( "register calls /v1/register with all the data needed for registrati
 	assert.equal(pageScript.method, "POST");
 });
 
+// add_facebook_credential()
+
+QUnit.module( "add_facebook_credential()" ); 
+
+// register_with_facebook
+
+QUnit.module( "register_with_facebook()" ); 
 QUnit.test( "register_with_facebook calls /v1/register with all the data needed for facebook registration", function( assert ) {
 	pageScript = new PageScript(true)
 	pageScript.ajaxBase = ajaxBase
@@ -304,6 +342,9 @@ QUnit.test( "register_with_facebook calls /v1/register with all the data needed 
 	assert.equal(pageScript.method, "POST");
 });
 
+// getCookie
+
+QUnit.module( "getCookie()" ); 
 QUnit.test( "getCookie extracts the named cookie", function( assert ) {
 	pageScript = new PageScript(true)
 	document.cookie = "csrf=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef"
@@ -311,6 +352,9 @@ QUnit.test( "getCookie extracts the named cookie", function( assert ) {
 	assert.equal(cookie, "64b0d60d-0d6f-4c47-80d5-1a698f67d2ef");
 });
 
+// addAssurance
+
+QUnit.module( "addAssurance()" ); 
 QUnit.test( "addAssurance calls /v1/add_assurance with digest,assurance and email", function( assert ) {
 	document.getElementById("AddAssuranceForm_digest_input").value="digest"
 	document.getElementById("AddAssuranceForm_assurance_input").value="assurance"
@@ -327,6 +371,21 @@ QUnit.test( "addAssurance calls /v1/add_assurance with digest,assurance and emai
 	assert.equal(pageScript.method, "POST");
 });
 
+// hashCallback
+
+QUnit.module( "hashCallback()" ); 
+
+// InitiateResendRegistrationEmail
+
+QUnit.module( "InitiateResendRegistrationEmail()" ); 
+
+// changeHash
+
+QUnit.module( "changeHash()" ); 
+
+// digestGetter
+
+QUnit.module( "digestGetter()" ); 
 QUnit.test( "digestGetter puts the result for the predigest input to the digest for the named form", function( assert ) {
 	document.getElementById("AddAssuranceForm_predigest_input").value="xxpredigestxx"
 
@@ -342,8 +401,49 @@ QUnit.test( "digestGetter puts the result for the predigest input to the digest 
 	assert.equal(pageScript.method, "POST");
 });
 
+// changeEmailAddress
+
+QUnit.module( "changeEmailAddress()" ); 
+
+// fill_RemoveCredentialContainer
+
+QUnit.module( "fill_RemoveCredentialContainer()" ); 
+
+// RemoveCredential
+
+QUnit.module( "RemoveCredential()" ); 
+
+// addGoogleCredential()
+
+QUnit.module( "addGoogleCredential()" ); 
+
+// GoogleLogin()
+
+QUnit.module( "GoogleLogin()" ); 
+
+// GoogleRegister()
+
+QUnit.module( "GoogleRegister()" ); 
+
+// TwitterLogin()
+
+QUnit.module( "TwitterLogin()" ); 
+
+// addPassowrdCredential()
+
+QUnit.module( "addPassowrdCredential()" ); 
+
+// addCredential()
+
+QUnit.module( "addCredential()" ); 
+
+// deRegister()
+
+QUnit.module( "deRegister()" ); 
+
 // menuHandler("menuName")
 
+QUnit.module( "menuHandler()" ); 
 QUnit.test( "menuHandler can hide and display the tabs", function( assert ) {
 	document.getElementById("login-menu").style.display="block";
 	pageScript = new PageScript(true)
@@ -367,3 +467,7 @@ QUnit.test( "menuHandler can hide and display the tabs", function( assert ) {
 	assert.equal(pageScript.activeButton.id,"registration-menu");
 	assert.equal(pageScript.activeTab.id,"tab-content-registration");
 });
+
+// main()
+
+QUnit.module( "main()" ); 

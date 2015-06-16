@@ -248,7 +248,6 @@ function PageScript(debug) {
 			console.log("ssl login");
 			self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.initCallback)
 		}		
-		
 	}
 	
 	PageScript.prototype.sslLogin = function() {
@@ -522,11 +521,6 @@ function PageScript(debug) {
 			self.menuTab.style.display="block";
 		}
 
-		self.menuDeactivate = function() {
-			self.menuButton.className="";
-			self.menuTab.style.display="none";
-		}
-		
 		self.menuHide = function() {
 			self.menuButton.style.display="none";
 		}
