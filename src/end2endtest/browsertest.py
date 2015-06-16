@@ -22,9 +22,9 @@ class JavaScriptUnitTest(EndUserTesting):
 
         driver.save_screenshot("doc/screenshots/unit_tests.png")
         xml = driver.find_element_by_id("qunit-xml").get_attribute("innerHTML")
-        f = open(xmlpath,"w")
-        f.write(xml)
-        f.close()
+        decorated = open(xmlpath,"w")
+        decorated.write(xml)
+        decorated.close()
         body = driver.find_element_by_id("qunit-testresult").text
         numtests = int(re.search("(\d+) assertions",body).groups()[0])
         failed = int(re.search("(\d+) failed",body).groups()[0])

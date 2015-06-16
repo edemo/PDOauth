@@ -182,7 +182,7 @@ class AuthProviderIntegrationTest(
         params = {
             "response_type": "code",
             "client_id": self.app.name,
-            "redirect_uri": self.app.redirect_uri
+            "redirectUri": self.app.redirect_uri
         }
         baseUrl = app.config.get('BASE_URL')
         uriBase = "/v1/oauth2/auth"

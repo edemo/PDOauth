@@ -18,7 +18,6 @@ class SslAuthTest(EndUserTesting):
         emailField = self.driver.find_element_by_id("KeygenForm_email_input")
         emailField.clear()
         emailField.send_keys(self.userCreationEmail)
-        self.driver.find_element_by_id("KeygenForm_createuser_input").click()
         self.driver.find_element_by_id("KeygenForm_submit").click()
         time.sleep(4)
         user = User.getByEmail(self.userCreationEmail)
@@ -100,14 +99,8 @@ class SslAuthTest(EndUserTesting):
         testUrl = startUrl.replace(baseUrl, sslLoginBaseUrl)
         self.driver.get(testUrl)
         time.sleep(1)
-        self.switchToTab("account")
-        body = self.driver.find_element_by_id(
-            "PasswordResetForm_password_label").text
-        self.assertEqual(body, u'Új jelszó:')
-        self.driver.get(sslLoginBaseUrl + '/ssl_login')
-        time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
-        self.assertEqual('{"errors": ["No certificate given"]}', body)
+        self.assertTrue(u'Bejelentkezési lehetőségek' in body)
 
     @test
     def normal_pages_do_not_ask_for_cert(self):

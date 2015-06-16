@@ -13,11 +13,11 @@ class FacebookTest(PDUnitTest, UserUtil):
         self.cred.user.activate()
         interface = self.controller.interface
         interface.facebook_id = self.userCreationUserid
-        interface.access_token = self.usercreationPassword
+        interface.accessToken = self.usercreationPassword
         data = {
                 'credentialType': 'facebook',
                 'identifier': interface.facebook_id,
-                'secret': interface.access_token
+                'secret': interface.accessToken
         }
         self.form = FakeForm(data)
 
