@@ -31,11 +31,11 @@ class Decorators(WebInterface, Responses):
         return resp
 
     def interfaceFunc(self, rule, formClass=None, status=400, checkLoginFunction=None, **options):
-        def decorator(func):
+        def DECORATOR(func):
             def validated(*args, **kwargs):
                 return self.runInterfaceFunc(func, args, kwargs, formClass, status, checkLoginFunction)
             validated.func_name = func.func_name
             endpoint = options.pop('endpoint', None)
             self.app.add_url_rule(rule, endpoint, validated, **options)
             return validated
-        return decorator
+        return DECORATOR

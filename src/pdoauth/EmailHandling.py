@@ -1,3 +1,4 @@
+#pylint: disable=no-member
 from uuid import uuid4
 import time
 from pdoauth.models.Credential import Credential
@@ -11,7 +12,7 @@ class EmailHandling(object):
         uri = "{0}/v1/verify_email/{1}".format(self.getConfig('BASE_URL'),secret)
         text = """Hi, click on <a href="{0}">{0}</a> until {1} to verify your email""".format(uri, timeText)
         self.mail.send_message(subject="verification", body=text, recipients=[user.email], sender=self.getConfig('SERVER_EMAIL_ADDRESS'))
-    
+
     def sendPasswordResetMail(self, user, secret, expiry):
         timeText = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(expiry))
         serverName = self.getConfig('SERVICE_NAME')

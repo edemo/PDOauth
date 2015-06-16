@@ -1,6 +1,6 @@
 from pdoauth.app import app
 from flask_login import logout_user
-import config
+from integrationtest import config
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
@@ -42,7 +42,7 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
         with app.test_client() as c:
             data = self.prepareData()
             data.pop('email')
-            resp = c.post(config.base_url + '/v1/register', data=data)
+            resp = c.post(config.BASE_URL + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertEquals(self.getResponseText(resp),'{"errors": ["email: Invalid email address."]}')
 
@@ -51,7 +51,7 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
         data = self.prepareData()
         data['secret'] = '1234'
         with app.test_client() as c:
-            resp = c.post(config.base_url + '/v1/register', data=data)
+            resp = c.post(config.BASE_URL + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["secret: '))
 
@@ -60,7 +60,7 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
         data = self.prepareData()
         data.pop('credentialType')
         with app.test_client() as c:
-            resp = c.post(config.base_url + '/v1/register', data=data)
+            resp = c.post(config.BASE_URL + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["credentialType: '))
 
@@ -69,7 +69,7 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
         data = self.prepareData()
         data.pop('identifier')
         with app.test_client() as c:
-            resp = c.post(config.base_url + '/v1/register', data=data)
+            resp = c.post(config.BASE_URL + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["identifier: '))

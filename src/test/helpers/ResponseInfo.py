@@ -4,8 +4,8 @@ class ResponseInfo(object):
 
     def getResponseText(self, resp):
         text = ""
-        for i in resp.response:
-            text += i
+        for msgPart in resp.response:
+            text += msgPart
         return text
 
     def printResponse(self, resp):

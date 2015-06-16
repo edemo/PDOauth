@@ -9,7 +9,7 @@ class DeregisterTest(PDUnitTest, UserUtil):
 
     def _doDeregister(self):
         data = dict(csrf_token=self.controller.getCSRF())
-        resp = self.controller.do_deregister(FakeForm(data))
+        resp = self.controller.doDeregister(FakeForm(data))
         return resp
 
     def _assureHaveCredentialsAndAssurances(self, user):
@@ -60,13 +60,13 @@ class DeregisterTest(PDUnitTest, UserUtil):
     @test
     def deregistration_doit_needs_deregistration_secret(self):
         emptyForm = FakeForm(dict(deregister_secret=None))
-        self.assertReportedError(self.controller.do_deregistration_doit, [emptyForm], 400, ["secret is needed for deregistration_doit"])
+        self.assertReportedError(self.controller.doDeregistrationDot, [emptyForm], 400, ["secret is needed for deregistration_doit"])
 
     def _doDeregistrationDoit(self, overwriteSecret=None):
         secret = self._getDeregistrationSecret()
         if overwriteSecret is not None:
             secret = overwriteSecret
-        resp = self.controller.do_deregistration_doit(FakeForm(dict(deregister_secret=secret)))
+        resp = self.controller.doDeregistrationDot(FakeForm(dict(deregister_secret=secret)))
         return resp
 
     @test        
@@ -83,19 +83,19 @@ class DeregisterTest(PDUnitTest, UserUtil):
     @test
     def your_credentials_are_deleted_in_deregistration(self):
         self._doDeregistrationDoit()
-        user = User.getByEmail(self.usercreation_email)
+        user = User.getByEmail(self.userCreationEmail)
         creds = Credential.getByUser(user)
         self.assertTrue(len(creds) == 0)
             
     @test
     def your_assurances_are_deleted_in_deregistration(self):
         self._doDeregistrationDoit()
-        user = User.getByEmail(self.usercreation_email)
+        user = User.getByEmail(self.userCreationEmail)
         assurances = Assurance.getByUser(user)
         self.assertTrue(len(assurances) == 0)
 
     @test
     def your_user_is_deleted_in_deregistration(self):
         self._doDeregistrationDoit()
-        user = User.getByEmail(self.usercreation_email)
+        user = User.getByEmail(self.userCreationEmail)
         self.assertTrue(user is None)

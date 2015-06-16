@@ -1,13 +1,14 @@
+#pylint: disable=no-member
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.app import app
 from pdoauth.FlaskInterface import FlaskInterface
 
 class ServerSide(object):
     def doServerSideRequest(self, code):
-        postData = {'code':code, 
-            'grant_type':'authorization_code', 
-            'client_id':self.appid, 
-            'client_secret':self.appsecret, 
+        postData = {'code':code,
+            'grant_type':'authorization_code',
+            'client_id':self.appid,
+            'client_secret':self.appsecret,
             'redirect_uri':'https://test.app/redirecturi'}
         with app.test_request_context(data = postData):
             resp = AuthProvider(FlaskInterface).token_interface()

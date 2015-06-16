@@ -1,12 +1,13 @@
+# pylint: disable=maybe-no-member
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from pdoauth.models.Application import Application
 from pdoauth.app import app
-import config
+from integrationtest import config
 from test.helpers.RandomUtil import RandomUtil
 
-class IntegrationTest(IntegrationTest, RandomUtil):
+class RedirectionTest(IntegrationTest, RandomUtil):
     @test
-    def Unauthenticated_user_is_redirected_to_login_page_when_tries_to_do_oauth_with_us(self):
+    def unauthenticated_user_is_redirected_to_login_page_when_tries_to_do_oauth_with_us(self):
         redirectUri = 'https://client.example.com/oauth/redirect'
         self.setupRandom()
         appid = "app2-{0}".format(self.randString)
@@ -16,5 +17,5 @@ class IntegrationTest(IntegrationTest, RandomUtil):
         resp = app.test_client().get(uri)
         self.assertEquals(302,resp.status_code)
         self.assertTrue(resp.headers.has_key('Content-Length'))
-        self.assertTrue(resp.headers['Location'].startswith(config.base_url + "/static/login.html"))
+        self.assertTrue(resp.headers['Location'].startswith(config.BASE_URL + "/static/login.html"))
 

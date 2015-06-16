@@ -7,7 +7,7 @@ from test.helpers.PDUnitTest import PDUnitTest, test
 class UriServiceTest(PDUnitTest, ResponseInfo):
 
     def _checkUri(self, checkedUri):
-        resp = self.controller.do_uris()
+        resp = self.controller.doUris()
         self.assertEquals(resp.status_code, 200)
         uris = self.fromJson(resp)
         self.assertTrue(uris[checkedUri] is not None)

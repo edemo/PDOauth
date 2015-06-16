@@ -8,16 +8,16 @@ class CredentialTest(PDUnitTest, UserUtil):
 
     def setUp(self):
         self.user = self.createUserWithCredentials()
-        self.cred=Credential.get('password', self.usercreation_userid)
+        self.cred=Credential.get('password', self.userCreationUserid)
         PDUnitTest.setUp(self)
         
     @test
     def Credential_representation_is_readable(self):
-        secretdigest=SHA256Hash(self.usercreation_password).hexdigest()
+        secretdigest=SHA256Hash(self.usercreationPassword).hexdigest()
         representation = "Credential(user={0},credentialType=password,identifier={2},secret={1})".format(
-            self.usercreation_email,
+            self.userCreationEmail,
             secretdigest,
-            self.usercreation_userid)
+            self.userCreationUserid)
         self.assertEquals("{0}".format(self.cred),representation)
 
     @test
@@ -30,7 +30,7 @@ class CredentialTest(PDUnitTest, UserUtil):
         resp = self._createPasswordCredential()
         self.assertEqual(resp.status_code, 200)
         text = self.getResponseText(resp)
-        self.assertTrue(self.usercreation_userid in text)
+        self.assertTrue(self.userCreationUserid in text)
 
     @test
     def the_credential_is_actually_added(self):
@@ -56,24 +56,24 @@ class CredentialTest(PDUnitTest, UserUtil):
         data = {"credentialType":"facebook", 
             "identifier":myUserid}
         self.assertTrue(Credential.get("facebook", myUserid))
-        resp = self.controller.do_remove_credential(FakeForm(data))
+        resp = self.controller.doRemoveCredential(FakeForm(data))
         return resp
 
     @test
     def password_is_stored_using_sha256_hash(self):
         resp = self._createPasswordCredential()
         self.assertEqual(resp.status_code, 200)
-        cred = Credential.get('password', self.usercreation_userid)
-        self.assertEqual(cred.secret, SHA256Hash(self.usercreation_password).hexdigest())
+        cred = Credential.get('password', self.userCreationUserid)
+        self.assertEqual(cred.secret, SHA256Hash(self.usercreationPassword).hexdigest())
 
 
     def _createPasswordCredential(self, userid=None):
         self.controller.loginInFramework(self.cred)
         self.setupUserCreationData()
         if userid is None:
-            userid = self.usercreation_userid
-        form = FakeForm(dict(credentialType='password', identifier=userid, secret=self.usercreation_password))
-        resp = self.controller.do_add_credential(form)
+            userid = self.userCreationUserid
+        form = FakeForm(dict(credentialType='password', identifier=userid, secret=self.usercreationPassword))
+        resp = self.controller.doAddCredential(form)
         return resp
 
     @test
@@ -87,10 +87,10 @@ class CredentialTest(PDUnitTest, UserUtil):
     def the_credential_used_for_login_cannot_be_cleared(self):
         credential = self.createUserWithCredentials()
         self.controller.loginInFramework(credential)
-        self.assertTrue(Credential.get("password", self.usercreation_userid))
+        self.assertTrue(Credential.get("password", self.userCreationUserid))
         form = FakeForm({
-            "identifier": self.usercreation_userid,
+            "identifier": self.userCreationUserid,
             "credentialType": "password",
         })
-        self.assertReportedError(self.controller.do_remove_credential,[form], 400, ["You cannot delete the login you are using"])
-        self.assertTrue(Credential.get("password", self.usercreation_userid))
+        self.assertReportedError(self.controller.doRemoveCredential,[form], 400, ["You cannot delete the login you are using"])
+        self.assertTrue(Credential.get("password", self.userCreationUserid))

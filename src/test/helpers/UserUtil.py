@@ -1,3 +1,4 @@
+#pylint: disable=no-member
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Credential import Credential
 from test.helpers.ResponseInfo import ResponseInfo
@@ -22,23 +23,27 @@ class UserUtil(ResponseInfo, RandomUtil):
             cookieDict[key.strip()] = value.strip()
         return cookieDict
 
-    def createUserWithCredentials(self, credType='password', userid=None, password=None, email=None):
-        userid, password, email = self.setupUserCreationData(userid, password, email)
-        cred = CredentialManager.create_user_with_creds(credType, userid, password, email)
+    def createUserWithCredentials(self,
+            credType='password', userid=None, password=None, email=None):
+        self.setupUserCreationData(userid, password, email)
+        cred = CredentialManager.create_user_with_creds(
+            credType,
+            self.userCreationUserid,
+            self.usercreationPassword,
+            self.userCreationEmail)
         cred.user.activate()
         return cred
-    
+
     def createLoggedInUser(self):
         self.setupRandom()
         self.cred = self.createUserWithCredentials()
         self.cred.user.authenticated = True
         self.controller.loginInFramework(self.cred)
         return self.cred
-    
+
     def deleteUser(self, user):
         for cred in Credential.getByUser(user):
             cred.rm()
-        
         user.rm()
 
     def assertUserResponse(self, resp):
@@ -49,7 +54,8 @@ class UserUtil(ResponseInfo, RandomUtil):
         self.assertTrue(data.has_key('userid'))
         return data
 
-    def showUserByCurrentUser(self, userid):
-        self.controller.getSession()['auth_user'] =  (self.controller.getCurrentUser().userid, True)
-        resp = self.controller.do_show_user(userid=userid)
+    def showUserByCurrentUser(self, ouserid):
+        userid = self.controller.getCurrentUser().userid
+        self.controller.getSession()['auth_user'] =  (userid, True)
+        resp = self.controller.doShowUser(userid=ouserid)
         return resp

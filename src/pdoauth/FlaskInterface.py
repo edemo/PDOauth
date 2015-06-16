@@ -23,7 +23,7 @@ class FlaskInterface(Responses):
     def make_response(self, ret, status):
         return flask.make_response(ret, status)
 
-    def _facebookMe(self, code):
+    def facebookMe(self, code):
         args = {"access_token":code, 
             "format":"json", 
             "method":"get"}

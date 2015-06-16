@@ -10,24 +10,28 @@ class SslAuthTest(EndUserTesting):
     def setUp(self):
         EndUserTesting.setUp(self)
         self.setupUserCreationData()
- 
+
     def _keygenAndLogin(self):
         self.driver.get(app.config.get("START_URL"))
-        self.driver.execute_script("document.getElementById('tab-content-registration').style.visibility = 'visible'")
-        self.driver.find_element_by_id("KeygenForm_email_input").clear()
-        self.driver.find_element_by_id("KeygenForm_email_input").send_keys(self.usercreation_email)
+        # pylint: disable=line-too-long
+        jsCode = "document.getElementById('tab-content-registration').style.visibility = 'visible'"
+        self.driver.execute_script(jsCode)
+        emailField = self.driver.find_element_by_id("KeygenForm_email_input")
+        emailField.clear()
+        emailField.send_keys(self.userCreationEmail)
         self.driver.find_element_by_id("KeygenForm_createuser_input").click()
         self.driver.find_element_by_id("KeygenForm_submit").click()
         time.sleep(4)
-        user = User.getByEmail(self.usercreation_email)
+        user = User.getByEmail(self.userCreationEmail)
         self.assertTrue(user)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
         time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
-        self.assertTrue('{"credentialType": "certificate", "identifier": ' in body)
-        self.assertTrue('/{0}"}}'.format(self.usercreation_email) in
+        credentialText = '{"credentialType": "certificate", "identifier": '
+        self.assertTrue(credentialText in body)
+        self.assertTrue('/{0}"}}'.format(self.userCreationEmail) in
             body)
 
 
@@ -44,7 +48,6 @@ class SslAuthTest(EndUserTesting):
 
     @test
     def ssl_login_logs_in_if_you_are_registered_and_have_cert(self):
-        identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
         self._keygenAndLogin()
         time.sleep(1)
         self._logoutAfterKeygen()
@@ -59,16 +62,15 @@ class SslAuthTest(EndUserTesting):
         time.sleep(1)
         self.assertEqual(self.driver.find_element_by_id("errorMsg").text, "")
         userData = self.driver.find_element_by_id("me_Msg").text
-        self.assertTrue("{0}".format(self.usercreation_email) in
+        self.assertTrue("{0}".format(self.userCreationEmail) in
                 userData)
         self.deleteCerts()
-        
 
     @test
     def ssl_login_registers_and_logs_in_if_you_have_cert_and_give_email(self):
         self._keygenAndLogin()
         self._logoutAfterKeygen()
-        user = User.getByEmail(self.usercreation_email)
+        user = User.getByEmail(self.userCreationEmail)
         self.deleteUser(user)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login?email=hello@example.com')
@@ -80,7 +82,7 @@ class SslAuthTest(EndUserTesting):
         user = User.getByEmail("hello@example.com")
         self.deleteUser(user)
         self.deleteCerts()
- 
+
     @test
     def no_ssl_login_on_base_url(self):
         self._keygenAndLogin()
@@ -88,14 +90,14 @@ class SslAuthTest(EndUserTesting):
         baseUrl = app.config.get("BASE_URL")
         self.driver.get(baseUrl + '/ssl_login')
         self.driver.get(baseUrl + '/v1/users/me')
-        user = User.getByEmail(self.usercreation_email)
+        user = User.getByEmail(self.userCreationEmail)
         self.deleteUser(user)
         body = self.driver.find_element_by_css_selector("BODY").text
         self.assertEqual('{"errors": ["no authorization"]}', body)
         self.deleteCerts()
 
     @test
-    def SSl_LOGIN_BASE_URL_works_if_no_cert_is_given(self):
+    def the_SSl_LOGIN_BASE_URL_page_works_if_no_cert_is_given(self):
         self.deleteCerts()
         startUrl = app.config.get("START_URL")
         baseUrl = app.config.get("BASE_URL")
@@ -103,7 +105,8 @@ class SslAuthTest(EndUserTesting):
         testUrl = startUrl.replace(baseUrl, sslLoginBaseUrl)
         self.driver.get(testUrl)
         self.switchToTab("account")
-        body = self.driver.find_element_by_id("PasswordResetForm_password_label").text
+        body = self.driver.find_element_by_id(
+            "PasswordResetForm_password_label").text
         self.assertEqual(body, u'Új jelszó:')
         self.driver.get(sslLoginBaseUrl + '/ssl_login')
         time.sleep(1)
@@ -117,7 +120,8 @@ class SslAuthTest(EndUserTesting):
         startUrl = app.config.get("START_URL")
         self.driver.get(startUrl)
         self.switchToTab("account")
-        body = self.driver.find_element_by_id("PasswordResetForm_password_label").text
+        passwordId = "PasswordResetForm_password_label"
+        body = self.driver.find_element_by_id(passwordId).text
         self.assertEqual(body, u'Új jelszó:')
         self.deleteCerts()
 

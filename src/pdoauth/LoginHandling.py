@@ -31,7 +31,7 @@ class LoginHandling(object):
 
     def checkIdAgainstFacebookMe(self, form):
         code = form.secret.data
-        resp = self._facebookMe(code)
+        resp = self.facebookMe(code)
         if 200 != resp.status:
             raise ReportedError(["Cannot login to facebook"], 403)
         data = json.loads(resp.data)

@@ -1,3 +1,4 @@
+#pylint: disable=no-member, invalid-name
 from flask import json
 from test import config
 from flask_login import AnonymousUserMixin
@@ -6,7 +7,10 @@ class FakeMail(object):
     def __init__(self):
         self.outbox = list()
     def send_message(self, subject, body, recipients, sender):
-        self.outbox.append(dict(subject=subject, body=body, recipients=recipients, sender=sender))
+        msg = dict(
+            subject=subject, body=body, recipients=recipients, sender=sender)
+        self.outbox.append(msg)
+
 class FakeApp(object):
     def __init__(self):
         self.config = config.Config()
@@ -32,13 +36,14 @@ class FakeForm(object):
         for key, value in self.__dict__.items():
             values.append("{0}={1}".format(key,value.data))
         return "FakeForm({0})".format(",".join(values))
-class FakeRequest():
+
+class FakeRequest(object):
     def __init__(self):
         self.url='http://localhost/'
         self.environ = dict()
         self.form = dict()
         self.method = 'GET'
-        
+
     def setUrl(self, url):
         self.url = 'http://localhost'+url
     def getUrl(self):
@@ -49,14 +54,14 @@ class FakeRequest():
         return self.environ
     def setForm(self, form):
         self.form = form
-    
+
     def setMethod(self, method):
         self.method = method
 
 class FakeSession(dict):
     pass
 
-class FakeResponse(object):  
+class FakeResponse(object):
     def __init__(self, message, status):
         self.response = message
         self.data = message
@@ -64,7 +69,7 @@ class FakeResponse(object):
         self.status = status
         self.cookies = dict()
         self.headers = dict()
-    
+
     def set_cookie(self,name,value,path="/", domain = None):
         domainpart = ""
         if domain is not None:
@@ -72,23 +77,24 @@ class FakeResponse(object):
         header = "{0}={1}; {3}Path={2}".format(name,value, path, domainpart)
         self.headers['Set-Cookie']=header
 
-class ContextUrlIsAlreadySet(object):
+class ContextUrlIsAlreadySet(Exception):
     pass
 
 
 class FakeInterface(object):
     def __init__(self):
-        self._request = FakeRequest()
-        self._session = FakeSession()
+        self.request = FakeRequest()
+        self.session = FakeSession()
         self.urlSet = False
         self.logOut()
 
     def setEnviron(self, environ):
         if environ is None:
             environ = dict()
-        self._request.setEnviron(environ)
+        self.request.setEnviron(environ)
 
-    def set_request_context(self, url=None, data=None, method = 'GET', environ = None):
+    def set_request_context(self,
+        url=None, data=None, method = 'GET', environ = None):
         request = self.getRequest()
         if url is not None:
             if self.urlSet is False:
@@ -96,15 +102,15 @@ class FakeInterface(object):
                 self.urlSet = True
             else:
                 raise ContextUrlIsAlreadySet()
-        self._request.setForm(data)
-        self._request.setMethod(method)
+        self.request.setForm(data)
+        self.request.setMethod(method)
         self.setEnviron(environ)
 
     def getRequest(self):
-        return self._request
+        return self.request
 
     def getSession(self):
-        return self._session
+        return self.session
 
     def loginUserInFramework(self, user):
         self.current_user = user
@@ -119,11 +125,14 @@ class FakeInterface(object):
 
     def getCurrentUser(self):
         return self.current_user
-    
+
     def make_response(self, message, status):
         return FakeResponse(message,status)
-    
-    def _facebookMe(self, code):
+
+    def facebookMe(self, code):
         if self.access_token == code:
-            return FakeResponse(json.dumps(dict(id=self.facebook_id)), 200)
-        return FakeResponse('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}', 400)
+            data = dict(id=self.facebook_id)
+            return FakeResponse(json.dumps(data), 200)
+        #pylint: disable=line-too-long
+        errMsg = '{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}'
+        return FakeResponse(errMsg, 400)

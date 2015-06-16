@@ -7,7 +7,7 @@ from flask import json
 from test.helpers.PDUnitTest import PDUnitTest, test
 
 def testForBothInterfaces(*args,**kwargs):
-    def decorator(func):
+    def DECORATOR(func):
         def f(self):
             interface = WebInterface(FlaskInterface)
             with app.test_request_context(*args,**kwargs):
@@ -18,7 +18,7 @@ def testForBothInterfaces(*args,**kwargs):
         f.func_name = func.func_name
         test(f)
         return f
-    return decorator
+    return DECORATOR
 
 class WebInterfaceTests(PDUnitTest, UserUtil):
 
@@ -64,7 +64,7 @@ class WebInterfaceTests(PDUnitTest, UserUtil):
     @testForBothInterfaces()
     def facebook_interface_gives_error_for_bad_code(self, interface):
         interface.interface.access_token = 'notjunk'
-        resp = interface._facebookMe('junk')
+        resp = interface.facebookMe('junk')
         self.assertEquals(resp.status, 400)
         self.assertEquals(resp.data, '{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}')
 
@@ -73,7 +73,7 @@ class WebInterfaceTests(PDUnitTest, UserUtil):
         interface = WebInterface(FakeInterface)
         interface.interface.access_token = '42'
         interface.interface.facebook_id = 'f4c3b00c'
-        resp = interface._facebookMe('42')
+        resp = interface.facebookMe('42')
         respAsJson = json.loads(resp.data)
         self.assertEqual(respAsJson['id'], 'f4c3b00c')
         self.assertEqual(resp.status_code, 200)

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-
+# pylint: disable=no-member
 from twatson.unittest_annotations import Fixture, test
 from pdoauth.AuthProvider import AuthProvider, DiscardingNonexistingToken
 from pdoauth.models.Application import Application
@@ -17,88 +17,111 @@ class AuthProviderTest(Fixture, AuthenticatedSessionMixin, RandomUtil):
         Application.query.delete()  # @UndefinedVariable
         KeyData.query.delete()  # @UndefinedVariable
         TokenInfoByAccessKey.query.delete()  # @UndefinedVariable
-        self.ap = AuthProvider(FakeInterface)
+        self.authProvider = AuthProvider(FakeInterface)
         self.session = db.session
-        self.app = Application.new("test app 5", "secret5", "https://test.app/redirecturi")
+        self.app = Application.new(
+                    "test app 5", "secret5", "https://test.app/redirecturi")
         self.session.add(self.app)
         self.session.commit()
-        
+
     def tearDown(self):
         self.session.close()
-        
+
     @test
     def validate_client_id_returns_False_for_None(self):
-        self.assertFalse(self.ap.validate_client_id(None))
+        self.assertFalse(self.authProvider.validate_client_id(None))
 
     @test
     def validate_client_id_returns_False_for_empty_string(self):
-        self.assertFalse(self.ap.validate_client_id(""))
+        self.assertFalse(self.authProvider.validate_client_id(""))
 
     @test
     def validate_client_id_returns_False_for_wrong_id(self):
-        self.assertFalse(self.ap.validate_client_id("different"))
-        
+        self.assertFalse(self.authProvider.validate_client_id("different"))
+
     @test
     def validate_client_id_returns_True_for_good_id(self):
-        self.assertTrue(self.ap.validate_client_id(self.app.appid))
-        
+        self.assertTrue(self.authProvider.validate_client_id(self.app.appid))
+
     @test
     def validate_client_secret_returns_False_for_None(self):
-        self.assertFalse(self.ap.validate_client_secret(self.app.appid, None))
+        self.assertFalse(
+            self.authProvider.validate_client_secret(self.app.appid, None))
 
     @test
     def validate_client_secret_returns_False_for_empty_string(self):
-        self.assertFalse(self.ap.validate_client_secret(self.app.appid, ""))
+        self.assertFalse(
+            self.authProvider.validate_client_secret(self.app.appid, ""))
 
     @test
     def validate_client_secret_returns_False_for_wrong_secret(self):
-        self.assertFalse(self.ap.validate_client_secret(self.app.appid, "different"))
-        
+        self.assertFalse(
+            self.authProvider.validate_client_secret(self.app.appid, "other"))
+
     @test
     def validate_client_secret_returns_False_for_None_id(self):
-        self.assertFalse(self.ap.validate_client_secret(None, None))
-        
+        self.assertFalse(self.authProvider.validate_client_secret(None, None))
+
     @test
     def validate_client_secret_returns_True_for_good_secret(self):
-        self.assertTrue(self.ap.validate_client_secret(self.app.appid, self.app.secret))
+        appid = self.app.appid
+        secret = self.app.secret
+        self.assertTrue(
+            self.authProvider.validate_client_secret(appid, secret))
 
     @test
     def validate_redirect_uri_returns_False_for_None(self):
-        self.assertFalse(self.ap.validate_redirect_uri(self.app.appid, None))
+        self.assertFalse(
+            self.authProvider.validate_redirect_uri(self.app.appid, None))
 
     @test
     def validate_redirect_uri_returns_False_for_bad_app(self):
-        self.assertFalse(self.ap.validate_redirect_uri('some crap', "https://test.app/redirecturi"))
-        
+        uri = "https://test.app/redirecturi"
+        self.assertFalse(
+            self.authProvider.validate_redirect_uri('some crap', uri))
+
     @test
     def validate_redirect_uri_returns_False_for_empty(self):
-        self.assertFalse(self.ap.validate_redirect_uri(self.app.appid, ""))
+        self.assertFalse(
+            self.authProvider.validate_redirect_uri(self.app.appid, ""))
 
     @test
     def validate_redirect_uri_returns_False_for_wrong_uri(self):
-        self.assertFalse(self.ap.validate_redirect_uri(self.app.appid, "some crap"))
+        self.assertFalse(
+            self.authProvider.validate_redirect_uri(self.app.appid, "crap"))
 
     @test
     def validate_redirect_uri_returns_True_for_good_uri(self):
-        self.assertTrue(self.ap.validate_redirect_uri(self.app.appid, "https://test.app/redirecturi"))
+        redirectUri = "https://test.app/redirecturi"
+        appid = self.app.appid
+        self.assertTrue(
+            self.authProvider.validate_redirect_uri(appid, redirectUri))
 
     @test
     def validate_redirect_uri_returns_True_for_good_uri_with_parameters(self):
-        self.assertTrue(self.ap.validate_redirect_uri(self.app.appid, "https://test.app/redirecturi?param=value"))
+        uri = "https://test.app/redirecturi?param=value"
+        self.assertTrue(
+            self.authProvider.validate_redirect_uri(self.app.appid, uri))
 
     @test
     def validate_scope_returns_True_for_empty(self):
-        self.assertTrue(self.ap.validate_scope(self.app.appid, ""))
-        
+        self.assertTrue(self.authProvider.validate_scope(self.app.appid, ""))
+
     @test
     def validate_scope_returns_False_for_nonempty(self):
-        self.assertFalse(self.ap.validate_scope(self.app.appid, "crap"))
+        self.assertFalse(
+            self.authProvider.validate_scope(self.app.appid, "crap"))
 
     @test
     def validate_scope_returns_False_for_None(self):
-        self.assertFalse(self.ap.validate_scope(self.app.appid, "crap"))
-    
+        self.assertFalse(
+            self.authProvider.validate_scope(self.app.appid, "crap"))
+
     @test
     def discarding_nonexistent_refresh_token_is_an_error(self):
-        self.assertRaises(DiscardingNonexistingToken,self.ap.discard_refresh_token,'client_id', 'nonexisting')
+        self.assertRaises(
+            DiscardingNonexistingToken,
+            self.authProvider.discard_refresh_token,
+            'client_id',
+            'nonexisting')
 

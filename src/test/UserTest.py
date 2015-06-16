@@ -67,10 +67,10 @@ class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.setupUserCreationData()
         cred = CredentialManager.create_user_with_creds(
             'password',
-            self.usercreation_userid,
-            self.usercreation_password,
-            self.usercreation_email)
-        self.assertEquals(cred.user.email, self.usercreation_email)
+            self.userCreationUserid,
+            self.usercreationPassword,
+            self.userCreationEmail)
+        self.assertEquals(cred.user.email, self.userCreationEmail)
     
     @test
     def User_hash_can_be_stored(self):
@@ -78,16 +78,16 @@ class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
         digest = self.createHash()
         cred = CredentialManager.create_user_with_creds(
             'password',
-            self.usercreation_userid,
-            self.usercreation_password,
-            self.usercreation_email,
+            self.userCreationUserid,
+            self.usercreationPassword,
+            self.userCreationEmail,
             digest)
         self.assertEquals(cred.user.hash, digest)
 
     @test
     def cannot_create_user_with_already_existing_email(self):
         self.createUserWithCredentials()
-        self.assertReportedError(User.new, [self.usercreation_email], 400, ['there is already a user with this email'])
+        self.assertReportedError(User.new, [self.userCreationEmail], 400, ['there is already a user with this email'])
 
     @test
     def getByDigest_does_not_allow_empty_digest(self):

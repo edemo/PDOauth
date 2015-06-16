@@ -7,13 +7,13 @@ from end2endtest.helpers.EndUserTesting import EndUserTesting, test
 class JavaScriptUnitTest(EndUserTesting):
     def setUp(self):
         self.setupDriver()
-        self.base_url = config.Config.BASE_URL
+        self.baseUrl = config.Config.BASE_URL
         self.verificationErrors = []
 
     @test
     def javascript_unit_test_run_nicely(self):
         driver = self.driver
-        driver.get(self.base_url+"/static/login.html")
+        driver.get(self.baseUrl+"/static/login.html")
         driver.find_element_by_id("Unit_test_button").click()
         time.sleep(2)
         mypath = os.path.abspath(__file__)
@@ -38,18 +38,18 @@ class JavaScriptUnitTest(EndUserTesting):
     @test
     def the_me_link_works(self):
         driver = self.driver
-        driver.get(self.base_url+"/static/login.html")
+        driver.get(self.baseUrl+"/static/login.html")
         user = self.createUserWithCredentials().user
         user.activate()
         self.thePassword = self.mkRandomPassword()
         self.switchToTab("login")
         driver.find_element_by_id("LoginForm_username_input").clear()
-        driver.find_element_by_id("LoginForm_username_input").send_keys(self.usercreation_userid)
+        driver.find_element_by_id("LoginForm_username_input").send_keys(self.userCreationUserid)
         driver.find_element_by_id("LoginForm_password_input").clear()
-        driver.find_element_by_id("LoginForm_password_input").send_keys(self.usercreation_password)
+        driver.find_element_by_id("LoginForm_password_input").send_keys(self.usercreationPassword)
         driver.find_element_by_id("LoginForm_submitButton").click()
         time.sleep(1)
-        driver.get(self.base_url+"/static/login.html")
+        driver.get(self.baseUrl+"/static/login.html")
         body = driver.find_element_by_id("userdata").text
         self.assertEqual(body, '')
         self.switchToTab("account")
