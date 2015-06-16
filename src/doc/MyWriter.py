@@ -14,15 +14,15 @@ class MyWriter(TemplateWriter):
         pass
 
     def writeDocsFor(self, ob, functionpages):
-        self.f = open(os.path.join(self.base, "doc.xml"), 'w')
+        self.decorated = open(os.path.join(self.base, "doc.xml"), 'w')
         impl = getDOMImplementation()
         self.doc = impl.createDocument(None, "documentation", None)
         top_element = self.doc.documentElement
         isfunc = ob.documentation_location == model.DocLocation.PARENT_PAGE
         if (isfunc and functionpages) or not isfunc:
             self.writeDocsForOne(ob, top_element)
-        self.doc.writexml(self.f,indent=" ", addindent=" ", newl="\n")
-        self.f.close()
+        self.doc.writexml(self.decorated,indent=" ", addindent=" ", newl="\n")
+        self.decorated.close()
 
     def setAttrIf(self, element, item, attname, modifier=unicode):
         v = getattr(item,attname,None)

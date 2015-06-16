@@ -11,7 +11,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
         if config.skipFacebookTests:
             return
         driver = self.driver
-        driver.get(self.base_url+"/static/login.html")
+        driver.get(self.baseUrl+"/static/login.html")
         self.switchToTab('registration')
         driver.find_element_by_id("Facebook_registration_button").click()
         time.sleep(1)
@@ -22,9 +22,9 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
         driver.find_element_by_id("email").send_keys(config.fbuser)
         driver.find_element_by_id("u_0_2").click()
         driver.switch_to.window(self.master)
-        self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
+        self.assertEqual(self.baseUrl  + "/static/login.html", driver.current_url)
         time.sleep(5)
-        body = driver.find_element_by_id("message").text
+        body = driver.find_element_by_id("PopupWindow_MessageDiv").text
         self.assertEqual("please give us an email in the registration form", body)
 
     @test
@@ -32,7 +32,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
         if config.skipFacebookTests:
             return
         driver = self.driver
-        driver.get(self.base_url+"/static/login.html")
+        driver.get(self.baseUrl+"/static/login.html")
         self.switchToTab('registration')
         driver.find_element_by_id("Facebook_registration_button").click()
         time.sleep(1)
@@ -43,9 +43,13 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
         driver.find_element_by_id("email").send_keys(config.fbuser2)
         driver.find_element_by_id("u_0_2").click()
         driver.switch_to.window(self.master)
-        self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
+        self.assertEqual(self.baseUrl  + "/static/login.html", driver.current_url)
         time.sleep(5)
-        body = driver.find_element_by_id("userdata").text
+        body = driver.find_element_by_id("PopupWindow_SuccessDiv").text
+        self.assertTrue("mag+elekne@magwas.rulez.org"in body)
+        self.closePopup()
+        self.switchToTab("account")
+        body = driver.find_element_by_id("me_Msg").text
         self.assertTrue("mag+elekne@magwas.rulez.org"in body)
         self.user = User.getByEmail(config.fbuser2)
         Credential.getByUser(self.user, "facebook").rm()
@@ -55,10 +59,10 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
     def you_can_login_using_facebook(self):
         if config.skipFacebookTests:
             return
-        self.user = self.createUserWithCredentials("facebook", config.fbuserid, None, config.fbuser)
+        self.user = self.createUserWithCredentials("facebook", config.fbuserid, None, config.fbuser).user
         self.user.activate()
         driver = self.driver
-        driver.get(self.base_url+"/static/login.html")
+        driver.get(self.baseUrl+"/static/login.html")
         self.switchToTab("login")
         driver.find_element_by_id("Facebook_login_button").click()
         time.sleep(1)
@@ -70,10 +74,12 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
         driver.find_element_by_id("u_0_2").click()
         driver.switch_to.window(self.master)
         time.sleep(1)
-        self.assertEqual(self.base_url  + "/static/login.html", driver.current_url)
-        body = driver.find_element_by_id("message").text
+        self.assertEqual(self.baseUrl  + "/static/login.html", driver.current_url)
+        body = driver.find_element_by_id("PopupWindow_MessageDiv").text
         self.assertEqual("", body)
-        body = driver.find_element_by_id("userdata").text
+        self.closePopup()
+        self.switchToTab("account")
+        body = driver.find_element_by_id("me_Msg").text
         self.assertTrue("mag+tesztelek@magwas.rulez.org"in body)
         Credential.getByUser(self.user, "facebook").rm()
         self.user.rm()

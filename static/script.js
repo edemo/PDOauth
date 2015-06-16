@@ -41,6 +41,7 @@ function PageScript(debug) {
 		  {
 		  if (xmlhttp.readyState==4)
 		    {
+				console.log("ajaxbase: callback="+callback);
 		    	callback(xmlhttp.status,xmlhttp.responseText,xmlhttp.responseXML);
 		    }
 		  }
@@ -67,20 +68,30 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.processErrors = function(data) {
-			t = "<ul>"
 			console.log(data)
-			if (data.message) document.getElementById("message").innerHTML=data.message;
-			if (data.assurances) document.getElementById("userdata").innerHTML=this.parse_userdata(data);
-			errs = data.errors
-			for ( err in errs ) t += "<li>"+ errs[err] +"</li>" ;
-			t += "</ul>"
-			document.getElementById("errorMsg").innerHTML=t
+			var msg = {};
+			if (data.message) {
+				msg.title="Szerverüzenet";
+				msg.message="<p>message</p><p>"+data.message+"</p>";
+			}
+			if (data.assurances) {
+				msg.title="A felhasználó adatai";
+				msg.success=self.parse_userdata(data);
+			}
+			if (data.errors) {
+				msg.title = "Hibaüzenet"
+				msg.error = "<ul>";
+				errs = data.errors;
+				for ( err in errs ) msg.error += "<li>"+ errs[err] +"</li>" ;
+				msg.error += "</ul>";
+			}
+			return msg;
 	}
 	
 	PageScript.prototype.parse_userdata = function(data) {
 		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
 		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
-		userdata +='<p><b>hash:</b></p><pre id="my_Hash">'+data.hash+"</pre>"
+		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
 		userdata +="<p><b>tanusítványok:</b></p>"
 		userdata +="<ul>"
 		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
@@ -93,56 +104,102 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.myCallback = function(status, text) {
-		document.getElementById("errorMsg").innerHTML=text
 		var data = JSON.parse(text);
 		if (status == 200) {
 			if(QueryString.next) {
 				window.location = decodeURIComponent(QueryString.next)
 			}
 		}
-		self.processErrors(data)
-		self.Init_Callback(status, text)
+		var msg=self.processErrors(data)
+		msg.callback=self.get_me;
+		self.displayMsg(msg);
 	}
 
-	PageScript.prototype.passwordReset = function() {
-	    secret = document.getElementById("PasswordResetForm_secret_input").value;
-	    password = document.getElementById("PasswordResetForm_password_input").value;
+	PageScript.prototype.get_me = function() {
+		self.ajaxget("/v1/users/me", self.Init_Callback)
+	}
+	
+	PageScript.prototype.Init_Callback = function(status, text) {
+		var data = JSON.parse(text);
+		if (status != 200) {
+			self.menuHandler("login").menuActivate();
+			self.menuHandler("account").menuHide();
+			self.menuHandler("assurer").menuHide();
+			self.menuHandler("registration").menuUnhide();
+			self.processErrors(data);
+		}
+		else {
+			if (!self.activeButton)	self.menuHandler("account").menuActivate();
+			else {
+				var a=["login", "register"];
+				if ( a.indexOf(self.activeButtonName) > -1 ) self.menuHandler("account").menuActivate();
+			}
+			self.menuHandler("login").menuHide();
+			self.menuHandler("registration").menuHide();
+			if (data.assurances) {
+				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
+				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
+				if (data.email) {
+					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
+					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
+				}
+				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
+				else self.menuHandler("assurer").menuUnhide();
+			}
+			self.fill_RemoveCredentialContainer(data);
+		}
+	}
+	
+	PageScript.prototype.displayMsg = function( msg ) {
+		document.getElementById("popup").style.display  = "flex";
+		if (!msg.callback) msg.callback="";
+		document.getElementById("PopupWindow_CloseButton").onclick = function() {self.closePopup(msg.callback)}
+		console.log("displaymsg: callback="+document.getElementById("PopupWindow_CloseButton").onclick);
+		if (msg.title) document.getElementById("PopupWindow_TitleDiv").innerHTML = "<h2>"+msg.title+"</h2>";
+		if (msg.error) document.getElementById("PopupWindow_ErrorDiv").innerHTML     = "<p class='warning'>"+msg.error+"</p>";
+		if (msg.message) document.getElementById("PopupWindow_MessageDiv").innerHTML = "<p class='message'>"+msg.message+"</p>";
+		if (msg.success)document.getElementById("PopupWindow_SuccessDiv").innerHTML  = "<p class='success'>"+msg.success+"</p>";
+		document.getElementById('fade').style.display='block';
+		document.getElementById('fade').style.filter='alpha(opacity=50)';
+		document.getElementById('fade').style.opacity='0.5';
+	}
+	
+	PageScript.prototype.closePopup = function(popupCallback) {
+
+		document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
+		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
+		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
+		document.getElementById("PopupWindow_SuccessDiv").innerHTML = "";
+		document.getElementById('popup').style.display='none';
+		document.getElementById('fade').style.display='none';
+		if (popupCallback) popupCallback();
+		return "closePopup";
+	}
+
+	PageScript.prototype.passwordReset = function(myForm) {
+		secret = document.getElementById(myForm+"_secret_input").value;
+	    password = document.getElementById(myForm+"_password_input").value;
 	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.myCallback)
 	}
 	
-	PageScript.prototype.InitiatePasswordReset = function() {
-		this.ajaxget("/v1/users/me", this.PWresetInitCallback)
+	PageScript.prototype.InitiatePasswordReset = function(myForm) {
+		self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.myCallback)
 	}
-
-	PageScript.prototype.PWresetInitCallback = function(status, text){
-		var data = JSON.parse(text);
-		if (status == 200) {
-			self.ajaxget("/v1/users/"+data.email+"/passwordreset", self.PWresetCallback)
-		}
-		else {
-			document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>Nincs bejelentkezett felhasználó</p>";
-		}
-	}
-	
-	PageScript.prototype.PWresetCallback = function(status, text) {
-		var data = JSON.parse(text);
-		if (data.message) document.getElementById("InitiatePasswordReset_ErrorMsg").innerHTML+="<p class='warning'>"+data.message+"</p>";
-	} 
 	
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_username_input").value;
 	    var onerror=false;
-		document.getElementById("LoginForm_errorMsg").innerHTML="";
+		var errorMsg="";
 		if (username=="") {
-			document.getElementById("LoginForm_errorMsg").innerHTML+="<p class='warning'>A felhasználónév nincs megadva</p>";
+			errorMsg+="<p class='warning'>A felhasználónév nincs megadva</p>";
 			onerror=true;
 		}
 	    password = document.getElementById("LoginForm_password_input").value;
 	    if (password=="") {
-			document.getElementById("LoginForm_errorMsg").innerHTML+="<p class='warning'>A jelszó nincs megadva</p>";
+			errorMsg+="<p class='warning'>A jelszó nincs megadva</p>";
 			onerror=true; 
 		}
-		if (onerror==true) return;
+		if (onerror==true) self.displayMsg({error:errorMsg, title:'Hibaüzenet'});
 		else {
 			username = encodeURIComponent(username);	
 			password = encodeURIComponent(password);
@@ -172,8 +229,10 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.logoutCallback = function(status, text) {
-		self.myCallback(status,text);					// Ez ide minek, ha amúgy is újratöltünk
-	    window.location = QueryString.uris.START_URL		
+		var data = JSON.parse(text);
+		var msg=self.processErrors(data)
+		msg.callback=function() {window.location = QueryString.uris.START_URL};
+		self.displayMsg(msg);	    		
 	}
 	
 	PageScript.prototype.logout = function() {
@@ -181,7 +240,6 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.uriCallback = function(status,text) {
-		document.getElementById("errorMsg").innerHTML=text
 		var data = JSON.parse(text);
 		QueryString.uris = data
 		self.processErrors(data)
@@ -222,6 +280,7 @@ function PageScript(debug) {
 			identifier: userId,
 			secret: accessToken
 		}
+		self.ajaxpost("/v1/add_credential", text, self.myCallback )
 		self.ajaxpost("/v1/add_credential", text, function(status, text){
 			var data = JSON.parse(text);
 			console.log(data);
@@ -279,16 +338,15 @@ function PageScript(debug) {
 		}
 		else {
 			var data = JSON.parse(text);
-			document.getElementById("ChangeHashForm_ErrorMsg").innerHTML='<p class="warning">'+data.errors+'</p>';	
+			self.displayMsg({error:'<p class="warning">'+data.errors+'</p>'});	
 		}
 	}
 	
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
-		document.getElementById("InitiateResendRegistrationEmail_ErrorMsg").innerHTML='<p class="warning">Ez a funkció sajnos még nem működik</p>';	
+		self.displayMsg({error:'<p class="warning">Ez a funkció sajnos még nem működik</p>'});	
 		}
 	
 	PageScript.prototype.changeHash = function() {
-		document.getElementById("ChangeHashForm_ErrorMsg").innerHTML="";
 	    digest = document.getElementById("ChangeHashForm_digest_input").value;
 	    csrf_token = this.getCookie('csrf');
 	    text= {
@@ -304,16 +362,16 @@ function PageScript(debug) {
 			if (status==200) {
 		    	document.getElementById(self.formName + "_digest_input").value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
 				document.getElementById(self.formName + "_predigest_input").value = "";
-				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>A titkosítás sikeres</p>"
+				self.displayMsg({success:"<p class='success'>A titkosítás sikeres</p>"});
 			} else {
-				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>" + text + "</p>"
+				self.displayMsg({error:"<p class='warning'>" + text + "</p>"});
 			}
 		}
 	
 		self.getDigest = function() {
 			personalId = document.getElementById(this.formName+"_predigest_input").value;
 			if ( personalId == "") {
-				document.getElementById(self.formName + "_errorMsg").innerHTML="<p class='warning'>A személyi szám nincs megadva</p>"
+				self.displayMsg({error:"<p class='warning'>A személyi szám nincs megadva</p>"})
 				return;
 			}
 			text = "<id>"+personalId+"</id>"
@@ -340,40 +398,8 @@ function PageScript(debug) {
 	
 	PageScript.prototype.changeEmailAddress = function() {
 	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
-		if (email=="") document.getElementById("ChangeEmailAddressForm_ErrorMsg").innerHTML="<p class='warning'>Nincs megadva érvényes e-mail cím</p>";
-		else document.getElementById("ChangeEmailAddressForm_ErrorMsg").innerHTML="<p class='warning'>Ez a funkció sajnos még nem elérhető</p>";
-	}
-	
-	PageScript.prototype.Init_Callback = function(status, text) {
-		console.log('Init_Callback');
-		console.log(JSON.parse(text));
-		var data = JSON.parse(text);
-		if (status != 200) {
-			document.getElementById("tab-login").checked = true;
-			document.getElementById("tab-account-label").style.display = 'none';
-			document.getElementById("tab-assurer-label").style.display = 'none';
-			document.getElementById("tab-login-label").style.display = 'block';
-			document.getElementById("tab-registration-label").style.display = 'block';
-			self.processErrors(data)
-		}
-		else {
-			document.getElementById("tab-account").checked = true; 
-			if (data.assurances) {
-				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
-//				console.log(document.getElementById("my_Hash").innerHTML);
-				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
-				if (data.email) document.getElementById("AddSslCredentialForm_email_input").value=data.email;
-			}
-			document.getElementById("tab-login-label").style.display = 'none';
-			document.getElementById("tab-registration-label").style.display = 'none';
-			document.getElementById("tab-account-label").style.display = 'block';
-			document.getElementById("tab-assurer-label").style.display = 'block';			
-			if (data.assurances) {
-				if (!(data.assurances.assurer)) document.getElementById("tab-assurer-label").style.display = 'none';
-				else document.getElementById("tab-assurer-label").style.display = 'block';
-			}
-			self.fill_RemoveCredentialContainer(data);
-		}
+		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
+		else self.displayMsg({error:"<p class='warning'>Ez a funkció sajnos még nem elérhető</p>"});
 	}
 	
 	PageScript.prototype.fill_RemoveCredentialContainer = function(data) {
@@ -398,15 +424,6 @@ function PageScript(debug) {
 	
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
-		self.rmCredential_Callback = function(status,text) {
-			if (status==200) {
-		    	document.getElementById(self.formName).innerHTML = "<p class='success'>Ezt a hitelesítési módot töröltük</p>";
-			} else {
-				var data=JSON.parse(text);
-				document.getElementById("RemoveCredential_ErrorMsg").innerHTML="<p class='warning'>" + data.errors + "</p>"
-			}
-		}
-	
 		self.doRemove = function() {
 			credentialType = document.getElementById(this.formName+"_credentialType").innerHTML;
 			identifier = document.getElementById(this.formName+"_identifier").innerHTML;
@@ -414,23 +431,26 @@ function PageScript(debug) {
 				credentialType: credentialType,
 				identifier: identifier
 			}
-			this.ajaxpost("/v1/remove_credential", text, this.rmCredential_Callback);
+			this.ajaxpost("/v1/remove_credential", text, self.myCallback);
 		}
 
 		return self
 	}
 
-	
 	PageScript.prototype.addGoogleCredential = function(){
-		document.getElementById("AddCredentialForm_ErrorMsg").innerHTML="<p class='warning'>Ez a funkció sajnos még nem működik</p>";
+		self.displayMsg({error:"<p class='warning'>Ez a funkció sajnos még nem működik</p>"});
 	}
 	
 	PageScript.prototype.GoogleLogin = function(){
-		document.getElementById("Login-ErrorMsg").innerHTML="<p class='warning'>A google bejelentkezés funkció sajnos még nem működik</p>";
+		self.displayMsg({error:"<p class='warning'>A google bejelentkezés funkció sajnos még nem működik</p>"});
+	}
+	
+	PageScript.prototype.GoogleRegister = function(){
+		self.displayMsg({error:"<p class='warning'>A google bejelentkezés funkció sajnos még nem működik</p>"});
 	}
 	
 	PageScript.prototype.TwitterLogin = function(){
-		document.getElementById("Login-ErrorMsg").innerHTML="<p class='warning'>A twitter bejelentkezés funkció sajnos még nem működik</p>";
+		self.displayMsg({error:"<p class='warning'>A twitter bejelentkezés funkció sajnos még nem működik</p>"});
 	}
 	
 	PageScript.prototype.addPassowrdCredential = function(){
@@ -449,11 +469,10 @@ function PageScript(debug) {
 			var data = JSON.parse(text);
 			console.log(data)
 			if (status != 200) {
-				document.getElementById("AddCredentialForm_ErrorMsg").innerHTML="<p class='warning'>"+data.errors+"</p>";
+				self.displayMsg({error:"<p class='warning'>"+data.errors+"</p>",title:"Hibaüzenet:"});
 			}
 			else {
-				document.getElementById("AddCredentialForm_ErrorMsg").innerHTML="<p class='warning'>Hitelesítési mód sikeresen hozzáadva</p>";
-				self.ajaxget("/v1/users/me", self.Init_Callback);
+				self.displayMsg({error:"<p class='success'>Hitelesítési mód sikeresen hozzáadva</p>",title:"",callback:self.get_me});
 			}
 		})
 	}	
@@ -474,23 +493,56 @@ function PageScript(debug) {
 					}
 					self.ajaxpost("/deregister", text, function(status, text){
 						var data = JSON.parse(text);
-						if (status != 200) document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>"+data.errors+"</p>";
-						else document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>A fiók törlése megtörtént.</p>";
+						var msg=self.processErrors(data)
+						msg.callback=self.get_me;
+						self.displayMsg(msg);
 					})
 				}
 			})
 		
 	}
 
+	PageScript.prototype.menuHandler = function(menu_item) {
+		self.menuName=menu_item;
+		self.menuButton=document.getElementById(self.menuName+"-menu");
+		self.menuTab=document.getElementById("tab-content-"+self.menuName);
+		if (typeof(theMenu=document.getElementsByClassName("active-menu")[0])!="undefined") {
+			self.activeButton=theMenu;
+			self.activeButtonName=self.activeButton.id.split("-")[0];
+			self.activeTab=document.getElementById("tab-content-"+self.activeButtonName);
+		}
 		
+		self.menuActivate = function() {
+			if (self.activeButton) { 
+				self.activeButton.className="";
+				self.activeTab.style.display="none";
+			}
+			self.menuButton.style.display="block";
+			self.menuButton.className="active-menu";
+			self.menuTab.style.display="block";
+		}
 
+		self.menuDeactivate = function() {
+			self.menuButton.className="";
+			self.menuTab.style.display="none";
+		}
+		
+		self.menuHide = function() {
+			self.menuButton.style.display="none";
+		}
+		
+		self.menuUnhide = function() {
+			self.menuButton.style.display="block";
+		}
+		return self;
+	}
 
 	PageScript.prototype.main = function() {
 		this.ajaxget("/uris", this.uriCallback)
 		this.ajaxget("/v1/users/me", this.Init_Callback)
 		if (QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
-			document.getElementById("tab-account").checked = true;
+			document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value=QueryString.secret
 		}
 		
 	}

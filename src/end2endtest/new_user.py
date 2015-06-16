@@ -21,14 +21,14 @@ class NewUserTest(EndUserTesting):
 
 
     def _gotoOauthPage(self, driver):
-        fullUri = "{0}/v1/oauth2/auth?{1}".format(self.base_url, 
+        fullUri = "{0}/v1/oauth2/auth?{1}".format(self.baseUrl, 
             urlencode({
                     "response_type":"code", 
                     "client_id":self.app.appid, 
                     "redirect_uri":self.redirect_uri}))
         driver.get(fullUri)
         time.sleep(1)
-        uri = "{0}/static/login.html?{1}".format(self.base_url,urlencode({"next": fullUri}))
+        uri = "{0}/static/login.html?{1}".format(self.baseUrl,urlencode({"next": fullUri}))
         self.assertEqual(uri, driver.current_url)
         return fullUri
 

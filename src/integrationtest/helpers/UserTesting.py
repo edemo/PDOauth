@@ -1,3 +1,4 @@
+#pylint: disable=no-member
 from pdoauth.app import app, mail
 from test.helpers.CryptoTestUtil import CryptoTestUtil
 from test.helpers.RandomUtil import RandomUtil
@@ -9,57 +10,59 @@ from pdoauth.models.Application import Application
 app.extensions["mail"].suppress = True
 
 class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
-    def login(self, c, activate = True, createUser = True):
+
+    def login(self, client, activate = True, createUser = True):
         self.setupRandom()
         if createUser:
-            user = self.createUserWithCredentials()
+            user = self.createUserWithCredentials().user
         else:
-            user = User.getByEmail(self.usercreation_email)
-        if activate:
-            user.activate()
+            user = User.getByEmail(self.userCreationEmail)
+        if not activate:
+            user.active = False
         data = {
                 'credentialType': 'password',
-                'identifier': self.usercreation_userid,
-                'secret': self.usercreation_password
+                'identifier': self.userCreationUserid,
+                'secret': self.usercreationPassword
         }
-        resp = c.post(config.base_url+'/login', data=data)
+        resp = client.post(config.BASE_URL+'/login', data=data)
         return resp
 
-    def getCode(self, c):
+    def getCode(self, client):
         redirect_uri = 'https://test.app/redirecturi'
         appid = "app-{0}".format(self.randString)
         self.appsecret = "secret-{0}".format(self.randString)
         application = Application.new(appid, self.appsecret, redirect_uri)
         self.appid = application.appid
-        uri = config.base_url + '/v1/oauth2/auth'
-        query_string = 'response_type=code&client_id={0}&redirect_uri={1}'.format(self.appid, 
-            redirect_uri)
-        resp = c.get(uri, query_string=query_string)
+        uri = config.BASE_URL + '/v1/oauth2/auth'
+        queryPattern = 'response_type=code&client_id={0}&redirect_uri={1}'
+        queryString = queryPattern.format(self.appid, redirect_uri)
+        resp = client.get(uri, query_string=queryString)
         self.assertEqual(302, resp.status_code)
         location = resp.headers['Location']
-        self.assertTrue(location.startswith('https://test.app/redirecturi?code='))
+        urlStart = 'https://test.app/redirecturi?code='
+        self.assertTrue(location.startswith(urlStart))
         return location.split('=')[1]
 
     def loginAndGetCode(self):
-        with app.test_client() as c:
-            self.login(c)
-            return self.getCode(c)
+        with app.test_client() as client:
+            self.login(client)
+            return self.getCode(client)
 
 
     def prepareData(self, email=None):
         if email is None:
             email = "{0}@example.com".format(self.randString)
-        self.registered_email = email
-        self.registered_password = "password_{0}".format(self.mkRandomPassword())
-        data = {'credentialType':'password', 
-            'identifier':"id_{0}".format(self.randString), 
-            'secret':self.registered_password, 
-            'email':email, 
+        self.registeredEmail = email
+        self.registeredPassword = "password_{0}".format(self.mkRandomPassword())
+        data = {'credentialType':'password',
+            'identifier':"id_{0}".format(self.randString),
+            'secret':self.registeredPassword,
+            'email':email,
             'digest':self.createHash()}
         return data
 
-    def register(self, c, email = None):
+    def register(self, client, email = None):
         with mail.record_messages() as outbox:
             data = self.prepareData(email)
-            resp = c.post(config.base_url + '/v1/register', data=data)
+            resp = client.post(config.BASE_URL + '/v1/register', data=data)
             return resp, outbox

@@ -13,7 +13,8 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.driver.get(app.config.get("START_URL"))
         self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=False)
-        
+        time.sleep(2)
+        self.closePopup()        
         digest = self.createHash()
         self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
@@ -31,7 +32,8 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.switchToTab('registration')
         oldDigest=self.createHash()
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
-        time.sleep(1)
+        time.sleep(2)
+        self.closePopup()
         self.switchToTab("account")
         time.sleep(1)
         userdata = self.driver.find_element_by_id("me_Msg").text
@@ -54,7 +56,8 @@ class EndUserDigestManagementTest(EndUserTesting):
         oldDigest=self.createHash()
         self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
-        time.sleep(1)
+        time.sleep(2)
+        self.closePopup()
         self.switchToTab("account")
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("{0}".format(oldDigest) in userdata)

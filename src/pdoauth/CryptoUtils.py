@@ -7,9 +7,9 @@ from pdoauth.ReportedError import ReportedError
 class CryptoUtils(object):
 
     def contentsOfFileNamedInConfig(self, confkey):
-        f = open(self.getConfig(confkey))
-        ret = f.read()
-        f.close()
+        decorated = open(self.getConfig(confkey))
+        ret = decorated.read()
+        decorated.close()
         return ret
 
     def createCertFromSPKAC(self, spkacInput, cn, email):
