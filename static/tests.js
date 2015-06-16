@@ -44,6 +44,10 @@ function xmlFor(text) {
 	return xmlDoc;
 }
 
+assert_IsPopupShown = function( assert ) { assert.ok(document.getElementById("popup").style.display=="flex", "popup div is shown"); }
+assert_IsPopupHidden = function( assert ) { assert.ok(document.getElementById("popup").style.display!="flex", "popup div is hidden"); }
+
+QUnit.module( "AJAX" ); 
 QUnit.test( "ajaxpost can be mocked", function( assert ) {
 	pageScript = new PageScript(true)
 	pageScript.ajaxBase = ajaxBase
@@ -51,13 +55,13 @@ QUnit.test( "ajaxpost can be mocked", function( assert ) {
 	pageScript.text = "szia";
 	pageScript.xml = xmlFor("<xml>hello</xml>");
 	pageScript.ajaxpost("h",{data: "hello"}, function(status,text,xml) {
-		assert.equal(201,status);
-		assert.equal("szia",text);
-		assert.equal("hello",xml.childNodes[0].childNodes[0].nodeValue);
+		assert.equal(201,status,"callback function gets '201' in the 'status' parameter");
+		assert.equal("szia",text,"callback function gets 'Szia' in the 'text' parameter");
+		assert.equal("hello",xml.childNodes[0].childNodes[0].nodeValue,"callback function gets an xml data with node value 'hello' in the 'xml' parameter");
 	});
-	assert.equal(pageScript.uri, "h");
-	assert.equal(pageScript.data, "data=hello");
-	assert.equal(pageScript.method, "POST");
+	assert.equal(pageScript.uri, "h", "pageScript.uri gets 'h'");
+	assert.equal(pageScript.data, "data=hello", "pageScript.data gets 'data=hello'");
+	assert.equal(pageScript.method, "POST", "pageScript.method gets 'POST'");
 });
 
 QUnit.test( "ajaxget can be mocked", function( assert ) {
@@ -67,32 +71,36 @@ QUnit.test( "ajaxget can be mocked", function( assert ) {
 	pageScript.text = "szia";
 	pageScript.xml = xmlFor("<xml>hello</xml>");
 	pageScript.ajaxget("h", function(status,text,xml) {
-		assert.equal(201,status);
-		assert.equal("szia",text);
-		assert.equal("hello",xml.childNodes[0].childNodes[0].nodeValue);
+		assert.equal(201,status,"callback function gets '201' in the 'status' parameter");
+		assert.equal("szia",text,"callback function gets 'Szia' in the 'text' parameter");
+		assert.equal("hello",xml.childNodes[0].childNodes[0].nodeValue,"callback function gets an xml data with node value 'hello' in the 'xml' parameter");
 	});
-	assert.equal(pageScript.uri, "h");
-	assert.equal(pageScript.data, undefined);
-	assert.equal(pageScript.method, "GET");
+	assert.equal(pageScript.uri, "h", "pageScript.uri gets 'h'");
+	assert.equal(pageScript.method, "GET", "pageScript.method gets 'GET'");
 });
 
 // msg=processErrors(data={})
 
-QUnit.test( "with processErrors - message is returned in message property", function( assert ) {
+QUnit.module( "processErrors()" ); 
+QUnit.test( "message is returned in message property", function( assert ) {
 	pageScript = new PageScript(true)
 	msg=pageScript.processErrors({message: "hello world"})
-	assert.equal(msg.message,"<p>message</p><p>hello world</p>");
-	assert.equal(msg.title,"Szerverüzenet");
+	assert.equal(msg.message, "<p>message</p><p>hello world</p>", "the 'message' property of the returned object gets its value");
+	assert.equal(msg.title, "Szerverüzenet",  "the 'title' property of the returned object gets its value");
 });
 
-QUnit.test( "with processErrors - errors is returned in error property", function( assert ) {
+QUnit.test( "errors is returned in error property", function( assert ) {
 	pageScript = new PageScript(true)
-	msg=pageScript.processErrors({errors: ["hello world"]})
-	assert.equal(msg.error, "<ul><li>hello world</li></ul>");
-	assert.equal(msg.title,"Hibaüzenet");	
+	data={errors: ["hello world"]}
+	error="<ul><li>hello world</li></ul>"
+	title="Hibaüzenet"
+	
+	msg=pageScript.processErrors(data)
+	assert.equal(msg.error, error, "the 'error' property of the returned object gets its value");
+	assert.equal(msg.title, title, "the 'title' property of the returned object gets its value");	
 });
 
-QUnit.test( "with processErrors - assurances, email and userid are returned in success property", function( assert ) {
+QUnit.test( "assurances, email and userid are returned in success property", function( assert ) {
 	pageScript = new PageScript(true)
 	data = {
                 'assurances': {
@@ -102,18 +110,22 @@ QUnit.test( "with processErrors - assurances, email and userid are returned in s
                 'email': 'my@email.com',
                 'userid': 'theuserid'
         }
+	success="<p><b>e-mail cím:</b> my@email.com</p><p><b>felhasználó azonosító:</b> theuserid</p><p><b>hash:</b></p><pre>undefined</pre><p><b>tanusítványok:</b></p><ul><li>test</li><li>foo</li></ul><p><b>hitelesítési módok:</b></p><ul></ul>"
+	title="A felhasználó adatai"
+	
 	msg=pageScript.processErrors(data)
-	assert.equal(msg.success, "<p><b>e-mail cím:</b> my@email.com</p><p><b>felhasználó azonosító:</b> theuserid</p><p><b>hash:</b></p><pre>undefined</pre><p><b>tanusítványok:</b></p><ul><li>test</li><li>foo</li></ul><p><b>hitelesítési módok:</b></p><ul></ul>");	
-	assert.equal(msg.title,"A felhasználó adatai");	
+	assert.equal(msg.success, success, "the 'success' property of the returned object gets its value");	
+	assert.equal(msg.title, title, "the 'title' property of the returned object gets its value");	
 });
 
 // displayMsg(msg={})
 
+QUnit.module( "displayMsg()" ); 
 QUnit.test( "with displayMsg the popup div apears", function( assert ) {
 	pageScript = new PageScript(true)
-	assert.equal(document.getElementById("popup").style.display,"");
+	assert_IsPopupHidden( assert );
 	pageScript.displayMsg({title: "hello world"});
-	assert.equal(document.getElementById("popup").style.display,"flex");
+	assert_IsPopupShown( assert );
 });
 
 QUnit.test( "with displayMsg string in message property is shown in the PopupWindow_MessageDiv element", function( assert ) {
@@ -142,17 +154,18 @@ QUnit.test( "with displayMsg string in title property is shown in the PopupWindo
 
 // closePopup(callback=function(){})
 
-QUnit.test( "with closePopup the popup div hides and a callback function is calling", function( assert ) {
+QUnit.module( "closePopup()" ); 
+QUnit.test( "the popup div hides and a callback function is calling", function( assert ) {
 	pageScript = new PageScript(true)
-	assert.equal(document.getElementById("popup").style.display,"flex");
+	assert_IsPopupShown( assert );
 	pageScript.closePopup( function () {
 		document.getElementById("PopupWindow_TitleDiv").innerHTML="hello popup"
 	})
-	assert.equal(document.getElementById("popup").style.display,"none");
+	assert_IsPopupHidden( assert )
 	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "hello popup");
 });
 
-QUnit.test( "with displayMsg a callback function is injected into the PopupWindow_CloseButton button onclick propoerty callback function", function( assert ) {
+QUnit.test( "with displayMsg a callback function is injected into the PopupWindow_CloseButton button onclick propoerty", function( assert ) {
 	pageScript = new PageScript(true)
 	pageScript.displayMsg( 
 		{ 
@@ -161,24 +174,57 @@ QUnit.test( "with displayMsg a callback function is injected into the PopupWindo
 				document.getElementById("PopupWindow_TitleDiv").innerHTML="world hello"
 			} 
 		} )
-	assert.equal(document.getElementById("popup").style.display,"flex");
+	assert_IsPopupShown( assert );
 	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "<h2>hello world</h2>");
 	document.getElementById("PopupWindow_CloseButton").onclick()
 	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "world hello");
-	assert.equal(document.getElementById("popup").style.display,"none");
+	assert_IsPopupHidden( assert )
+});
+
+// parseUserdata( userdata_object )
+
+QUnit.module( "parseUserdata()" ); 
+QUnit.test( "parseUserdata parses userdata contained a JSON object to html", function( assert ) {
+	pageScript = new PageScript(true)
+	userdata=pageScript.parseUserdata({"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"})
+	assert.equal(userdata, "<p><b>e-mail cím:</b> my@email.com</p><p><b>felhasználó azonosító:</b> theuserid</p><p><b>hash:</b></p><pre>undefined</pre><p><b>tanusítványok:</b></p><ul><li>test</li><li>foo</li></ul><p><b>hitelesítési módok:</b></p><ul></ul>");	
 });
 
 // myCallback( htmlstatus, JSON )
 
+QUnit.module( "myCallback()" ); 
 QUnit.test( "MyCallback processes the data through processErrors", function( assert ) {
 	pageScript = new PageScript(true)
 	data = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	pageScript.myCallback(200,data)
-	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\"></p>"+pageScript.parse_userdata(JSON.parse(data))+"<p></p>");	
+	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\"></p>"+pageScript.parseUserdata(JSON.parse(data))+"<p></p>");	
 });
+
+// initCallback( htmlstatus, JSON )
+
+QUnit.module( "initCallback()" ); 
+QUnit.test( "initCallback hides account and assurer menutabs and shows login and registration if the html status not 200", function( assert ) {
+	pageScript = new PageScript(true)
+	data = '{"errors": {"": "no authorization"}}'
+	pageScript.initCallback(400,data)
+	assert.equal(document.getElementById("login-menu").style.display,"block");
+	assert.equal(document.getElementById("registration-menu").style.display,"block");
+	assert.equal(document.getElementById("assurer-menu").style.display,"none");
+	assert.equal(document.getElementById("account-menu").style.display,"none");
+	assert_IsPopupHidden( assert )
+	data = '{"errors": {"": "any other error message"}}'
+	pageScript.initCallback(400,data)
+	assert.equal(document.getElementById("login-menu").style.display,"block");
+	assert.equal(document.getElementById("registration-menu").style.display,"block");
+	assert.equal(document.getElementById("assurer-menu").style.display,"none");
+	assert.equal(document.getElementById("account-menu").style.display,"none");
+	assert_IsPopupShown( assert );
+});
+
 
 // passwordReset("formName")
 
+QUnit.module( "passwordReset()" ); 
 QUnit.test( "passwordReset calls /v1/password_reset with secret and password", function( assert ) {
 	document.getElementById("PasswordResetForm_secret_input").value = "thesecret"
 	document.getElementById("PasswordResetForm_password_input").value = "thepassword"

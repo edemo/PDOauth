@@ -76,7 +76,7 @@ function PageScript(debug) {
 			}
 			if (data.assurances) {
 				msg.title="A felhasználó adatai";
-				msg.success=self.parse_userdata(data);
+				msg.success=self.parseUserdata(data);
 			}
 			if (data.errors) {
 				msg.title = "Hibaüzenet"
@@ -88,7 +88,7 @@ function PageScript(debug) {
 			return msg;
 	}
 	
-	PageScript.prototype.parse_userdata = function(data) {
+	PageScript.prototype.parseUserdata = function(data) {
 		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
 		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
 		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
@@ -116,17 +116,17 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.get_me = function() {
-		self.ajaxget("/v1/users/me", self.Init_Callback)
+		self.ajaxget("/v1/users/me", self.initCallback)
 	}
 	
-	PageScript.prototype.Init_Callback = function(status, text) {
+	PageScript.prototype.initCallback = function(status, text) {
 		var data = JSON.parse(text);
 		if (status != 200) {
 			self.menuHandler("login").menuActivate();
 			self.menuHandler("account").menuHide();
 			self.menuHandler("assurer").menuHide();
 			self.menuHandler("registration").menuUnhide();
-			self.processErrors(data);
+			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		}
 		else {
 			if (!self.activeButton)	self.menuHandler("account").menuActivate();
@@ -137,7 +137,7 @@ function PageScript(debug) {
 			self.menuHandler("login").menuHide();
 			self.menuHandler("registration").menuHide();
 			if (data.assurances) {
-				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
+				document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);
 				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
 				if (data.email) {
 					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
@@ -246,7 +246,7 @@ function PageScript(debug) {
 		loc = '' + window.location
 		if(loc.indexOf(QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
 			console.log("ssl login");
-			self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.Init_Callback)
+			self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.initCallback)
 		}		
 		
 	}
@@ -285,7 +285,7 @@ function PageScript(debug) {
 			var data = JSON.parse(text);
 			console.log(data);
 			if (status==200) {
-				document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);
+				document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);
 			}
 		})
 	}
@@ -332,7 +332,7 @@ function PageScript(debug) {
 			self.ajaxget('/v1/users/me',function(status, text){
 				if (status==200) {
 					var data = JSON.parse(text);
-					document.getElementById("me_Msg").innerHTML=self.parse_userdata(data);	
+					document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);	
 				}
 			});
 		}
@@ -539,7 +539,7 @@ function PageScript(debug) {
 
 	PageScript.prototype.main = function() {
 		this.ajaxget("/uris", this.uriCallback)
-		this.ajaxget("/v1/users/me", this.Init_Callback)
+		this.ajaxget("/v1/users/me", this.initCallback)
 		if (QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
 			document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value=QueryString.secret
