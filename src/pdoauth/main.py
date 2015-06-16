@@ -18,11 +18,12 @@ from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
 
-CONTROLLER = Controller(FlaskInterface)
+webInterface = FlaskInterface()
+CONTROLLER = Controller(webInterface)
 CONTROLLER.mail = mail
 CONTROLLER.app = app
-DECORATOR = Decorators(app, FlaskInterface)
-AUTHPROVIDER = AuthProvider(FlaskInterface)
+DECORATOR = Decorators(app, webInterface)
+AUTHPROVIDER = AuthProvider(webInterface)
 def getStaticPath():
     staticDirectory = os.path.join(os.path.dirname(__file__),"..", "..", "static")
     return os.path.abspath(staticDirectory)
@@ -78,7 +79,7 @@ def changePassword(form):
 
 @DECORATOR.interfaceFunc("/v1/users/<email>/passwordreset", methods=["GET"])
 def sendPasswordResetEmail(email):
-    return CONTROLLER.do_send_password_reset_email(email)
+    return CONTROLLER.doSendPasswordResetEmail(email)
 
 @DECORATOR.interfaceFunc("/v1/users/me/update_hash", methods=["POST"],
     formClass=DigestUpdateForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)

@@ -9,7 +9,7 @@ class PDUnitTest(Fixture):
         self.setUpController()
 
     def setUpController(self):
-        self.controller = Controller(FakeInterface)
+        self.controller = Controller(FakeInterface())
         self.controller.app = FakeApp()
         self.controller.app = FakeApp()
         self.controller.mail = FakeMail()

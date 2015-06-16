@@ -65,4 +65,5 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
         with mail.record_messages() as outbox:
             data = self.prepareData(email)
             resp = client.post(config.BASE_URL + '/v1/register', data=data)
-            return resp, outbox
+            self.outbox = outbox
+            return resp

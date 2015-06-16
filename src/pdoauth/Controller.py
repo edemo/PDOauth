@@ -240,7 +240,7 @@ class Controller(
         cred.rm()
         return self.simple_response("email verified OK")
 
-    def do_send_password_reset_email(self, email):
+    def doSendPasswordResetEmail(self, email):
         user = User.getByEmail(email)
         if user is None:
             raise ReportedError(['Invalid email address'])

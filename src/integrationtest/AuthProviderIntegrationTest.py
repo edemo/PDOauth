@@ -27,7 +27,7 @@ class AuthProviderIntegrationTest(
         Application.query.delete()  # @UndefinedVariable
         KeyData.query.delete()  # @UndefinedVariable
         TokenInfoByAccessKey.query.delete()  # @UndefinedVariable
-        self.authProvider = AuthProvider(FlaskInterface)
+        self.authProvider = AuthProvider(FlaskInterface())
         self.session = db.session
         self.app = Application.new(
             "test app 5", "secret5", "https://test.app/redirecturi")

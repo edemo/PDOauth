@@ -6,15 +6,17 @@ from pdoauth.models.Credential import Credential
 class LoginHandling(object):
 
     def loginUser(self, cred):
-        cred.user.set_authenticated()
         r = self.loginInFramework(cred)
         return r
+
+    def setCSRFCookie(self, resp):
+        resp.set_cookie("csrf", self.getCSRF(), domain=self.getConfig('COOKIE_DOMAIN'))
 
     def returnUserAndLoginCookie(self, user, additionalInfo=None):
         if additionalInfo is None:
             additionalInfo={}
         resp = self.as_dict(user, **additionalInfo)
-        resp.set_cookie("csrf", self.getCSRF(), domain=self.getConfig('COOKIE_DOMAIN'))
+        self.setCSRFCookie(resp)
         return resp
 
     def finishLogin(self, cred):
@@ -24,10 +26,10 @@ class LoginHandling(object):
         raise ReportedError(["Inactive or disabled user"], status=403)
 
     def passwordLogin(self, form):
-        user = CredentialManager.getCredentialFromForm(form)
-        if user is None:
+        cred = CredentialManager.getCredentialFromForm(form)
+        if cred is None:
             raise ReportedError(["Bad username or password"], status=403)
-        return self.finishLogin(user)
+        return self.finishLogin(cred)
 
     def checkIdAgainstFacebookMe(self, form):
         code = form.secret.data
