@@ -1,4 +1,4 @@
-from pdoauth.app import app, login_manager, mail
+from pdoauth.app import app, login_manager, mail, db
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.Controller import Controller
 from flask.helpers import send_from_directory
@@ -17,6 +17,9 @@ from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
+from pdoauth.models import *  # @UnusedWildImport
+
+db.create_all()
 
 webInterface = FlaskInterface()
 CONTROLLER = Controller(webInterface)
@@ -24,6 +27,7 @@ CONTROLLER.mail = mail
 CONTROLLER.app = app
 DECORATOR = Decorators(app, webInterface)
 AUTHPROVIDER = AuthProvider(webInterface)
+
 def getStaticPath():
     staticDirectory = os.path.join(os.path.dirname(__file__),"..", "..", "static")
     return os.path.abspath(staticDirectory)
