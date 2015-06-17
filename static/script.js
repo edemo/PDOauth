@@ -2,6 +2,7 @@ var QueryString = function () { //http://stackoverflow.com/questions/979975/how-
   // This function is anonymous, is executed immediately and 
   // the return value is assigned to QueryString!
   var query_string = {};
+  console.log("queryString")
   var query = window.location.search.substring(1);
   var vars = query.split("&");
   for (var i=0;i<vars.length;i++) {
@@ -26,7 +27,7 @@ var uribase="";
 function PageScript(debug) {
 	var self = this
 	this.debug=debug
-
+	
 	PageScript.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
 		if (window.XMLHttpRequest)
@@ -41,7 +42,7 @@ function PageScript(debug) {
 		  {
 		  if (xmlhttp.readyState==4)
 		    {
-				console.log("ajaxbase: callback="+callback);
+//				console.log("ajaxbase: callback="+callback);
 		    	callback(xmlhttp.status,xmlhttp.responseText,xmlhttp.responseXML);
 		    }
 		  }
@@ -57,7 +58,7 @@ function PageScript(debug) {
 			l.push(key +"=" +encodeURIComponent(data[key]));
 		}
 		t = l.join("&")
-		console.log(t)
+//		console.log(t)
 		xmlhttp.send(t);
 	}
 
@@ -68,7 +69,7 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.processErrors = function(data) {
-			console.log(data)
+//			console.log(data)
 			var msg = {};
 			if (data.message) {
 				msg.title="Szerverüzenet";
@@ -107,14 +108,16 @@ function PageScript(debug) {
 		var data = JSON.parse(text);
 		if (status == 200) {
 			if(QueryString.next) {
-				window.location = decodeURIComponent(QueryString.next)
+				self.doRedirect(decodeURIComponent(QueryString.next))
 			}
 		}
-		var msg=self.processErrors(data)
-		msg.callback=self.get_me;
+		var msg = self.processErrors(data)
+		msg.callback = self.get_me;
 		self.displayMsg(msg);
 	}
 
+	PageScript.prototype.doRedirect = (this.debug)?function(href){this.test_href=href}:function(href){window.location=href}
+	
 	PageScript.prototype.get_me = function() {
 		self.ajaxget("/v1/users/me", self.initCallback)
 	}
@@ -154,7 +157,7 @@ function PageScript(debug) {
 		document.getElementById("popup").style.display  = "flex";
 		if (!msg.callback) msg.callback="";
 		document.getElementById("PopupWindow_CloseButton").onclick = function() {self.closePopup(msg.callback)}
-		console.log("displaymsg: callback="+document.getElementById("PopupWindow_CloseButton").onclick);
+//		console.log("displaymsg: callback="+document.getElementById("PopupWindow_CloseButton").onclick);
 		if (msg.title) document.getElementById("PopupWindow_TitleDiv").innerHTML = "<h2>"+msg.title+"</h2>";
 		if (msg.error) document.getElementById("PopupWindow_ErrorDiv").innerHTML     = "<p class='warning'>"+msg.error+"</p>";
 		if (msg.message) document.getElementById("PopupWindow_MessageDiv").innerHTML = "<p class='message'>"+msg.message+"</p>";
@@ -165,7 +168,7 @@ function PageScript(debug) {
 	}
 	
 	PageScript.prototype.closePopup = function(popupCallback) {
-
+		this.popupCallback=popupCallback //only for testing
 		document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
@@ -253,7 +256,7 @@ function PageScript(debug) {
 	PageScript.prototype.sslLogin = function() {
 		loc = '' +window.location
 		newloc = loc.replace(QueryString.uris.BASE_URL, QueryString.uris.SSL_LOGIN_BASE_URL)
-		console.log(newloc)
+//		console.log(newloc)
 		window.location = newloc
 	}
 
@@ -282,7 +285,7 @@ function PageScript(debug) {
 		self.ajaxpost("/v1/add_credential", text, self.myCallback )
 		self.ajaxpost("/v1/add_credential", text, function(status, text){
 			var data = JSON.parse(text);
-			console.log(data);
+//			console.log(data);
 			if (status==200) {
 				document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);
 			}
@@ -466,7 +469,7 @@ function PageScript(debug) {
 		}
 		self.ajaxpost("/v1/add_credential", text, function(status,text){
 			var data = JSON.parse(text);
-			console.log(data)
+//			console.log(data)
 			if (status != 200) {
 				self.displayMsg({error:"<p class='warning'>"+data.errors+"</p>",title:"Hibaüzenet:"});
 			}

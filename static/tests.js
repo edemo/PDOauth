@@ -27,6 +27,7 @@ function ajaxBase(callback) {
 	}
 	xmlhttp.send = function(data) {
 		self.data = data
+		self.callback = callback
 		callback(self.status,self.text,self.xml);
 	}
 	return xmlhttp;	
@@ -72,7 +73,7 @@ QUnit.test( "ajaxget can be mocked", function( assert ) {
 	pageScript.xml = xmlFor("<xml>hello</xml>");
 	pageScript.ajaxget("h", function(status,text,xml) {
 		assert.equal(201,status,"callback function gets '201' in the 'status' parameter");
-		assert.equal("szia",text,"callback function gets 'Szia' in the 'text' parameter");
+		assert.equal("szia",text,"callback function gets 'szia' in the 'text' parameter");
 		assert.equal("hello",xml.childNodes[0].childNodes[0].nodeValue,"callback function gets an xml data with node value 'hello' in the 'xml' parameter");
 	});
 	assert.equal(pageScript.uri, "h", "pageScript.uri gets 'h'");
@@ -151,17 +152,24 @@ QUnit.test( "the strings comes with 'error', 'succes', 'title' and 'messege' pro
 
 QUnit.test( "the callback function should be injected into the PopupWindow_CloseButton button onclick propoerty", function( assert ) {
 	pageScript = new PageScript(true)
-	callback = function() { return "world hello" } 
 	msg={ 
 			title: "hello world", 
-			callback: callback
+			callback: function() { return 'world hello' } 
 		}
-	button_function = function() { pageScript.closePopup(callback) }
 	
 	pageScript.displayMsg( msg )
 	assert_IsPopupShown( assert );
 	assert.equal(document.getElementById("PopupWindow_TitleDiv").innerHTML, "<h2>hello world</h2>", "the popup window's title div should get its value");
-	assert.equal(document.getElementById("PopupWindow_CloseButton").onclick.toString, button_function.toString, "the onclick property should get the function")
+	document.getElementById("PopupWindow_CloseButton").onclick()
+	assert_IsPopupHidden( assert );
+	assert.equal( pageScript.popupCallback.toString(), msg.callback.toString() , "the function in onclick property should get the function in msg.callback as argument'")
+
+	delete msg.callback
+	pageScript.displayMsg( msg )
+	assert_IsPopupShown( assert );
+	document.getElementById("PopupWindow_CloseButton").onclick()
+	assert_IsPopupHidden( assert );
+	assert.equal( pageScript.popupCallback.toString(), "", "the onclick function shouldn't get any argumentum")
 });
 
 // closePopup(callback=function(){})
@@ -188,20 +196,66 @@ QUnit.test( "the popup div should hide, erase its child divs and the callback fu
 // parseUserdata( userdata_object )
 
 QUnit.module( "parseUserdata()" ); 
-QUnit.test( "parseUserdata parses userdata contained a JSON object to html", function( assert ) {
+QUnit.test( "should parse the userdata contained an object to html", function( assert ) {
 	pageScript = new PageScript(true)
-	userdata=pageScript.parseUserdata({"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"})
-	assert.equal(userdata, "<p><b>e-mail cím:</b> my@email.com</p><p><b>felhasználó azonosító:</b> theuserid</p><p><b>hash:</b></p><pre>undefined</pre><p><b>tanusítványok:</b></p><ul><li>test</li><li>foo</li></ul><p><b>hitelesítési módok:</b></p><ul></ul>");	
+	var theUserId    = "theuserid"
+	var theUserEmail = "my@email.com"
+	var theDataObject = {
+							"userid": theUserId,
+						"assurances": {"test": "", "foo": ""},
+							 "email": theUserEmail 
+						}
+	
+	var userData = pageScript.parseUserdata(theDataObject)
+	assert.ok( userData.search(theUserId), "the output should contain the userid" )
+	assert.ok( userData.search(theUserEmail), "the output should contain the email address" )
 });
 
-// myCallback( htmlstatus, JSON )
+// myCallback( htmlstatus, JSON_string )
 
 QUnit.module( "myCallback()" ); 
-QUnit.test( "MyCallback processes the data through processErrors", function( assert ) {
+QUnit.test( "should redirect with 'next' query var comes in url if status=200", function( assert ) {
 	pageScript = new PageScript(true)
 	data = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
-	pageScript.myCallback(200,data)
-	assert.equal(document.getElementById("PopupWindow_SuccessDiv").innerHTML, "<p class=\"success\"></p>"+pageScript.parseUserdata(JSON.parse(data))+"<p></p>");	
+	QueryString.next = "newlocation"
+
+	pageScript.myCallback( 201, data )
+	assert.notOk(pageScript.test_href, "with status 201 the window.location shouldn't get new value accordin to QueryString.next");	
+
+	pageScript.myCallback( 200, data )
+	assert.equal(pageScript.test_href, "newlocation", "with status 200 the window.location should get the new location");	
+
+	delete QueryString.next
+	delete pageScript.test_href
+
+	pageScript.myCallback( 200, data )
+	assert.notOk(pageScript.test_href, "with status 200 the window.location shouldn't get new value if QueryString.next undefined");	
+});
+
+QUnit.test( "should display the processed data through processErrors() and displayMsg(), popop callback should have the get_me()", function( assert ) {
+	pageScript = new PageScript(true)
+	data = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
+	pageScript.myCallback( 200,data )
+	assert_IsPopupShown( assert );
+	assert.ok(document.getElementById("PopupWindow_SuccessDiv").innerHTML.search("my@email.com"), "the data should be shown in popup window");	
+	document.getElementById("PopupWindow_CloseButton").onclick()
+	assert.equal( pageScript.popupCallback.toString(), pageScript.get_me.toString() , "the function in PopupWindow_CloseButton onclick property should get the function 'get_me' as argument'")
+	assert_IsPopupHidden( assert );
+});
+
+// get_me() calls /v1/users/me
+
+QUnit.module( "get_me()" ); 
+QUnit.test( "should call '/v1/users/me' trough AJAX", function( assert ) {
+	pageScript = new PageScript(true)
+	pageScript.ajaxBase = ajaxBase
+	pageScript.status = 200;
+	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
+
+	pageScript.get_me();
+	assert.equal(pageScript.uri, "/v1/users/me", "the URI should be '/v1/users/me'");
+	assert.equal(pageScript.method, "GET", "the method should be GET");
+	assert.equal(pageScript.callback.toString(), pageScript.initCallback.toString(), "callback function should be the 'initCallback'");
 });
 
 // initCallback( htmlstatus, JSON )
