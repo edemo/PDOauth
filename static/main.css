@@ -105,6 +105,7 @@
 		pre {
 		  line-height: 100%;
 		  word-wrap: break-word;
+		  white-space: pre-line;
 		  }
 		  div.label {
 			color: yellow;
