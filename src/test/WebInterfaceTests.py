@@ -123,7 +123,7 @@ class WebInterfaceTests(PDUnitTest, UserUtil):
     def headers_can_be_obtained_with_getHeader(self):
         self.assertEquals(self.controller.getHeader('Authorization'), 'foo')
 
-    @testForBothInterfaces(data=dict(bar='foo'))
+    @testForBothInterfaces(data=dict(bar='foo'), method='POST')
     def form_can_be_obtained_with_getRequestForm(self):
         self.assertEquals(self.controller.getRequestForm()['bar'], 'foo')
 

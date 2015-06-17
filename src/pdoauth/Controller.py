@@ -14,6 +14,8 @@ from pdoauth.CertificateHandling import CertificateHandling
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from urllib import urlencode
 from pdoauth.Responses import Responses
+from pdoauth.models.Application import Application
+from Crypto.Hash.SHA512 import SHA512Hash
 
 class Controller(
         WebInterface, Responses, EmailHandling,
@@ -26,19 +28,20 @@ class Controller(
     passwordResetSent = "Password reset email has successfully sent."
     cannotDeleteLoginCred = "You cannot delete the login you are using"
 
-    def setAuthUser(self, userid, isHerself):
-        self.getSession()['auth_user']=(userid, isHerself)
+    def setAuthUser(self, userid, authenticator):
+        self.getSession()['auth_user']=(userid, authenticator)
 
     def authenticateUserOrBearer(self):
         authHeader = self.getHeader('Authorization')
         current_user = self.getCurrentUser()
         if current_user.is_authenticated():
-            self.setAuthUser(current_user.userid, True)
+            self.setAuthUser(current_user.userid, current_user.userid)
         elif authHeader:
             token = authHeader.split(" ")[1]
-            data = TokenInfoByAccessKey.find(token)
-            targetuserid = data.tokeninfo.user_id
-            self.setAuthUser(targetuserid, False)
+            tokeninfo = TokenInfoByAccessKey.find(token).tokeninfo
+            appid = tokeninfo.client_id
+            targetuserid = tokeninfo.user_id
+            self.setAuthUser(targetuserid, appid)
         else:
             raise ReportedError(["no authorization"], status=403)
 
@@ -199,28 +202,55 @@ class Controller(
         msg = "added assurance {0} for {1}".format(neededAssurance, user.email)
         return self.simple_response(msg)
 
-    def getShownUser(self, userid, authuser, isHerself):
-        if userid == 'me':
-            shownUser = authuser
-        elif isHerself:
-            if Assurance.getByUser(authuser).has_key('assurer'):
-                shownUser = User.get(userid)
-            else:
-                raise ReportedError([self.noShowAuthorization], status=403)
-        else:
-            raise ReportedError([self.noShowAuthorization], status=403)
-        return shownUser
-
 
     def getAuthenticatedUser(self):
-        authid, isHerself = self.getSession()['auth_user']
+        authid, authenticator = self.getSession()['auth_user']
         authuser = User.get(authid)
-        return authuser, isHerself
+        return authuser, authenticator
+
+    def doesUserAskOwnData(self, userid, authenticator):
+        return userid == authenticator
+
+
+    def doesUserAskForOthersData(self, authuser, authenticator):
+        return authuser.userid == authenticator
+
+    def getDataOfUserForAuthenticator(self, userid, authuser, authenticator):
+        user = User.get(userid)
+        if self.doesUserAskOwnData(userid, authenticator):
+            data = dict(email=user.email,
+                userid=user.userid,
+                assurances=Assurance.getByUser(user),
+                hash=user.hash,
+                credentials=Credential.getByUser_as_dictlist(user))
+            return data
+        if self.doesUserAskForOthersData(authuser, authenticator):
+            assurances = Assurance.getByUser(authuser)
+            if assurances.has_key('assurer'):
+                data = dict(email=user.email,
+                    userid=user.userid,
+                    assurances=Assurance.getByUser(user),
+                    hash=user.hash,
+                    credentials=Credential.getByUser_as_dictlist(user))
+                return data
+            else:
+                raise ReportedError([self.noShowAuthorization], status=403)
+        app = Application.get(authenticator)
+        twistedUserId = SHA512Hash(app.appid+user.userid).hexdigest()
+        data = dict(email=user.email,
+            userid=twistedUserId,
+            assurances=Assurance.getByUser(user),
+            hash=user.hash,
+            credentials=Credential.getByUser_as_dictlist(user))
+        return data
 
     def doShowUser(self, userid):
-        authuser, isHerself = self.getAuthenticatedUser()
-        shownUser = self.getShownUser(userid, authuser, isHerself)
-        return self.as_dict(shownUser)
+        authuser, authenticator = self.getAuthenticatedUser()
+        if userid == 'me':
+            userid = authuser.userid
+        data = self.getDataOfUserForAuthenticator(userid, authuser, authenticator)
+        ret = json.dumps(data)
+        return self.make_response(ret,200)
 
     def checkEmailverifyCredential(self, cred):
         if cred is None:

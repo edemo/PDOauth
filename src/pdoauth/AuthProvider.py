@@ -1,9 +1,8 @@
 
-from pyoauth2_shift.provider import AuthorizationProvider
 from pdoauth.models.Application import Application
 from pdoauth.models.KeyData import KeyData
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from pdoauth.Controller import WebInterface
+from pdoauth.AuthorizationProvider import AuthorizationProvider
 
 class ScopeMustBeEmpty(Exception):
     pass
@@ -11,7 +10,7 @@ class ScopeMustBeEmpty(Exception):
 class DiscardingNonexistingToken(Exception):
     pass
 
-class AuthProvider(AuthorizationProvider,WebInterface):
+class AuthProvider(AuthorizationProvider):
 
     def validate_client_id(self,client_id):
         if client_id is None:
@@ -42,7 +41,6 @@ class AuthProvider(AuthorizationProvider,WebInterface):
     def persist_token_information(self, client_id, scope, access_token, token_type, expires_in, refresh_token, data):
         keydata = KeyData.new(client_id, data.user_id, access_token, refresh_token)
         TokenInfoByAccessKey.new(access_token, keydata, expires_in)
-
     
     def from_refresh_token(self,client_id, refresh_token, scope):
         if scope != '':
@@ -67,18 +65,10 @@ class AuthProvider(AuthorizationProvider,WebInterface):
         keydata.rm()
         
     def auth_interface(self):
-        response = self.get_authorization_code_from_uri(self.getRequestUrl())
-        flask_res = self.make_response(response.text, response.status_code)
-        for k, v in response.headers.iteritems():
-            flask_res.headers[k] = v
-        return flask_res
+        uri = self.getRequestUrl()
+        return self.get_authorization_code_from_uri(uri)
 
     def token_interface(self):
         requestForm = self.getRequestForm()
         data = {k:requestForm[k] for k in requestForm.iterkeys()}
-        response = self.get_token_from_post_data(data)
-        flask_res = self.make_response(response.text, response.status_code)
-        for k, v in response.headers.iteritems():
-            flask_res.headers[k] = v
-        
-        return flask_res
+        return self.get_token_from_post_data(data)

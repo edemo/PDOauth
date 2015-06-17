@@ -6,11 +6,10 @@ from pdoauth.models.Application import Application
 from pdoauth.app import db
 from pdoauth.models.KeyData import KeyData
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from test.helpers.AuthenticatedSessionMixin import AuthenticatedSessionMixin
 from test.helpers.RandomUtil import RandomUtil
 from test.helpers.FakeInterFace import FakeInterface
 
-class AuthProviderTest(Fixture, AuthenticatedSessionMixin, RandomUtil):
+class AuthProviderTest(Fixture, RandomUtil):
 
     def setUp(self):
         self.setupRandom()

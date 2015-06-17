@@ -3,6 +3,7 @@ from twatson.unittest_annotations import Fixture, test  # @UnusedImport
 from pdoauth.Controller import Controller
 from pdoauth.ReportedError import ReportedError
 from test.helpers.FakeInterFace import FakeInterface, FakeApp, FakeMail
+from pdoauth import main
 
 class PDUnitTest(Fixture):
     def setUp(self):

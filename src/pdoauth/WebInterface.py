@@ -55,5 +55,10 @@ class WebInterface(object):
             (credential.credentialType, credential.identifier)
         return self.interface.loginUserInFramework(user)
 
+    def makeRedirectResponse(self, redirectUri):
+        response = self.make_response(redirectUri, 302)
+        response.headers['Location']= redirectUri
+        return response
+
     def make_response(self, ret, status):
         return self.interface.make_response(ret, status)

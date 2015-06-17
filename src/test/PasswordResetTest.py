@@ -98,7 +98,7 @@ class PasswordResetTest(PDUnitTest, UserUtil):
         secret = unicode(uuid4())
         for someone in User.query.all()[:5]:  # @UndefinedVariable
             Credential.new(someone, 'email_for_password_reset', unicode(uuid4()), time.time()-1)
-        self.assertEqual(self.countExpiredCreds(),5)
+        self.assertTrue(self.countExpiredCreds()>=5)
         data = dict(password=password, secret=secret)
         self.assertReportedError(self.controller.doPasswordReset,(FakeForm(data),),
                 404, ['The secret has expired'])

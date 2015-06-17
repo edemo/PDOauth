@@ -10,7 +10,7 @@ class ServerSide(object):
             'client_id':self.appid,
             'client_secret':self.appsecret,
             'redirect_uri':'https://test.app/redirecturi'}
-        with app.test_request_context(data = postData):
+        with app.test_request_context(data = postData, method="POST"):
             resp = AuthProvider(FlaskInterface()).token_interface()
         data = self.fromJson(resp)
         self.assertTrue(data.has_key('access_token'))

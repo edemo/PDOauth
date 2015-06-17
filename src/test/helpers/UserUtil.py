@@ -58,7 +58,7 @@ class UserUtil(ResponseInfo, RandomUtil):
 
     def showUserByCurrentUser(self, ouserid):
         userid = self.controller.getCurrentUser().userid
-        self.controller.getSession()['auth_user'] =  (userid, True)
+        self.controller.getSession()['auth_user'] =  (userid, userid)
         resp = self.controller.doShowUser(userid=ouserid)
         return resp
 

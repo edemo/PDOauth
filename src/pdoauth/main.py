@@ -17,9 +17,9 @@ from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
-from pdoauth import models  # @UnusedWildImport
+#from pdoauth import models  # @UnusedWildImport
 
-db.create_all()
+#db.create_all()
 
 webInterface = FlaskInterface()
 CONTROLLER = Controller(webInterface)

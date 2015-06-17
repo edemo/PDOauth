@@ -19,6 +19,7 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
             user = User.getByEmail(self.userCreationEmail)
         if not activate:
             user.active = False
+        self.userid = user.userid
         data = {
                 'credentialType': 'password',
                 'identifier': self.userCreationUserid,

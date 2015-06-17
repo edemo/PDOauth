@@ -6,12 +6,12 @@ from pdoauth.models.Application import Application
 from pdoauth.app import db, app
 from pdoauth.models.KeyData import KeyData
 from pyoauth2_shift.provider import utils
-from flask_login import current_user
+from flask_login import current_user, login_user
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from urllib import urlencode
-from test.helpers.AuthenticatedSessionMixin import AuthenticatedSessionMixin
-from test.helpers.RandomUtil import RandomUtil
 from pdoauth.FlaskInterface import FlaskInterface
+from integrationtest.helpers.UserTesting import UserTesting
+from integrationtest import config
 
 class FakeData(object):
 
@@ -19,8 +19,15 @@ class FakeData(object):
         self.client_id = client_id
         self.user_id = user_id
 
-class AuthProviderIntegrationTest(
-        IntegrationTest, AuthenticatedSessionMixin, RandomUtil):
+class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
+
+    def makeSessionAuthenticated(self):
+        user = self.createUserWithCredentials().user
+        user.activate()
+        user.set_authenticated()
+        user.save()
+        login_user(user)
+        self.userid = user.userid
 
     def setUp(self):
         self.setupRandom()
@@ -125,20 +132,27 @@ class AuthProviderIntegrationTest(
 
     @test
     def authorization_code_cannot_be_obtained_without_user(self):
-        with app.test_request_context('/'):
-            redirectUri = 'https://test.app/redirecturi'
-            resp = self.authProvider.get_authorization_code('code',
-                               self.app.appid,
-                               redirectUri, scope='')
-        uri = 'https://test.app/redirecturi?error=access_denied'
-        self.assertTrue(
-            resp.headers['Location'].startswith(uri))
+        with app.test_client() as c:
+            redirect_uri = 'https://test.app/redirecturi'
+            params = {
+                    "response_type":"code",
+                    "client_id":self.app.appid,
+                    "redirect_uri":redirect_uri
+            }
+            resp = c.get("https://localhost.local/v1/oauth2/auth", query_string=params)
+            denyUri = config.BASE_URL
+            self.assertTrue(resp.headers['Location'].startswith(denyUri))
+
+
+    def buildAuthUri(self):
+        redirect_uri = 'https://test.app/redirecturi'
+        uriPattern = 'https://localhost.local/v1/oauth2/auth?response_type=code&client_id={0}&redirect_uri={1}'
+        uri = uriPattern.format(self.app.appid, redirect_uri)
+        return uri
 
     def _getAuthorizationCode(self):
         with app.test_request_context('/'):
-            redirect_uri = 'https://test.app/redirecturi'
-            uriPattern = 'https://localhost.local/v1/oauth2/auth?response_type=code&client_id={0}&redirect_uri={1}'
-            uri = uriPattern.format(self.app.appid, redirect_uri)
+            uri = self.buildAuthUri()
             self.makeSessionAuthenticated()
             self.assertTrue(current_user.is_authenticated())
             params = utils.url_query_params(uri)

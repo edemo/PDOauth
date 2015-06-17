@@ -14,13 +14,14 @@ class Responses(object):
     def simple_response(self,text):
         return self.makeJsonResponse(dict(message=text))
     
+    def addUserDataToDict(self, user, kwargs):
+        return kwargs.update({'email':user.email, 'userid':user.userid, 
+                'assurances':Assurance.getByUser(user), 
+                'hash':user.hash, 
+                'credentials':Credential.getByUser_as_dictlist(user)})
+
     def as_dict(self, user, **kwargs):
-        kwargs.update({'email':user.email, 
-            'userid':user.userid, 
-            'assurances':Assurance.getByUser(user),
-            'hash': user.hash,
-            'credentials': Credential.getByUser_as_dictlist(user)
-        })
+        self.addUserDataToDict(user, kwargs)
         ret = json.dumps(kwargs)
         return self.make_response(ret,200)
 
