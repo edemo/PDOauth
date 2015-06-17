@@ -1,123 +1,114 @@
-from test.TestUtil import UserTesting
-from twatson.unittest_annotations import Fixture, test
-from pdoauth.app import app
+# pylint: disable=line-too-long
 from pdoauth.models.Credential import Credential
 from urllib import urlencode
+from test.helpers.PDUnitTest import PDUnitTest, test
 
-class SSLLoginTest(Fixture, UserTesting):
+from test.config import Config
+from test.helpers.FakeInterFace import FakeMail
+from test.helpers.CryptoTestUtil import CryptoTestUtil, TEST_USER_IDENTIFIER
+from test.helpers.UserUtil import UserUtil
+
+CREDENTIAL_REPRESENTATION = '{{"credentialType": "certificate", "identifier": "{0}"}}'.format(TEST_USER_IDENTIFIER)
+
+class SslLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
+
+    def tearDown(self):
+        PDUnitTest.tearDown(self)
+        self.removeCertUser()
 
     @test
     def there_is_a_SSL_LOGIN_BASE_URL_config_option_containing_the_base_url_of_the_site_with_the_optional_no_ca_config(self):
-        self.assertTrue(app.config.get('SSL_LOGIN_BASE_URL') is not None)
+        self.assertTrue(Config.SSL_LOGIN_BASE_URL is not None)
 
     @test
     def there_is_a_BASE_URL_config_option_containing_the_plain_ssl_base_url(self):
         "where no certificate is asked"
-        self.assertTrue(app.config.get('BASE_URL') is not None)
+        self.assertTrue(Config.BASE_URL is not None)
 
     @test
     def there_is_a_SSL_LOGOUT_URL_config_option_pointing_to_a_location_which_is_set_up_with_SSLVerifyClient_require_and_SSLVerifyDepth_0_within_SSL_LOGIN_BASE_URL(self):
-        self.assertTrue(app.config.get('SSL_LOGIN_BASE_URL') in app.config.get('SSL_LOGOUT_URL'))
-    
+        self.assertTrue(Config.SSL_LOGIN_BASE_URL in Config.SSL_LOGOUT_URL)
+
     @test
     def there_is_a_START_URL_config_option_which_contains_the_starting_point_useable_for_unregistered_and_or_not_logged_in_user(self):
-        self.assertTrue(app.config.get('BASE_URL') in app.config.get('START_URL'))
-                
+        self.assertTrue(Config.BASE_URL in Config.START_URL)
+
     @test
     def you_can_login_using_a_registered_ssl_cert(self):
-        identifier, digest, cert = self.getCertAttributes()
-        user = self.createUserWithCredentials()
-        secret = digest
-        cred = Credential.new(user, "certificate", identifier, secret)
-        environ_base = dict(SSL_CLIENT_CERT=cert)
-        with app.test_client() as c:
-            resp = c.get("/ssl_login", environ_base=environ_base)
-            self.assertEquals(resp.status_code, 200)
-            self.assertTrue('{"credentialType": "certificate", "identifier": "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"}' in
-                self.getResponseText(resp))
-        cred.rm()
+        resp = self.createUserAndLoginWithCert()
+        self.assertEquals(resp.status_code, 200)
+        self.assertTrue(CREDENTIAL_REPRESENTATION in
+            self.getResponseText(resp))
+
+    @test
+    def ssl_login_sets_csrf_cookie(self):
+        resp = self.createUserAndLoginWithCert()
+        cookieParts = self.getCookieParts(resp)
+        self.assertTrue(cookieParts.has_key('csrf'))
+
+    @test
+    def login_cookie_have_path_set_to_root(self):
+        resp = self.createUserAndLoginWithCert()
+        cookieParts = self.getCookieParts(resp)
+        self.assertEquals(cookieParts['Path'], '/')
+
+    @test
+    def login_cookie_have_domain_set_to_COOKIE_DOMAIN(self):
+        resp = self.createUserAndLoginWithCert()
+        cookieParts = self.getCookieParts(resp)
+        cookieDomain = self.controller.app.config.get('COOKIE_DOMAIN')
+        self.assertEquals(cookieParts['Domain'], cookieDomain)
 
     @test
     def with_cert_login_you_get_actually_logged_in(self):
-        identifier, digest, cert = self.getCertAttributes()
-        user = self.createUserWithCredentials()
-        secret = digest
-        cred = Credential.new(user, "certificate", identifier, secret)
-        environ_base = dict(SSL_CLIENT_CERT=cert)
-        with app.test_client() as c:
-            resp = c.get("/ssl_login", environ_base=environ_base)
-            self.assertEquals(resp.status_code, 200)
-            self.assertTrue('{"credentialType": "certificate", "identifier": "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"}' in
-                self.getResponseText(resp))
-            resp = c.get("/v1/users/me")
-            self.assertEqual(200, resp.status_code)
-        cred.rm()
+        resp = self.createUserAndLoginWithCert()
+        self.assertEquals(resp.status_code, 200)
+        body = self.getResponseText(resp)
+        self.assertTrue(CREDENTIAL_REPRESENTATION in
+            body)
+        resp = self.showUserByCurrentUser('me')
+        self.assertEqual(200, resp.status_code)
 
     @test
     def you_cannot_login_using_an_unregistered_ssl_cert_without_email(self):
-        identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
-        environ_base = dict(SSL_CLIENT_CERT=cert)
-        with app.test_client() as c:
-            resp = c.get("/ssl_login", environ_base=environ_base)
-            self.assertEquals(resp.status_code, 403)
-            self.assertEqual('{"errors": ["You have to register first"]}', self.getResponseText(resp))
+        certAttr = self.getCertAttributes()
+        self.assertReportedError(
+            self.sslLoginWithCert, [certAttr.cert], 403, ["You have to register first"])
 
     @test
     def you_cannot_login_without_a_cert(self):
-        with app.test_client() as c:
-            resp = c.get("/ssl_login")
-            self.assertEquals(resp.status_code, 403)
-            self.assertEqual('{"errors": ["No certificate given"]}', self.getResponseText(resp))
+        self.assertReportedError(
+            self.controller.doSslLogin, [], 403, ["No certificate given"])
 
     @test
     def empty_certstring_gives_error(self):
-        environ_base = dict(SSL_CLIENT_CERT='')
-        with app.test_client() as c:
-            resp = c.get("/ssl_login",environ_base=environ_base)
-            self.assertEquals(resp.status_code, 403)
-            self.assertEqual('{"errors": ["No certificate given"]}', self.getResponseText(resp))
+        self.assertReportedError(
+            self.sslLoginWithCert, [''], 403, ["No certificate given"])
 
     @test
     def junk_certstring_gives_error(self):
-        environ_base = dict(SSL_CLIENT_CERT='junk')
-        with app.test_client() as c:
-            resp = c.get("/ssl_login",environ_base=environ_base)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["error in cert", "junk"]}', self.getResponseText(resp))
+        self.assertReportedError(
+            self.sslLoginWithCert, ['junk'], 400, ["error in cert", "junk"])
 
     @test
     def ssl_login_is_cors_enabled(self):
-        identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
-        user = self.createUserWithCredentials()
-        secret = digest
-        cred = Credential.new(user, "certificate", identifier, secret)
-        environ_base = dict(SSL_CLIENT_CERT=cert)
-        with app.test_client() as c:
-            resp = c.get("/ssl_login",environ_base=environ_base)
-            self.assertEquals(resp.status_code, 200)
-            self.assertEqual(resp.headers['Access-Control-Allow-Origin'], "*")
-        cred.rm()
+        resp = self.createUserAndLoginWithCert()
+        self.assertEquals(resp.status_code, 200)
+        self.assertEqual(resp.headers['Access-Control-Allow-Origin'], "*")
 
     @test
     def you_can_register_and_login_using_an_unregistered_ssl_cert_with_email(self):
-        identifier, digest, cert = self.getCertAttributes()  # @UnusedVariable
-        environ_base = dict(SSL_CLIENT_CERT=cert)
+        certAttr = self.getCertAttributes()
         params=dict(email="certuser@example.com")
-        queryString = urlencode(params)
-        with app.test_client() as c:
-            resp = c.get("/ssl_login", query_string=queryString,environ_base=environ_base)
-            cred = Credential.get("certificate", identifier)
-            self.deleteUser(cred.user)
-            self.assertEquals(resp.status_code, 200)
-            responseText = self.getResponseText(resp)
-            self.assertTrue('{"credentialType": "certificate", "identifier": "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"}' in
-                responseText)
-            self.assertTrue('{"credentialType": "emailcheck", "identifier":' in
-                responseText)
-
-    @test
-    def you_cannot_ssl_login_without_a_cert(self):
-        with app.test_client() as c:
-            resp = c.get("/ssl_login")
-            self.assertEquals(resp.status_code, 403)
-            self.assertEqual('{"errors": ["No certificate given"]}', self.getResponseText(resp))
+        url = Config.BASE_URL + "?" + urlencode(params)
+        self.controller.interface.set_request_context(url)
+        self.controller.mail = FakeMail()
+        resp = self.sslLoginWithCert(certAttr.cert)
+        cred = Credential.get("certificate", certAttr.identifier)
+        self.deleteUser(cred.user)
+        self.assertEquals(resp.status_code, 200)
+        responseText = self.getResponseText(resp)
+        self.assertTrue(CREDENTIAL_REPRESENTATION in
+            responseText)
+        self.assertTrue('{"credentialType": "emailcheck", "identifier":' in
+            responseText)

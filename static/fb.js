@@ -50,13 +50,33 @@ function FaceBook(pageScript) {
     });
   }
 
-  FaceBook.prototype.loginCallBack = function(response) {
+  
+	FaceBook.prototype.credentialCallBack = function(response) {
+  		var self = this;
+	    if (response.status === 'connected') {
+	    	self.loggedIn = response;
+	    	self.pageScript.add_facebook_credential(response.authResponse.userID, response.authResponse.accessToken)
+	    } else {
+	    	self.doc.getElementById('AddCredentialForm_ErrorMsg').innerHTML = '<p class="warning">A facebook bejelentkezés sikertelen</p>';
+	    } 
+	  }
+
+	FaceBook.prototype.add_fb_credential = function() {
+		var self = this;
+		if (! self.loggedIn ) {
+			FB.login(function(response) {
+			    self.credentialCallBack(response);
+			  });
+		}
+	}
+  
+	FaceBook.prototype.loginCallBack = function(response) {
   		var self = this;
 	    if (response.status === 'connected') {
 	    	self.loggedIn = response;
 	    	self.pageScript.login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
 	    } else {
-	    	self.doc.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
+	    	self.doc.getElementById('Login-ErrorMsg').innerHTML = '<p class="warning">A facebook bejelentkezés sikertelen</p>';
 	    } 
 	  }
 
@@ -82,14 +102,14 @@ function FaceBook(pageScript) {
 		     		if (e != '') {
 		     			email = e;
 		     		} else {
-			     		self.doc.getElementById('message').innerHTML = "please give us an email in the registration form"
+			     		self.pageScript.displayMsg({ title:"Facebook",message:"please give us an email in the registration form" })
 			     		return;
 			     	};
 		     	};
 				self.pageScript.register_with_facebook(response.authResponse.userID, response.authResponse.accessToken, email)
 		    });
 		} else {
-		  self.doc.getElementById('message').innerHTML = 'Facebook login is unsuccessful'
+		  self.pageScript.displayMsg({ title:"Facebook", error:'Facebook login is unsuccessful' })
 		} 
 	}
 	

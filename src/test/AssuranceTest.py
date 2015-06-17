@@ -1,162 +1,107 @@
-# -*- coding: UTF-8 -*-
-from twatson.unittest_annotations import Fixture, test
-from pdoauth.app import app
-from pdoauth.models.User import User
-from test.TestUtil import UserTesting, CSRFMixin
+#pylint: disable=line-too-long
+from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.UserUtil import UserUtil
 from pdoauth.models.Assurance import Assurance
-from uuid import uuid4
-from flask_login import current_user
-import config
+from test.helpers.FakeInterFace import FakeForm
+from test.helpers.CryptoTestUtil import CryptoTestUtil
 
-class AssuranceTest(Fixture, CSRFMixin, UserTesting):
+class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
-    def _setupTestWithoutAssurance(self, c):
-        self.login(c)
-        self.createUserWithCredentials()
-        target = User.getByEmail(self.usercreation_email)
-        target.hash = self.createHash()
-        target.save()
-        self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
-        return target
-
-    def _setupTest(self, c):
-        target = self._setupTestWithoutAssurance(c)
-        Assurance.new(current_user, 'assurer', current_user)
-        Assurance.new(current_user, 'assurer.test', current_user)
-        return target
-
-
-    @test
-    def assurance_form_needs_csrf(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                digest = self.createHash(),
-                assurance = "test",
-                email = "invalid@email.com",
-                csrf_token = "")
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(400, resp.status_code)
-            self.assertEquals(self.getResponseText(resp),'{"errors": ["csrf_token: csrf validation error"]}')
+    def _prepareTest(self,
+            noTestAdderAssurance=False,
+            email =None,
+            noAssurerAssurance=False,
+            digest=None):
+        self.createLoggedInUser()
+        user = self.cred.user
+        if not noAssurerAssurance:
+            Assurance.new(user, 'assurer', user)
+        if not noTestAdderAssurance:
+            Assurance.new(user, 'assurer.test', user)
+        self.target = self.createUserWithCredentials().user
+        self.target.hash = self.createHash()
+        self.data = dict(
+                assurance='test',
+                email = None)
+        self.addDataBasedOnOptionValue('email', email, self.target.email)
+        self.addDataBasedOnOptionValue('digest', digest, self.target.hash)
+        form = FakeForm(self.data)
+        return form
 
     @test
     def assurers_with_appropriate_credential_can_add_assurance_to_user_using_hash(self):
-        """
-        the appropriate credential is an assurance in the form "assurer.<assurance_name>"
-        where assurance_name is the assurance to be added
-        """
-        with app.test_client() as c:
-            target = self._setupTest(c)
-            data = dict(
-                digest = target.hash,
-                assurance = "test",
-                email = target.email,
-                csrf_token = self.getCSRF(c))
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(200, resp.status_code)
-            self.assertEquals(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
-
-    @test
-    def no_madeup_csrf_cookie(self):
-        with app.test_client() as c:
-            target = self._setupTest(c)
-            false_cookie=unicode(uuid4())
-            data = dict(
-                digest = target.hash,
-                assurance = "test",
-                email = target.email,
-                csrf_token = false_cookie)
-            c.set_cookie("localhost.localdomain","csrf",false_cookie)
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(400, resp.status_code)
-            self.assertEquals('{"errors": ["csrf_token: csrf validation error"]}',self.getResponseText(resp))
-
-    @test
-    def assurers_without_appropriate_credential_cannot_add_assurance_to_user(self):
-        with app.test_client() as c:
-            target = self._setupTestWithoutAssurance(c)
-            data = dict(
-                digest = target.hash,
-                assurance = "test",
-                email = target.email,
-                csrf_token = self.getCSRF(c))
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(403, resp.status_code)
+        form = self._prepareTest()
+        self.controller.doAddAssurance(form)
+        self.assertEqual(Assurance.listByUser(self.target)[0].name, 'test')
 
     @test
     def adding_assurance_is_possible_using_the_hash_only(self):
-        with app.test_client() as c:
-            target = self._setupTest(c)
-            data = dict(
-                digest = target.hash,
-                assurance = "test",
-                csrf_token = self.getCSRF(c))
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(200, resp.status_code)
-            self.assertEquals(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
+        form = self._prepareTest(email = False)
+        self.controller.doAddAssurance(form)
+        self.assertEqual(Assurance.listByUser(self.target)[0].name, 'test')
 
     @test
     def assurers_need_assurer_assurance(self):
-        with app.test_client() as c:
-            target = self._setupTestWithoutAssurance(c)
-            Assurance.new(current_user, 'assurer.test', current_user)
-            data = dict(
-                digest = target.hash,
-                assurance = "test",
-                email = target.email,
-                csrf_token = self.getCSRF(c))
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(403, resp.status_code)
-            self.assertEquals('{"errors": ["no authorization"]}', self.getResponseText(resp))
+        form = self._prepareTest(noAssurerAssurance=True)
+        self.assertReportedError(
+            self.controller.doAddAssurance,[form], 403, ["no authorization"])
 
     @test
     def assurers_need_giving_assurance(self):
         "that is they have to have assurance.[the assurance to give]"
-        with app.test_client() as c:
-            target = self._setupTestWithoutAssurance(c)
-            Assurance.new(current_user, 'assurer', current_user)
-            data = dict(
-                digest = target.hash,
-                assurance = "test",
-                email = target.email,
-                csrf_token = self.getCSRF(c))
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(403, resp.status_code)
-            self.assertEquals('{"errors": ["no authorization"]}', self.getResponseText(resp))
+        form = self._prepareTest(noTestAdderAssurance=True)
+        self.assertReportedError(
+            self.controller.doAddAssurance,[form], 403, ["no authorization"])
+
+    def _prepareHashCollision(self, email=None):
+        form = self._prepareTest(email=email)
+        self.digest = self.target.hash
+        self.anotherUser = self.createUserWithCredentials().user
+        self.anotherUser.hash = self.digest
+        return form
 
     @test
     def when_an_assurer_wants_to_add_an_assurance_for_a_user_with_hash_and_without_email___and_there_are_multiple_users_with_that_hash___then_an_error_is_signaled(self):
-        with app.test_client() as c:
-            target = self._setupTest(c)
-            anotherUser = self.createUserWithCredentials()
-            anotherUser.hash = target.hash
-            anotherUser.save()
-            data = dict(
-                digest = target.hash,
-                assurance = "test",
-                csrf_token = self.getCSRF(c))
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(400, resp.status_code)
-            self.assertEquals('{"errors": ["Two users with the same hash; specify both hash and email"]}', self.getResponseText(resp))
+        form = self._prepareHashCollision(False)
+        self.assertReportedError(
+            self.controller.doAddAssurance,[form],
+            400, ["More users with the same hash; specify both hash and email"])
 
     @test
     def when_an_assurance_added_with_hash_and_email___and_there_is_another_user_with_the_same_hash___the_hash_from_the_other_user_is_deleted(self):
-        with app.test_client() as c:
-            target = self._setupTest(c)
-            anotherUser = self.createUserWithCredentials()
-            anotherEmail = self.usercreation_email
-            anotherUser.hash = target.hash
-            targetHash = target.hash
-            anotherUser.save()
-            data = dict(
-                digest = target.hash,
-                assurance = "test",
-                email = target.email,
-                csrf_token = self.getCSRF(c))
-            resp = c.post(config.base_url + '/v1/add_assurance', data = data)
-            self.assertEquals(200, resp.status_code)
-            self.assertEquals(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
-            anotherUser = User.getByEmail(anotherEmail)
-            self.assertEqual(anotherUser.hash, None)
-            user = User.getByEmail(target.email)
-            self.assertEqual(user.hash, targetHash)
+        form = self._prepareHashCollision()
+        resp = self.controller.doAddAssurance(form)
+        self.assertEquals(200, resp.status_code)
+        assurer = Assurance.getByUser(self.target)['test'][0]['assurer']
+        self.assertEquals(assurer, self.controller.getCurrentUser().email)
+        self.assertEqual(self.anotherUser.hash, None)
+        self.assertEqual(self.target.hash, self.digest)
+
+    @test
+    def adding_assurance_with_invalid_hash_and_email_fails(self):
+        badhash = self.createHash()
+        form = self._prepareTest(digest=badhash)
+        self.assertReportedError(
+            self.controller.doAddAssurance,[form],
+            400, ['This user does not have that digest'])
+        self.assertFalse(Assurance.getByUser(self.target).has_key('test'))
+
+    @test
+    def adding_assurance_with_invalid_hash_and_no_email_fails(self):
+        badhash = self.createHash()
+        form = self._prepareTest(digest=badhash,email=False)
+        self.assertReportedError(
+            self.controller.doAddAssurance,[form],
+            400, ['No user with this hash'])
+        self.assertFalse(Assurance.getByUser(self.target).has_key('test'))
+
+    @test
+    def adding_assurance_with_email_and_hash_of_someone_other_fails(self):
+        otherHash = self.createHash()
+        form = self._prepareTest(digest=otherHash)
+        self.anotherUser = self.createUserWithCredentials().user
+        self.anotherUser.hash = otherHash
+        self.assertReportedError(
+            self.controller.doAddAssurance,[form],
+            400, ['This user does not have that digest'])
+        self.assertFalse(Assurance.getByUser(self.target).has_key('test'))

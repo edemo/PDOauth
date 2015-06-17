@@ -5,6 +5,7 @@ from sqlalchemy.sql.sqltypes import Integer, String
 from sqlalchemy.orm import relationship
 from pdoauth.models.User import User
 import time
+from pdoauth.ReportedError import ReportedError
 
 
 class AlreadyExistingCredential(Exception):
@@ -44,7 +45,7 @@ class Credential(db.Model, ModelUtils):
     def new(cls, user, credentialType, identifier, secret):
         oldcred = cls.get(credentialType, identifier)
         if oldcred is not None:
-            raise AlreadyExistingCredential
+            raise ReportedError('Already existing credential', 400)
         cred = cls(user, credentialType, identifier, secret)
         cred.save()
         return cred
@@ -57,9 +58,8 @@ class Credential(db.Model, ModelUtils):
             if float(c.secret) < now:
                 c.rm()
 
-    
     def __repr__(self, *args, **kwargs):
-        return "Credential(user={0.user.email},credentialType={0.credentialType},secret={0.secret})".format(self)
+        return "Credential(user={0.user.email},credentialType={0.credentialType},identifier={0.identifier},secret={0.secret})".format(self)
 
     
     @classmethod

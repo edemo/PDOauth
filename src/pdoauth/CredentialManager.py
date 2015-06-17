@@ -9,22 +9,25 @@ class CredentialManager(object):
         return protected
 
     @classmethod
-    def create_user_with_creds(cls, credtype, identifier, secret, email, digest=None):
-        user = User.new(email, digest)
+    def addCredToUser(cls, user, credtype, identifier, secret):
         protected = cls.protect_secret(secret)
         cred = Credential.new(user, credtype, identifier, protected)
-        if cred is None:
-            user.rm()
-            return None
-        return user
+        cred.save()
+        return cred
+
+    @classmethod
+    def create_user_with_creds(cls, credtype, identifier, secret, email, digest=None):
+        user = User.new(email, digest)
+        cred = cls.addCredToUser(user, credtype, identifier, secret)
+        return cred
 
     
     @classmethod
-    def validate_from_form(cls, form):
+    def getCredentialFromForm(cls, form):
         cred = Credential.get('password', form.identifier.data)
         if cred is None:
             return None
         hashed = cls.protect_secret(form.secret.data)
         if cred.secret == hashed:
-            return cred.user
+            return cred
         return None

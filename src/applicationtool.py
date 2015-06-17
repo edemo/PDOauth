@@ -86,7 +86,7 @@ USAGE
         verbose = args.verbose
         name = args.name[0]
         secret = args.secret[0]
-        redirectUri = args.redirectUri[0]
+        redirectUri = args.redirect_uri[0]
         return do_main(verbose, name, secret, redirectUri)
 
     except KeyboardInterrupt:

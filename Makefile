@@ -14,32 +14,35 @@ static/qunit-reporter-junit.js:
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js
 
-alltests: tests integrationtest
+alltests: tests integrationtests end2endtest
 
-onlyintegrationtest: install testsetup runserver runemail testsetup chrometest firefoxtest
+onlyend2endtest: install testsetup runserver runemail testsetup chrometest firefoxtest
 
 firefoxtest:
-	PYTHONPATH=src python -m unittest discover -s src/integrationtest -p "*.py"
+	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*.py"
 
 chrometest:
-	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -s src/integrationtest -p "*.py"
+	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -f -s src/end2endtest -p "*.py"
 
-integrationtest: onlyintegrationtest killall
+end2endtest: onlyend2endtest killall
 
 runserver:
-	mkdir -p tmp; apache2 -X -f $$(pwd)/src/integrationtest/apache2.conf&
+	mkdir -p tmp; apache2 -X -f $$(pwd)/src/end2endtest/apache2.conf&
 
 killserver:
 	kill $$(cat tmp/httpd.pid)
 
 runemail:
-	python -m smtpd -n -c DebuggingServer localhost:1025&
+	mkdir -p tmp; python -m smtpd -n -c DebuggingServer localhost:1025 >tmp/smtpd.log&
 
 killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
 
+integrationtests: testsetup
+	PYTHONPATH=src python -m unittest discover -v -f -s src/integrationtest -p "*.py"
+
 tests: testsetup
-	PYTHONPATH=src python -m unittest discover -s src/test -p "*.py"
+	PYTHONPATH=src python -m unittest discover -v -f -s src/test -p "*.py"
 
 testsetup:
 	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade ; mkdir -p doc/screenshots
@@ -57,10 +60,16 @@ sql:
 
 killall: killserver killemail
 
-xmldoc: doc/html/documentation.html
+xmldoc: doc/html/documentation.html doc/html/commitlog.html
 
-doc/xml/doc.xml: doc/xml
+doc/xml/doc.xml: doc/xml/commitlog.xml doc/xml/buildinfo.xml doc/xml
 	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
+
+doc/xml/commitlog.xml: doc/xml
+	(echo "<commitlog>";git log --pretty=format:'<commit id="%h" author="%an" date="%ad">%f</commit>'|cat;echo "</commitlog>")|sed 's/-/ /g' >doc/xml/commitlog.xml
+
+doc/xml/buildinfo.xml: doc/xml
+	 echo "<buildinfo><branch>${TRAVIS_BRANCH}</branch><commit>${TRAVIS_COMMIT}</commit><build>${TRAVIS_BUILD_ID}</build></buildinfo>" >doc/xml/buildinfo.xml
 
 doc/html:
 	mkdir -p doc/html
@@ -76,6 +85,12 @@ lib/saxon9he.jar: tmp/saxon.zip
 
 doc/xml/intermediate.xml: lib/saxon9he.jar doc/xml/doc.xml doc/screenshots/unittests.xml
 	java -jar lib/saxon9he.jar -xsl:src/doc/intermediate.xsl -s:doc/xml/doc.xml >doc/xml/intermediate.xml
+
+doc/html/commitlog.docbook: doc/xml/commitlog.xml doc/html
+	java -jar lib/saxon9he.jar -xsl:src/doc/commitlog.xsl -s:doc/xml/commitlog.xml >doc/html/commitlog.docbook
+
+doc/html/commitlog.html: doc/html/commitlog.docbook doc/static/docbook.css
+	java -jar lib/saxon9he.jar -xsl:src/doc/docbook2html.xslt -s:doc/html/commitlog.docbook >doc/html/commitlog.html
 
 doc/html/documentation.docbook: doc/xml/intermediate.xml doc/html
 	java -jar lib/saxon9he.jar -xsl:src/doc/todocbook.xsl -s:doc/xml/intermediate.xml >doc/html/documentation.docbook

@@ -1,150 +1,101 @@
-from test.TestUtil import UserTesting, CSRFMixin
-from twatson.unittest_annotations import Fixture, test
-import config
-from pdoauth.app import app
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
-from pdoauth.forms import credErr
+from pdoauth.models.Assurance import Assurance
+from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.UserUtil import UserUtil
+from test.helpers.FakeInterFace import FakeForm
 
-class DeregisterTest(Fixture, UserTesting, CSRFMixin):
+class DeregisterTest(PDUnitTest, UserUtil):
 
-    @test
-    def you_can_deregister_with_your_login_credentials_and_csrf(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                csrf_token = self.getCSRF(c),
-                credentialType= "password",
-                identifier= self.usercreation_userid,
-                secret = self.usercreation_password
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 200)
-            self.assertEqual('{"message": "deregistered"}', self.getResponseText(resp))
+    def _doDeregister(self):
+        data = dict(csrf_token=self.controller.getCSRF())
+        resp = self.controller.doDeregister(FakeForm(data))
+        return resp
 
-    @test
-    def you_have_to_use_the_credentials_used_for_login_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            user = User.getByEmail(self.usercreation_email)
-            self.setupUserCreationData()
-            Credential.new(user, "password", self.usercreation_userid, self.usercreation_password)
-            data = dict(
-                csrf_token= self.getCSRF(c),
-                credentialType= "password",
-                identifier= self.usercreation_userid,
-                secret = self.usercreation_password
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["You should use your login credentials to deregister"]}', self.getResponseText(resp))
+    def _assureHaveCredentialsAndAssurances(self, user):
+        creds = Credential.getByUser(user)
+        self.assertTrue(len(creds) > 0)
+        assurances = Assurance.getByUser(user)
+        self.assertTrue(len(assurances) > 0)
+
+    def _loginAndDeregister(self):
+        self.createLoggedInUser()
+        user = self.cred.user
+        Assurance.new(user, "test", user)
+        self._assureHaveCredentialsAndAssurances(user)
+        resp = self._doDeregister()
+        return resp
 
     @test
-    def you_need_credentialType_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                csrf_token = self.getCSRF(c),
-                identifier= self.usercreation_userid,
-                secret = self.usercreation_password
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+    def you_can_deregister_with_csrf(self):
+        resp = self._loginAndDeregister()
+        self.assertEquals(resp.status_code, 200)
 
     @test
-    def you_need_valid_credentialType_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                csrf_token = self.getCSRF(c),
-                credentialType= "invalid",
-                identifier= self.usercreation_userid,
-                secret = self.usercreation_password
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+    def calling_do_deregister_sends_deregistration_email(self):
+        self._loginAndDeregister()
+        outbox = self.controller.mail.outbox
+        self.assertEqual(len(outbox), 1)
+
+    def _getDeregistrationSecret(self):
+        self._loginAndDeregister()
+        user = self.cred.user
+        deregistrationCredential = Credential.getByUser(user, 'deregister')
+        secret = deregistrationCredential.secret
+        return secret
 
     @test
-    def you_need_identifier_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                csrf_token = self.getCSRF(c),
-                credentialType= "password",
-                secret = self.usercreation_password
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
+    def deregistration_email_contains_deregistration_secret(self):
+        secret = self._getDeregistrationSecret()
+        mail = self.controller.mail.outbox[0]
+        self.assertTrue(secret in mail['body'])
 
     @test
-    def you_need_valid_identifier_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                csrf_token = self.getCSRF(c),
-                credentialType= "password",
-                identifier= "inv",
-                secret = self.usercreation_password
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
+    def deregistration_email_contains_DEREGISTRATION_URL(self):
+        self._loginAndDeregister()
+        mail = self.controller.mail.outbox[0]
+        deregistrationUrl = self.controller.getConfig('DEREGISTRATION_URL')
+        self.assertTrue(deregistrationUrl in mail['body'])
 
     @test
-    def you_need_secret_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                csrf_token = self.getCSRF(c),
-                credentialType= "password",
-                identifier= self.usercreation_userid,
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long.", "secret: password should contain lowercase", "secret: password should contain uppercase", "secret: password should contain digit"]}'
-, self.getResponseText(resp))
+    def deregistration_doit_needs_deregistration_secret(self):
+        emptyForm = FakeForm(dict(deregister_secret=None))
+        self.assertReportedError(self.controller.doDeregistrationDot, [emptyForm], 400, ["secret is needed for deregistration_doit"])
+
+    def _doDeregistrationDoit(self, overwriteSecret=None):
+        secret = self._getDeregistrationSecret()
+        if overwriteSecret is not None:
+            secret = overwriteSecret
+        resp = self.controller.doDeregistrationDot(FakeForm(dict(deregister_secret=secret)))
+        return resp
+
+    @test        
+    def deregistration_doit_works_with_right_secret_and_csrf(self):
+        resp = self._doDeregistrationDoit()
+        self.assertEqual(resp.status_code, 200)
+        msg = self.fromJson(resp)
+        self.assertEqual(msg['message'], 'you are deregistered')
+
+    @test        
+    def deregistration_doit_does_not_work_with_bad_secret(self):
+        self.assertReportedError(self._doDeregistrationDoit, ['junk'], 400, ['bad deregistration secret'])
 
     @test
-    def you_need_valid_secret_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                csrf_token = self.getCSRF(c),
-                credentialType= "password",
-                identifier= self.usercreation_userid,
-                secret = "l"
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long.", "secret: password should contain uppercase", "secret: password should contain digit"]}'
-, self.getResponseText(resp))
+    def your_credentials_are_deleted_in_deregistration(self):
+        self._doDeregistrationDoit()
+        user = User.getByEmail(self.userCreationEmail)
+        creds = Credential.getByUser(user)
+        self.assertTrue(len(creds) == 0)
+            
+    @test
+    def your_assurances_are_deleted_in_deregistration(self):
+        self._doDeregistrationDoit()
+        user = User.getByEmail(self.userCreationEmail)
+        assurances = Assurance.getByUser(user)
+        self.assertTrue(len(assurances) == 0)
 
     @test
-    def you_need_csrf_token_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                credentialType= "password",
-                identifier= self.usercreation_userid,
-                secret = self.usercreation_password
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["csrf_token: csrf validation error"]}', self.getResponseText(resp))
-
-    @test
-    def you_need_valid_csrf_token_to_deregister(self):
-        with app.test_client() as c:
-            self.login(c)
-            data = dict(
-                csrf_token= "invalid",
-                credentialType= "password",
-                identifier= self.usercreation_userid,
-                secret = self.usercreation_password
-            )
-            resp = c.post(config.base_url+'/deregister', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["csrf_token: csrf validation error"]}', self.getResponseText(resp))
+    def your_user_is_deleted_in_deregistration(self):
+        self._doDeregistrationDoit()
+        user = User.getByEmail(self.userCreationEmail)
+        self.assertTrue(user is None)
