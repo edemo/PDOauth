@@ -2,7 +2,6 @@
 from flask import json
 from test import config
 from flask_login import AnonymousUserMixin
-from wtforms.fields.core import UnboundField
 
 class FakeMail(object):
     def __init__(self):
@@ -105,7 +104,10 @@ class FakeInterface(object):
             headers = dict()
         self.request.headers = headers
 
-    def set_request_context(self, url=None, data=None, method='GET', environ=None, headers=None):
+    def set_request_context(self, url=None, data=None, method='GET', environ=None, headers=None, newUri=False):
+        if newUri:
+            self.request = FakeRequest()
+            self.urlSet = False
         request = self.getRequest()
         if url is not None:
             if self.urlSet is False:
