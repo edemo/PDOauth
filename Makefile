@@ -1,4 +1,4 @@
-install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-junit.js
+install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-junit.js static/blanket.min.js
 
 checkall: install alltests xmldoc
 
@@ -10,6 +10,9 @@ static/qunit-1.18.0.css:
 
 static/qunit-reporter-junit.js:
 	curl https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/qunit-reporter-junit.js -o static/qunit-reporter-junit.js
+
+static/blanket.min.js:
+	curl https://raw.githubusercontent.com/alex-seville/blanket/master/dist/qunit/blanket.min.js -o static/blanket.min.js
 
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js
