@@ -1,237 +1,129 @@
-from twatson.unittest_annotations import Fixture, test
-from test.TestUtil import UserTesting
-from pdoauth.app import app
-from flask_login import logout_user
-import config
-from pdoauth.models.Assurance import Assurance, emailVerification
-import time
-from pdoauth.models.User import User
-import re
+# pylint: disable=line-too-long
+from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.FakeInterFace import FakeForm
+from test.helpers.UserUtil import UserUtil
+from pdoauth.models.Credential import Credential
+from Crypto.Hash.SHA256 import SHA256Hash
+from test.helpers.CryptoTestUtil import CryptoTestUtil
+from pdoauth.models.Assurance import Assurance
 
-class RegistrationTest(Fixture, UserTesting):
+class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
-    def setUp(self):
-        self.setupRandom()
- 
+    def _prepareTest(self, digest =None, email=None):
+        self.setupUserCreationData()
+        self.data = dict(credentialType='password',
+                identifier=self.userCreationUserid,
+                secret=self.usercreationPassword,
+                email=None,
+                digest=None)
+        self.addDataBasedOnOptionValue('email', email, self.userCreationEmail)
+        self.addDataBasedOnOptionValue('digest', digest, self.createHash())
+        form = FakeForm(self.data)
+        return form
+
     @test
-    def you_can_register_with_username__password__email_and_hash(self):
-        with app.test_client() as c:
-            resp, outbox = self.register(c)  # @UnusedVariable
-            self.assertUserResponse(resp)
-
-    @test
-    def registration_sets_the_csrf_cookie(self):
-        with app.test_client() as c:
-            resp, outbox = self.register(c)  # @UnusedVariable
-            self.assertTrue("csrf=" in unicode(resp.headers['Set-Cookie']))
+    def password_is_stored_hashed_in_registration(self):
+        form = self._prepareTest()
+        self.controller.doRegistration(form)
+        cred = Credential.get('password', self.userCreationUserid)
+        theSecret = SHA256Hash(self.usercreationPassword).hexdigest()
+        self.assertEqual(cred.secret, theSecret)
 
     @test
     def on_registration_a_temporary_email_verification_credential_is_registered(self):
-        with app.test_client() as c:
-            resp, outbox = self.register(c)  # @UnusedVariable
-            data = self.fromJson(resp)
-            self.assertEquals("emailcheck", data['credentials'][1]['credentialType'])
+        form = self._prepareTest()
+        self.controller.doRegistration(form)
+        current_user = self.controller.getCurrentUser()
+        cred = Credential.getByUser(current_user, 'emailcheck')
+        self.assertTrue(cred)
+
     @test
     def the_emailcheck_secret_is_not_shown_in_the_registration_answer(self):
-        with app.test_client() as c:
-            resp, outbox = self.register(c)  # @UnusedVariable
-            text = self.getResponseText(resp)
-            secret=re.search('href=".*verify_email/([^"]*)"',outbox[0].body).group(1)
-            self.assertTrue(not (secret in text))
+        form = self._prepareTest()
+        resp = self.controller.doRegistration(form)
+        text = self.getResponseText(resp)
+        current_user = self.controller.getCurrentUser()
+        cred = Credential.getByUser(current_user, 'emailcheck')
+        self.assertTrue(not cred.secret in text)
 
     @test
     def you_can_register_without_hash(self):
-        with app.test_client() as c:
-            email = "{0}@example.com".format(self.randString)
-            self.registered_email = email
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertUserResponse(resp)
+        form = self._prepareTest(digest=False)
+        self.controller.doRegistration(form)
+        self.assertEqual(self.controller.getCurrentUser().hash, None)
 
     @test
-    def if_you_register_without_hash_it_will_be_null(self):
-        with app.test_client() as c:
-            email = "{0}@example.com".format(self.randString)
-            self.registered_email = email
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
-            c.post(config.base_url + '/v1/register', data=data)
-            user = User.getByEmail(email)
-            self.assertEqual(user.hash, None)
+    def you_are_logged_in_in_registration(self):
+        form = self._prepareTest()
+        self.controller.doRegistration(form)
+        self.assertEqual(self.controller.getCurrentUser().email,
+            self.userCreationEmail)
+
+    def _registerAndGetEmail(self):
+        form = self._prepareTest()
+        self.controller.doRegistration(form)
+        msg = self.controller.mail.outbox[0]['body']
+        return msg
 
     @test
-    def you_can_login_after_registration(self):
-        with app.test_client() as c:
-            resp, outbox = self.register(c)
-            logout_user()
-            self.assertUserResponse(resp)
-            self.assertEquals(outbox[0].subject,"verification")
-            self.assertEquals(outbox[0].sender,"test@edemokraciagep.org")
-            data = {
-                'credentialType': 'password',
-                'identifier': "id_{0}".format(self.randString), 
-                'secret': self.registered_password
-            }
-            resp = c.post(config.base_url + '/login', data=data)
-            self.assertUserResponse(resp)
-            
-            resp = c.get(config.base_url + '/v1/users/me')
-            self.assertEquals(resp.status_code, 200)
-            data = self.fromJson(resp)
-            self.assertTrue(data.has_key('userid'))
-            self.assertTrue(u'@example.com' in data['email'])
+    def registration_sends_registration_email(self):
+        msg = self._registerAndGetEmail()
+        self.assertTrue(msg)
+
+    @test
+    def registration_email_contains_registration_uri_with_secret(self):
+        msg = self._registerAndGetEmail()
+        self.assertTrue(msg)
+        current_user = self.controller.getCurrentUser()
+        cred = Credential.getByUser(current_user, 'emailcheck')
+        BASE_URL = self.controller.getConfig('BASE_URL')
+        uri = "{0}/v1/verify_email/{1}".format(BASE_URL,cred.secret)
+        self.assertTrue(uri in msg)
 
     @test
     def user_cannot_register_twice_with_same_email(self):
+        self.setupRandom()
         email = "k-{0}@example.com".format(self.randString)
-        with app.test_client() as c:
-            resp , outbox = self.register(c,email=email)  # @UnusedVariable
-            logout_user()
-            self.assertUserResponse(resp)
-        self.setupRandom()
-        with app.test_client() as c:
-            resp, outbox  = self.register(c, email=email)  # @UnusedVariable
-            logout_user()
-            self.assertEquals(400, resp.status_code)
-            text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["email: There is already a user with that email'))
+        form = self._prepareTest(email=email)
+        self.controller.doRegistration(form)
+        form = self._prepareTest(email=email)
+        self.assertReportedError(
+            self.controller.doRegistration,
+            [form],
+            400,
+            ["there is already a user with this email"])
 
     @test
-    def registration_is_impossible_without_email(self):
-        with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertEquals(self.getResponseText(resp),'{"errors": ["email: Invalid email address."]}')
+    def when_a_hash_is_registered_which_is_already_used_by_another_user___the_user_is_notified_about_the_fact(self):
+        theHash = self.createHash()
+        form = self._prepareTest(digest=theHash)
+        anotherUser = self.createUserWithCredentials().user
+        anotherUser.hash = theHash
+        resp = self.controller.doRegistration(form)
+        self.assertEqual(200, resp.status_code)
+        data = self.fromJson(resp)
+        self.assertEqual(data['message'],"another user is using your hash")
 
     @test
-    def password_registration_needs_good_password(self):
-        email = "k0-{0}@example.com".format(self.randString)
-        with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"1234",
-                'email': email,
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["secret: '))
-
-    @test
-    def registration_should_give_a_credential_type(self):
-        email = "k0-{0}@example.com".format(self.randString)
-        with app.test_client() as c:
-            data = {
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEquals(resp.status_code, 400)
-            self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["credentialType: '))
-
-    @test
-    def registration_should_give_an_identifier(self):
-        email = "k0-{0}@example.com".format(self.randString)
-        with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEquals(resp.status_code, 400)
-            text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["identifier: '))
-
-    @test
-    def password_registration_is_impossible_with_already_used_username(self):
-        self.setupRandom()
-        email = "k0-{0}@example.com".format(self.randString)
-        with app.test_client() as c:
-            data = {
-                'identifier': "id_{0}".format(self.randString), 
-                'credentialType':'password', 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': email,
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEquals(resp.status_code, 200)
-            data['email'] = "k1-{0}@example.com".format(self.randString)
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEquals(resp.status_code, 400)
-            text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["identifier: There is already a user with that username'))
-
-    @test
-    def When_a_hash_is_registered_which_is_already_used_by_another_user___the_user_is_notified_about_the_fact(self):
-        anotherUser = self.createUserWithCredentials()
-        self.setupRandom()
+    def when_a_hash_is_registered_which_is_already_used_by_another_assured_user___the_user_is_notified_about_the_fact_and_registration_fails(self):
+        anotherUser = self.createUserWithCredentials().user
+        Assurance.new(anotherUser, "test", anotherUser)
         theHash = self.createHash()
         anotherUser.hash = theHash
-        with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': "email{0}@example.com".format(self.randString),
-                'digest': theHash
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEqual(200, resp.status_code)
-            text = self.getResponseText(resp)
-            self.assertTrue("another user is using your hash" in text)
-
-    @test
-    def When_a_hash_is_registered_which_is_already_used_by_another_assured_user___the_user_is_notified_about_the_fact_and_registration_fails(self):
-        anotherUser = self.createUserWithCredentials()
-        Assurance.new(anotherUser, "test", anotherUser, time.time())
-        self.setupRandom()
-        theHash = self.createHash()
-        anotherUser.hash = theHash
-        with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': "email{0}@example.com".format(self.randString),
-                'digest': theHash
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEqual(400, resp.status_code)
-            text = self.getResponseText(resp)
-            self.assertTrue("another user is using your hash" in text)
+        form = self._prepareTest(digest=theHash)
+        self.assertReportedError(self.controller.doRegistration,
+            [form],
+            400,
+            ['another user is using your hash'])
 
     @test
     def the_emailverification_assurance_does_not_count_in_hash_collision(self):
-        anotherUser = self.createUserWithCredentials()
-        Assurance.new(anotherUser, emailVerification, anotherUser, time.time())
-        self.setupRandom()
+        anotherUser = self.createUserWithCredentials().user
+        Assurance.new(anotherUser, "emailverification", anotherUser)
         theHash = self.createHash()
         anotherUser.hash = theHash
-        with app.test_client() as c:
-            data = {
-                'credentialType':'password', 
-                'identifier': "id_{0}".format(self.randString), 
-                'secret':"password_{0}".format(self.mkRandomPassword()),
-                'email': "email{0}@example.com".format(self.randString),
-                'digest': theHash
-            }
-            resp = c.post(config.base_url + '/v1/register', data=data)
-            self.assertEqual(200, resp.status_code)
-            text = self.getResponseText(resp)
-            self.assertTrue("another user is using your hash" in text)
+        form = self._prepareTest(digest=theHash)
+        resp = self.controller.doRegistration(form)
+        self.assertEqual(200, resp.status_code)
+        data = self.fromJson(resp)
+        self.assertEqual(data['message'],"another user is using your hash")

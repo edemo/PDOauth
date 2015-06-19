@@ -1,13 +1,12 @@
-from pdoauth.app import db
+from pdoauth.app import db, login_manager
 from pdoauth.ModelUtils import ModelUtils
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String, BOOLEAN, Integer
 import uuid
-
+from pdoauth.ReportedError import ReportedError
 
 class AlreadyExistingUser(Exception):
     pass
-
 
 class User(db.Model, ModelUtils):
     __tablename__ = 'user'
@@ -18,7 +17,6 @@ class User(db.Model, ModelUtils):
     active = Column(BOOLEAN)
     authenticated = Column(BOOLEAN)
 
-    
     @classmethod
     def getByEmail(cls, email):
         u= cls.query.filter_by(email=email).first()
@@ -28,7 +26,7 @@ class User(db.Model, ModelUtils):
     def new(cls, email, digest=None):
         u = cls.getByEmail(email)
         if u is not None:
-            raise AlreadyExistingUser()
+            raise ReportedError(["there is already a user with this email"])
         user = cls( email,digest)
         user.save()
         return user
@@ -62,9 +60,11 @@ class User(db.Model, ModelUtils):
     def is_anonymous(self):
         return False
     
-    @classmethod
-    def get(cls, userid):
-        return User.query.filter_by(userid=userid).first()
+    @login_manager.user_loader
+    @staticmethod
+    def get(userid):
+        user = User.query.filter_by(userid=userid).first()
+        return user
 
     
     @classmethod

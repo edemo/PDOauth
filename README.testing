@@ -1,9 +1,32 @@
+You can find all the dependencies and their installation in .travis.yml
 To setup (and reset) testing environment, type
 make testsetup
 
-to run test, just type
+to run all test, just type
 
-make
+make checkall
+
+this currently runs the unit/integration tests, and end-to-end tests using firefox and chrome
+
+to run just the unit/integration tests, do
+
+make tests
+
+for end-to-end tests run
+
+make onlyend2endtest
+
+if you want to use your own browser, run
+
+make handtest
+
+to fire up an apache on ports 8888 (plain http) and 8889 (https), and a fake smtp server on port 1025
+
+use
+
+make killall
+
+to bring down the hand test environment
 
 The test harness uses an sqlite database file at /tmp/pdoauth.db
 If you can rework it to use in-memory sqlite (and initialize it!) I will be thankful.

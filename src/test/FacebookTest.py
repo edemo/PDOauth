@@ -1,76 +1,63 @@
-from pdoauth.Controller import Controller
-from flask import json
-from twatson.unittest_annotations import Fixture, test
-from pdoauth.app import app
-from test.TestUtil import UserTesting
 from pdoauth.models.Credential import Credential
 from pdoauth.FlaskInterface import FlaskInterface
+from pdoauth.ReportedError import ReportedError
+from test.helpers.FakeInterFace import FakeForm
+from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.UserUtil import UserUtil
 
+class FacebookTest(PDUnitTest, UserUtil):
 
-class record(object):
-    pass
-
-class FakeInterface(FlaskInterface):
-    
-    def validate_on_submit(self,form):
-        for k in self.request_data.keys():
-            getattr(form,k).data = self.request_data[k]
-        return form.validate()
-
-    def _facebookMe(self, code):
-        resp = record()
-        if self.access_token == code:
-            resp.status = 200
-            resp.data = json.dumps(dict(id=self.facebook_id))
-        else:
-            resp.status = 404
-        return resp
-
-
-class FacebookTest(Fixture, UserTesting):
     def setUp(self):
-        self.controller = Controller(FakeInterface)
-        self.user = self.createUserWithCredentials(credType="facebook")
-        self.user.activate()
-        self.controller.facebook_id = self.usercreation_userid
-        self.controller.access_token = self.usercreation_password
+        PDUnitTest.setUp(self)
+        self.cred = self.createUserWithCredentials(credType="facebook")
+        self.cred.user.activate()
+        interface = self.controller.interface
+        interface.facebook_id = self.userCreationUserid
+        interface.accessToken = self.usercreationPassword
         data = {
                 'credentialType': 'facebook',
-                'identifier': self.controller.facebook_id,
-                'secret': self.controller.access_token
+                'identifier': interface.facebook_id,
+                'secret': interface.accessToken
         }
-        self.controller.request_data = data
+        self.form = FakeForm(data)
+
+
+    def tearDown(self):
+        PDUnitTest.tearDown(self)
 
     @test
     def facebook_login_needs_facebook_id_and_access_token(self):
-        with app.test_request_context():
-            resp = self.controller.do_login()
-            self.assertEqual(resp.status_code, 200)
+        resp = self.controller.doLogin(self.form)
+        self.assertEqual(resp.status_code, 200)
 
     @test
     def facebook_login_needs_facebook_id_as_username(self):
-        self.controller.request_data['identifier'] = 'badid'
-        with app.test_request_context():
-            resp = self.controller.do_login()
-            self.assertEqual(resp.status_code, 403)
-            data = self.fromJson(resp)
-            self.assertEqual(data['errors'],["bad facebook id"])
+        form = self.form
+        form.set('identifier','badid')
+        with self.assertRaises(ReportedError) as e:
+            self.controller.doLogin(form)
+        self.assertEqual(e.exception.status, 403)
+        self.assertEqual(e.exception.descriptor,["bad facebook id"])
 
     @test
     def facebook_login_needs_correct_access_token_as_password(self):
-        self.controller.request_data['secret'] = self.mkRandomPassword()
-        with app.test_request_context():
-            resp = self.controller.do_login()
-            self.assertEqual(resp.status_code, 403)
-            data = self.fromJson(resp)
-            self.assertEqual(data['errors'],["Cannot login to facebook"])
+        self.form.set('secret',self.mkRandomPassword())
+        with self.assertRaises(ReportedError) as e:
+            self.controller.doLogin(self.form)
+        self.assertEqual(e.exception.status, 403)
+        self.assertEqual(e.exception.descriptor, ["Cannot login to facebook"])
 
     @test
     def facebook_login_needs_facebook_credentials_as_registered(self):
-        cred = Credential.getByUser(self.user, "facebook")
-        cred.rm()
-        with app.test_request_context():
-            resp = self.controller.do_login()
-            self.assertEqual(resp.status_code, 403)
-            data = self.fromJson(resp)
-            self.assertEqual(data['errors'],["You have to register first"])
+        self.cred.rm()
+        with self.assertRaises(ReportedError) as e:
+            self.controller.doLogin(self.form)
+        self.assertEqual(e.exception.status, 403)
+        self.assertEqual(e.exception.descriptor,["You have to register first"])
+
+    @test
+    def facebookMe_reaches_facebook(self):
+        resp = FlaskInterface().facebookMe("code")
+        self.assertEqual(400, resp.status)
+        self.assertTrue(resp.headers.has_key('x-fb-rev'))
+        self.assertEqual('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}', resp.data)

@@ -1,5 +1,5 @@
-from integrationtest.config import Config as IntegrationTestConfig
+from end2endtest.config import Config as IntegrationTestConfig
 
 class Config(IntegrationTestConfig):
     pass
-base_url = Config.BASE_URL
+BASE_URL = Config.BASE_URL

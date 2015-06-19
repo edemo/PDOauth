@@ -1,120 +1,128 @@
-from pdoauth.app import app, login_manager
+from pdoauth.app import app, login_manager, mail
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.Controller import Controller
-from flask_login import login_required
 from flask.helpers import send_from_directory
 from pdoauth.models.User import User
 import os
-from flask.globals import request
-from urllib import urlencode
+from pdoauth.forms.LoginForm import LoginForm
+from pdoauth.Decorators import Decorators
+from pdoauth.forms.KeygenForm import KeygenForm
+from pdoauth.forms.DeregisterForm import DeregisterForm
+from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
+from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
+from pdoauth.forms.PasswordResetForm import PasswordResetForm
+from pdoauth.forms.RegistrationForm import RegistrationForm
+from pdoauth.forms.AssuranceForm import AssuranceForm
+from pdoauth.forms.CredentialForm import CredentialForm
+from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
+from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
 
-controller = Controller(FlaskInterface)
+CONTROLLER = Controller(FlaskInterface)
+CONTROLLER.mail = mail
+CONTROLLER.app = app
+DECORATOR = Decorators(app, FlaskInterface)
+AUTHPROVIDER = AuthProvider(FlaskInterface)
+def getStaticPath():
+    staticDirectory = os.path.join(os.path.dirname(__file__),"..", "..", "static")
+    return os.path.abspath(staticDirectory)
 
-@login_manager.unauthorized_handler
-def unauthorized():
-    resp = controller.error_response(["authentication needed"], 302)
-    uri = "{1}?{0}".format(urlencode({"next": request.url}), app.config.get("START_URL"))
-    resp.headers['Location'] = uri
-    return resp
+STATIC_PATH=getStaticPath()
 
 @login_manager.user_loader
-def load_user(userid):
+def getUser(userid):
     return User.get(userid)
 
-@app.route("/v1/oauth2/auth", methods=["GET"])
-@login_required
+@DECORATOR.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
+def login(form):
+    return CONTROLLER.doLogin(form)
+
+@DECORATOR.interfaceFunc("/ssl_login", methods=["GET"])
+def ssl_login():
+    return CONTROLLER.doSslLogin()
+
+@DECORATOR.interfaceFunc("/v1/oauth2/auth", methods=["GET"], checkLoginFunction=CONTROLLER.redirectIfNotLoggedIn)
 def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
-    return AuthProvider.auth_interface()
+    return AUTHPROVIDER.auth_interface()
 
-@app.route("/login", methods=["POST"])
-def login():
-    return controller.do_login()
+@DECORATOR.interfaceFunc("/keygen", methods=["POST"], formClass=KeygenForm)
+def keygen(form):
+    return CONTROLLER.doKeygen(form)
 
-@app.route("/ssl_login", methods=["GET"])
-def ssl_login():
-    return controller.do_ssl_login()
+@DECORATOR.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def deregister(form):
+    return CONTROLLER.doDeregister(form)
 
-@app.route("/keygen", methods=["POST"])
-def keygen():
-    return controller.do_keygen()
+@DECORATOR.interfaceFunc("/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def deregister_doit(form):
+    return CONTROLLER.doDeregistrationDot(form)
 
-@app.route("/deregister", methods=["POST"])
-def deregister():
-    return controller.do_deregister()
-
-@app.route("/logout", methods=["GET"])
-@login_required
+@DECORATOR.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def logout():
-    return controller.do_logout()
+    return CONTROLLER.doLogout()
 
-@app.route("/v1/oauth2/token", methods=["POST"])
+@DECORATOR.interfaceFunc("/v1/oauth2/token", methods=["POST"])
 def token():
-    return AuthProvider.token_interface()
+    return AUTHPROVIDER.token_interface()
 
-@app.route("/v1/users/<userid>", methods=["GET"])
+@DECORATOR.interfaceFunc("/v1/users/<userid>", methods=["GET"],
+    checkLoginFunction=CONTROLLER.authenticateUserOrBearer)
 def showUser(userid):
-    return controller.do_show_user(userid)
+    return CONTROLLER.doShowUser(userid)
 
-@app.route("/v1/users/me/change_password", methods=["POST"])
-def changePassword():
-    return controller.do_change_password()
+@DECORATOR.interfaceFunc("/v1/users/me/change_password", methods=["POST"],
+    formClass=PasswordChangeForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def changePassword(form):
+    return CONTROLLER.doChangePassword(form)
 
-@app.route("/v1/users/<email>/passwordreset", methods=["GET"])
+@DECORATOR.interfaceFunc("/v1/users/<email>/passwordreset", methods=["GET"])
 def sendPasswordResetEmail(email):
-    return controller.do_send_password_reset_email(email)
+    return CONTROLLER.do_send_password_reset_email(email)
 
-@app.route("/v1/users/me/update_hash", methods=["POST"])
-@login_required
-def updateHash():
-    return controller.do_update_hash()
+@DECORATOR.interfaceFunc("/v1/users/me/update_hash", methods=["POST"],
+    formClass=DigestUpdateForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def updateHash(form):
+    return CONTROLLER.doUpdateHash(form)
 
-@app.route("/v1/password_reset", methods=["POST"])
-def passwordReset():
-    return controller.do_password_reset()
+@DECORATOR.interfaceFunc("/v1/password_reset", methods=["POST"],
+    formClass=PasswordResetForm)
+def passwordReset(form):
+    return CONTROLLER.doPasswordReset(form)
 
-@app.route("/v1/register", methods=["POST"])
-def register():
-    return controller.do_registration()
+@DECORATOR.interfaceFunc("/v1/register", methods=["POST"],
+    formClass=RegistrationForm)
+def register(form):
+    return CONTROLLER.doRegistration(form)
 
-@app.route("/v1/verify_email/<token>", methods=["GET"])
-def verifyEmail(token):
-    return controller.do_verify_email(token)
+@DECORATOR.interfaceFunc("/v1/verify_email/<emailToken>", methods=["GET"])
+def verifyEmail(emailToken):
+    return CONTROLLER.doverifyEmail(emailToken)
 
-@app.route('/v1/user_by_email/<email>', methods=["GET"])
-@login_required
+@DECORATOR.interfaceFunc("/v1/user_by_email/<email>", methods=["GET"],
+    checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def get_by_email(email):
-    return controller.do_get_by_email(email)
+    return CONTROLLER.doGetByEmail(email)
 
-@app.route('/v1/add_assurance', methods=["POST"])
-@login_required
-def add_assurance():
-    return controller.do_add_assurance()
+@DECORATOR.interfaceFunc("/v1/add_assurance", methods=["POST"],
+    formClass=AssuranceForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def add_assurance(form):
+    return CONTROLLER.doAddAssurance(form)
 
-@app.route('/v1/add_credential', methods=["POST"])
-@login_required
-def add_credential():
-    return controller.do_add_credential()
+@DECORATOR.interfaceFunc("/v1/add_credential", methods=["POST"],
+    formClass=CredentialForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def add_credential(form):
+    return CONTROLLER.doAddCredential(form)
 
-@app.route('/v1/remove_credential', methods=["POST"])
-@login_required
-def remove_credential():
-    return controller.do_remove_credential()
+@DECORATOR.interfaceFunc("/v1/remove_credential", methods=["POST"],
+    formClass=CredentialIdentifierForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def remove_credential(form):
+    return CONTROLLER.doRemoveCredential(form)
 
-@app.route('/uris', methods=["GET"])
+@DECORATOR.interfaceFunc("/uris", methods=["GET"])
 def uriservice():
-    return controller.do_uris()
+    return CONTROLLER.doUris()
 
-def getStaticPath():
-    mainpath = os.path.abspath(__file__)
-    up = os.path.dirname
-    ret = os.path.join(up(up(up(mainpath))), 'static')
-    return ret
-
-@app.route('/static/<path:path>')
+@DECORATOR.interfaceFunc("/static/<path:path>", methods=["GET"])
 def send_static(path):
-    return send_from_directory(getStaticPath(), path)
-
-if __name__ == '__main__':
-    app.run("localhost", 8888)
+    return send_from_directory(STATIC_PATH, path)

@@ -1,0 +1,31 @@
+If you feel like you want to setup your own instance of PDOauth, then we are doing something wrong.
+For testing, you don't have to install it; see README.testing.
+If you want to provide SSO service for participatory democracy purposes, please understand the following:
+The whole point of developing this software is to have one trusted single-sign-on service for
+all who provide services to spread and improve the idea of Participatory Democracy.
+This way we will have a common user base, so when the time comes to ask questions in a truly global level,
+those who have enough credibility to do so will be able to do it with a small entry threshold for the people involved.
+
+So before you start your own authentication/authorization service, please talk to us about your goals and/or concerns,
+and we will do everything we can to alleviate them, and make it easy for you to just use this service.
+
+Anyway, here is what we have done to install the software in our server.
+- install an ubuntu server
+- install all the packages mentioned in the debs_needed file
+- check out the software from github (we do it to /usr/local/PDOauth):
+  cd /usr/local ; git clone https://github.com/edemo/PDOauth.git
+- install python dependencies:
+  cd /usr/local/PDOauth; do sudo pip install -r requirements.txt
+- set up a postgres database (actually you can use all major ones, we just happen to like postgres the best)
+- create a facebook application for facebook login
+- setup an ssl certificate for your CA, and another for your web site. We recommend to use different ones:
+  for the site you most probably want a cert signed by a well-known CA, while you probably don't want to invest
+  much money in the CA cert, which is just there because the trust model of X509 is sadly broken.
+- create a config file. We use /etc/pdoauth/config.py for this. You can find an example for src/end2entests/config.py
+- configure your apache. The important parts are found in end2endtest/apache2.conf
+  One important thing is the wsgi python path. it should contain /usr/local/PDOauth/src, and /etc/pdoauth.
+
+The URL to the hash anchor is wired in into static/script.js probably you want to install your own hash anchor and change it.
+
+But again, please only install your own service if you have already tried to talk tuo us about your needs and we did not respond in
+a cooperative way. (Which won't happen, ever.)
