@@ -1,9 +1,9 @@
-var QueryString = function () { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
+QueryStringFunc = function (win) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   // This function is anonymous, is executed immediately and 
   // the return value is assigned to QueryString!
+  win=win || window 			// to be testable
   var query_string = {};
-  console.log("queryString")
-  var query = window.location.search.substring(1);
+  var query = win.location.search.substring(1);
   var vars = query.split("&");
   for (var i=0;i<vars.length;i++) {
     var pair = vars[i].split("=");
@@ -20,29 +20,35 @@ var QueryString = function () { //http://stackoverflow.com/questions/979975/how-
     }
   } 
     return query_string;
-} ();
+};
+
+var QueryString = QueryStringFunc();
 
 var uribase="";
 
-function PageScript(debug) {
+function PageScript(test) {
 	var self = this
-	this.debug=debug
+	test=test || { debug: false }
+	this.debug=test.debug
+	win = test.win || window;
 	
 	PageScript.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
-		if (window.XMLHttpRequest)
+		if (win.XMLHttpRequest)
 		  {// code for IE7+, Firefox, Chrome, Opera, Safari
-		  xmlhttp=new XMLHttpRequest();
+		  xmlhttp = new win.XMLHttpRequest();
+//		  xmlhttp.oName="XMLHttpRequest"; // for testing
 		  }
 		else
 		  {// code for IE6, IE5
-		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  xmlhttp = new win.ActiveXObject("Microsoft.XMLHTTP");
+//		  xmlhttp.oName="ActiveXObject";   // for testing
 		  }
+		xmlhttp.callback=callback // for testing
 		xmlhttp.onreadystatechange=function()
 		  {
 		  if (xmlhttp.readyState==4)
 		    {
-//				console.log("ajaxbase: callback="+callback);
 		    	callback(xmlhttp.status,xmlhttp.responseText,xmlhttp.responseXML);
 		    }
 		  }
@@ -58,7 +64,6 @@ function PageScript(debug) {
 			l.push(key +"=" +encodeURIComponent(data[key]));
 		}
 		t = l.join("&")
-//		console.log(t)
 		xmlhttp.send(t);
 	}
 
@@ -69,7 +74,6 @@ function PageScript(debug) {
 	}
 
 	PageScript.prototype.processErrors = function(data) {
-//			console.log(data)
 			var msg = {};
 			if (data.message) {
 				msg.title="Szerverüzenet";
@@ -111,12 +115,14 @@ function PageScript(debug) {
 				self.doRedirect(decodeURIComponent(QueryString.next))
 			}
 		}
-		var msg = self.processErrors(data)
-		msg.callback = self.get_me;
-		self.displayMsg(msg);
+		this.msg = self.processErrors(data)
+		this.msg.callback = self.get_me;
+		self.displayMsg(this.msg);
 	}
 
-	PageScript.prototype.doRedirect = (this.debug)?function(href){this.test_href=href}:function(href){window.location=href}
+	PageScript.prototype.doRedirect = function(href){ 
+		win.location=href	
+	}
 	
 	PageScript.prototype.get_me = function() {
 		self.ajaxget("/v1/users/me", self.initCallback)
@@ -157,7 +163,6 @@ function PageScript(debug) {
 		document.getElementById("popup").style.display  = "flex";
 		if (!msg.callback) msg.callback="";
 		document.getElementById("PopupWindow_CloseButton").onclick = function() {self.closePopup(msg.callback)}
-//		console.log("displaymsg: callback="+document.getElementById("PopupWindow_CloseButton").onclick);
 		if (msg.title) document.getElementById("PopupWindow_TitleDiv").innerHTML = "<h2>"+msg.title+"</h2>";
 		if (msg.error) document.getElementById("PopupWindow_ErrorDiv").innerHTML     = "<p class='warning'>"+msg.error+"</p>";
 		if (msg.message) document.getElementById("PopupWindow_MessageDiv").innerHTML = "<p class='message'>"+msg.message+"</p>";
@@ -248,7 +253,6 @@ function PageScript(debug) {
 		self.processErrors(data)
 		loc = '' + window.location
 		if(loc.indexOf(QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
-			console.log("ssl login");
 			self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.initCallback)
 		}		
 	}
@@ -256,7 +260,6 @@ function PageScript(debug) {
 	PageScript.prototype.sslLogin = function() {
 		loc = '' +window.location
 		newloc = loc.replace(QueryString.uris.BASE_URL, QueryString.uris.SSL_LOGIN_BASE_URL)
-//		console.log(newloc)
 		window.location = newloc
 	}
 
@@ -285,7 +288,6 @@ function PageScript(debug) {
 		self.ajaxpost("/v1/add_credential", text, self.myCallback )
 		self.ajaxpost("/v1/add_credential", text, function(status, text){
 			var data = JSON.parse(text);
-//			console.log(data);
 			if (status==200) {
 				document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);
 			}
@@ -306,7 +308,7 @@ function PageScript(debug) {
 	
 	PageScript.prototype.getCookie = function(cname) {
 	    var name = cname + "=";
-	    var ca = document.cookie.split(';');
+	    var ca = win.document.cookie.split(';');
 	    for(var i=0; i<ca.length; i++) {
 	        var c = ca[i];
 	        while (c.charAt(0)==' ') c = c.substring(1);
@@ -469,7 +471,6 @@ function PageScript(debug) {
 		}
 		self.ajaxpost("/v1/add_credential", text, function(status,text){
 			var data = JSON.parse(text);
-//			console.log(data)
 			if (status != 200) {
 				self.displayMsg({error:"<p class='warning'>"+data.errors+"</p>",title:"Hibaüzenet:"});
 			}
