@@ -22,7 +22,7 @@ QueryStringFunc = function (win) { //http://stackoverflow.com/questions/979975/h
     return query_string;
 };
 
-var QueryString = QueryStringFunc();
+QueryString = QueryStringFunc();
 
 var uribase="";
 
@@ -138,6 +138,7 @@ function PageScript(test) {
 			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		}
 		else {
+			console.log(data)
 			if (!self.activeButton)	self.menuHandler("account").menuActivate();
 			else {
 				var a=["login", "register"];
@@ -152,6 +153,7 @@ function PageScript(test) {
 					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
 					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
 				}
+				console.log(data.assurances.assurer)
 				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
 				else self.menuHandler("assurer").menuUnhide();
 			}
@@ -239,7 +241,7 @@ function PageScript(test) {
 	PageScript.prototype.logoutCallback = function(status, text) {
 		var data = JSON.parse(text);
 		var msg=self.processErrors(data)
-		msg.callback=function() {window.location = QueryString.uris.START_URL};
+		msg.callback=function() { self.doRedirect(QueryString.uris.START_URL) };
 		self.displayMsg(msg);	    		
 	}
 	
@@ -250,8 +252,9 @@ function PageScript(test) {
 	PageScript.prototype.uriCallback = function(status,text) {
 		var data = JSON.parse(text);
 		QueryString.uris = data
+		console.log(data)
 		self.processErrors(data)
-		loc = '' + window.location
+		loc = '' + win.location
 		if(loc.indexOf(QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
 			self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.initCallback)
 		}		
@@ -407,7 +410,7 @@ function PageScript(test) {
 	}
 	
 	PageScript.prototype.fill_RemoveCredentialContainer = function(data) {
-		var container = '<div class="msg">';
+		var container = '';
 		var i=0;
 		for(CR in data.credentials) {
 			container += '<div id="RemoveCredential_'+i+'">';
@@ -422,7 +425,7 @@ function PageScript(test) {
 			container += '</tr></table></div>' ;
 			i++;
 		}
-		container += "</div>";
+		container += "";
 		document.getElementById("Remove_Credential_Container").innerHTML=container;
 	}
 	

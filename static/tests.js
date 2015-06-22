@@ -50,11 +50,41 @@ hidePopup = function () {
 		document.getElementById('fade').style.display='none';
 }
 
-IsPopupShown = function() { return document.getElementById("popup").style.display=="flex"; }
-IsPopupHidden = function() { return document.getElementById("popup").style.display!="flex"; }
+isPopupShown = function() { return document.getElementById("popup").style.display=="flex"; }
+isPopupHidden = function() { return document.getElementById("popup").style.display!="flex"; }
 
-assert_IsPopupShown = function( assert ) { assert.ok(IsPopupShown(), "popup div should be shown"); }
-assert_IsPopupHidden = function( assert ) { assert.ok(IsPopupHidden(), "popup div should be hidden"); }
+isLoginButtonHidden        = function() { return document.getElementById("login-menu").style.display=="none" }
+isRegistrationButtonHidden = function() { return document.getElementById("registration-menu").style.display=="none" }
+isAssurerButtonHidden      = function() { return document.getElementById("assurer-menu").style.display=="none" }
+isAccountButtonHidden      = function() { return document.getElementById("account-menu").style.display=="none" }
+isApplicationButtonHidden  = function() { return document.getElementById("application-menu").style.display=="none" }
+isCredentialContainerEmpty = function() { console.log(document.getElementById("Remove_Credential_Container").innerHTML); return document.getElementById("Remove_Credential_Container").innerHTML==""}
+doCredentialContainerContain = function(testStrings) {
+	for(testString in testStrings){
+		if (!document.getElementById("Remove_Credential_Container").innerHTML.search(testString)) return false;
+	}
+	return true;
+}
+doMessageContainerContain = function(testStrings) {
+	for(testString in testStrings){
+		if (!document.getElementById("PopupWindow_MessageDiv").innerHTML.search(testString)) return false;
+	}
+	return true;
+}
+doSuccessContainerContain = function(testStrings) {
+	for(testString in testStrings){
+		if (!document.getElementById("PopupWindow_SuccessDiv").innerHTML.search(testString)) return false;
+	}
+	return true;
+}
+doErrorContainerContain = function(testStrings) {
+	for(testString in testStrings){
+		if (!document.getElementById("PopupWindow_ErrorDiv").innerHTML.search(testString)) return false;
+	}
+	return true;
+}
+assert_IsPopupShown = function( assert ) { assert.ok(isPopupShown(), "popup div should be shown"); }
+assert_IsPopupHidden = function( assert ) { assert.ok(isPopupHidden(), "popup div should be hidden"); }
 
 callbackForAjax = function(status,text,xml) {
 	assert = pageScript.assert
@@ -322,24 +352,49 @@ QUnit.test( "should call '/v1/users/me' trough AJAX", function( assert ) {
 });
 
 // initCallback( htmlstatus, JSON )
-// ez még nincs kész
+
 QUnit.module( "initCallback()" ); 
+QUnit.test( "initCallback should set visibility of the menutabs according the user rights - no autorization", function( assert ) {
+	pageScript = new PageScript(test)
+	data = '{"errors": ["no authorization"]}'
+	pageScript.initCallback(400,data)
+	assert.ok(!isLoginButtonHidden() && !isRegistrationButtonHidden() && isAssurerButtonHidden() && isAccountButtonHidden(),
+		"user specific tabs should be hidden and login, registration tabs should be shown if no user logged in")
+	assert.ok(isPopupHidden(), "popup window should be hidden if 'no authorization'");
+})
+
+QUnit.test( "initCallback should set the visibility of the menutabs according the user rights - Any other message", function( assert ) {
+	pageScript = new PageScript(test)
+	data = '{"errors": ["any other error"]}'
+	pageScript.initCallback(400,data)
+	assert.ok(!isLoginButtonHidden() && !isRegistrationButtonHidden() && isAssurerButtonHidden() && isAccountButtonHidden(),
+		"user specific tabs should be hidden and login, registration tabs should be shown if no user logged in")
+	assert.ok(isPopupShown(), "popup window should be shown if any other message are in the AJAX response");
+	hidePopup();
+})
+
+QUnit.test( "initCallback should set the visibility of the menutabs according the user rights - user without 'assurer' assurance and credentials", function( assert ) {
+	pageScript = new PageScript(test)
+	data = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
+	pageScript.initCallback(200,data)
+	assert.ok(isLoginButtonHidden() && isRegistrationButtonHidden() && !isAccountButtonHidden(),
+		"Account tab should be shown")
+	assert.ok(isAssurerButtonHidden(), "assurer tab should be hidden if the user don't has 'assurer' assurance")
+	assert.ok(isCredentialContainerEmpty(),"if no credential nothing should be shown in div of credentials")
+	assert.equal(document.getElementById("AddSslCredentialForm_email_input").value,"my@email.com","AddSslCredentialForm_email_input should contain the email");
+	assert.equal(document.getElementById("PasswordResetInitiateForm_email_input").value,"my@email.com","PasswordResetInitiateForm_email_input should contain the email");
+	assert_IsPopupHidden( assert );
+})
+
 QUnit.test( "initCallback hides account and assurer menutabs and shows login and registration if the html status not 200", function( assert ) {
 	pageScript = new PageScript(test)
-	data = '{"errors": {"": "no authorization"}}'
-	pageScript.initCallback(400,data)
-	assert.equal(document.getElementById("login-menu").style.display,"block");
-	assert.equal(document.getElementById("registration-menu").style.display,"block");
-	assert.equal(document.getElementById("assurer-menu").style.display,"none");
-	assert.equal(document.getElementById("account-menu").style.display,"none");
-	assert_IsPopupShown( assert )
-	data = '{"errors": {"": "any other error message"}}'
-	pageScript.initCallback(400,data)
-	assert.equal(document.getElementById("login-menu").style.display,"block");
-	assert.equal(document.getElementById("registration-menu").style.display,"block");
-	assert.equal(document.getElementById("assurer-menu").style.display,"none");
-	assert.equal(document.getElementById("account-menu").style.display,"none");
-	assert_IsPopupShown( assert );
+	data = '{"userid": "theuserid", "assurances": {"assurer": {"date":""}, "foo": ""},"credentials": [{"credentialType": "facebook", "identifier": "828377612368497"}], "email": "my@email.com"}'
+	assert.notOk(!isLoginButtonHidden() && !isRegistrationButtonHidden() && isAccountButtonHidden(),
+		"account tab should be shown and login, registration tabs should be hidden")
+	pageScript.initCallback(200,data)
+	assert_IsPopupHidden( assert );
+	assert.ok(!isAssurerButtonHidden(), "assurer tab should be shown if the user has 'assurer' assurance")
+	assert.ok(doCredentialContainerContain(["facebook","828377612368497"]),"credentials should be shown in credential container")
 });
 
 
@@ -347,19 +402,38 @@ QUnit.test( "initCallback hides account and assurer menutabs and shows login and
 
 QUnit.module( "passwordReset()" ); 
 QUnit.test( "passwordReset calls /v1/password_reset with secret and password", function( assert ) {
-	document.getElementById("PasswordResetForm_secret_input").value = "thesecret"
-	document.getElementById("PasswordResetForm_password_input").value = "thepassword"
+	document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value = "thesecret"
+	document.getElementById("PasswordResetForm_OnLoginTab_password_input").value = "thepassword"
 	pageScript = new PageScript(test)
 	pageScript.status = 200;
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
-	pageScript.passwordReset("PasswordResetForm")
-	assert.equal(pageScript.uri, "/v1/password_reset");
-	assert.equal(pageScript.data, "secret=thesecret&password=thepassword");
-	assert.equal(pageScript.method, "POST");
+	pageScript.passwordReset("PasswordResetForm_OnLoginTab")
+	assert.equal(pageScript.uri, "/v1/password_reset", "uri should be '/v1/password_reset'");
+	assert.equal(pageScript.data, "secret=thesecret&password=thepassword", "data should contain secret and password");
+	assert.equal(pageScript.method, "POST", "method should be 'POST'");
+	// the userdata should be updated in userdata div
+	assert_IsPopupShown(assert);
+	// the user shuold be informed about the result
+	hidePopup();
 });
 
 // InitiatePasswordReset(formName)
 QUnit.module( "InitiatePasswordReset()" ); 
+QUnit.test( "calls AJAX with method 'GET' on uri /v1/users/'email'/passwordreset", function( assert ) {
+	var form="PasswordResetInitiateForm_OnLoginTab"
+	document.getElementById(form+"_email_input").value = "my@email.com"
+	pageScript = new PageScript(test)
+	pageScript.status = 200;
+	pageScript.text = '{"message": "Password reset email has successfully sent."}';
+	
+	pageScript.InitiatePasswordReset(form);
+	assert.equal(pageScript.uri, "/v1/users/my@email.com/passwordreset", "uri should be '/v1/password_reset/my@email.com/passwordreset'");
+	assert.equal(pageScript.method, "GET", "method should be 'GET'");
+	assert_IsPopupShown(assert);
+	assert.ok(doMessageContainerContain(['message','Password reset email has successfully sent.']),"the message div should contain the message of the server")
+	hidePopup();
+});
+
 
 // login()
 
@@ -371,9 +445,22 @@ QUnit.test( "login calls /login with password as credential type, username and p
 	pageScript.status = 200;
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.login()
-	assert.equal(pageScript.uri, "/login");
-	assert.equal(pageScript.data, "credentialType=password&identifier=theuser&secret=thepassword");
-	assert.equal(pageScript.method, "POST");
+	assert.equal(pageScript.uri, "/login", "uri should be '/login'");
+	assert.equal(pageScript.data, "credentialType=password&identifier=theuser&secret=thepassword", "data should contain the credential type, the username and the password");
+	assert.equal(pageScript.method, "POST", "method should be POST");
+	assert_IsPopupShown(assert);
+	assert.ok(doSuccessContainerContain(['theuserid','test','my@email.com']),"the successcontainer should contain the user data");
+	hidePopup();
+});
+
+QUnit.test( "error message should be shown if the input fields are empty, AJAX shouldn't be called", function( assert ) {
+	document.getElementById("LoginForm_username_input").value = ""
+	document.getElementById("LoginForm_password_input").value = ""
+	pageScript = new PageScript(test)
+	pageScript.login()
+	assert_IsPopupShown(assert);
+	assert.ok(doErrorContainerContain(['felhasználónév','jelszó']),"the error container should contain the error messages")
+	assert.notOk((pageScript.method), "Ajax shouldn't be called");
 });
 
 // login_with_facebook
@@ -384,9 +471,12 @@ QUnit.test( "login_with_facebook calls /login with facebook as credential type, 
 	pageScript.status = 200;
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.login_with_facebook("fbid", "accesstoken")
-	assert.equal(pageScript.uri, "/login");
-	assert.equal(pageScript.data, "credentialType=facebook&identifier=fbid&secret=accesstoken");
-	assert.equal(pageScript.method, "POST");
+	assert.equal(pageScript.uri, "/login", "uri should be '/login'");
+	assert.equal(pageScript.data, "credentialType=facebook&identifier=fbid&secret=accesstoken", "data should contain facebook as credential type, fbid as userid, and access token as secret");
+	assert.equal(pageScript.method, "POST", "method should be POST");
+	assert_IsPopupShown(assert);
+	assert.ok(doSuccessContainerContain(['theuserid','test','my@email.com']),"the successcontainer should contain the user data");
+	hidePopup();
 });
 
 // byEmail
@@ -398,18 +488,26 @@ QUnit.test( "byEmail calls /v1/user_by_email/[email address]", function( assert 
 	pageScript.status = 200;
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.byEmail()
-	assert.equal(pageScript.uri, "/v1/user_by_email/email%40address.com");
-	assert.equal(pageScript.method, "GET");
+	assert.equal(pageScript.uri, "/v1/user_by_email/email%40address.com", "uri should be /v1/user_by_email/email%40address.com");
+	assert.equal(pageScript.method, "GET", "the method should be GET");
 });
 
 // logoutCallback()
-
-QUnit.module( "logoutCallback()" ); 
-
 // logout()
 
-QUnit.module( "logout()" ); 
-
+QUnit.module( "logout() and logoutCallback()" ); 
+QUnit.test( "calls AJAX with method 'GET' on uri /logout and callback should be logoutCallback()", function( assert ) {
+	pageScript = new PageScript(test)
+	pageScript.status = 200;
+	pageScript.text = '{"message": "logged out"}';
+	
+	pageScript.logout();
+	assert.equal(pageScript.uri, "/logout", "uri should be '/logout'");
+	assert.equal(pageScript.method, "GET", "method should be 'GET'");
+	assert_IsPopupShown(assert);
+	assert.ok(doMessageContainerContain(['message','logged out']),"the message div should contain the message of the server");
+	hidePopup();
+});
 // uriCallback()
 
 QUnit.module( "uriCallback()" ); 
@@ -431,9 +529,9 @@ QUnit.test( "register calls /v1/register with all the data needed for registrati
 	pageScript.status = 200;
 	pageScript.text = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}';
 	pageScript.register()
-	assert.equal(pageScript.uri, "/v1/register");
+	assert.equal(pageScript.uri, "/v1/register", "uri should be '/v1/register'");
 	assert.equal(pageScript.data, "credentialType=password&identifier=identifier&secret=secret&email=email%40mail.com&digest=thedigest");
-	assert.equal(pageScript.method, "POST");
+	assert.equal(pageScript.method, "POST", "the method should be POST");
 });
 
 // add_facebook_credential()
