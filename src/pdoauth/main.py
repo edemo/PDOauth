@@ -1,4 +1,4 @@
-from pdoauth.app import app, login_manager, mail, db
+from pdoauth.app import app, login_manager, mail
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.Controller import Controller
 from flask.helpers import send_from_directory
@@ -17,9 +17,7 @@ from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
-#from pdoauth import models  # @UnusedWildImport
-
-#db.create_all()
+from pdoauth.forms.TokenInterfaceForm import TokenInterfaceForm
 
 webInterface = FlaskInterface()
 CONTROLLER = Controller(webInterface)
@@ -67,9 +65,9 @@ def deregister_doit(form):
 def logout():
     return CONTROLLER.doLogout()
 
-@DECORATOR.interfaceFunc("/v1/oauth2/token", methods=["POST"])
-def token():
-    return AUTHPROVIDER.token_interface()
+@DECORATOR.interfaceFunc("/v1/oauth2/token", methods=["POST"], formClass=TokenInterfaceForm)
+def token(form):
+    return AUTHPROVIDER.token_interface(form)
 
 @DECORATOR.interfaceFunc("/v1/users/<userid>", methods=["GET"],
     checkLoginFunction=CONTROLLER.authenticateUserOrBearer)

@@ -46,12 +46,18 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
         redirect = self.buildAuthorizationCodeRedirectUri(redirect_uri, params, code)
         return self.makeRedirectResponse(redirect)
 
+    def isEmpty(self, value):
+        return value is None or value == ''
+
     def get_token_from_post_data(self, form):
+        #print form._fields
+        #for key, value in form._fields.items():
+        #    print "{0}='{1}'".format(key, value.data)
         self.ensureClientAuthParams(form)
         if form.scope.data is None:
             form.scope.data = ''
 
-        if form.grant_type.data is "refresh_token":
+        if form.grant_type.data == "refresh_token":
             return self.refresh_token(form)
 
         self.ensureCustomerAuthParams(form)
@@ -61,7 +67,7 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
         self.validateGetTokenParameters(form)
 
         data = self.from_authorization_code(form.client_id.data, form.code.data, form.scope.data)
-        if data is None:
+        if self.isEmpty(data):
             raise ReportedError('invalid_grant', 400)
         self.discard_authorization_code(form.client_id.data, form.code.data)
         return self.persistAndRespond(form.client_id.data, data.user_id)
@@ -71,7 +77,7 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
         self.validateRefreshTokenParameters(form)
         keyData = self.from_refresh_token(form)
 
-        if keyData is None:
+        if self.isEmpty(keyData):
             raise ReportedError('invalid_grant', 400)
 
         keyData.rm()
@@ -143,7 +149,7 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
             raise ReportedError('Missing parameter client_id in URL query', 302, params['redirect_uri'])
 
     def ensureRequiredParam(self, form, name):
-        if getattr(form,name).data is None:
+        if self.isEmpty(getattr(form,name).data):
             raise ReportedError("Missing required OAuth 2.0 POST param: {0}".format(name))
 
     def ensureClientAuthParams(self, form):
@@ -164,7 +170,7 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
 
     def validate_client_id(self, client_id, message='unauthorized_client', errorCode=302, uri=None):
         app = Application.get(client_id)
-        if app is None:
+        if self.isEmpty(app):
             raise ReportedError('unauthorized_client', errorCode, uri=uri)
 
     def validate_client_secret(self,client_id, client_secret):
@@ -174,7 +180,7 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
 
     def validate_redirect_uri(self, client_id, redirect_uri, message='Invalid request', errorCode=302):
         app = Application.get(client_id)
-        if app is None:
+        if self.isEmpty(app):
             raise ReportedError(message, errorCode, uri=redirect_uri)
         if not app.redirect_uri == redirect_uri.split("?")[0]:
             raise ReportedError(message, errorCode, uri=redirect_uri)

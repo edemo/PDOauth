@@ -5,9 +5,6 @@ class WebInterface(object):
     def __init__(self, interfaceInstance):
         self.setInterface(interfaceInstance)
 
-    def getForm(self, formClass):
-        self.interface.getForm(formClass)
-
     def setInterface(self, interfaceInstance):
         self.interface = interfaceInstance
 

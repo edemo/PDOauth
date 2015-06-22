@@ -30,7 +30,7 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
     @test
     def registration_is_impossible_without_email(self):
         with app.test_client() as client:
-            data = self.prepareData()
+            data = self.prepareAuthInterfaceData()
             data.pop('email')
             resp = client.post(config.BASE_URL + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
@@ -38,7 +38,7 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
 
     @test
     def password_registration_needs_good_password(self):
-        data = self.prepareData()
+        data = self.prepareAuthInterfaceData()
         data['secret'] = '1234'
         with app.test_client() as client:
             resp = client.post(config.BASE_URL + '/v1/register', data=data)
@@ -47,7 +47,7 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
 
     @test
     def registration_should_give_a_credential_type(self):
-        data = self.prepareData()
+        data = self.prepareAuthInterfaceData()
         data.pop('credentialType')
         with app.test_client() as client:
             resp = client.post(config.BASE_URL + '/v1/register', data=data)
@@ -56,7 +56,7 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
 
     @test
     def registration_should_give_an_identifier(self):
-        data = self.prepareData()
+        data = self.prepareAuthInterfaceData()
         data.pop('identifier')
         with app.test_client() as client:
             resp = client.post(config.BASE_URL + '/v1/register', data=data)

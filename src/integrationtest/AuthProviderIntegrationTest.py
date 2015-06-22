@@ -11,12 +11,6 @@ from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest import config
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 
-class FakeData(object):
-
-    def __init__(self, client_id, user_id):
-        self.client_id = client_id
-        self.user_id = user_id
-
 class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
 
     def setUp(self):
@@ -47,18 +41,6 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
             resp = c.get("https://localhost.local/v1/oauth2/auth", query_string=params)
             denyUri = config.BASE_URL
             self.assertTrue(resp.headers['Location'].startswith(denyUri))
-
-
-    def buildAuthUri(self):
-        redirect_uri = 'https://test.app/redirecturi'
-        uriPattern = 'https://localhost.local/v1/oauth2/auth?response_type=code&client_id={0}&redirect_uri={1}'
-        uri = uriPattern.format(self.app.appid, redirect_uri)
-        return uri
-
-
-    def isEmptyFromCde(self, appid, code):
-        theCode = self.authProvider.from_authorization_code(appid, code, '')
-        return theCode is None
 
     @test
     def auth_interface_redirects_to_redirect_uri(self):
