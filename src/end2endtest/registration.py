@@ -7,6 +7,10 @@ import urllib3
 from end2endtest import config
 from urllib import urlencode
 from end2endtest.helpers.EndUserTesting import EndUserTesting, test
+from pdoauth.models.User import User
+from pdoauth.models.AppMap import AppMap
+from pdoauth.models.AppAssurance import AppAssurance
+from pdoauth.models.Assurance import Assurance
 
 class EndUserRegistrationTest(EndUserTesting):
 
@@ -129,7 +133,7 @@ class EndUserRegistrationTest(EndUserTesting):
         self.appsecret = ''.join(random.choice(string.ascii_letters) for _ in range(32))
         appname = "app_{0}".format(''.join(random.choice(string.ascii_letters) for _ in range(6)))
         self.redirectUri = 'https://demokracia.rulez.org/'
-        applicationtool.do_main(0, appname, self.appsecret, self.redirectUri)
+        applicationtool.do_main(0, appname, self.appsecret, self.redirectUri, ['test', 'assurer.test'])
         app = Application.find(appname)
         self.appid = app.appid
 
@@ -168,8 +172,11 @@ class EndUserRegistrationTest(EndUserTesting):
         headers = dict(Authorization='Bearer {0}'.format(self.accessToken))
         resp = self.http.request("get", self.baseUrl + "/v1/users/me", headers=headers)
         answer = json.loads(resp.data)
-        self.assertEqual(answer['email'], self.assurerEmail)
-        self.assertTrue(answer['assurances']['assurer'][0]['assurer'], self.assurerEmail)
+        user = User.getByEmail(self.assurerEmail)
+        app = Application.get(self.appid)
+        appMapEntry = AppMap.get(app, user)
+        self.assertEqual(answer['email'], appMapEntry.getEmail())
+        self.assertEqual(answer['assurances'], ['assurer.test'])
 
     @test
     def _registration(self):

@@ -160,11 +160,13 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
     @test
     def the_email_address_shown_for_the_user_is_userid_dot_appname_at_EMAILDOMAIN(self):
         userinfo1 = self.getUserInfo()
+        appMapEntry = AppMap.get(self.app, self.cred.user)
         emailAddress = "{0}.{1}@{2}".format(
-                        AppMap.get(self.app, self.cred.user).userid,
+                        appMapEntry.userid,
                         self.app.name,
                         config.Config.EMAIL_DOMAIN)
         self.assertEqual(userinfo1['email'], emailAddress)
+        self.assertEqual(userinfo1['email'], appMapEntry.getEmail())
 
     @test
     def the_applications_do_not_receive_credential_data_from_the_user(self):
