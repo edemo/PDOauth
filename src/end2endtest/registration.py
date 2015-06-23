@@ -164,7 +164,6 @@ class EndUserRegistrationTest(EndUserTesting):
         self.accessToken = answer['access_token']
         self.refreshToken = answer['refresh_token']
 
-
     def the_server_can_get_your_user_info_with_your_access_token(self):
         headers = dict(Authorization='Bearer {0}'.format(self.accessToken))
         resp = self.http.request("get", self.baseUrl + "/v1/users/me", headers=headers)

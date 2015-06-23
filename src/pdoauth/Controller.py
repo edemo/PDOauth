@@ -16,6 +16,8 @@ from urllib import urlencode
 from pdoauth.Responses import Responses
 from pdoauth.models.Application import Application
 from Crypto.Hash.SHA512 import SHA512Hash
+from pdoauth.models.AppMap import AppMap
+from pdoauth.models.AppAssurance import AppAssurance
 
 class Controller(
         WebInterface, Responses, EmailHandling,
@@ -211,38 +213,56 @@ class Controller(
     def doesUserAskOwnData(self, userid, authenticator):
         return userid == authenticator
 
-
     def doesUserAskForOthersData(self, authuser, authenticator):
         return authuser.userid == authenticator
+
+    def computeAssurancesForApp(self, user, app):
+        appAssurances = AppAssurance.get(app)
+        userAssurances = Assurance.listByUser(user)
+        shownAssurances = list()
+        for userAssurance in userAssurances:
+            if userAssurance.name in appAssurances:
+                shownAssurances.append(userAssurance.name)
+        return shownAssurances
+
+    def shownDataForApp(self, user, authenticator):
+        app = Application.get(authenticator)
+        twistedUserId = SHA512Hash(app.appid + user.userid).hexdigest()[:16]
+        shownEmail = AppMap.getEmailFor(app, user).email
+        shownAssurances = self.computeAssurancesForApp(user, app)
+        return dict(
+            email=shownEmail,
+            userid=twistedUserId,
+            assurances=shownAssurances)
+
+
+    def shownDataForAssurer(self, user):
+        return dict(
+            email=user.email,
+            userid=user.userid,
+            assurances=Assurance.getByUser(user),
+            hash=user.hash,
+            credentials=Credential.getByUser_as_dictlist(user))
+
+    def shownDataForUser(self, user):
+        return dict(
+            email=user.email,
+            userid=user.userid,
+            assurances=Assurance.getByUser(user),
+            hash=user.hash,
+            credentials=Credential.getByUser_as_dictlist(user))
 
     def getDataOfUserForAuthenticator(self, userid, authuser, authenticator):
         user = User.get(userid)
         if self.doesUserAskOwnData(userid, authenticator):
-            data = dict(email=user.email,
-                userid=user.userid,
-                assurances=Assurance.getByUser(user),
-                hash=user.hash,
-                credentials=Credential.getByUser_as_dictlist(user))
-            return data
+            return self.shownDataForUser(user)
         if self.doesUserAskForOthersData(authuser, authenticator):
             assurances = Assurance.getByUser(authuser)
             if assurances.has_key('assurer'):
-                data = dict(email=user.email,
-                    userid=user.userid,
-                    assurances=Assurance.getByUser(user),
-                    hash=user.hash,
-                    credentials=Credential.getByUser_as_dictlist(user))
-                return data
+                return self.shownDataForAssurer(user)
             else:
                 raise ReportedError([self.noShowAuthorization], status=403)
-        app = Application.get(authenticator)
-        twistedUserId = SHA512Hash(app.appid+user.userid).hexdigest()
-        data = dict(email=user.email,
-            userid=twistedUserId,
-            assurances=Assurance.getByUser(user),
-            hash=user.hash,
-            credentials=Credential.getByUser_as_dictlist(user))
-        return data
+        return self.shownDataForApp(user, authenticator)
 
     def doShowUser(self, userid):
         authuser, authenticator = self.getAuthenticatedUser()

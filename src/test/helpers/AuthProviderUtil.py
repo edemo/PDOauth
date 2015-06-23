@@ -82,3 +82,26 @@ class AuthProviderUtil(object):
         code = self.getCodeFromAuthInterface(self.authParams)
         return code
 
+    def assertCorrectKeysInTokenReply(self, data):
+        keys = data.keys()
+        for key in 'access_token', 'token_type', 'expires_in', 'refresh_token':
+            keys.remove(key)
+        self.assertEqual(len(keys), 0)
+
+    def showUserByServer(self, tokens):
+        headers = dict(Authorization='Bearer {0}'.format(tokens['access_token']))
+        self.controller.interface.set_request_context(headers=headers)
+        self.controller.authenticateUserOrBearer()
+        resp = self.controller.doShowUser(userid='me')
+        userinfo = self.fromJson(resp)
+        return userinfo
+
+    def prepareGetUserInfo(self):
+        self.app = self.createApp()
+        self.setDefaultParams()
+        self.controller.loginInFramework(self.cred)
+
+    def getUserInfo(self):
+        tokens = self.obtainCodeAndCallTokenInterface()
+        userinfo = self.showUserByServer(tokens)
+        return userinfo

@@ -6,17 +6,17 @@ from test.helpers.PDUnitTest import PDUnitTest, test
 from pdoauth.ReportedError import ReportedError
 from test.helpers.UserUtil import UserUtil
 from test.helpers.CryptoTestUtil import CryptoTestUtil
-from integrationtest.helpers.UserTesting import UserTesting
-from pdoauth.models.KeyData import KeyData
-from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from pdoauth.models.Application import Application
+from test.helpers.AuthProviderUtil import AuthProviderUtil
 from pdoauth.AuthProvider import AuthProvider
-from test import config
+from pdoauth.models.AppAssurance import AppAssurance
 
-class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil):
+class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
 
     def setUp(self):
         PDUnitTest.setUp(self)
+        self.app = self.createApp()
+        self.authProvider = AuthProvider(self.controller.interface)
+        self.setDefaultParams()
         self.createLoggedInUser()
 
     @test
@@ -80,16 +80,16 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil):
         data = self.fromJson(resp)
         assurances = data['assurances']
         self.assertEquals(assurances['test'][0]['assurer'], current_user.email)
- 
+
     @test
     def users_without_assurer_assurance_cannot_get_email_and_digest_for_anyone(self):
         current_user = self.controller.getCurrentUser()
         targetuser=self.createUserWithCredentials().user
         Assurance.new(targetuser,'test',current_user)
         target = User.getByEmail(self.userCreationEmail)
-        with self.assertRaises(ReportedError) as e:
+        with self.assertRaises(ReportedError) as context:
             self.showUserByCurrentUser(target.userid)
-        self.assertTrue(e.exception.status,403)
+        self.assertTrue(context.exception.status,403)
 
     @test
     def users_with_assurer_assurance_can_get_user_by_email(self):
@@ -106,61 +106,93 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.setupRandom()
         self.createUserWithCredentials()
         target = User.getByEmail(self.userCreationEmail)
-        with self.assertRaises(ReportedError) as e:
+        with self.assertRaises(ReportedError) as context:
             self.controller.doGetByEmail('u'+target.email)
-        self.assertTrue(e.exception.status,404)
+        self.assertTrue(context.exception.status,404)
 
     @test
     def users_without_assurer_assurance_cannot_get_user_by_email(self):
         user = self.createUserWithCredentials()
         self.assertTrue(user is not None)
         target = User.getByEmail(self.userCreationEmail)
-        with self.assertRaises(ReportedError) as e:
+        with self.assertRaises(ReportedError) as context:
             self.controller.doGetByEmail(target.email)
-        self.assertTrue(e.exception.status,403)
-
-    def createApplication(self):
-        redirect_uri = 'https://test.app/redirecturi'
-        appid = "app-{0}".format(self.randString)
-        self.appsecret = "secret-{0}".format(self.randString)
-        application = Application.new(appid, self.appsecret, redirect_uri)
-        self.appid = application.appid
-        return redirect_uri
-
-    def loginAndGetCode(self):
-        redirect_uri = self.createApplication()
-        self.controller.interface.set_request_context()
-        uri = config.BASE_URL + '/v1/oauth2/auth'
-        queryPattern = 'response_type=code&client_id={0}&redirect_uri={1}'
-        queryString = queryPattern.format(self.appid, redirect_uri)
-        self.controller.interface.set_request_context("/foo?" + queryString)
-        resp = AuthProvider(self.controller.interface).auth_interface()
-        code = resp.headers['Location'].split("=")[1]
-        return code
-
-    def showUserByServer(self, code, userid):
-        headers = dict(Authorization='Bearer {0}'.format(code))
-        self.controller.interface.set_request_context(headers=headers)
-        self.controller.getSession()['auth_user'] = userid, self.appid
-        resp = self.controller.doShowUser(userid)
-        return self.fromJson(resp)
-
-    def userInfoForServer(self):
-        code = self.loginAndGetCode()
-        self.controller.logOut()
-        data = self.showUserByServer(code, self.cred.user.userid)
-        return data 
+        self.assertTrue(context.exception.status,403)
 
     @test
     def user_id_shown_to_the_application_differs_from_the_user_id(self):
-        data = self.userInfoForServer()
         userid = self.cred.user.userid
-        self.assertTrue(userid != data['userid'])
+        userinfo = self.getUserInfo()
+        self.assertTrue(userid != userinfo['userid'])
 
     @test
     def user_id_shown_to_the_application_does_not_change_over_time(self):
-        code = self.loginAndGetCode()
-        self.controller.logOut()
-        data1 = self.showUserByServer(code, self.cred.user.userid)
-        data2 = self.showUserByServer(code, self.cred.user.userid)
-        self.assertEqual(data1, data2)
+        tokens = self.obtainCodeAndCallTokenInterface()
+        userinfo1 = self.showUserByServer(tokens)
+        Assurance.new(self.cred.user, 'test', self.cred.user)
+        userinfo2 = self.showUserByServer(tokens)
+        self.assertEqual(userinfo1['userid'], userinfo2['userid'])
+
+    @test
+    def email_shown_to_the_application_does_not_change_over_time(self):
+        tokens = self.obtainCodeAndCallTokenInterface()
+        userinfo1 = self.showUserByServer(tokens)
+        Assurance.new(self.cred.user, 'test', self.cred.user)
+        userinfo2 = self.showUserByServer(tokens)
+        self.assertEqual(userinfo1['email'], userinfo2['email'])
+
+    @test
+    def the_userid_shown_for_the_same_user_should_be_different_for_different_applications(self):
+        userinfo1 = self.getUserInfo()
+        self.prepareGetUserInfo()
+        userinfo2 = self.getUserInfo()
+        self.assertTrue(userinfo1['userid'] != userinfo2['userid'])
+
+    @test
+    def the_email_address_shown_for_the_same_user_should_be_different_for_different_applications(self):
+        userinfo1 = self.getUserInfo()
+        self.prepareGetUserInfo()
+        userinfo2 = self.getUserInfo()
+        self.assertTrue(userinfo1['email'] != userinfo2['email'])
+
+    @test
+    def the_applications_do_not_receive_credential_data_from_the_user(self):
+        userinfo = self.getUserInfo()
+        self.assertTrue(not userinfo.has_key('credentials'))
+
+    @test
+    def the_applications_do_not_receive_hash_from_the_user(self):
+        userinfo = self.getUserInfo()
+        self.assertTrue(not userinfo.has_key('hash'))
+
+    @test
+    def for_each_application_there_is_a_list_of_assurances_used_by_that_applications(self):
+        AppAssurance.get(self.app)
+
+    @test
+    def assurance_list_for_applications_contain_the_assurances_added(self):
+        AppAssurance.add(self.app, 'test')
+        assuranceList = AppAssurance.get(self.app)
+        self.assertEqual(assuranceList, ['test'])
+
+    @test
+    def if_you_add_the_same_assurance_the_second_time__it_will_have_no_effect(self):
+        AppAssurance.add(self.app, 'test')
+        AppAssurance.add(self.app, 'test')
+        assuranceList = AppAssurance.get(self.app)
+        self.assertEqual(assuranceList, ['test'])
+
+    @test
+    def the_applications_receive_intersection_of_users_assurances_and_applications_assurances(self):
+        AppAssurance.add(self.app, 'test')
+        AppAssurance.add(self.app, 'test2')
+        user = self.cred.user
+        Assurance.new(user, "test", user)
+        Assurance.new(user, "test3", user)
+        userinfo = self.getUserInfo()
+        self.assertEqual(userinfo['assurances'], ['test'])
+
+    @test
+    def the_applications_do_not_receive_anything_beyond_mapped_email_address__mapped_user_id_and_filtered_list_of_assurance_names(self):
+        userinfo = self.getUserInfo()
+        self.assertEquals(userinfo.keys(),['userid', 'assurances', 'email'])

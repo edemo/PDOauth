@@ -51,12 +51,6 @@ class AuthProviderTest(PDUnitTest, UserUtil, AuthProviderUtil):
         self.controller.logOut()
         self.assertReportedError(self.callAuthInterface, (), 302, 'access_denied')
 
-    def assertCorrectKeysInTokenReply(self, data):
-        keys = data.keys()
-        for key in 'access_token', 'token_type', 'expires_in', 'refresh_token':
-            keys.remove(key)
-        self.assertEqual(len(keys), 0)
-
     @test
     def bad_parameters_in_token_interface_lead_to_errors(self):
         for paramupdates, status, message in self.tokenInterfaceInputMatrix:

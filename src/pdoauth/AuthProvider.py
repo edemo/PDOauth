@@ -50,9 +50,6 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
         return value is None or value == ''
 
     def get_token_from_post_data(self, form):
-        #print form._fields
-        #for key, value in form._fields.items():
-        #    print "{0}='{1}'".format(key, value.data)
         self.ensureClientAuthParams(form)
         if form.scope.data is None:
             form.scope.data = ''
