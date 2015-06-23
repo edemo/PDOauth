@@ -227,12 +227,13 @@ class Controller(
 
     def shownDataForApp(self, user, authenticator):
         app = Application.get(authenticator)
-        twistedUserId = SHA512Hash(app.appid + user.userid).hexdigest()[:16]
-        shownEmail = AppMap.getEmailFor(app, user).email
+        appmapEntry = AppMap.get(app, user)
+        shownEmail = appmapEntry.getEmail()
+        shownUserId = appmapEntry.userid
         shownAssurances = self.computeAssurancesForApp(user, app)
         return dict(
             email=shownEmail,
-            userid=twistedUserId,
+            userid=shownUserId,
             assurances=shownAssurances)
 
 

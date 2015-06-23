@@ -9,6 +9,8 @@ from test.helpers.CryptoTestUtil import CryptoTestUtil
 from test.helpers.AuthProviderUtil import AuthProviderUtil
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.models.AppAssurance import AppAssurance
+from pdoauth.models.AppMap import AppMap
+from test import config
 
 class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
 
@@ -154,6 +156,15 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
         self.prepareGetUserInfo()
         userinfo2 = self.getUserInfo()
         self.assertTrue(userinfo1['email'] != userinfo2['email'])
+
+    @test
+    def the_email_address_shown_for_the_user_is_userid_dot_appname_at_EMAILDOMAIN(self):
+        userinfo1 = self.getUserInfo()
+        emailAddress = "{0}.{1}@{2}".format(
+                        AppMap.get(self.app, self.cred.user).userid,
+                        self.app.name,
+                        config.Config.EMAIL_DOMAIN)
+        self.assertEqual(userinfo1['email'], emailAddress)
 
     @test
     def the_applications_do_not_receive_credential_data_from_the_user(self):
