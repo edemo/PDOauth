@@ -7,7 +7,7 @@ from test.helpers.CryptoTestUtil import CryptoTestUtil
 
 class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
-    def _prepareTest(self,
+    def prepareLoginForm(self,
             noTestAdderAssurance=False,
             email =None,
             noAssurerAssurance=False,
@@ -30,31 +30,31 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
     @test
     def assurers_with_appropriate_credential_can_add_assurance_to_user_using_hash(self):
-        form = self._prepareTest()
+        form = self.prepareLoginForm()
         self.controller.doAddAssurance(form)
         self.assertEqual(Assurance.listByUser(self.target)[0].name, 'test')
 
     @test
     def adding_assurance_is_possible_using_the_hash_only(self):
-        form = self._prepareTest(email = False)
+        form = self.prepareLoginForm(email = False)
         self.controller.doAddAssurance(form)
         self.assertEqual(Assurance.listByUser(self.target)[0].name, 'test')
 
     @test
     def assurers_need_assurer_assurance(self):
-        form = self._prepareTest(noAssurerAssurance=True)
+        form = self.prepareLoginForm(noAssurerAssurance=True)
         self.assertReportedError(
             self.controller.doAddAssurance,[form], 403, ["no authorization"])
 
     @test
     def assurers_need_giving_assurance(self):
         "that is they have to have assurance.[the assurance to give]"
-        form = self._prepareTest(noTestAdderAssurance=True)
+        form = self.prepareLoginForm(noTestAdderAssurance=True)
         self.assertReportedError(
             self.controller.doAddAssurance,[form], 403, ["no authorization"])
 
     def _prepareHashCollision(self, email=None):
-        form = self._prepareTest(email=email)
+        form = self.prepareLoginForm(email=email)
         self.digest = self.target.hash
         self.anotherUser = self.createUserWithCredentials().user
         self.anotherUser.hash = self.digest
@@ -80,7 +80,7 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
     @test
     def adding_assurance_with_invalid_hash_and_email_fails(self):
         badhash = self.createHash()
-        form = self._prepareTest(digest=badhash)
+        form = self.prepareLoginForm(digest=badhash)
         self.assertReportedError(
             self.controller.doAddAssurance,[form],
             400, ['This user does not have that digest'])
@@ -89,7 +89,7 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
     @test
     def adding_assurance_with_invalid_hash_and_no_email_fails(self):
         badhash = self.createHash()
-        form = self._prepareTest(digest=badhash,email=False)
+        form = self.prepareLoginForm(digest=badhash,email=False)
         self.assertReportedError(
             self.controller.doAddAssurance,[form],
             400, ['No user with this hash'])
@@ -98,7 +98,7 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
     @test
     def adding_assurance_with_email_and_hash_of_someone_other_fails(self):
         otherHash = self.createHash()
-        form = self._prepareTest(digest=otherHash)
+        form = self.prepareLoginForm(digest=otherHash)
         self.anotherUser = self.createUserWithCredentials().user
         self.anotherUser.hash = otherHash
         self.assertReportedError(
