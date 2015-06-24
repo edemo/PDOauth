@@ -1202,9 +1202,10 @@ QUnit.test( "RemoveCredential().doRemove should call '/v1/remove_credential' to 
 				"'RemoveCredential_0'"+
 				').doRemove()">Törlöm</button></div></td></tr></tbody></table></div>';
 	document.getElementById("Remove_Credential_Container").innerHtml=testDiv;
+	test.win.document = {cookie:"csrf=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef"};
 	pageScript = new PageScript(test)
 	var checkUri = "/v1/remove_credential";
-	var checkData = "credentialType=facebook&identifier=828377612368497";
+	var checkData = "csrf_token=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef&credentialType=facebook&identifier=828377612368497";
 	var checkMethod = "POST";
 	var checkCallback = pageScript.myCallback;
 		// calling unit	

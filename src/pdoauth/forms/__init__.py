@@ -8,7 +8,7 @@ def csrfCheck(self, field):
         raise ValidationError('csrf validation error')
     sessionid = session['csrf_token']
     if not sessionid == field.data:
-        raise ValidationError('csrf validation error')
+        raise ValidationError('csrf validation error )
 
 def optional(validator):
     return [validators.Optional()] + validator
