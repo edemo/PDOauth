@@ -40,6 +40,10 @@ class KeyData(db.Model, ModelUtils):
     def find_by_code(cls, client_id, authorization_code):
         return cls.query.filter_by(client_id=client_id, authorization_code = authorization_code).first()
 
+    @classmethod
+    def byCode(cls,code):
+        return cls.query.filter_by(authorization_code=code).first()
+
     def __repr__(self, *args, **kwargs):
         return "KeyData(client_id={0}, user_id={1}, access_key={2}, refresh_key={3}, authorization_code={4})".format(
             self.client_id,

@@ -1,4 +1,4 @@
-#pylint: disable=no-member, invalid-name
+#pylint: disable=no-member, invalid-name, too-many-arguments
 from flask import json
 from test import config
 from flask_login import AnonymousUserMixin
@@ -23,17 +23,18 @@ class FakeRecord(object):
         self.data = value
 
 class FakeForm(object):
-
-    def set(self, key, value):
-        return setattr(self, key, FakeRecord(value))
-
     def __init__(self,theDict):
+        self.vals = dict()
         for key, value in theDict.items():
             self.set(key, value)
+    def set(self, key, value):
+        record = FakeRecord(value)
+        setattr(self,key,record)
+        self.vals[key] = record
 
     def __repr__(self, *args, **kwargs):
         values = []
-        for key, value in self.__dict__.items():
+        for key, value in self.vals.items():
             values.append("{0}={1}".format(key,value.data))
         return "FakeForm({0})".format(",".join(values))
 
@@ -43,6 +44,7 @@ class FakeRequest(object):
         self.environ = dict()
         self.form = dict()
         self.method = 'GET'
+        self.headers = dict()
 
     def setUrl(self, url):
         self.url = 'http://localhost'+url
@@ -54,7 +56,6 @@ class FakeRequest(object):
         return self.environ
     def setForm(self, form):
         self.form = form
-
     def setMethod(self, method):
         self.method = method
 
@@ -93,8 +94,20 @@ class FakeInterface(object):
             environ = dict()
         self.request.setEnviron(environ)
 
-    def set_request_context(self,
-        url=None, data=None, method = 'GET', environ = None):
+    def setHeaders(self, headers):
+        if headers is None:
+            headers = dict()
+        self.request.setHeaders(headers)
+
+    def setheaders(self, headers):
+        if headers is None:
+            headers = dict()
+        self.request.headers = headers
+
+    def set_request_context(self, url=None, data=None, method='GET', environ=None, headers=None, newUri=False):
+        if newUri:
+            self.request = FakeRequest()
+            self.urlSet = False
         request = self.getRequest()
         if url is not None:
             if self.urlSet is False:
@@ -105,6 +118,7 @@ class FakeInterface(object):
         self.request.setForm(data)
         self.request.setMethod(method)
         self.setEnviron(environ)
+        self.setheaders(headers)
 
     def getRequest(self):
         return self.request
@@ -113,8 +127,10 @@ class FakeInterface(object):
         return self.session
 
     def loginUserInFramework(self, user):
-        self.current_user = user
-        return True
+        active = user.is_active()
+        if active:
+            self.current_user = user
+        return active
 
     def logOut(self):
         self.current_user = AnonymousUserMixin()

@@ -1,127 +1,75 @@
 # -*- coding: UTF-8 -*-
-# pylint: disable=no-member
-from twatson.unittest_annotations import Fixture, test
-from pdoauth.AuthProvider import AuthProvider, DiscardingNonexistingToken
-from pdoauth.models.Application import Application
-from pdoauth.app import db
-from pdoauth.models.KeyData import KeyData
-from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from test.helpers.AuthenticatedSessionMixin import AuthenticatedSessionMixin
-from test.helpers.RandomUtil import RandomUtil
-from test.helpers.FakeInterFace import FakeInterface
+from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.UserUtil import UserUtil
+from pdoauth.AuthProvider import AuthProvider
+from test.helpers.AuthProviderUtil import AuthProviderUtil
 
-class AuthProviderTest(Fixture, AuthenticatedSessionMixin, RandomUtil):
+class AuthProviderTest(PDUnitTest, UserUtil, AuthProviderUtil):
 
     def setUp(self):
-        self.setupRandom()
-        Application.query.delete()  # @UndefinedVariable
-        KeyData.query.delete()  # @UndefinedVariable
-        TokenInfoByAccessKey.query.delete()  # @UndefinedVariable
-        self.authProvider = AuthProvider(FakeInterface)
-        self.session = db.session
-        self.app = Application.new(
-                    "test app 5", "secret5", "https://test.app/redirecturi")
-        self.session.add(self.app)
-        self.session.commit()
-
-    def tearDown(self):
-        self.session.close()
+        PDUnitTest.setUp(self)
+        self.app = self.createApp()
+        self.createLoggedInUser()
+        self.authProvider = AuthProvider(self.controller.interface)
+        self.setDefaultParams()
+    @test
+    def code_can_be_obtained_in_auth_interface(self):
+        self.callAuthInterface()
 
     @test
-    def validate_client_id_returns_False_for_None(self):
-        self.assertFalse(self.authProvider.validate_client_id(None))
+    def tokens_can_be_obtained_in_token_interface_with_code(self):
+        data = self.obtainCodeAndCallTokenInterface()
+        self.assertTrue(data.has_key('access_token'))
 
     @test
-    def validate_client_id_returns_False_for_empty_string(self):
-        self.assertFalse(self.authProvider.validate_client_id(""))
+    def token_interface_response_contains_access_token__token_type__expires_in_and_refresh_token(self):
+        data = self.obtainCodeAndCallTokenInterface()
+        self.assertCorrectKeysInTokenReply(data)
 
     @test
-    def validate_client_id_returns_False_for_wrong_id(self):
-        self.assertFalse(self.authProvider.validate_client_id("different"))
+    def tokens_can_be_obtained_in_token_interface_with_refresh_token(self):
+        data = self.obtainCodeAndCallTokenInterface()
+        self.setDefaultParams()
+        self.tokenParams['grant_type'] = 'refresh_token'
+        data = self.callJustTokenInterface(False, data['refresh_token'])
+        self.assertCorrectKeysInTokenReply(data)
 
     @test
-    def validate_client_id_returns_True_for_good_id(self):
-        self.assertTrue(self.authProvider.validate_client_id(self.app.appid))
+    def all_parameters_for_auth_interface_should_be_present_and_correct(self):
+        for param, value, status, message in self.authInterfaceInputMatrix:
+            self.setDefaultParams()
+            print "{1} as {0} leads to {2} {3}".format(param, value, status, message)
+            if value is None:
+                self.authParams.pop(param)
+            else:
+                self.authParams[param] = value
+            self.assertReportedError(self.getCodeFromAuthInterface,[self.authParams],
+                status, message)
 
     @test
-    def validate_client_secret_returns_False_for_None(self):
-        self.assertFalse(
-            self.authProvider.validate_client_secret(self.app.appid, None))
+    def auth_interface_does_not_work_without_login(self):
+        self.controller.logOut()
+        self.assertReportedError(self.callAuthInterface, (), 302, 'access_denied')
 
     @test
-    def validate_client_secret_returns_False_for_empty_string(self):
-        self.assertFalse(
-            self.authProvider.validate_client_secret(self.app.appid, ""))
+    def bad_parameters_in_token_interface_lead_to_errors(self):
+        for paramupdates, status, message in self.tokenInterfaceInputMatrix:
+            self.setUp()
+            print "the parameters {0} lead to {1} {2}".format(paramupdates, status, message)
+            self.tokenParams.update(paramupdates)
+            self.assertReportedError(self.obtainCodeAndCallTokenInterface,[],status,message)
 
     @test
-    def validate_client_secret_returns_False_for_wrong_secret(self):
-        self.assertFalse(
-            self.authProvider.validate_client_secret(self.app.appid, "other"))
+    def refresh_token_cannot_be_obtained_with_another_clients_identity(self):
+        self.tokenParams['grant_type'] = 'refresh_token'
+        app = self.createApp()
+        self.tokenParams['client_id'] = app.appid
+        self.tokenParams['client_secret'] = app.secret
+        self.assertReportedError(self.obtainCodeAndCallTokenInterface,[],400,'invalid_grant')
 
     @test
-    def validate_client_secret_returns_False_for_None_id(self):
-        self.assertFalse(self.authProvider.validate_client_secret(None, None))
-
-    @test
-    def validate_client_secret_returns_True_for_good_secret(self):
-        appid = self.app.appid
-        secret = self.app.secret
-        self.assertTrue(
-            self.authProvider.validate_client_secret(appid, secret))
-
-    @test
-    def validate_redirect_uri_returns_False_for_None(self):
-        self.assertFalse(
-            self.authProvider.validate_redirect_uri(self.app.appid, None))
-
-    @test
-    def validate_redirect_uri_returns_False_for_bad_app(self):
-        uri = "https://test.app/redirecturi"
-        self.assertFalse(
-            self.authProvider.validate_redirect_uri('some crap', uri))
-
-    @test
-    def validate_redirect_uri_returns_False_for_empty(self):
-        self.assertFalse(
-            self.authProvider.validate_redirect_uri(self.app.appid, ""))
-
-    @test
-    def validate_redirect_uri_returns_False_for_wrong_uri(self):
-        self.assertFalse(
-            self.authProvider.validate_redirect_uri(self.app.appid, "crap"))
-
-    @test
-    def validate_redirect_uri_returns_True_for_good_uri(self):
-        redirectUri = "https://test.app/redirecturi"
-        appid = self.app.appid
-        self.assertTrue(
-            self.authProvider.validate_redirect_uri(appid, redirectUri))
-
-    @test
-    def validate_redirect_uri_returns_True_for_good_uri_with_parameters(self):
-        uri = "https://test.app/redirecturi?param=value"
-        self.assertTrue(
-            self.authProvider.validate_redirect_uri(self.app.appid, uri))
-
-    @test
-    def validate_scope_returns_True_for_empty(self):
-        self.assertTrue(self.authProvider.validate_scope(self.app.appid, ""))
-
-    @test
-    def validate_scope_returns_False_for_nonempty(self):
-        self.assertFalse(
-            self.authProvider.validate_scope(self.app.appid, "crap"))
-
-    @test
-    def validate_scope_returns_False_for_None(self):
-        self.assertFalse(
-            self.authProvider.validate_scope(self.app.appid, "crap"))
-
-    @test
-    def discarding_nonexistent_refresh_token_is_an_error(self):
-        self.assertRaises(
-            DiscardingNonexistingToken,
-            self.authProvider.discard_refresh_token,
-            'client_id',
-            'nonexisting')
+    def no_scope_equals_empty_scope(self):
+        self.tokenParams['scope'] = None
+        data = self.obtainCodeAndCallTokenInterface()
+        self.assertCorrectKeysInTokenReply(data)
 
