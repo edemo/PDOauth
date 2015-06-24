@@ -1341,27 +1341,29 @@ QUnit.module( "deRegister()" );
 
 QUnit.module( "menuHandler()" ); 
 QUnit.test( "menuHandler can hide and display the tabs", function( assert ) {
+		// Initializing the test
 	document.getElementById("login-menu").style.display="block";
 	pageScript = new PageScript(test)
 	pageScript.menuHandler("login").menuHide();
-	assert.equal(document.getElementById("login-menu").style.display,"none");
+	assert.equal(document.getElementById("login-menu").style.display,"none","login menu should be hidden");
 	pageScript.menuHandler("login").menuUnhide();
-	assert.equal(document.getElementById("login-menu").style.display,"block");
+	assert.equal(document.getElementById("login-menu").style.display,"block","login menu should be shown");
 	document.getElementById("login-menu").className="";
 	document.getElementById("tab-content-login").style.display="none";
 	pageScript.menuHandler("login").menuActivate();
-	assert.equal(document.getElementById("login-menu").className,"active-menu");
-	assert.equal(document.getElementById("tab-content-login").style.display,"block");
-	assert.equal(pageScript.activeButtonName,"login");
-	assert.equal(pageScript.activeButton.id,"login-menu");
-	assert.equal(pageScript.activeTab.id,"tab-content-login");
+	assert.equal(document.getElementById("login-menu").className,"active-menu","login menu should be activated");
+	assert.equal(document.getElementById("tab-content-login").style.display,"block","login tab should be shows");
+	pageScript.menuHandler("login").menuActivate();
+	assert.equal(pageScript.activeButtonName,"login","the 'login' should be the active button");
+	assert.equal(pageScript.activeButton.id,"login-menu","the 'login-menu' should be the active button id");
+	assert.equal(pageScript.activeTab.id,"tab-content-login","the 'tab-content-login' should be the active tab id");
 	pageScript.menuHandler("registration").menuActivate();
-	assert.equal(document.getElementById("login-menu").className,"");
-	assert.equal(document.getElementById("tab-content-login").style.display,"none");
+	assert.equal(document.getElementById("login-menu").className,"","login menu should be deactivated");
+	assert.equal(document.getElementById("tab-content-login").style.display,"none","login tab should be hidden");
 	pageScript.menuHandler("registration");
-	assert.equal(pageScript.activeButtonName,"registration");
-	assert.equal(pageScript.activeButton.id,"registration-menu");
-	assert.equal(pageScript.activeTab.id,"tab-content-registration");
+	assert.equal(pageScript.activeButtonName,"registration","the 'registration' should be the active button");
+	assert.equal(pageScript.activeButton.id,"registration-menu","the 'registration-menu' should be the active button id");
+	assert.equal(pageScript.activeTab.id,"tab-content-registration","the 'tab-content-registration' should be the active tab id");
 });
 
 // main()
