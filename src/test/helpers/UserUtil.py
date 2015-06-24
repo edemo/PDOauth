@@ -3,6 +3,8 @@ from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Credential import Credential
 from test.helpers.ResponseInfo import ResponseInfo
 from test.helpers.RandomUtil import RandomUtil
+from test.helpers.FakeInterFace import FakeForm
+from bs4 import BeautifulSoup
 
 class UserUtil(ResponseInfo, RandomUtil):
 
@@ -56,6 +58,37 @@ class UserUtil(ResponseInfo, RandomUtil):
 
     def showUserByCurrentUser(self, ouserid):
         userid = self.controller.getCurrentUser().userid
-        self.controller.getSession()['auth_user'] =  (userid, True)
+        self.controller.getSession()['auth_user'] =  (userid, userid)
         resp = self.controller.doShowUser(userid=ouserid)
         return resp
+
+    def prepareLoginForm(self, inactive = False, identifier = None, secret=None):
+        cred = self.createUserWithCredentials()
+        if inactive:
+            cred.user.active=False
+        self.data = dict(credentialType='password',
+            identifier=None,
+            secret=None)
+        self.addDataBasedOnOptionValue('identifier', identifier, self.userCreationUserid)
+        self.addDataBasedOnOptionValue('secret', secret, self.usercreationPassword)
+        form = FakeForm(self.data)
+        return form
+
+    def _sendPasswordResetEmail(self, email=None):
+        self.createUserWithCredentials()
+        if email is None:
+            email = self.userCreationEmail
+        resp = self.controller.doSendPasswordResetEmail(email)
+        self.data = self.fromJson(resp)
+        self.outbox = self.controller.mail.outbox
+        return resp.status_code
+
+    def the_reset_link_is_in_the_reset_email(self):
+        self._sendPasswordResetEmail()
+        text = self.outbox[0]['body']
+        soup = BeautifulSoup(text)
+        passwordResetLink = soup.find("a")['href']
+        self.secret = passwordResetLink.split('?secret=')[1]
+        self.tempcred = Credential.get('email_for_password_reset',self.secret)
+        return passwordResetLink
+
