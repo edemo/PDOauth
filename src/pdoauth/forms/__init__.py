@@ -25,6 +25,6 @@ secretValidator = [validators.Length(min=8),
                      validators.Regexp(".*[a-z].*", message="password should contain lowercase"),
                      validators.Regexp(".*[0-9].*", message="password should contain digit")]
 emailValidator = [validators.Email()]
-digestValidator = [validators.Length(min=512, max=512), validators.regexp("[0-9A-Fa-f]*")]
+digestValidator = [validators.Length(min=128, max=128), validators.regexp("[0-9A-Fa-f]*")]
 assuranceValidator = [validators.Length(min=4, max=50)]
 csrfValidator = [csrfCheck]
