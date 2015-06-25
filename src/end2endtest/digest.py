@@ -8,7 +8,7 @@ class EndUserDigestManagementTest(EndUserTesting):
 
     @test
     def you_can_add_a_digest_as_a_logged_in_user(self):
-        self.assertEqual(len(config.testSignatureAllOne),512)
+        self.assertEqual(len(config.testSignatureAllOne),128)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
         self.switchToTab('registration')
@@ -26,7 +26,7 @@ class EndUserDigestManagementTest(EndUserTesting):
 
     @test
     def you_can_change_the_digest_as_a_logged_in_user(self):
-        self.assertEqual(len(config.testSignatureAllOne),512)
+        self.assertEqual(len(config.testSignatureAllOne),128)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
         self.switchToTab('registration')
@@ -50,7 +50,7 @@ class EndUserDigestManagementTest(EndUserTesting):
 
     @test
     def you_can_delete_the_digest_as_a_logged_in_user_by_giving_empty_one(self):
-        self.assertEqual(len(config.testSignatureAllOne),512)
+        self.assertEqual(len(config.testSignatureAllOne),128)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
         oldDigest=self.createHash()

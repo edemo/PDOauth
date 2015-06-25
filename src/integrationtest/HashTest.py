@@ -176,7 +176,7 @@ class HashTest(IntegrationTest, UserTesting, CSRFMixin):
             resp = client.post(config.BASE_URL+'/v1/users/me/update_hash', data=data)
             self.assertEqual(400,resp.status_code)
             self.assertEqual(
-                '{"errors": ["digest: Field must be between 512 and 512 characters long."]}'
+                '{"errors": ["digest: Field must be between 128 and 128 characters long."]}'
                 ,self.getResponseText(resp)
             )
 
