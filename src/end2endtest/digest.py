@@ -21,6 +21,7 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
+        self.driver.find_element_by_id("PopupWindow_CloseButton").click()	
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\n{0}".format(digest) in userdata)
 
@@ -45,6 +46,7 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
+        self.driver.find_element_by_id("PopupWindow_CloseButton").click()	
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\n{0}".format(digest) in userdata)
 
@@ -64,6 +66,7 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
+        self.driver.find_element_by_id("PopupWindow_CloseButton").click()	
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\nnull" in userdata)
     
