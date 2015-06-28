@@ -105,6 +105,7 @@
 		pre {
 		  line-height: 100%;
 		  word-wrap: break-word;
+		  white-space: pre-line;
 		  }
 		  div.label {
 			color: yellow;
@@ -171,8 +172,8 @@
         background-color: #CCE7F5;
         z-index:1002;
         overflow: auto;
-	    font-size: 20px;
-	    line-height: 140%;
+	    font-size: 16px;
+	    line-height: 100%;
 		display: block;
   		}
     .popup-frame {

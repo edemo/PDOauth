@@ -2,12 +2,11 @@
 from uuid import uuid4
 class WebInterface(object):
 
-    def __init__(self, interfaceClass):
-        self.setInterface(interfaceClass)
+    def __init__(self, interfaceInstance):
+        self.setInterface(interfaceInstance)
 
-    def setInterface(self, interfaceClass):
-        self.interface = interfaceClass()
-
+    def setInterface(self, interfaceInstance):
+        self.interface = interfaceInstance
 
     def getRequest(self):
         return self.interface.getRequest()
@@ -34,9 +33,6 @@ class WebInterface(object):
     def getConfig(self, name):
         return self.app.config.get(name)
 
-    def validate_on_submit(self,form):
-        return form.validate_on_submit()
-
     def facebookMe(self, code):
         return self.interface.facebookMe(code)
 
@@ -55,6 +51,11 @@ class WebInterface(object):
         session['login_credential'] = \
             (credential.credentialType, credential.identifier)
         return self.interface.loginUserInFramework(user)
+
+    def makeRedirectResponse(self, redirectUri):
+        response = self.make_response(redirectUri, 302)
+        response.headers['Location']= redirectUri
+        return response
 
     def make_response(self, ret, status):
         return self.interface.make_response(ret, status)
