@@ -8,7 +8,7 @@ class EndUserDigestManagementTest(EndUserTesting):
 
     @test
     def you_can_add_a_digest_as_a_logged_in_user(self):
-        self.assertEqual(len(config.testSignatureAllOne),512)
+        self.assertEqual(len(config.testSignatureAllOne),128)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
         self.switchToTab('registration')
@@ -21,12 +21,13 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
+        self.driver.find_element_by_id("PopupWindow_CloseButton").click()	
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\n{0}".format(digest) in userdata)
 
     @test
     def you_can_change_the_digest_as_a_logged_in_user(self):
-        self.assertEqual(len(config.testSignatureAllOne),512)
+        self.assertEqual(len(config.testSignatureAllOne),128)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
         self.switchToTab('registration')
@@ -45,12 +46,13 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
+        self.driver.find_element_by_id("PopupWindow_CloseButton").click()	
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\n{0}".format(digest) in userdata)
 
     @test
     def you_can_delete_the_digest_as_a_logged_in_user_by_giving_empty_one(self):
-        self.assertEqual(len(config.testSignatureAllOne),512)
+        self.assertEqual(len(config.testSignatureAllOne),128)
         self.setupUserCreationData()
         self.driver.get(app.config.get("START_URL"))
         oldDigest=self.createHash()
@@ -64,6 +66,7 @@ class EndUserDigestManagementTest(EndUserTesting):
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
+        self.driver.find_element_by_id("PopupWindow_CloseButton").click()	
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\nnull" in userdata)
     
