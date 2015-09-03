@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.7
+#!/usr/local/bin/python
 # encoding: utf-8
 '''
 applicationtool -- a tool to handle applications
@@ -18,9 +18,10 @@ you can register applications with it
 import sys
 import os
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ONE_OR_MORE
 from argparse import RawDescriptionHelpFormatter
 from pdoauth.models.Application import Application
+from pdoauth.models.AppAssurance import AppAssurance
 
 __all__ = []
 __version__ = 0.1
@@ -57,7 +58,7 @@ def main(argv=None): # IGNORE:C0111
     program_license = '''%s
 
   Created by Árpád Magosányi on %s.
-  Copyright 2015 Informatikusok az e-demokráciáért. All rights reserved.
+  Copyright 2015 Informatikusok az catchedException-demokráciáért. All rights reserved.
 
   Licensed under GNU GPL v3
 
@@ -79,6 +80,8 @@ USAGE
             help="application secret", metavar="secret", nargs=1)
         parser.add_argument(dest="redirectUri",
             help="the oauth2 redirect uri for the application", metavar="redirectUri", nargs=1)
+        parser.add_argument(dest="assurances",
+            help="assurances handled by the application", metavar="assurances", nargs=ONE_OR_MORE)
 
         # Process arguments
         args = parser.parse_args()
@@ -87,28 +90,31 @@ USAGE
         name = args.name[0]
         secret = args.secret[0]
         redirectUri = args.redirect_uri[0]
-        return do_main(verbose, name, secret, redirectUri)
+        assurances = args.assurances
+        return do_main(verbose, name, secret, redirectUri, assurances)
 
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###
         return 0
-    except Exception, e:
+    except Exception, catchedException:
         if DEBUG or TESTRUN:
-            raise(e)
+            raise catchedException
         indent = len(program_name) * " "
-        sys.stderr.write(program_name + ": " + repr(e) + "\n")
+        sys.stderr.write(program_name + ": " + repr(catchedException) + "\n")
         sys.stderr.write(indent + "  for help use --help")
         return 2
 
-def do_main(verbose, name, secret, redirectUri):
-        if verbose > 0:
-            print("registering application {0} with secret {1} at {2}".format(name, secret, redirectUri))
-        app = Application.new(name, secret, redirectUri)
-        if app is None:
-            print "already existing app with this name: {0}".format(name)
-            return 2
-        print "id of the app is: {0}".format(app.appid)
-        return 0
+def do_main(verbose, name, secret, redirectUri, assurances):
+    if verbose > 0:
+        print("registering application {0} with secret {1} at {2}".format(name, secret, redirectUri))
+    app = Application.new(name, secret, redirectUri)
+    for assurance in assurances:
+        AppAssurance(app,assurance).save()
+    if app is None:
+        print "already existing app with this name: {0}".format(name)
+        return 2
+    print "id of the app is: {0}".format(app.appid)
+    return 0
 
 if __name__ == "__main__":
     if DEBUG:
