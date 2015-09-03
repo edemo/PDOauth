@@ -26,6 +26,10 @@ class Decorators(WebInterface, Responses):
 
     def errorReport(self, e):
         logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))
+        if e.status == 302:
+            response = self.make_response(e.descriptor, e.status)
+            response.headers['Location'] = '{0}?errors={1}'.format(e.uri,e.descriptor)
+            return response
         resp = self.error_response(e.descriptor, e.status)
         resp.headers['Access-Control-Allow-Origin'] = self.app.config.get('BASE_URL')
         return resp

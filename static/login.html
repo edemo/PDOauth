@@ -2,11 +2,12 @@
 	<head>
 		<meta charset="UTF-8">
 			<title>SSO test page</title>
-			<script type='text/javascript' src="debug.js"></script>
-			<script type='text/javascript' src="script.js"></script>
-			<script type='text/javascript' src="fb.js"></script>
 			<script type='text/javascript' src="qunit-1.18.0.js"></script>
 			<script type='text/javascript' src="qunit-reporter-junit.js"></script>
+			<script type='text/javascript' src="blanket.min.js"></script>
+			<script type='text/javascript' src="debug.js"></script>
+			<script type='text/javascript' src="script.js" data-cover></script>
+			<script type='text/javascript' src="fb.js"></script>
 			<link rel="stylesheet" href="qunit-1.18.0.css">
 			<link rel="stylesheet" href="main.css">
 	</head>
@@ -383,7 +384,7 @@
 									<button class="button" type="button" id="logout_button" onclick="javascript:pageScript.logout()">Logout</button>
 									<hr/>
 									<p>Adataim megjelenítése</p>
-									<button class="button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.Init_Callback)">Adataim</button>
+									<button class="button type="button" id="melink" onclick="pageScript.ajaxget('/v1/users/me',pageScript.initCallback)">Adataim</button>
 								</td>
 								<td width="15px" >
 									<div class="msg" id="me_Msg" style="max-width: 600px;  margin-left: 10px;"></div>
@@ -541,7 +542,7 @@
 						<hr/>
 
 						<p>Hitelesítési módjaim törlése</p>
-						<div id="Remove_Credential_Container"></div>
+						<div id="Remove_Credential_Container" class="msg"></div>
 
 						<hr/>
 						

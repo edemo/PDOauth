@@ -28,6 +28,7 @@ class CertificateHandling(CryptoUtils):
     def createCertResponse(self, certObj):
         resp = self.make_response(certObj.as_der(), 200)
         resp.headers["Content-Type"] = "application/x-x509-user-cert"
+        self.setCSRFCookie(resp)
         return resp
 
     def doKeygen(self, form):

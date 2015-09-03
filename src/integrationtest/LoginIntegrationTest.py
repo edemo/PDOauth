@@ -4,7 +4,7 @@ from pdoauth.forms import credErr
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 
-class LoginTest(IntegrationTest, UserTesting):
+class LoginIntegrationTest(IntegrationTest, UserTesting):
 
     @test
     def login_does_not_accept_get(self):
@@ -32,15 +32,6 @@ class LoginTest(IntegrationTest, UserTesting):
                 text)
 
     @test
-    def password_login_should_send_hidden_field_credentialType(self):
-        with app.test_client() as client:
-            data = dict(identifier="userid", secret=self.mkRandomPassword())
-            resp = client.post(config.BASE_URL + '/login', data=data)
-            self.assertEquals(resp.status_code, 403)
-            text = self.getResponseText(resp)
-            self.assertTrue(text.startswith('{"errors": ["credentialType: '))
-
-    @test
     def password_login_needs_correct_identifier_and_secret(self):
         with app.test_client() as client:
             data = dict(identifier="userid", secret=self.mkRandomPassword(), credentialType='password')
@@ -60,15 +51,6 @@ class LoginTest(IntegrationTest, UserTesting):
             self.assertEquals(text,expected)
 
     @test
-    def password_login_works_with_correct_identifier_and_secret(self):
-        user = self.createUserWithCredentials().user
-        user.activate()
-        with app.test_client() as client:
-            data = dict(identifier=self.userCreationUserid, secret=self.usercreationPassword, credentialType='password')
-            resp = client.post(config.BASE_URL + '/login', data=data)
-            self.assertUserResponse(resp)
-
-    @test
     def user_can_authenticate_on_login_page(self):
         with app.test_client() as client:
             resp = self.login(client)
@@ -76,43 +58,8 @@ class LoginTest(IntegrationTest, UserTesting):
             self.assertUserResponse(resp)
 
     @test
-    def login_sets_the_csrf_cookie(self):
+    def you_have_to_be_logged_in_to_log_out(self):
         with app.test_client() as client:
-            resp = self.login(client)
-            self.assertTrue("csrf=" in unicode(resp.headers['Set-Cookie']))
+            resp = client.get("/logout")
+            self.assertEquals(resp.status_code, 403)
 
-    @test
-    def inactive_user_cannot_authenticate(self):
-        with app.test_client() as client:
-            resp = self.login(client, activate=False)
-            text = self.getResponseText(resp)
-            self.assertEqual(403, resp.status_code)
-            self.assertEquals(text,'{"errors": ["Inactive or disabled user"]}')
-
-    @test
-    def authentication_with_bad_userid_is_rejected(self):
-        self.createUserWithCredentials()
-        data = {
-                'credentialType': 'password',
-                'identifier': 'baduser',
-                'secret': self.usercreationPassword,
-        }
-        with app.test_client() as client:
-            resp = client.post(config.BASE_URL + '/login', data=data)
-            text = self.getResponseText(resp)
-            self.assertEqual(403, resp.status_code)
-            self.assertTrue("Bad username or password" in text)
-
-    @test
-    def authentication_with_bad_secret_is_rejected(self):
-        self.createUserWithCredentials()
-        data = {
-                'credentialType': 'password',
-                'identifier': self.userCreationUserid,
-                'secret': self.mkRandomPassword(),
-        }
-        with app.test_client() as client:
-            resp = client.post(config.BASE_URL + '/login', data=data)
-            text = self.getResponseText(resp)
-            self.assertEqual(403, resp.status_code)
-            self.assertEqual('{"errors": ["Bad username or password"]}', text)

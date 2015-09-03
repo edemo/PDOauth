@@ -10,7 +10,6 @@ from pdoauth.models.KeyData import KeyData
 class DuplicateAccessKey(Exception):
     pass
 
-
 class TokenInfoByAccessKey(db.Model, ModelUtils):
     __tablename__ = 'tokeninfo_by_access_key'
     id = Column(Integer,primary_key=True)

@@ -44,7 +44,7 @@ class CryptoTestUtil(object):
 
     def createHash(self):
         self.setupRandom()
-        return SHA512Hash(self.randString).hexdigest() * 4
+        return SHA512Hash(self.randString).hexdigest()
 
     def sslLoginWithCert(self, cert):
         environ = dict(SSL_CLIENT_CERT=cert)
