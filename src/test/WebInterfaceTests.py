@@ -68,7 +68,7 @@ class WebInterfaceTests(PDUnitTest, UserUtil):
         self.controller.interface.accessToken = 'notjunk'
         resp = self.controller.facebookMe('junk')
         self.assertEquals(resp.status, 400)
-        self.assertEquals(resp.data, '{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}')
+        self.assertTrue( '{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190' in resp.data)
 
     @test
     def fake_facebookMe_returns_okay_if_interface_access_token_equals_code(self):
