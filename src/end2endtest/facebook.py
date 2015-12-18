@@ -49,6 +49,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
         body = driver.find_element_by_id("PopupWindow_SuccessDiv").text
         self.assertTrue("mag+elekne@magwas.rulez.org"in body)
         self.closePopup()
+        time.sleep(1)
         self.switchToTab("account")
         body = driver.find_element_by_id("me_Msg").text
         self.assertTrue("mag+elekne@magwas.rulez.org"in body)
@@ -78,7 +79,7 @@ class EndUserRegistrationAndLoginWithFacebookTest(EndUserTesting):
         self.assertEqual(self.baseUrl  + "/static/login.html", driver.current_url)
         body = driver.find_element_by_id("PopupWindow_MessageDiv").text
         self.assertEqual("", body)
-        time.sleep(1)
+        time.sleep(3)
         self.closePopup()
         self.switchToTab("account")
         body = driver.find_element_by_id("me_Msg").text

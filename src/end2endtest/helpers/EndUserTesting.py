@@ -19,6 +19,7 @@ class EndUserTesting(Fixture, UserTesting, BrowserSetup):
             password=self.usercreationPassword
         if digest is None:
             digest = self.createHash()
+        self.switchToTab('registration')
         driver.find_element_by_id("RegistrationForm_digest_input").clear()
         if digest is not False:
             driver.find_element_by_id("RegistrationForm_digest_input").send_keys(digest)
