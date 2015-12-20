@@ -425,8 +425,8 @@ QUnit.test( "shouldn't redirect if the status isn't equal 200", function( assert
 	var testData = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	var testStatus = 201;
 	var oldLocation = win.location;
-	var oldQueryString = QueryString;
-	QueryString.next = "newlocation";
+	var oldQueryString = pageScript.QueryString;
+	pageScript.QueryString.next = "newlocation";
 		// calling the unit	
 	pageScript.myCallback( testStatus, testData )
 		// asserts 
@@ -434,7 +434,7 @@ QUnit.test( "shouldn't redirect if the status isn't equal 200", function( assert
 		//cleaning
 	hidePopup()
 	win.location = oldLocation
-	QueryString = oldQueryString
+	pageScript.QueryString = oldQueryString
 });
 
 QUnit.test( "shouldn't redirect if the status is 200 but no next key or value is given in query string", function( assert ) {
@@ -442,9 +442,9 @@ QUnit.test( "shouldn't redirect if the status is 200 but no next key or value is
 	pageScript = new PageScript(test)
 	var testData = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	var testStatus = 200;
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	var oldLocation = win.location;
-	delete QueryString.next;
+	delete pageScript.QueryString.next;
 		// calling the unit	
 	pageScript.myCallback( testStatus, testData )
 		// asserts 
@@ -452,7 +452,7 @@ QUnit.test( "shouldn't redirect if the status is 200 but no next key or value is
 		//cleaning
 	hidePopup()
 	win.location = oldLocation
-	QueryString = oldQueryString
+	pageScript.QueryString = oldQueryString
 });
 
 QUnit.test( "should redirect with 'next' query var comes in url if status=200", function( assert ) {
@@ -460,9 +460,9 @@ QUnit.test( "should redirect with 'next' query var comes in url if status=200", 
 	pageScript = new PageScript(test)
 	var testData = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	var testStatus = 200;
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	var oldLocation = win.location;
-	QueryString.next = "newlocation";
+	pageScript.QueryString.next = "newlocation";
 		// calling the unit		
 	pageScript.myCallback( testStatus, testData )
 		// asserts 
@@ -470,7 +470,7 @@ QUnit.test( "should redirect with 'next' query var comes in url if status=200", 
 		//cleaning
 	hidePopup()
 	win.location = oldLocation
-	QueryString = oldQueryString
+	pageScript.QueryString = oldQueryString
 });
 
 QUnit.test( "should display the processed data through processErrors() and displayMsg(), popop callback should have the get_me()", function( assert ) {
@@ -663,9 +663,9 @@ QUnit.test( "sslLogin() should redirect to the SSL_LOGIN_BASE_URL uri", function
 		// Initializing the test
 	pageScript = new PageScript(test);
 	var oldLocation = win.location
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	win.location="https://valami.com/base"
-	QueryString.uris={SSL_LOGIN_BASE_URL: "SSL_base", BASE_URL:"base"}
+	pageScript.QueryString.uris={SSL_LOGIN_BASE_URL: "SSL_base", BASE_URL:"base"}
 	var testURL="https://valami.com/SSL_base"
 		// calling the unit
 	pageScript.sslLogin();
@@ -673,7 +673,7 @@ QUnit.test( "sslLogin() should redirect to the SSL_LOGIN_BASE_URL uri", function
 	assert.equal( win.location, testURL, "should redirected to SSL_LOGIN_BASE_URL" );
 		//cleaning
 	win.location = oldLocation
-	QueryString = oldQueryString 		
+	pageScript.QueryString = oldQueryString 		
 });
 
 // login_with_facebook
@@ -807,16 +807,16 @@ QUnit.test( "logoutCallback() should display the response comes from the server"
 QUnit.test( "doLoadHome() should redirect to the location contained in the QueryString.uris.START_URL", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test);
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	var oldLocation = win.location;
-	QueryString.uris = {START_URL: "newlocation"};
+	pageScript.QueryString.uris = {START_URL: "newlocation"};
 		// calling the unit		
 	pageScript.doLoadHome();
 		// asserts 
 	assert.equal( win.location, "newlocation", "windows.location should get the url contained in the QS" );	
 		//cleaning
 	win.location = oldLocation
-	QueryString = oldQueryString
+	pageScript.QueryString = oldQueryString
 });
 
 
@@ -833,14 +833,14 @@ QUnit.test( "should fill the 'QeryString.uris' array with the datas have coming 
 					'"SSL_LOGOUT_URL": "https://sso.edemokraciagep.org/ssl_logout/",' +
 					'"START_URL": "https://sso.edemokraciagep.org/static/login.html"}'
 	var testStatus = 200;
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 		// calling the unit
 	pageScript.uriCallback( testStatus, testText )
 		// asserts
-	assert.equal( JSON.stringify(QueryString.uris), JSON.stringify(JSON.parse(testText)),"QueryString.uris should contain the data" );	
+	assert.equal( JSON.stringify(pageScript.QueryString.uris), JSON.stringify(JSON.parse(testText)),"QueryString.uris should contain the data" );	
 		//cleaning
 	win.location = oldLocation
-	QueryString = oldQueryString 		
+	pageScript.QueryString = oldQueryString 		
 });
 
 QUnit.test( "should display the errors in error div if the server sent any error", function( assert ) {
@@ -849,19 +849,19 @@ QUnit.test( "should display the errors in error div if the server sent any error
 	var oldLocation = win.location
 	var testJSONtext =	'{"errors": ["error message"]}';
 	var testStatus = 400;
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	var checkString = "error message"
-	delete QueryString.uris;
+	delete pageScript.QueryString.uris;
 		// calling the unit
 	pageScript.uriCallback( testStatus, testJSONtext )
 		// asserts
 	assert_IsPopupShown( assert );
 	assert.ok( doesErrorContainerContain( checkString ),"the error container should contain the error message" );
-	assert.notOk( QueryString.uris, "the QueryString.uris should be unchanged" );
+	assert.notOk( pageScript.QueryString.uris, "the QueryString.uris should be unchanged" );
 		//cleaning
 	hidePopup();
 	win.location = oldLocation
-	QueryString = oldQueryString 		
+	pageScript.QueryString = oldQueryString 		
 });
 
 
@@ -982,6 +982,7 @@ QUnit.test( "digestGetter()getDigest should call anchor for digest", function( a
 	var oldDigest = document.getElementById( testForm + "_digest_input").value;
 	document.getElementById( testForm + "_predigest_input").value = "xxpredigestxx";
 	pageScript = new PageScript(test)
+    pageScript.QueryString.uris={ANCHOR_URL: "https://anchor.edemokraciagep.org"}
 	var checkUri = "https://anchor.edemokraciagep.org/anchor";
 	var checkData = "<id>xxpredigestxx</id>";
 	var checkMethod = "POST";

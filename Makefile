@@ -21,11 +21,17 @@ jquery:
 	curl https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js -o static/jquery.min.js
 	
 clean:
-	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js
+	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
 alltests: tests integrationtests end2endtest
 
-onlyend2endtest: install testsetup runserver runemail testsetup chrometest firefoxtest
+onlyend2endtest: install testsetup runanchor runserver runemail testsetup chrometest firefoxtest
+
+PDAnchor:
+	git clone https://github.com/edemo/PDAnchor.git
+
+runanchor: PDAnchor
+	make -C PDAnchor runserver
 
 firefoxtest:
 	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*.py"
@@ -67,7 +73,10 @@ handtest: testsetup runemail runserver
 sql:
 	sqlite3 /tmp/pdoauth.db
 
-killall: killserver killemail
+killall: killserver killemail killanchor
+
+killanchor:
+	 make -C PDAnchor killserver
 
 xmldoc: doc/html/documentation.html doc/html/commitlog.html
 

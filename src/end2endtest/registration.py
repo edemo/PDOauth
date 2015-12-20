@@ -98,6 +98,7 @@ class EndUserRegistrationTest(EndUserTesting):
     def an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(self, driver,):
         driver.get(self.baseUrl  + "/static/login.html")
         driver.refresh()
+        time.sleep(1)
         self.switchToTab("assurer")
         driver.find_element_by_id("AddAssuranceForm_digest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_digest_input").send_keys(self.theHash)

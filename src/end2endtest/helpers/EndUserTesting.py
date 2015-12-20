@@ -3,6 +3,8 @@ from integrationtest.helpers.UserTesting import UserTesting
 from twatson.unittest_annotations import Fixture, test  # @UnusedImport
 from end2endtest.helpers.BrowserSetup import BrowserSetup
 from end2endtest import config
+import time
+import assurancetool
 
 class EndUserTesting(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
@@ -30,4 +32,15 @@ class EndUserTesting(Fixture, UserTesting, BrowserSetup):
         driver.find_element_by_id("RegistrationForm_email_input").clear()
         driver.find_element_by_id("RegistrationForm_email_input").send_keys(email)
         driver.find_element_by_id("RegistrationForm_submitButton").click()
+
+
+    def loginAsAssurer(self, driver):
+        driver.get(self.baseUrl + "/static/login.html?next=/v1/users/me")
+        self.setupUserCreationData()
+        self.assurer = self.userCreationUserid
+        self.assurerEmail = self.userCreationEmail
+        self.fillInAndSubmitRegistrationForm(driver, password=self.usercreationPassword, userid=self.assurer, email=self.assurerEmail)
+        time.sleep(1)
+        assurancetool.do_main(0, self.assurerEmail, 'self', ["assurer", "assurer.test"])
+
 
