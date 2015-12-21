@@ -15,7 +15,6 @@ from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 from urllib import urlencode
 from pdoauth.Responses import Responses
 from pdoauth.models.Application import Application
-from Crypto.Hash.SHA512 import SHA512Hash
 from pdoauth.models.AppMap import AppMap
 from pdoauth.models.AppAssurance import AppAssurance
 
@@ -362,6 +361,7 @@ class Controller(
             PASSWORD_RESET_FORM_URL = self.getConfig('PASSWORD_RESET_FORM_URL'),
             SSL_LOGIN_BASE_URL = self.getConfig('SSL_LOGIN_BASE_URL'),
             SSL_LOGOUT_URL = self.getConfig('SSL_LOGOUT_URL'),
+            ANCHOR_URL = self.getConfig('ANCHOR_URL'),
         )
         ret = json.dumps(data)
         return self.make_response(ret,200)

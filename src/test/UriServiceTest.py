@@ -32,3 +32,7 @@ class UriServiceTest(PDUnitTest, ResponseInfo):
     @test
     def the_uri_service_gives_back_the_SSL_LOGOUT_URL(self):
         self._checkUri('SSL_LOGOUT_URL')
+
+    @test
+    def the_uri_service_gives_back_the_ANCHOR_URL(self):
+        self._checkUri('ANCHOR_URL')

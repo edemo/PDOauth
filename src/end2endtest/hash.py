@@ -10,28 +10,38 @@ class EndUserObtainingHashTest(EndUserTesting):
         In this case your web browser goes directly to anchor.edemokraciagep.org, and gets the hash for you.
         The SSO server never sees your personal id.
         """
-        if (config.skipSlowTests):
+        if config.skipSlowTests:
             return
         driver = self.driver
         driver.get(self.baseUrl+"/static/login.html?next=/v1/users/me")
+        self.switchToTab('registration')
         driver.find_element_by_id("RegistrationForm_predigest_input").clear()
         driver.find_element_by_id("RegistrationForm_predigest_input").send_keys("11111111110")
         driver.find_element_by_id("RegistrationForm_getDigestButton").click()
-        driver.save_screenshot("doc/screenshots/getting_digest_for_registration.png")
         time.sleep(1)
+        driver.save_screenshot("doc/screenshots/getting_digest_for_registration.png")
+        time.sleep(10)
         digest = driver.find_element_by_id("RegistrationForm_digest_input").get_attribute('value')
         self.assertEqual(digest,config.testSignatureAllOne)
-        time.sleep(59)
+
+
+    @test
+    def assurer_can_obtain_the_hash_by_filling_in_your_personal_id_and_pushing_the_button_near_it(self):
+        if config.skipSlowTests:
+            return
         driver = self.driver
+        self.loginAsAssurer(driver)
+
         driver.get(self.baseUrl+"/static/login.html?next=/v1/users/me")
+        self.switchToTab('assurer')
         driver.find_element_by_id("AddAssuranceForm_predigest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_predigest_input").send_keys("22222222220")
         driver.find_element_by_id("AddAssuranceForm_getDigestButton").click()
-        time.sleep(1)
+        time.sleep(5)
         driver.save_screenshot("doc/screenshots/getting_digest_for_assurance.png")
         digest = driver.find_element_by_id("AddAssuranceForm_digest_input").get_attribute('value')
         self.assertEqual(digest,config.testSignatureAllTwo)
-    
+
     def tearDown(self):
         self.driver.quit()
         self.assertEqual([], self.verificationErrors)
