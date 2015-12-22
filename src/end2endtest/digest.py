@@ -16,12 +16,15 @@ class EndUserDigestManagementTest(EndUserTesting):
         time.sleep(2)
         self.closePopup()        
         digest = self.createHash()
+        self.driver.get(app.config.get("START_URL"))
+        #the above line should not be needed, see bug #178
         self.switchToTab("account")
         self.driver.find_element_by_id("ChangeHashForm_digest_input").clear()
         self.driver.find_element_by_id("ChangeHashForm_digest_input").send_keys(digest)
         self.driver.find_element_by_id("ChangeHashForm_submitButton").click()
         time.sleep(1)
         self.driver.find_element_by_id("PopupWindow_CloseButton").click()	
+        time.sleep(1)
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\n{0}".format(digest) in userdata)
 
@@ -34,9 +37,8 @@ class EndUserDigestManagementTest(EndUserTesting):
         oldDigest=self.createHash()
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
         time.sleep(2)
-        self.closePopup()
+        self.driver.get(app.config.get("START_URL"))
         self.switchToTab("account")
-        time.sleep(1)
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("hash:\n{0}".format(oldDigest) in userdata)
         self.setupRandom()
@@ -58,8 +60,8 @@ class EndUserDigestManagementTest(EndUserTesting):
         oldDigest=self.createHash()
         self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver=self.driver, digest=oldDigest)
-        time.sleep(2)
-        self.closePopup()
+        time.sleep(1)
+        self.driver.get(app.config.get("START_URL"))
         self.switchToTab("account")
         userdata = self.driver.find_element_by_id("me_Msg").text
         self.assertTrue("{0}".format(oldDigest) in userdata)

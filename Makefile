@@ -12,7 +12,7 @@ static/qunit-reporter-junit.js:
 	curl https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/qunit-reporter-junit.js -o static/qunit-reporter-junit.js
 
 static/blanket.min.js:
-	curl https://raw.githubusercontent.com/alex-seville/blanket/master/dist/qunit/blanket.min.js -o static/blanket.min.js
+	curl https://raw.githubusercontent.com/alex-seville/blanket/89266afe70ea733592f5d51f213657d98e19fc0a/dist/qunit/blanket.js -o static/blanket.min.js
 
 bootstrap-3:
 	curl https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css -o static/bootstrap.min.css; curl https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js -o static/bootstrap.min.js
@@ -21,11 +21,17 @@ jquery:
 	curl https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js -o static/jquery.min.js
 	
 clean:
-	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js
+	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
 alltests: tests integrationtests end2endtest
 
-onlyend2endtest: install testsetup runserver runemail testsetup chrometest firefoxtest
+onlyend2endtest: install testsetup runanchor runserver runemail testsetup chrometest firefoxtest
+
+PDAnchor:
+	git clone https://github.com/edemo/PDAnchor.git
+
+runanchor: PDAnchor
+	make -C PDAnchor runserver
 
 firefoxtest:
 	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*.py"
@@ -67,7 +73,10 @@ handtest: testsetup runemail runserver
 sql:
 	sqlite3 /tmp/pdoauth.db
 
-killall: killserver killemail
+killall: killserver killemail killanchor
+
+killanchor:
+	 make -C PDAnchor killserver
 
 xmldoc: doc/html/documentation.html doc/html/commitlog.html
 

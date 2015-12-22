@@ -68,6 +68,7 @@ class SslAuthTest(EndUserTesting):
         self.deleteUser(user)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
         self.driver.get(sslLoginBaseUrl + '/ssl_login?email=hello@example.com')
+        time.sleep(1)
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
         body = self.driver.find_element_by_css_selector("BODY").text
         self.assertTrue('{"credentialType": "certificate", "identifier": "' in
