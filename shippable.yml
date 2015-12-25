@@ -6,6 +6,7 @@ env:
 before_install:
 - pip list
 - id
+- ls /usr/local/bin
 - ./tools/setupdoc
 - cp /etc/hosts /tmp
 - echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
