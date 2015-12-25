@@ -5,6 +5,8 @@ env:
     - I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
 before_install:
 - pip list
+- python -V
+- ls /usr/local/lib/python2.7/dist-packages/
 - id
 - ls /usr/local/bin
 - ./tools/setupdoc
