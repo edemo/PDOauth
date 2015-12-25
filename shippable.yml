@@ -4,6 +4,8 @@ env:
     - NSS_DEFAULT_DB_TYPE="sql"
     - I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
 before_install:
+- python -c "import sys;print sys.path"
+- type python
 - pip list
 - python -V
 - ls /usr/local/lib/python2.7/dist-packages/
