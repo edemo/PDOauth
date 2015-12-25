@@ -3,6 +3,7 @@ env:
   global: 
     - NSS_DEFAULT_DB_TYPE="sql"
     - I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
+    - PATH=/firefox:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 before_install:
 - python -c "import sys;print sys.path"
 - type python
