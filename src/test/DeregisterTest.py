@@ -60,13 +60,13 @@ class DeregisterTest(PDUnitTest, UserUtil):
     @test
     def deregistration_doit_needs_deregistration_secret(self):
         emptyForm = FakeForm(dict(deregister_secret=None))
-        self.assertReportedError(self.controller.doDeregistrationDot, [emptyForm], 400, ["secret is needed for deregistration_doit"])
+        self.assertReportedError(self.controller.doDeregistrationDoit, [emptyForm], 400, ["secret is needed for deregistration_doit"])
 
     def _doDeregistrationDoit(self, overwriteSecret=None):
         secret = self._getDeregistrationSecret()
         if overwriteSecret is not None:
             secret = overwriteSecret
-        resp = self.controller.doDeregistrationDot(FakeForm(dict(deregister_secret=secret)))
+        resp = self.controller.doDeregistrationDoit(FakeForm(dict(deregister_secret=secret)))
         return resp
 
     @test        
