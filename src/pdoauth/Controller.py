@@ -89,7 +89,7 @@ class Controller(
         self.removeAssurances(user)
         user.rm()
 
-    def doDeregistrationDot(self, form):
+    def doDeregistrationDoit(self, form):
         secret = form.deregister_secret.data
         if secret is None:
             raise ReportedError(
@@ -108,7 +108,8 @@ class Controller(
                     return True
         return False
 
-    def doRegistration(self, form):
+
+    def checkAndUpdateHash(self, form, user):
         additionalInfo = {}
         digest = form.digest.data
         if digest == '':
@@ -119,13 +120,28 @@ class Controller(
                 if self.isAnyoneHandAssurredOf(anotherUsers):
                     raise ReportedError([self.anotherUserUsingYourHash], 400)
                 additionalInfo["message"] = self.anotherUserUsingYourHash
+        user.hash = digest
+        user.save()
+        assurances = Assurance.listByUser(user)
+        self.deleteHandAssuredAssurances(assurances)
+        if digest is not None:
+            Assurance.new(user, "hashgiven", user)
+        return additionalInfo
+
+    def doUpdateHash(self,form):
+        user = self.getCurrentUser()
+        additionalInfo  = self.checkAndUpdateHash(form,user)
+        return self.simple_response('new hash registered', additionalInfo)
+
+    def doRegistration(self, form):
         cred = CredentialManager.create_user_with_creds(
             form.credentialType.data,
             form.identifier.data,
             form.secret.data,
             form.email.data,
-            digest)
+            None)
         user = cred.user
+        additionalInfo = self.checkAndUpdateHash(form, user)
         self.sendPasswordVerificationEmail(user)
         user.set_authenticated()
         user.activate()
@@ -342,17 +358,6 @@ class Controller(
         for assurance in assurances:
             if assurance.name != emailVerification:
                 assurance.rm()
-
-    def doUpdateHash(self,form):
-        digest = form.digest.data
-        if digest == '':
-            digest = None
-        user = self.getCurrentUser()
-        user.hash = digest
-        user.save()
-        assurances = Assurance.listByUser(user)
-        self.deleteHandAssuredAssurances(assurances)
-        return self.simple_response('new hash registered')
 
     def doUris(self):
         data = dict(
