@@ -59,7 +59,7 @@ def deregister(form):
 
 @DECORATOR.interfaceFunc("/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister_doit(form):
-    return CONTROLLER.doDeregistrationDot(form)
+    return CONTROLLER.doDeregistrationDoit(form)
 
 @DECORATOR.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def logout():

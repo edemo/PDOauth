@@ -51,7 +51,7 @@ class UserUtil(ResponseInfo, RandomUtil):
     def assertUserResponse(self, resp):
         self.assertEquals(resp.status_code, 200)
         data = self.fromJson(resp)
-        self.assertEquals(data['assurances'], {})
+        self.assertTrue(len(data['assurances'].keys()) < 2)
         self.assertTrue("@example.com" in data['email'])
         self.assertTrue(data.has_key('userid'))
         return data
