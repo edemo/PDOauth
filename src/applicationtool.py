@@ -48,7 +48,7 @@ def main(argv=None): # IGNORE:C0111
     if argv is None:
         argv = sys.argv
     else:
-        sys.argv.extend(argv)
+        sys.argv = [sys.argv[0]] + argv
 
     program_name = os.path.basename(sys.argv[0])
     program_version = "v%s" % __version__
@@ -89,7 +89,7 @@ USAGE
         verbose = args.verbose
         name = args.name[0]
         secret = args.secret[0]
-        redirectUri = args.redirect_uri[0]
+        redirectUri = args.redirectUri[0]
         assurances = args.assurances
         return do_main(verbose, name, secret, redirectUri, assurances)
 
