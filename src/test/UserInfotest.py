@@ -41,7 +41,7 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
     def user_info_contains_assurance(self):
         current_user = self.controller.getCurrentUser()
         myEmail = current_user.email
-        now = time.time()
+        now = round(time.time())
         Assurance.new(current_user, 'test', current_user, now)
         Assurance.new(current_user, 'test2', current_user, now)
         Assurance.new(current_user, 'test2', current_user, now)
@@ -53,7 +53,7 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
         assurance = assurances['test'][0]
         self.assertEqual(assurance['assurer'], myEmail)
         self.assertEqual(assurance['user'], myEmail)
-        self.assertEqual(assurance['timestamp'], now)
+        self.assertEqual(round(assurance['timestamp']), now)
         self.assertEqual(assurance['readable_time'], time.asctime(time.gmtime(now)))
         self.assertEqual(len(assurances['test2']),2)
 
