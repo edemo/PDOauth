@@ -5,13 +5,6 @@ env:
     - I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
     - PATH=/firefox:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 before_install:
-- python -c "import sys;print sys.path"
-- type python
-- pip list
-- python -V
-- ls /usr/local/lib/python2.7/dist-packages/
-- id
-- ls /usr/local/bin
 - ./tools/setupdoc
 - cp /etc/hosts /tmp
 - echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
@@ -19,5 +12,6 @@ before_install:
 - export DISPLAY=:99.0
 - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/cucumber_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1024x768x24
 script:
+- service postgresql start
 - make checkall
 - ./tools/commitdocs
