@@ -3,10 +3,14 @@ from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.Application import Application,\
     NotUnique, NonHttpsRedirectUri
 from pdoauth.app import db
+from pdoauth.models.AppAssurance import AppAssurance
+from pdoauth.models.AppMap import AppMap
 
 class ApplicationTest(Fixture):
 
     def setUp(self):
+        AppMap.query.delete() #@UndefinedVariable
+        AppAssurance.query.delete() #@UndefinedVariable
         Application.query.delete()  #@UndefinedVariable
         self.app = Application.new(
             "test app1", "secret1", "https://test.app/redirecturi1")

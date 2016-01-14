@@ -2,6 +2,9 @@ install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-ju
 
 checkall: install alltests xmldoc
 
+testenv:
+	docker run -v $$(pwd):/PDOauth -it magwas/edemotest:master
+
 static/qunit-1.18.0.js:
 	curl http://code.jquery.com/qunit/qunit-1.18.0.js -o static/qunit-1.18.0.js
 

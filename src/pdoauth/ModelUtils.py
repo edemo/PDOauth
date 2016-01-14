@@ -1,6 +1,7 @@
 from pdoauth.app import db
+from pdoauth.Observable import Observable
 
-class ModelUtils(object):
+class ModelUtils(Observable):
 
     def save(self):
         session = db.session
@@ -8,6 +9,7 @@ class ModelUtils(object):
         session.commit()
         
     def rm(self):
+        self.notify("pre_rm")
         session = db.session
         session.delete(self)
         session.commit()

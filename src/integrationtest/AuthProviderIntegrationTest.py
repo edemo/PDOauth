@@ -15,13 +15,15 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
 
     def setUp(self):
         self.setupRandom()
-        Application.query.delete()  # @UndefinedVariable
-        KeyData.query.delete()  # @UndefinedVariable
-        TokenInfoByAccessKey.query.delete()  # @UndefinedVariable
+        #Application.query.delete()  # @UndefinedVariable
+        #KeyData.query.delete()  # @UndefinedVariable
+        #TokenInfoByAccessKey.query.delete()  # @UndefinedVariable
         self.authProvider = AuthProvider(FlaskInterface())
         self.session = db.session
         self.app = Application.new(
-            "test app 5", "secret5", "https://test.app/redirecturi")
+            "test app %s"%(self.mkRandomString(5)),
+            self.mkRandomPassword(),
+            "https://test.app/redirecturi")
         self.session.add(self.app)
         self.session.commit()
 
