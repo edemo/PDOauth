@@ -59,7 +59,7 @@ class User(db.Model, ModelUtils):
 
     def is_anonymous(self):
         return False
-    
+
     @login_manager.user_loader
     @staticmethod
     def get(userid):

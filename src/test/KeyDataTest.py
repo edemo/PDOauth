@@ -4,7 +4,7 @@ from pdoauth.models.KeyData import KeyData
 class KeyDataTest(Fixture):
     
     def setUp(self):
-        KeyData.query.delete()  # @UndefinedVariable
+        #KeyData.query.delete()  # @UndefinedVariable
         self.KeyData_can_be_created_with_client_id__user_id__acess_key__and__refresh_key()
         
     def KeyData_can_be_created_with_client_id__user_id__acess_key__and__refresh_key(self):
