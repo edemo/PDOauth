@@ -62,7 +62,8 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
 
     def get_token(self, form):
         self.validateGetTokenParameters(form)
-
+        if not form.code.data:
+            raise ReportedError('invalid_grant', 400)
         data = self.from_authorization_code(form.client_id.data, form.code.data, form.scope.data)
         if self.isEmpty(data):
             raise ReportedError('invalid_grant', 400)
