@@ -15,15 +15,9 @@ class KeyData(db.Model, ModelUtils):
 
     @classmethod
     def new(cls, client_id, user_id, access_key, refresh_key):
-        keyData = cls.find(client_id, user_id)
-        if keyData is None:
-            keyData = cls(client_id, user_id, access_key, refresh_key)
-            keyData.save()
+        keyData = cls(client_id, user_id, access_key, refresh_key)
+        keyData.save()
         return keyData
-
-    @classmethod
-    def find(cls, client_id, user_id):
-        return cls.query.filter_by(client_id=client_id, user_id = user_id).first()
 
     def __init__(self, client_id, user_id=None, access_key=None, refresh_key=None, authorization_code=None):
         self.client_id = client_id
@@ -31,6 +25,7 @@ class KeyData(db.Model, ModelUtils):
         self.user_id = user_id
         self.refresh_key = refresh_key
         self.authorization_code = authorization_code
+        self.save()
 
     @classmethod
     def find_by_refresh_token(cls, client_id, refreshToken):
