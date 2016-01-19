@@ -38,7 +38,10 @@ class Controller(
         if current_user.is_authenticated():
             self.setAuthUser(current_user.userid, current_user.userid)
         elif authHeader:
-            token = authHeader.split(" ")[1]
+            headerSplit = authHeader.split(" ")
+            if len(headerSplit)!= 2:
+                raise ReportedError(["bad Authorization header",authHeader], status=403)
+            token = headerSplit[1]
             tokeninfo = TokenInfoByAccessKey.find(token).tokeninfo
             appid = tokeninfo.client_id
             targetuserid = tokeninfo.user_id
