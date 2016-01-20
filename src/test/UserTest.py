@@ -71,7 +71,17 @@ class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
             self.usercreationPassword,
             self.userCreationEmail)
         self.assertEquals(cred.user.email, self.userCreationEmail)
-    
+
+    @test
+    def User_with_credential_can_be_deleted(self):
+        self.setupUserCreationData()
+        cred = CredentialManager.create_user_with_creds(
+            'password',
+            self.userCreationUserid,
+            self.usercreationPassword,
+            self.userCreationEmail)
+        cred.user.rm()
+        
     @test
     def User_hash_can_be_stored(self):
         self.setupUserCreationData()

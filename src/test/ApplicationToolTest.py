@@ -46,6 +46,7 @@ class ApplicationToolTest(Fixture, RandomUtil):
         out, err, isExit = self.runApplicationToolWithParameters([appname, password, uri, 'test'])
         self.assertFalse(isExit)
         outStr = out.getvalue()
+        self.assertEqual("", err.getvalue())
         self.assertTrue( 'id of the app is:' in outStr)
         appId = outStr.split(": ")[1].strip()
         app = Application.find(appname)

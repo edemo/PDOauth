@@ -72,4 +72,3 @@ class AuthProviderTest(PDUnitTest, UserUtil, AuthProviderUtil):
         self.tokenParams['scope'] = None
         data = self.obtainCodeAndCallTokenInterface()
         self.assertCorrectKeysInTokenReply(data)
-

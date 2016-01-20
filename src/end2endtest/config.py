@@ -10,7 +10,7 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = False
     SECRET_KEY = 'test secret'
-    SQLALCHEMY_DATABASE_URI = "sqlite:////{0}".format(os.path.abspath(os.path.join(tempfile.gettempdir(),'pdoauth.db')))
+    SQLALCHEMY_DATABASE_URI = "postgres:///root"
     AUTHCODE_EXPIRY = 60
     WTF_CSRF_ENABLED = False
     MAIL_PORT = 1025
