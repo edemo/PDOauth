@@ -1,6 +1,6 @@
 #!/bin/bash
 set -xe
-branch=$(echo ${TRAVIS_BRANCH}|sed 's/master//')
+branch=${TRAVIS_BRANCH}
 mkdir -p shippable/$branch
 mv doc/* shippable/$branch
 rsync -e "ssh -p 22022" -ar shippable/$branch shippable@demokracia.rulez.org:/var/www/adadocs/PDOauth

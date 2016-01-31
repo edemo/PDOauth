@@ -3,4 +3,3 @@ set -e
 branch=${TRAVIS_BRANCH}
 commit=${TRAVIS_COMMIT}
 echo working on $branch/$commit
-mkdir -p doc/$branch
