@@ -3,4 +3,4 @@ set -xe
 branch=${TRAVIS_BRANCH}
 mkdir -p shippable/$branch
 mv doc/* shippable/$branch
-rsync -e "ssh -p 22022" -ar shippable shippable@demokracia.rulez.org:/var/www/adadocs/PDOauth
+rsync -e "ssh -p 22022" -ar shippable/ shippable@demokracia.rulez.org:/var/www/adadocs/PDOauth
