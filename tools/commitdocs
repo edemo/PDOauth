@@ -3,4 +3,4 @@ set -xe
 branch=$(echo ${TRAVIS_BRANCH}|sed 's/master//')
 mkdir -p shippable/$branch
 mv doc/* shippable/$branch
-rsync --port 22022 -ar shippable/$branch shippable@demokracia.rulez.org:/var/www/adadocs/PDOauth
+rsync -e "ssh -p 22022" -ar shippable/$branch shippable@demokracia.rulez.org:/var/www/adadocs/PDOauth
