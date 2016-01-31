@@ -4,12 +4,10 @@ from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.models.Application import Application
 from pdoauth.app import db, app
-from pdoauth.models.KeyData import KeyData
 from urllib import urlencode
 from pdoauth.FlaskInterface import FlaskInterface
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest import config
-from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 
 class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
 
