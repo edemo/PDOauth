@@ -1,8 +1,5 @@
 #!/bin/bash
 set -e
-echo ${GH_TOKEN}|md5sum
-#git clone -b gh-pages $(git config remote.origin.url|sed 's/:/\//;s/git@/https:\/\//') doc
-git clone -b gh-pages $(git config remote.origin.url) doc
 branch=${TRAVIS_BRANCH}
 commit=${TRAVIS_COMMIT}
 echo working on $branch/$commit

@@ -103,24 +103,24 @@ USAGE
         return 2
 
 def do_main(verbose, email, assurer_email, assurances):
-        if verbose > 0:
-            print("Setting assurances {0} for user {1} by {2}".format(assurances, email, assurer_email))
-        user = User.getByEmail(email)
-        if user is None:
-            print "no such user: {0}".format(email)
-            return 2
-        if assurer_email == 'self':
-            assurer = user
-        else:
-            assurer = User.getByEmail(assurer_email)
-        if user is None:
-            print "no such assurer: {0}".format(assurer_email)
-            return 2
-        for ass in assurances:
-            if verbose > 1:
-                print("Setting assurance {0} for user {1} by {2}".format(ass, email, assurer_email))
-            Assurance.new(user, ass, assurer, time.time())
-        return 0
+    if verbose > 0:
+        print("Setting assurances {0} for user {1} by {2}".format(assurances, email, assurer_email))
+    user = User.getByEmail(email)
+    if user is None:
+        print "no such user: {0}".format(email)
+        return 2
+    if assurer_email == 'self':
+        assurer = user
+    else:
+        assurer = User.getByEmail(assurer_email)
+    if user is None:
+        print "no such assurer: {0}".format(assurer_email)
+        return 2
+    for ass in assurances:
+        if verbose > 1:
+            print("Setting assurance {0} for user {1} by {2}".format(ass, email, assurer_email))
+        Assurance.new(user, ass, assurer, time.time())
+    return 0
 
 if __name__ == "__main__":
     if DEBUG:
@@ -133,11 +133,11 @@ if __name__ == "__main__":
     if PROFILE:
         import cProfile
         import pstats
-        profile_filename = 'assurancetool_profile.txt'
-        cProfile.run('main()', profile_filename)
+        profileFilename = 'assurancetool_profile.txt'
+        cProfile.run('main()', profileFilename)
         statsfile = open("profile_stats.txt", "wb")
-        p = pstats.Stats(profile_filename, stream=statsfile)
-        stats = p.strip_dirs().sort_stats('cumulative')
+        pStats = pstats.Stats(profileFilename, stream=statsfile)
+        stats = pStats.strip_dirs().sort_stats('cumulative')
         stats.print_stats()
         statsfile.close()
         sys.exit(0)

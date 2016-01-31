@@ -19,7 +19,7 @@ from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.forms.TokenInterfaceForm import TokenInterfaceForm
 
-webInterface = FlaskInterface()
+webInterface = FlaskInterface() # pylint: disable=invalid-name
 CONTROLLER = Controller(webInterface)
 CONTROLLER.mail = mail
 CONTROLLER.app = app
