@@ -17,6 +17,8 @@ class EndUserObtainingHashTest(EndUserTesting):
         self.switchToTab('registration')
         driver.find_element_by_id("RegistrationForm_predigest_input").clear()
         driver.find_element_by_id("RegistrationForm_predigest_input").send_keys("11111111110")
+        driver.find_element_by_id("RegistrationForm_predigest_mothername").clear()
+        driver.find_element_by_id("RegistrationForm_predigest_mothername").send_keys("Mother Test")
         driver.find_element_by_id("RegistrationForm_getDigestButton").click()
         time.sleep(1)
         driver.save_screenshot("doc/screenshots/getting_digest_for_registration.png")
@@ -26,7 +28,7 @@ class EndUserObtainingHashTest(EndUserTesting):
 
 
     @test
-    def assurer_can_obtain_the_hash_by_filling_in_your_personal_id_and_pushing_the_button_near_it(self):
+    def assurer_can_obtain_the_hash_by_filling_in_your_personal_id__mother_name_and_pushing_the_button_near_it(self):
         if config.skipSlowTests:
             return
         driver = self.driver
@@ -36,6 +38,8 @@ class EndUserObtainingHashTest(EndUserTesting):
         self.switchToTab('assurer')
         driver.find_element_by_id("AddAssuranceForm_predigest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_predigest_input").send_keys("22222222220")
+        driver.find_element_by_id("AddAssuranceForm_predigest_mothername").clear()
+        driver.find_element_by_id("AddAssuranceForm_predigest_mothername").send_keys("Test Mother")
         driver.find_element_by_id("AddAssuranceForm_getDigestButton").click()
         time.sleep(5)
         driver.save_screenshot("doc/screenshots/getting_digest_for_assurance.png")

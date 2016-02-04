@@ -328,6 +328,22 @@ function PageScript(test) {
 		self.displayMsg({error:'<p class="warning">Ez a funkció sajnos még nem működik</p>'});	
 		}
 	
+	PageScript.createXmlForAnchor = function(formName) {
+		personalId = document.getElementById(formName+"_predigest_input").value;
+		motherValue = document.getElementById(formName+"_predigest_mothername").value;
+		mothername = self.normalizeString(motherValue);
+		
+		if ( personalId == "") {
+			self.displayMsg({error:"<p class='warning'>A személyi szám nincs megadva</p>"})
+			return;
+		}
+		if ( mothername == "") {
+			self.displayMsg({error:"<p class='warning'>Anyja neve nincs megadva</p>"})
+			return;
+		}
+		return ("<request><id>"+personalId+"</id><mothername>"+mothername+"</mothername></request>");
+
+	}
 	PageScript.prototype.digestGetter = function(formName) {
 		self.formName = formName
 		
@@ -342,12 +358,9 @@ function PageScript(test) {
 		}
 	
 		self.getDigest = function() {
-			personalId = document.getElementById(this.formName+"_predigest_input").value;
-			if ( personalId == "") {
-				self.displayMsg({error:"<p class='warning'>A személyi szám nincs megadva</p>"})
+			text = PageScript.createXmlForAnchor(self.formName)
+			if (text == null)
 				return;
-			}
-			text = "<id>"+personalId+"</id>"
 			http = this.ajaxBase(this.idCallback);
 			http.open("POST",self.QueryString.uris.ANCHOR_URL+"/anchor",true);
 			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -553,6 +566,33 @@ function PageScript(test) {
 		
 	}
 
+	PageScript.prototype.normalizeString = function(val) {
+		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
+		var unaccented="ouooueauiouooueaui";
+		var s = "";
+		
+		for (var i = 0, len = val.length; i < len; i++) {
+		  c = val[i];
+		  if(c.match('[abcdefghijklmnopqrstuvwxyz]')) {
+		    s=s+c;
+		  } else if(c.match('[ABCDEFGHIJKLMNOPQRSTUVXYZ]')) {
+		    s=s+c.toLowerCase();
+		  } else if(c.match('['+accented+']')) {
+		    for (var j = 0, alen = accented.length; j <alen; j++) {
+		      if(c.match(accented[j])) {
+		        s=s+unaccented[j];
+		      }
+		    }
+		  }
+		}
+		return s;
+	}
+	
+	PageScript.convert_mothername = function(formName) {
+		var inputElement = document.getElementById( formName+"_predigest_mothername");
+		var outputElement = document.getElementById( formName+"_predigest_label_mothername_normalized");
+		outputElement.innerHTML=self.normalizeString(inputElement.value);
+	}
 }
 
 pageScript = new PageScript();

@@ -173,6 +173,7 @@
 									</button>
 								</td>
 							</tr>
+							<tr>
 							<td>
 								<td>
 
@@ -193,6 +194,7 @@
 									</button>
 								</td>
 							</tr>
+							<tr>
 							<td>
 								<td>
 									<div id="sslLoginDiv"></div>
@@ -225,7 +227,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td colspan="2">
+									<td>
 									</td>
 									<td>
 										<div class="formrow">
@@ -233,7 +235,19 @@
 												személyi szám:
 											</div>
 											<input name="digest" type="text" id="RegistrationForm_predigest_input"></input>
+											<div class="label" id="RegistrationForm_predigest_empty_label">
+												&nbsp;
+											</div>
 
+										</div>
+									</td>
+									<td>
+										<div class="formrow">
+											<div class="label" id="RegistrationForm_predigest_label_mothername">
+												Anyja neve:
+											</div>
+											<input name="digest" type="text" id="RegistrationForm_predigest_mothername" onkeyup="PageScript.convert_mothername('RegistrationForm')"></input>
+											<div class="label" id="RegistrationForm_predigest_label_mothername_normalized"></div>
 										</div>
 									</td>
 									<td>
@@ -347,10 +361,17 @@
 									személyi szám:
 								</div>
 								<input name="digest" type="text" id="AddAssuranceForm_predigest_input"></input>
+							</div>
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_predigest_label_mothername">
+									Anyja neve:
+								</div>
+								<input name="digest" type="text" id="AddAssuranceForm_predigest_mothername" onkeyup="PageScript.convert_mothername('AddAssuranceForm')"></input>
+								<div class="label" id="AddAssuranceForm_predigest_label_mothername_normalized"></div>
+							</div>
 								<button class="pbutton" type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">
 									Titkos kód generálása
 								</button>
-							</div>
 							<div class="formrow">
 								<div class="label" id="AddAssuranceForm_digest_label">
 									titkós kód:
@@ -406,6 +427,14 @@
 								<button class="pbutton" type="button" id="ChangeHashForm_getDigestButton" onclick="pageScript.digestGetter('ChangeHashForm').getDigest()">Titkos kód előállítása</button>
 							</div>
 							<div class="formrow">
+								<div class="label" id="ChangeHashForm_predigest_label_mothername">
+									Anyja neve:
+								</div>
+								<input name="digest" type="text" id="ChangeHashForm_predigest_mothername" onkeyup="PageScript.convert_mothername('ChangeHashForm')"></input>
+								<div class="label" id="ChangeHashForm_predigest_label_mothername_normalized"></div>
+							</div>
+
+							<div class="formrow">
 								<div class="label" id="ChangeHashForm_digest_label">
 								titkosított kód:
 								</div>
@@ -437,11 +466,10 @@
 									</td>
 									<td>								
 										<input type="submit" class="button" value="Cserélem" id="ChangeEmailAddressForm_submitButton" >
-										</input>
 									</td>
 								</tr>
-							</form>
-						</table>
+							</table>
+						</form>
 						
 						<hr/>						
 	
