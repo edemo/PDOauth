@@ -6,6 +6,6 @@ class CSRFMixin(object):
             if cookie.name == 'csrf':
                 return cookie.value
 
-    def getCSRF(self, c, uri=None):
-        cookieJar = c.cookie_jar
+    def getCSRF(self, client):
+        cookieJar = client.cookie_jar
         return self.getCSRFCookieFromJar(cookieJar)
