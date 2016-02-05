@@ -974,6 +974,42 @@ QUnit.test( "[ Must be implemented!! ] User should be able to initiate resending
 // Hash functions
 QUnit.module( "Hash functions" ); 
 
+QUnit.test( "there is an input field for identity number in the Registration form", function( assert ) {
+	var element = document.getElementById( "RegistrationForm_predigest_input");
+	assert.notEqual(null,element);
+});
+
+QUnit.test( "there is an input field for mother name in the Registration form", function( assert ) {
+	var element = document.getElementById( "RegistrationForm_predigest_mothername");
+	assert.notEqual(null,element);
+});
+
+QUnit.test( "mother name gets normalized and shown", function( assert ) {
+	var inputElement = document.getElementById( "RegistrationForm_predigest_mothername");
+	var outputElement = document.getElementById( "RegistrationForm_predigest_label_mothername_normalized");
+	inputElement.value="";
+	assert.equal(outputElement.textContent,"");
+	inputElement.value="Tükörfúrógépy Árvíztűrőné"
+	var e = new KeyboardEvent("keyup");
+	inputElement.dispatchEvent(e);
+	assert.equal(outputElement.textContent,"tukorfurogepyarvizturone");
+});
+
+function setMotherName(formName, motherName) {
+	var inputElementMother = document.getElementById( formName+"_predigest_mothername");
+	inputElementMother.value=motherName;
+	var e = new KeyboardEvent("keyup");
+	inputElementMother.dispatchEvent(e);
+
+}
+
+QUnit.test("anchor gets the id and normalized mothername", function( assert ) {
+	var inputElementId = document.getElementById( "RegistrationForm_predigest_input");
+	inputElementId.value="17203133959";
+	setMotherName("RegistrationForm", "Teszt Éva");
+	assert.equal(PageScript.createXmlForAnchor("RegistrationForm"),"<request><id>17203133959</id><mothername>teszteva</mothername></request>");
+});
+
 // digestGetter
 QUnit.test( "digestGetter()getDigest should call anchor for digest", function( assert ) {
 		// Initializing the test
@@ -981,10 +1017,12 @@ QUnit.test( "digestGetter()getDigest should call anchor for digest", function( a
 	var oldPredigest = document.getElementById( testForm + "_predigest_input").value;
 	var oldDigest = document.getElementById( testForm + "_digest_input").value;
 	document.getElementById( testForm + "_predigest_input").value = "xxpredigestxx";
+	setMotherName(testForm, "Teszt Éva");
+
 	pageScript = new PageScript(test)
     pageScript.QueryString.uris={ANCHOR_URL: "https://anchor.edemokraciagep.org"}
 	var checkUri = "https://anchor.edemokraciagep.org/anchor";
-	var checkData = "<id>xxpredigestxx</id>";
+	var checkData = "<request><id>xxpredigestxx</id><mothername>teszteva</mothername></request>";
 	var checkMethod = "POST";
 		// calling unit	
 	pageScript.digestGetter( testForm ).getDigest();
@@ -1005,6 +1043,24 @@ QUnit.test( "digestGetter()getDigest should display an error message if prediges
 	document.getElementById( testForm + "_predigest_input").value = "";
 	pageScript = new PageScript(test)
 	var checkString = "A személyi szám nincs megadva";
+		// calling unit	
+	pageScript.digestGetter( testForm ).getDigest();
+		// asserts
+	assert_IsPopupShown( assert );
+	assert.ok( doesErrorContainerContain( checkString ), "the error container should contain the error message" );
+		// cleaning
+	document.getElementById( testForm + "_predigest_input").value = oldPredigest;
+	hidePopup();
+});
+
+QUnit.test( "digestGetter()getDigest should display an error message if mothername field doesn't contain any value", function( assert ) {
+		// Initializing the test
+	var testForm = "AddAssuranceForm";
+	var oldPredigest = document.getElementById( testForm + "_predigest_input").value;
+	document.getElementById( testForm + "_predigest_input").value = "17203133959";
+	document.getElementById( testForm + "_predigest_mothername").value = "";
+	pageScript = new PageScript(test)
+	var checkString = "Anyja neve nincs megadva";
 		// calling unit	
 	pageScript.digestGetter( testForm ).getDigest();
 		// asserts

@@ -2,7 +2,7 @@
 set -xe
 export  NSS_DEFAULT_DB_TYPE="sql"
 export  I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
-export PATH=/firefox:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export PATH=/firefox:/chromedriver:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 set +e
 service postgresql start; ret=1 ; while [ $ret != 0 ] ; do psql -c "select count(*) from pg_user;" ; ret=$?; done
 set -e
@@ -10,6 +10,8 @@ set -e
 cp /etc/hosts /tmp
 echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
 cp /tmp/hosts /etc/hosts
-export DISPLAY=:99.0
-/sbin/start-stop-daemon --start --quiet --pidfile /tmp/cucumber_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1024x768x24
+#export DISPLAY=:99.0
+#/sbin/start-stop-daemon --start --quiet --pidfile /tmp/cucumber_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1024x768x24
+export DISPLAY=:0
+Xvnc -SecurityTypes=None :0&
 make checkall
