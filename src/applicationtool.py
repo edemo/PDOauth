@@ -1,5 +1,7 @@
 #!/usr/local/bin/python
 # encoding: utf-8
+#pylint ignore=relative-import
+#pylint ignore=invalid-name
 '''
 applicationtool -- a tool to handle applications
 
@@ -42,13 +44,13 @@ class CLIError(Exception):
     def __unicode__(self):
         return self.msg
 
-def main(argv=None): # IGNORE:C0111
+def main(argv=None): #pylint ignore=too-many-locals
     '''Command line options.'''
 
     if argv is None:
         argv = sys.argv
     else:
-        sys.argv.extend(argv)
+        sys.argv = [sys.argv[0]] + argv
 
     program_name = os.path.basename(sys.argv[0])
     program_version = "v%s" % __version__
@@ -89,7 +91,7 @@ USAGE
         verbose = args.verbose
         name = args.name[0]
         secret = args.secret[0]
-        redirectUri = args.redirect_uri[0]
+        redirectUri = args.redirectUri[0]
         assurances = args.assurances
         return do_main(verbose, name, secret, redirectUri, assurances)
 
@@ -116,7 +118,7 @@ def do_main(verbose, name, secret, redirectUri, assurances):
     print "id of the app is: {0}".format(app.appid)
     return 0
 
-if __name__ == "__main__":
+def theMain():
     if DEBUG:
         sys.argv.append("-h")
         sys.argv.append("-v")
@@ -127,12 +129,17 @@ if __name__ == "__main__":
     if PROFILE:
         import cProfile
         import pstats
-        profile_filename = 'assurancetool_profile.txt'
-        cProfile.run('main()', profile_filename)
+        profileFilename = 'assurancetool_profile.txt'
+        cProfile.run('main()', profileFilename)
         statsfile = open("profile_stats.txt", "wb")
-        p = pstats.Stats(profile_filename, stream=statsfile)
-        stats = p.strip_dirs().sort_stats('cumulative')
+        pStats = pstats.Stats(profileFilename, stream=statsfile)
+        stats = pStats.strip_dirs().sort_stats('cumulative')
         stats.print_stats()
         statsfile.close()
         sys.exit(0)
     sys.exit(main())
+
+if __name__ == "__main__":
+    theMain()
+
+

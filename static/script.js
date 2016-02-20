@@ -22,7 +22,6 @@ QueryStringFunc = function (win) { //http://stackoverflow.com/questions/979975/h
     return query_string;
 };
 
-QueryString = QueryStringFunc();
 
 var uribase="";
 
@@ -31,6 +30,7 @@ function PageScript(test) {
 	test=test || { debug: false }
 	this.debug=test.debug
 	win = test.win || window;
+    this.QueryString = QueryStringFunc();
 	
 	PageScript.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
@@ -54,6 +54,7 @@ function PageScript(test) {
 		  }
 		return xmlhttp;
 	}
+
 
 	PageScript.prototype.ajaxpost = function( uri, data, callback ) {
 		xmlhttp = this.ajaxBase( callback );
@@ -109,8 +110,8 @@ function PageScript(test) {
 	PageScript.prototype.myCallback = function(status, text) {
 		var data = JSON.parse(text);
 		if (status == 200) {
-			if(QueryString.next) {
-				self.doRedirect(decodeURIComponent(QueryString.next))
+			if(self.QueryString.next) {
+				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
 		this.msg = self.processErrors(data)
@@ -242,7 +243,7 @@ function PageScript(test) {
 	}
 	
 	PageScript.prototype.doLoadHome = function() {
-		self.doRedirect(QueryString.uris.START_URL);
+		self.doRedirect(self.QueryString.uris.START_URL);
 	}
 	
 	PageScript.prototype.logout = function() {
@@ -252,11 +253,11 @@ function PageScript(test) {
 	PageScript.prototype.uriCallback = function(status,text) {
 		var data = JSON.parse(text);
 		if (status==200) {
-			QueryString.uris = data
+			self.QueryString.uris = data
 			console.log(data)
 			loc = '' + win.location
-			if (loc.indexOf(QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
-				self.ajaxget(QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.initCallback)
+			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
+				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.initCallback)
 			}
 		}
 		else self.displayMsg(self.processErrors(data));
@@ -264,7 +265,7 @@ function PageScript(test) {
 	
 	PageScript.prototype.sslLogin = function() {
 		var loc = '' +win.location
-		var newloc = loc.replace(QueryString.uris.BASE_URL, QueryString.uris.SSL_LOGIN_BASE_URL)
+		var newloc = loc.replace(self.QueryString.uris.BASE_URL, self.QueryString.uris.SSL_LOGIN_BASE_URL)
 		self.doRedirect( newloc );
 	}
 
@@ -327,6 +328,22 @@ function PageScript(test) {
 		self.displayMsg({error:'<p class="warning">Ez a funkció sajnos még nem működik</p>'});	
 		}
 	
+	PageScript.createXmlForAnchor = function(formName) {
+		personalId = document.getElementById(formName+"_predigest_input").value;
+		motherValue = document.getElementById(formName+"_predigest_mothername").value;
+		mothername = self.normalizeString(motherValue);
+		
+		if ( personalId == "") {
+			self.displayMsg({error:"<p class='warning'>A személyi szám nincs megadva</p>"})
+			return;
+		}
+		if ( mothername == "") {
+			self.displayMsg({error:"<p class='warning'>Anyja neve nincs megadva</p>"})
+			return;
+		}
+		return ("<request><id>"+personalId+"</id><mothername>"+mothername+"</mothername></request>");
+
+	}
 	PageScript.prototype.digestGetter = function(formName) {
 		self.formName = formName
 		
@@ -341,14 +358,11 @@ function PageScript(test) {
 		}
 	
 		self.getDigest = function() {
-			personalId = document.getElementById(this.formName+"_predigest_input").value;
-			if ( personalId == "") {
-				self.displayMsg({error:"<p class='warning'>A személyi szám nincs megadva</p>"})
+			text = PageScript.createXmlForAnchor(self.formName)
+			if (text == null)
 				return;
-			}
-			text = "<id>"+personalId+"</id>"
 			http = this.ajaxBase(this.idCallback);
-			http.open("POST",'https://anchor.edemokraciagep.org/anchor',true);
+			http.open("POST",self.QueryString.uris.ANCHOR_URL+"/anchor",true);
 			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		  	http.setRequestHeader("Content-length", text.length);
 		  	http.setRequestHeader("Connection", "close");
@@ -545,13 +559,40 @@ function PageScript(test) {
 	PageScript.prototype.main = function() {
 		this.ajaxget("/uris", this.uriCallback)
 		this.ajaxget("/v1/users/me", this.initCallback)
-		if (QueryString.secret) {
-			document.getElementById("PasswordResetForm_secret_input").value=QueryString.secret
-			document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value=QueryString.secret
+		if (self.QueryString.secret) {
+			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
+			document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value=self.QueryString.secret
 		}
 		
 	}
 
+	PageScript.prototype.normalizeString = function(val) {
+		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
+		var unaccented="ouooueauiouooueaui";
+		var s = "";
+		
+		for (var i = 0, len = val.length; i < len; i++) {
+		  c = val[i];
+		  if(c.match('[abcdefghijklmnopqrstuvwxyz]')) {
+		    s=s+c;
+		  } else if(c.match('[ABCDEFGHIJKLMNOPQRSTUVXYZ]')) {
+		    s=s+c.toLowerCase();
+		  } else if(c.match('['+accented+']')) {
+		    for (var j = 0, alen = accented.length; j <alen; j++) {
+		      if(c.match(accented[j])) {
+		        s=s+unaccented[j];
+		      }
+		    }
+		  }
+		}
+		return s;
+	}
+	
+	PageScript.convert_mothername = function(formName) {
+		var inputElement = document.getElementById( formName+"_predigest_mothername");
+		var outputElement = document.getElementById( formName+"_predigest_label_mothername_normalized");
+		outputElement.innerHTML=self.normalizeString(inputElement.value);
+	}
 }
 
 pageScript = new PageScript();

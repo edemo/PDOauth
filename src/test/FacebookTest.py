@@ -60,4 +60,4 @@ class FacebookTest(PDUnitTest, UserUtil):
         resp = FlaskInterface().facebookMe("code")
         self.assertEqual(400, resp.status)
         self.assertTrue(resp.headers.has_key('x-fb-rev'))
-        self.assertEqual('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}', resp.data)
+        self.assertTrue('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190' in resp.data)

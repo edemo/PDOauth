@@ -19,7 +19,7 @@ from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.forms.TokenInterfaceForm import TokenInterfaceForm
 
-webInterface = FlaskInterface()
+webInterface = FlaskInterface() # pylint: disable=invalid-name
 CONTROLLER = Controller(webInterface)
 CONTROLLER.mail = mail
 CONTROLLER.app = app
@@ -59,7 +59,7 @@ def deregister(form):
 
 @DECORATOR.interfaceFunc("/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister_doit(form):
-    return CONTROLLER.doDeregistrationDot(form)
+    return CONTROLLER.doDeregistrationDoit(form)
 
 @DECORATOR.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def logout():

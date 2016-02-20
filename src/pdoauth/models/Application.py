@@ -15,7 +15,7 @@ class Application(db.Model, ModelUtils):
     id = Column(Integer, primary_key=True)
     appid = Column(String, unique=True, nullable=False)
     name = Column(String, unique=True)
-    secret = Column(String(14))
+    secret = Column(String)
     redirect_uri = Column(String)
 
     @classmethod
@@ -43,4 +43,3 @@ class Application(db.Model, ModelUtils):
         if not redirect_uri.startswith("https://"):
             raise NonHttpsRedirectUri(redirect_uri)
         self.redirect_uri = redirect_uri
-        

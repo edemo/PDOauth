@@ -69,71 +69,53 @@ class HashTest(IntegrationTest, UserTesting, CSRFMixin):
     @test
     def it_is_possible_to_delete_the_hash_by_not_giving_a_digest_in_the_request(self):
         with app.test_client() as client:
-            resp = self.login(client)
-            self.assertUserResponse(resp)
+            self.updateHashForUser(client,addDigest=False)
+            self.assertEqual(self.userAfter.hash, None)
 
-            user = User.getByEmail(self.userCreationEmail)
-            oldHash = self.createHash()
-            user.hash = oldHash
-            userToCheck = User.getByEmail(self.userCreationEmail)
-            self.assertEqual(userToCheck.hash, oldHash)
-            self.setupRandom()
-            csrf = self.getCSRF(client)
-            data = dict(
-                csrf_token= csrf
-            )
-            resp = client.post(config.BASE_URL+'/v1/users/me/update_hash', data=data)
-            self.assertEqual(200,resp.status_code)
-            userAfter = User.getByEmail(self.userCreationEmail)
-            self.assertEqual(userAfter.hash, None)
+    @test
+    def when_hash_is_deleted_no_hashgiven_assurance_remains(self):
+        with app.test_client() as client:
+            assurances=self.updateHashForUser(client,addDigest=False)
+            self.assertEqual(assurances.keys(), [])
+
+    def updateHashForUser(self, client, assurance="test", addDigest=True):
+        resp = self.login(client)
+        self.assertUserResponse(resp)
+        user = User.getByEmail(self.userCreationEmail)
+        Assurance.new(user, assurance, user, time.time())
+        oldHash = self.createHash()
+        user.hash = oldHash
+        userToCheck = User.getByEmail(self.userCreationEmail)
+        self.assertEqual(len(Assurance.getByUser(userToCheck)), 1)
+        self.setupRandom()
+        csrf = self.getCSRF(client)
+        data = dict(
+            csrf_token=csrf)
+        if addDigest:
+            data['digest'] = oldHash
+        resp = client.post(config.BASE_URL + '/v1/users/me/update_hash', data=data)
+        self.assertEqual(200, resp.status_code)
+        self.userAfter = User.getByEmail(self.userCreationEmail)
+        assurances = Assurance.getByUser(self.userAfter)
+        return assurances
 
     @test
     def the_assurances_are_overwritten_on_hash_update(self):
         with app.test_client() as client:
-            resp = self.login(client)
-            self.assertUserResponse(resp)
+            assurances = self.updateHashForUser(client)
+            self.assertEqual(len(assurances), 1)
 
-            user = User.getByEmail(self.userCreationEmail)
-            Assurance.new(user, "test", user, time.time())
-            oldHash = self.createHash()
-            user.hash = oldHash
-            userToCheck = User.getByEmail(self.userCreationEmail)
-            self.assertEqual(len(Assurance.getByUser(userToCheck)), 1)
-            self.setupRandom()
-            digest = oldHash
-            csrf = self.getCSRF(client)
-            data = dict(
-                digest= digest,
-                csrf_token= csrf
-            )
-            resp = client.post(config.BASE_URL+'/v1/users/me/update_hash', data=data)
-            self.assertEqual(200,resp.status_code)
-            userAfter = User.getByEmail(self.userCreationEmail)
-            self.assertEqual(len(Assurance.getByUser(userAfter)), 0)
+    def a_hashgiven_assurance_is_created_when_a_hash_is_given(self):
+        with app.test_client() as client:
+            assurances = self.updateHashForUser(client)
+            self.assertEqual(assurances.keys(), ["hashgiven"])
 
     @test
     def emailverification_assurance_is_an_exception_from_overwriting(self):
         with app.test_client() as client:
-            resp = self.login(client)
-            self.assertUserResponse(resp)
-
-            user = User.getByEmail(self.userCreationEmail)
-            Assurance.new(user, emailVerification, user, time.time())
-            oldHash = self.createHash()
-            user.hash = oldHash
-            userToCheck = User.getByEmail(self.userCreationEmail)
-            self.assertEqual(len(Assurance.getByUser(userToCheck)), 1)
-            self.setupRandom()
-            digest = oldHash
-            csrf = self.getCSRF(client)
-            data = dict(
-                digest= digest,
-                csrf_token= csrf
-            )
-            resp = client.post(config.BASE_URL+'/v1/users/me/update_hash', data=data)
-            self.assertEqual(200,resp.status_code)
-            userAfter = User.getByEmail(self.userCreationEmail)
-            self.assertEqual(len(Assurance.getByUser(userAfter)), 1)
+            assurances = self.updateHashForUser(client,emailVerification)
+            self.assertEqual(len(assurances), 2)
+            self.assertTrue("emailverification" in assurances.keys())
 
     @test
     def without_login_it_is_not_possible_to_update_the_hash(self):

@@ -41,3 +41,11 @@ class TokenInfoByAccessKey(db.Model, ModelUtils):
         self.access_key = access_key
         self.tokeninfo = tokeninfo
         self.expire_time = time.time() + expires_in
+
+    @classmethod
+    def removeAllForKey(cls, key):
+        instances = cls.query.filter_by(access_key=key.access_key).all()
+        for instance in instances:
+            instance.rm()
+
+KeyData.subscribe(TokenInfoByAccessKey.removeAllForKey, "pre_rm")

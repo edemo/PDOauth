@@ -61,7 +61,7 @@ class Credential(db.Model, ModelUtils):
     def __repr__(self, *args, **kwargs):
         return "Credential(user={0.user.email},credentialType={0.credentialType},identifier={0.identifier},secret={0.secret})".format(self)
 
-    
+
     @classmethod
     def getByUser_as_dictlist(cls, user):
         l = []
@@ -72,5 +72,12 @@ class Credential(db.Model, ModelUtils):
                 identifier = cred.identifier
             ))
         return l
-    
-    
+
+    @classmethod
+    def removeAllForUser(cls, user):
+        creds = Credential.query.filter_by(user=user).all()
+        for cred in creds:
+            cred.rm()
+
+User.subscribe(Credential.removeAllForUser, "pre_rm")
+

@@ -1,11 +1,8 @@
-.pydevproject
-.project
 *.pyc
 doc/html
 doc/xml
 doc/screenshots
 .coverage
-.settings/
 tmp/
 lib/
 doc/static
@@ -16,3 +13,4 @@ static/blanket.min.js
 static/jquery.min.js
 static/bootstrap.min.css
 static/bootstrap.min.js
+/PDAnchor

@@ -55,8 +55,14 @@ class Assurance(db.Model, ModelUtils):
         assurance = cls(user, name, assurer, timestamp)
         assurance.save()
         return assurance
-            
     
-    
-    
-    
+    def __repr__(self):
+        return "Assurance({0},{1},{2},{3})".format(self.user, self.name, self.assurer, self.timestamp)
+
+    @classmethod
+    def removeAllForUser(cls, user):
+        instances = cls.query.filter_by(user=user).all()
+        for instance in instances:
+            instance.rm()
+
+User.subscribe(Assurance.removeAllForUser, "pre_rm")

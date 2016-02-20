@@ -33,3 +33,13 @@ class AppAssurance(db.Model, ModelUtils, CryptoUtils):
         appAssurance = AppAssurance(app,name)
         appAssurance.save()
         return appAssurance
+
+
+    
+    @classmethod
+    def removeAllForApp(cls, app):
+        applications = cls.query.filter_by(app=app).all()
+        for application in applications:
+            application.rm()
+
+Application.subscribe(AppAssurance.removeAllForApp, "pre_rm")

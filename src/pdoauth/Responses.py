@@ -13,13 +13,16 @@ class Responses(object):
                 errs.append("{0}: {1}".format(fieldname,error))
         return errs
 
-    def simple_response(self,text):
-        return self.makeJsonResponse(dict(message=text))
-    
+    def simple_response(self,text,additionalInfo=None):
+        if additionalInfo is None:
+            additionalInfo = dict()
+        additionalInfo['message']=text
+        return self.makeJsonResponse(additionalInfo)
+
     def addUserDataToDict(self, user, kwargs):
-        return kwargs.update({'email':user.email, 'userid':user.userid, 
-                'assurances':Assurance.getByUser(user), 
-                'hash':user.hash, 
+        return kwargs.update({'email':user.email, 'userid':user.userid,
+                'assurances':Assurance.getByUser(user),
+                'hash':user.hash,
                 'credentials':Credential.getByUser_as_dictlist(user)})
 
     def as_dict(self, user, **kwargs):

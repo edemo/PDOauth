@@ -425,8 +425,8 @@ QUnit.test( "shouldn't redirect if the status isn't equal 200", function( assert
 	var testData = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	var testStatus = 201;
 	var oldLocation = win.location;
-	var oldQueryString = QueryString;
-	QueryString.next = "newlocation";
+	var oldQueryString = pageScript.QueryString;
+	pageScript.QueryString.next = "newlocation";
 		// calling the unit	
 	pageScript.myCallback( testStatus, testData )
 		// asserts 
@@ -434,7 +434,7 @@ QUnit.test( "shouldn't redirect if the status isn't equal 200", function( assert
 		//cleaning
 	hidePopup()
 	win.location = oldLocation
-	QueryString = oldQueryString
+	pageScript.QueryString = oldQueryString
 });
 
 QUnit.test( "shouldn't redirect if the status is 200 but no next key or value is given in query string", function( assert ) {
@@ -442,9 +442,9 @@ QUnit.test( "shouldn't redirect if the status is 200 but no next key or value is
 	pageScript = new PageScript(test)
 	var testData = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	var testStatus = 200;
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	var oldLocation = win.location;
-	delete QueryString.next;
+	delete pageScript.QueryString.next;
 		// calling the unit	
 	pageScript.myCallback( testStatus, testData )
 		// asserts 
@@ -452,7 +452,7 @@ QUnit.test( "shouldn't redirect if the status is 200 but no next key or value is
 		//cleaning
 	hidePopup()
 	win.location = oldLocation
-	QueryString = oldQueryString
+	pageScript.QueryString = oldQueryString
 });
 
 QUnit.test( "should redirect with 'next' query var comes in url if status=200", function( assert ) {
@@ -460,9 +460,9 @@ QUnit.test( "should redirect with 'next' query var comes in url if status=200", 
 	pageScript = new PageScript(test)
 	var testData = '{"userid": "theuserid", "assurances": {"test": "", "foo": ""}, "email": "my@email.com"}'
 	var testStatus = 200;
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	var oldLocation = win.location;
-	QueryString.next = "newlocation";
+	pageScript.QueryString.next = "newlocation";
 		// calling the unit		
 	pageScript.myCallback( testStatus, testData )
 		// asserts 
@@ -470,7 +470,7 @@ QUnit.test( "should redirect with 'next' query var comes in url if status=200", 
 		//cleaning
 	hidePopup()
 	win.location = oldLocation
-	QueryString = oldQueryString
+	pageScript.QueryString = oldQueryString
 });
 
 QUnit.test( "should display the processed data through processErrors() and displayMsg(), popop callback should have the get_me()", function( assert ) {
@@ -663,9 +663,9 @@ QUnit.test( "sslLogin() should redirect to the SSL_LOGIN_BASE_URL uri", function
 		// Initializing the test
 	pageScript = new PageScript(test);
 	var oldLocation = win.location
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	win.location="https://valami.com/base"
-	QueryString.uris={SSL_LOGIN_BASE_URL: "SSL_base", BASE_URL:"base"}
+	pageScript.QueryString.uris={SSL_LOGIN_BASE_URL: "SSL_base", BASE_URL:"base"}
 	var testURL="https://valami.com/SSL_base"
 		// calling the unit
 	pageScript.sslLogin();
@@ -673,7 +673,7 @@ QUnit.test( "sslLogin() should redirect to the SSL_LOGIN_BASE_URL uri", function
 	assert.equal( win.location, testURL, "should redirected to SSL_LOGIN_BASE_URL" );
 		//cleaning
 	win.location = oldLocation
-	QueryString = oldQueryString 		
+	pageScript.QueryString = oldQueryString 		
 });
 
 // login_with_facebook
@@ -807,16 +807,16 @@ QUnit.test( "logoutCallback() should display the response comes from the server"
 QUnit.test( "doLoadHome() should redirect to the location contained in the QueryString.uris.START_URL", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test);
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	var oldLocation = win.location;
-	QueryString.uris = {START_URL: "newlocation"};
+	pageScript.QueryString.uris = {START_URL: "newlocation"};
 		// calling the unit		
 	pageScript.doLoadHome();
 		// asserts 
 	assert.equal( win.location, "newlocation", "windows.location should get the url contained in the QS" );	
 		//cleaning
 	win.location = oldLocation
-	QueryString = oldQueryString
+	pageScript.QueryString = oldQueryString
 });
 
 
@@ -833,14 +833,14 @@ QUnit.test( "should fill the 'QeryString.uris' array with the datas have coming 
 					'"SSL_LOGOUT_URL": "https://sso.edemokraciagep.org/ssl_logout/",' +
 					'"START_URL": "https://sso.edemokraciagep.org/static/login.html"}'
 	var testStatus = 200;
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 		// calling the unit
 	pageScript.uriCallback( testStatus, testText )
 		// asserts
-	assert.equal( JSON.stringify(QueryString.uris), JSON.stringify(JSON.parse(testText)),"QueryString.uris should contain the data" );	
+	assert.equal( JSON.stringify(pageScript.QueryString.uris), JSON.stringify(JSON.parse(testText)),"QueryString.uris should contain the data" );	
 		//cleaning
 	win.location = oldLocation
-	QueryString = oldQueryString 		
+	pageScript.QueryString = oldQueryString 		
 });
 
 QUnit.test( "should display the errors in error div if the server sent any error", function( assert ) {
@@ -849,19 +849,19 @@ QUnit.test( "should display the errors in error div if the server sent any error
 	var oldLocation = win.location
 	var testJSONtext =	'{"errors": ["error message"]}';
 	var testStatus = 400;
-	var oldQueryString = QueryString;
+	var oldQueryString = pageScript.QueryString;
 	var checkString = "error message"
-	delete QueryString.uris;
+	delete pageScript.QueryString.uris;
 		// calling the unit
 	pageScript.uriCallback( testStatus, testJSONtext )
 		// asserts
 	assert_IsPopupShown( assert );
 	assert.ok( doesErrorContainerContain( checkString ),"the error container should contain the error message" );
-	assert.notOk( QueryString.uris, "the QueryString.uris should be unchanged" );
+	assert.notOk( pageScript.QueryString.uris, "the QueryString.uris should be unchanged" );
 		//cleaning
 	hidePopup();
 	win.location = oldLocation
-	QueryString = oldQueryString 		
+	pageScript.QueryString = oldQueryString 		
 });
 
 
@@ -974,6 +974,42 @@ QUnit.test( "[ Must be implemented!! ] User should be able to initiate resending
 // Hash functions
 QUnit.module( "Hash functions" ); 
 
+QUnit.test( "there is an input field for identity number in the Registration form", function( assert ) {
+	var element = document.getElementById( "RegistrationForm_predigest_input");
+	assert.notEqual(null,element);
+});
+
+QUnit.test( "there is an input field for mother name in the Registration form", function( assert ) {
+	var element = document.getElementById( "RegistrationForm_predigest_mothername");
+	assert.notEqual(null,element);
+});
+
+QUnit.test( "mother name gets normalized and shown", function( assert ) {
+	var inputElement = document.getElementById( "RegistrationForm_predigest_mothername");
+	var outputElement = document.getElementById( "RegistrationForm_predigest_label_mothername_normalized");
+	inputElement.value="";
+	assert.equal(outputElement.textContent,"");
+	inputElement.value="Tükörfúrógépy Árvíztűrőné"
+	var e = new KeyboardEvent("keyup");
+	inputElement.dispatchEvent(e);
+	assert.equal(outputElement.textContent,"tukorfurogepyarvizturone");
+});
+
+function setMotherName(formName, motherName) {
+	var inputElementMother = document.getElementById( formName+"_predigest_mothername");
+	inputElementMother.value=motherName;
+	var e = new KeyboardEvent("keyup");
+	inputElementMother.dispatchEvent(e);
+
+}
+
+QUnit.test("anchor gets the id and normalized mothername", function( assert ) {
+	var inputElementId = document.getElementById( "RegistrationForm_predigest_input");
+	inputElementId.value="17203133959";
+	setMotherName("RegistrationForm", "Teszt Éva");
+	assert.equal(PageScript.createXmlForAnchor("RegistrationForm"),"<request><id>17203133959</id><mothername>teszteva</mothername></request>");
+});
+
 // digestGetter
 QUnit.test( "digestGetter()getDigest should call anchor for digest", function( assert ) {
 		// Initializing the test
@@ -981,9 +1017,12 @@ QUnit.test( "digestGetter()getDigest should call anchor for digest", function( a
 	var oldPredigest = document.getElementById( testForm + "_predigest_input").value;
 	var oldDigest = document.getElementById( testForm + "_digest_input").value;
 	document.getElementById( testForm + "_predigest_input").value = "xxpredigestxx";
+	setMotherName(testForm, "Teszt Éva");
+
 	pageScript = new PageScript(test)
+    pageScript.QueryString.uris={ANCHOR_URL: "https://anchor.edemokraciagep.org"}
 	var checkUri = "https://anchor.edemokraciagep.org/anchor";
-	var checkData = "<id>xxpredigestxx</id>";
+	var checkData = "<request><id>xxpredigestxx</id><mothername>teszteva</mothername></request>";
 	var checkMethod = "POST";
 		// calling unit	
 	pageScript.digestGetter( testForm ).getDigest();
@@ -1004,6 +1043,24 @@ QUnit.test( "digestGetter()getDigest should display an error message if prediges
 	document.getElementById( testForm + "_predigest_input").value = "";
 	pageScript = new PageScript(test)
 	var checkString = "A személyi szám nincs megadva";
+		// calling unit	
+	pageScript.digestGetter( testForm ).getDigest();
+		// asserts
+	assert_IsPopupShown( assert );
+	assert.ok( doesErrorContainerContain( checkString ), "the error container should contain the error message" );
+		// cleaning
+	document.getElementById( testForm + "_predigest_input").value = oldPredigest;
+	hidePopup();
+});
+
+QUnit.test( "digestGetter()getDigest should display an error message if mothername field doesn't contain any value", function( assert ) {
+		// Initializing the test
+	var testForm = "AddAssuranceForm";
+	var oldPredigest = document.getElementById( testForm + "_predigest_input").value;
+	document.getElementById( testForm + "_predigest_input").value = "17203133959";
+	document.getElementById( testForm + "_predigest_mothername").value = "";
+	pageScript = new PageScript(test)
+	var checkString = "Anyja neve nincs megadva";
 		// calling unit	
 	pageScript.digestGetter( testForm ).getDigest();
 		// asserts
