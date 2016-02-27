@@ -242,7 +242,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.login(client)
             user = User.getByEmail(self.userCreationEmail)
             data = dict(email=self.userCreationEmail, pubkey=SPKAC)
-            client.post(config.BASE_URL + "/keygen", data=data)
+            client.post(config.BASE_URL + "/v1/keygen", data=data)
             certCredential = Credential.getByUser(user, 'certificate')
             data = {
                 "csrf_token": self.getCSRF(client),

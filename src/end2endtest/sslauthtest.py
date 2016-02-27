@@ -23,7 +23,7 @@ class SslAuthTest(EndUserTesting):
         user = User.getByEmail(self.userCreationEmail)
         self.assertTrue(user)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
-        self.driver.get(sslLoginBaseUrl + '/ssl_login')
+        self.driver.get(sslLoginBaseUrl + '/v1/ssl_login')
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
         time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
@@ -67,7 +67,7 @@ class SslAuthTest(EndUserTesting):
         user = User.getByEmail(self.userCreationEmail)
         self.deleteUser(user)
         sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
-        self.driver.get(sslLoginBaseUrl + '/ssl_login?email=hello@example.com')
+        self.driver.get(sslLoginBaseUrl + '/v1/ssl_login?email=hello@example.com')
         time.sleep(1)
         self.driver.get(sslLoginBaseUrl + '/v1/users/me')
         body = self.driver.find_element_by_css_selector("BODY").text
@@ -83,7 +83,7 @@ class SslAuthTest(EndUserTesting):
         self._keygenAndLogin()
         self._logoutAfterKeygen()
         baseUrl = app.config.get("BASE_URL")
-        self.driver.get(baseUrl + '/ssl_login')
+        self.driver.get(baseUrl + '/v1/ssl_login')
         self.driver.get(baseUrl + '/v1/users/me')
         user = User.getByEmail(self.userCreationEmail)
         self.deleteUser(user)

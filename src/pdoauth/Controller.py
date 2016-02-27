@@ -370,6 +370,7 @@ class Controller(
             SSL_LOGIN_BASE_URL = self.getConfig('SSL_LOGIN_BASE_URL'),
             SSL_LOGOUT_URL = self.getConfig('SSL_LOGOUT_URL'),
             ANCHOR_URL = self.getConfig('ANCHOR_URL'),
+            FACEBOOK_APP_ID = self.getConfig('FACEBOOK_APP_ID'),
         )
         ret = json.dumps(data)
         return self.make_response(ret,200)

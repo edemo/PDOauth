@@ -626,12 +626,12 @@ QUnit.test( "calls AJAX with method 'GET' on uri /v1/users/'email'/passwordreset
 QUnit.module( "login methods" ); 
 
 // password login
-QUnit.test( "login() calls /login with 'password' as credential type, username and password", function( assert ) {
+QUnit.test( "login() calls /v1/login with 'password' as credential type, username and password", function( assert ) {
 		// Initializing the test
 	document.getElementById("LoginForm_username_input").value = "theuser"
 	document.getElementById("LoginForm_password_input").value = "thepassword"
 	pageScript = new PageScript(test)
-	var testUri = "/login";
+	var testUri = "/v1/login";
 	var testMethod = "POST";
 	var testData = "credentialType=password&identifier=theuser&secret=thepassword";
 		// calling the unit	
@@ -677,16 +677,16 @@ QUnit.test( "sslLogin() should redirect to the SSL_LOGIN_BASE_URL uri", function
 });
 
 // login_with_facebook
-QUnit.test( "login_with_facebook calls /login with facebook as credential type, userid and access token", function( assert ) {
+QUnit.test( "login_with_facebook calls /v1/login with facebook as credential type, userid and access token", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test);
-	var testUri = "/login";
+	var testUri = "/v1/login";
 	var testMethod = "POST";
 	var testData = "credentialType=facebook&identifier=fbid&secret=accessToken";
 		// calling the unit	
 	pageScript.login_with_facebook( "fbid", "accessToken" );
 		// asserts	
-	assert.equal(pageScript.uri, testUri, "uri should be '/login'");
+	assert.equal(pageScript.uri, testUri, "uri should be '/v1/login'");
 	assert.equal(pageScript.data, testData, "data should contain 'facebook' as credential type, 'fbid' as userid, and 'accessToken' as secret");
 	assert.equal(pageScript.method, testMethod, "method should be POST");
 	assert.equal( pageScript.callback.toString(), pageScript.myCallback.toString(), "callback should be myCalback()" );
@@ -771,16 +771,16 @@ QUnit.test( "addAssurance() should call '/v1/add_assurance' with digest, assuran
 QUnit.module( "logout" ); 
 
 // logout()
-QUnit.test( "logout() should call AJAX with method 'GET' on uri /logout and callback should be logoutCallback()", function( assert ) {
+QUnit.test( "logout() should call AJAX with method 'GET' on uri /v1/logout and callback should be logoutCallback()", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test)
-	var testUri = "/logout";
+	var testUri = "/v1/logout";
 	var testMethod = "GET";
 	var checkCallback = pageScript.logoutCallback;	
 		// calling the unit	
 	pageScript.logout();
 		// asserts		
-	assert.equal(pageScript.uri, testUri, "uri should be '/logout'" );
+	assert.equal(pageScript.uri, testUri, "uri should be '/v1/logout'" );
 	assert.equal(pageScript.method, testMethod, "method should be 'GET'" );
 	assert.equal( pageScript.callback.toString(), checkCallback.toString(), "callback should be logoutCallback()" );
 });

@@ -211,7 +211,7 @@ function PageScript(test) {
 		else {
 			username = encodeURIComponent(username);	
 			password = encodeURIComponent(password);
-			this.ajaxpost("/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
+			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
 			document.getElementById("DeRegisterForm_identifier_input").value=username;
 			document.getElementById("DeRegisterForm_secret_input").value=password;
 		}
@@ -225,7 +225,7 @@ function PageScript(test) {
 	    	identifier: username,
 	    	secret: password
 	    }
-	    this.ajaxpost("/login", data , this.myCallback)
+	    this.ajaxpost("/v1/login", data , this.myCallback)
 		document.getElementById("DeRegisterForm_identifier_input").value=username;
 		document.getElementById("DeRegisterForm_secret_input").value=password;
 	}
@@ -247,7 +247,7 @@ function PageScript(test) {
 	}
 	
 	PageScript.prototype.logout = function() {
-	    this.ajaxget("/logout", this.logoutCallback)
+	    this.ajaxget("/v1/logout", this.logoutCallback)
 	}
 
 	PageScript.prototype.uriCallback = function(status,text) {
@@ -257,7 +257,7 @@ function PageScript(test) {
 			console.log(data)
 			loc = '' + win.location
 			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
-				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.initCallback)
+				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+'/v1/ssl_login',pageScript.initCallback)
 			}
 		}
 		else self.displayMsg(self.processErrors(data));
@@ -516,7 +516,7 @@ function PageScript(test) {
 				identifier: document.getElementById("DeRegisterForm_identifier_input").value,
 				secret: document.getElementById("DeRegisterForm_secret_input").value
 			}
-			self.ajaxpost("/deregister", text, function(status, text){
+			self.ajaxpost("/v1/deregister", text, function(status, text){
 				var data = JSON.parse(text);
 				var msg=self.processErrors(data)
 				msg.callback=self.get_me;
@@ -557,7 +557,7 @@ function PageScript(test) {
 	}
 
 	PageScript.prototype.main = function() {
-		this.ajaxget("/uris", this.uriCallback)
+		this.ajaxget("/v1/uris", this.uriCallback)
 		this.ajaxget("/v1/users/me", this.initCallback)
 		if (self.QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret

@@ -18,7 +18,7 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
                 'identifier': self.userCreationUserid,
                 'secret': self.usercreationPassword
         }
-        resp = client.post(config.BASE_URL+'/login', data=data)
+        resp = client.post(config.BASE_URL+'/v1/login', data=data)
         return resp
 
     def prepareAuthInterfaceData(self, email=None):
