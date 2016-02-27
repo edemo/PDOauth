@@ -254,11 +254,13 @@ function PageScript(test) {
 		var data = JSON.parse(text);
 		if (status==200) {
 			self.QueryString.uris = data
+			uribase = self.QueryString.uris.BACKEND_PATH;
 			console.log(data)
 			loc = '' + win.location
 			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
 				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+'/v1/ssl_login',pageScript.initCallback)
 			}
+			self.ajaxget("/v1/users/me", self.initCallback)
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
@@ -557,8 +559,7 @@ function PageScript(test) {
 	}
 
 	PageScript.prototype.main = function() {
-		this.ajaxget("/v1/uris", this.uriCallback)
-		this.ajaxget("/v1/users/me", this.initCallback)
+		this.ajaxget("/adauris", this.uriCallback)
 		if (self.QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 			document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value=self.QueryString.secret

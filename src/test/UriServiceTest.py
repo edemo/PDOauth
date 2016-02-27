@@ -40,3 +40,7 @@ class UriServiceTest(PDUnitTest, ResponseInfo):
     @test
     def the_uri_service_gives_back_the_FACEBOOK_APP_ID(self):
         self._checkUri('FACEBOOK_APP_ID')
+
+    @test
+    def the_uri_service_gives_back_the_BACKEND_PATH(self):
+        self._checkUri('BACKEND_PATH')

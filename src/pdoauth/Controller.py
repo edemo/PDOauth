@@ -365,6 +365,7 @@ class Controller(
     def doUris(self):
         data = dict(
             BASE_URL = self.getConfig('BASE_URL'),
+            BACKEND_PATH = self.getConfig('BACKEND_PATH'),
             START_URL = self.getConfig('START_URL'),
             PASSWORD_RESET_FORM_URL = self.getConfig('PASSWORD_RESET_FORM_URL'),
             SSL_LOGIN_BASE_URL = self.getConfig('SSL_LOGIN_BASE_URL'),
