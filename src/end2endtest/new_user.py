@@ -21,7 +21,7 @@ class NewUserTest(EndUserTesting):
 
 
     def _gotoOauthPage(self, driver):
-        fullUri = "{0}/v1/oauth2/auth?{1}".format(self.baseUrl, 
+        fullUri = "{0}/v1/oauth2/auth?{1}".format(self.backendUrl, 
             urlencode({
                     "response_type":"code", 
                     "client_id":self.app.appid, 

@@ -29,7 +29,7 @@ class KeygenTest(IntegrationTest, UserTesting):
     @test
     def with_keygen_you_get_back_a_certificate(self):
         with app.test_client() as client:
-            resp = client.post("/keygen", data=self.data, headers=self.headers)
+            resp = client.post("/v1/keygen", data=self.data, headers=self.headers)
             self.assertEquals(resp.status_code, 200)
             cert = self.getResponseText(resp)
             self.assertTrue(self._getCertId(cert))
@@ -37,7 +37,7 @@ class KeygenTest(IntegrationTest, UserTesting):
     @test
     def with_keygen_you_get_back_a_certificate_for_the_given_email(self):
         with app.test_client() as client:
-            resp = client.post("/keygen", data=self.data, headers=self.headers)
+            resp = client.post("/v1/keygen", data=self.data, headers=self.headers)
             self.assertEquals(resp.status_code, 200)
             cert = self.getResponseText(resp)
             identifier, commonName = self._getCertId(cert)
@@ -49,7 +49,7 @@ class KeygenTest(IntegrationTest, UserTesting):
     def if_the_user_is_logged_in__a_credential_is_added_to_the_user_for_the_cert(self):
         with app.test_client() as client:
             self.login(client)
-            resp = client.post("/keygen", data=self.data, headers=self.headers)
+            resp = client.post("/v1/keygen", data=self.data, headers=self.headers)
             self.assertEquals(resp.status_code, 200)
             cert = self.getResponseText(resp)
             identifier, commonName = self._getCertId(cert)  # @UnusedVariable
@@ -64,7 +64,7 @@ class KeygenTest(IntegrationTest, UserTesting):
         with app.test_client() as client:
             self.data['createUser']=True
             self.assertEqual(None, User.getByEmail(self.userCreationEmail))
-            resp = client.post("/keygen", data=self.data, headers=self.headers)
+            resp = client.post("/v1/keygen", data=self.data, headers=self.headers)
             self.assertEquals(resp.status_code, 200)
             cert = self.getResponseText(resp)
             identifier = self._getCertId(cert)[0]
@@ -80,7 +80,7 @@ class KeygenTest(IntegrationTest, UserTesting):
         with app.test_client() as client:
             self.login(client)
             self.data['createUser']=True
-            resp = client.post("/keygen", data=self.data, headers=self.headers)
+            resp = client.post("/v1/keygen", data=self.data, headers=self.headers)
             self.assertEquals(resp.status_code, 200)
             cert = self.getResponseText(resp)
             identifier, commonName = self._getCertId(cert)

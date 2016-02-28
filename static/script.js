@@ -23,14 +23,13 @@ QueryStringFunc = function (win) { //http://stackoverflow.com/questions/979975/h
 };
 
 
-var uribase="";
-
 function PageScript(test) {
 	var self = this
-	test=test || { debug: false }
+	test=test || { debug: false, uribase: "" }
 	this.debug=test.debug
 	win = test.win || window;
     this.QueryString = QueryStringFunc();
+    self.uribase=test.uribase;
 	
 	PageScript.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
@@ -58,7 +57,7 @@ function PageScript(test) {
 
 	PageScript.prototype.ajaxpost = function( uri, data, callback ) {
 		xmlhttp = this.ajaxBase( callback );
-		xmlhttp.open( "POST", uribase + uri, true );
+		xmlhttp.open( "POST", self.uribase + uri, true );
 		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
 		l = []
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
@@ -66,9 +65,14 @@ function PageScript(test) {
 		xmlhttp.send( dataString );
 	}
 
-	PageScript.prototype.ajaxget = function( uri, callback ) {
+	PageScript.prototype.ajaxget = function( uri, callback, direct) {
 		xmlhttp = this.ajaxBase( callback )
-		xmlhttp.open( "GET", uribase + uri, true);
+		if (direct) {
+			theUri = uri;
+		} else {
+			theUri = self.uribase + uri;
+		}
+		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
 
@@ -128,6 +132,7 @@ function PageScript(test) {
 	}
 	
 	PageScript.prototype.initCallback = function(status, text) {
+		console.log(text)
 		var data = JSON.parse(text);
 		if (status != 200) {
 			self.menuHandler("login").menuActivate();
@@ -211,7 +216,7 @@ function PageScript(test) {
 		else {
 			username = encodeURIComponent(username);	
 			password = encodeURIComponent(password);
-			this.ajaxpost("/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
+			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
 			document.getElementById("DeRegisterForm_identifier_input").value=username;
 			document.getElementById("DeRegisterForm_secret_input").value=password;
 		}
@@ -225,7 +230,7 @@ function PageScript(test) {
 	    	identifier: username,
 	    	secret: password
 	    }
-	    this.ajaxpost("/login", data , this.myCallback)
+	    this.ajaxpost("/v1/login", data , this.myCallback)
 		document.getElementById("DeRegisterForm_identifier_input").value=username;
 		document.getElementById("DeRegisterForm_secret_input").value=password;
 	}
@@ -247,18 +252,23 @@ function PageScript(test) {
 	}
 	
 	PageScript.prototype.logout = function() {
-	    this.ajaxget("/logout", this.logoutCallback)
+	    this.ajaxget("/v1/logout", this.logoutCallback)
 	}
 
 	PageScript.prototype.uriCallback = function(status,text) {
 		var data = JSON.parse(text);
 		if (status==200) {
 			self.QueryString.uris = data
+			self.uribase = self.QueryString.uris.BACKEND_PATH;
+			keygenForm = document.getElementById("keygenform");
+			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
+
 			console.log(data)
 			loc = '' + win.location
 			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
-				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+'/ssl_login',pageScript.initCallback)
+				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login',pageScript.initCallback, true)
 			}
+			self.ajaxget("/v1/users/me", self.initCallback)
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
@@ -516,7 +526,7 @@ function PageScript(test) {
 				identifier: document.getElementById("DeRegisterForm_identifier_input").value,
 				secret: document.getElementById("DeRegisterForm_secret_input").value
 			}
-			self.ajaxpost("/deregister", text, function(status, text){
+			self.ajaxpost("/v1/deregister", text, function(status, text){
 				var data = JSON.parse(text);
 				var msg=self.processErrors(data)
 				msg.callback=self.get_me;
@@ -557,8 +567,7 @@ function PageScript(test) {
 	}
 
 	PageScript.prototype.main = function() {
-		this.ajaxget("/uris", this.uriCallback)
-		this.ajaxget("/v1/users/me", this.initCallback)
+		this.ajaxget("/adauris", this.uriCallback)
 		if (self.QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 			document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value=self.QueryString.secret

@@ -10,6 +10,8 @@ class SslAuthTest(EndUserTesting):
     def setUp(self):
         EndUserTesting.setUp(self)
         self.setupUserCreationData()
+        self.sslLoginBackendUrl = app.config.get("SSL_LOGIN_BASE_URL")+app.config.get("BACKEND_PATH")
+
 
     def _keygenAndLogin(self):
         self.driver.get(app.config.get("START_URL"))
@@ -22,9 +24,8 @@ class SslAuthTest(EndUserTesting):
         time.sleep(4)
         user = User.getByEmail(self.userCreationEmail)
         self.assertTrue(user)
-        sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
-        self.driver.get(sslLoginBaseUrl + '/ssl_login')
-        self.driver.get(sslLoginBaseUrl + '/v1/users/me')
+        self.driver.get(self.sslLoginBackendUrl + '/v1/ssl_login')
+        self.driver.get(self.sslLoginBackendUrl + '/v1/users/me')
         time.sleep(1)
         body = self.driver.find_element_by_css_selector("BODY").text
         credentialText = '{"credentialType": "certificate", "identifier": '
@@ -66,10 +67,9 @@ class SslAuthTest(EndUserTesting):
         self._logoutAfterKeygen()
         user = User.getByEmail(self.userCreationEmail)
         self.deleteUser(user)
-        sslLoginBaseUrl = app.config.get("SSL_LOGIN_BASE_URL")
-        self.driver.get(sslLoginBaseUrl + '/ssl_login?email=hello@example.com')
+        self.driver.get(self.sslLoginBackendUrl + '/v1/ssl_login?email=hello@example.com')
         time.sleep(1)
-        self.driver.get(sslLoginBaseUrl + '/v1/users/me')
+        self.driver.get(self.sslLoginBackendUrl + '/v1/users/me')
         body = self.driver.find_element_by_css_selector("BODY").text
         self.assertTrue('{"credentialType": "certificate", "identifier": "' in
             body)
@@ -82,9 +82,8 @@ class SslAuthTest(EndUserTesting):
     def no_ssl_login_on_base_url(self):
         self._keygenAndLogin()
         self._logoutAfterKeygen()
-        baseUrl = app.config.get("BASE_URL")
-        self.driver.get(baseUrl + '/ssl_login')
-        self.driver.get(baseUrl + '/v1/users/me')
+        self.driver.get(self.backendUrl + '/v1/ssl_login')
+        self.driver.get(self.sslLoginBackendUrl + '/v1/users/me')
         user = User.getByEmail(self.userCreationEmail)
         self.deleteUser(user)
         body = self.driver.find_element_by_css_selector("BODY").text

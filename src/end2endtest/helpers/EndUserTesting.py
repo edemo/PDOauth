@@ -10,6 +10,8 @@ class EndUserTesting(Fixture, UserTesting, BrowserSetup):
     def setUp(self):
         self.setupDriver()
         self.baseUrl = config.Config.BASE_URL
+        self.backendPath = config.Config.BACKEND_PATH
+        self.backendUrl = self.baseUrl + self.backendPath
         self.verificationErrors = []
 
     def fillInAndSubmitRegistrationForm(self, driver, email=None, userid=None, password=None, digest=None):
@@ -35,7 +37,7 @@ class EndUserTesting(Fixture, UserTesting, BrowserSetup):
 
 
     def loginAsAssurer(self, driver):
-        driver.get(self.baseUrl + "/static/login.html?next=/v1/users/me")
+        driver.get(self.backendUrl + "/static/login.html?next=/v1/users/me")
         self.setupUserCreationData()
         self.assurer = self.userCreationUserid
         self.assurerEmail = self.userCreationEmail
