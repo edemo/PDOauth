@@ -13,7 +13,7 @@ class EndUserObtainingHashTest(EndUserTesting):
         if config.skipSlowTests:
             return
         driver = self.driver
-        driver.get(self.baseUrl+"/static/login.html?next=/v1/users/me")
+        driver.get(self.backendUrl+"/static/login.html?next=/v1/users/me")
         self.switchToTab('registration')
         driver.find_element_by_id("RegistrationForm_predigest_input").clear()
         driver.find_element_by_id("RegistrationForm_predigest_input").send_keys("11111111110")
@@ -34,7 +34,7 @@ class EndUserObtainingHashTest(EndUserTesting):
         driver = self.driver
         self.loginAsAssurer(driver)
 
-        driver.get(self.baseUrl+"/static/login.html?next=/v1/users/me")
+        driver.get(self.backendUrl+"/static/login.html?next=/v1/users/me")
         self.switchToTab('assurer')
         driver.find_element_by_id("AddAssuranceForm_predigest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_predigest_input").send_keys("22222222220")

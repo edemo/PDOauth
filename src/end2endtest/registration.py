@@ -25,20 +25,24 @@ class EndUserRegistrationTest(EndUserTesting):
         self.assurerEmail = self.userCreationEmail
         self.assertTrue(self.assurerEmail != self.email)
 
-    def registration_is_done_by_filling_out_the_registration_form(self, driver):
-        driver.get(self.baseUrl  + "/static/login.html?next=/v1/users/me")
+
+    def goToLoginWithMeAsNext(self, driver):
+        driver.get(self.backendUrl + "/static/login.html?next=" + self.backendPath + "/v1/users/me")
         driver.refresh()
+
+    def registration_is_done_by_filling_out_the_registration_form(self, driver):
+        self.goToLoginWithMeAsNext(driver)
         self.switchToTab('registration')
         self.theHash = self.createHash()
         self.fillInAndSubmitRegistrationForm(driver, password=self.thePassword, userid=self.normaluser, email=self.email, digest=self.theHash)
         driver.save_screenshot("doc/screenshots/registration.png")
         time.sleep(1)
-        self.assertEqual(self.baseUrl  + "/v1/users/me", driver.current_url)
+        self.assertEqual(self.backendUrl  + "/v1/users/me", driver.current_url)
         body = driver.find_element_by_css_selector("BODY").text
         self.assertRegexpMatches(body, r"^[\s\S]*assurances[\s\S]*$")
 
     def if_you_are_not_logged_in__the_authorization_uri_redirects_to_login_page_such_that_after_login_you_can_continue(self, driver):
-        uri = self.baseUrl + "/v1/oauth2/auth"
+        uri = self.backendUrl + "/v1/oauth2/auth"
         driver.get(uri)
         driver.refresh()
         time.sleep(1)
@@ -49,25 +53,23 @@ class EndUserRegistrationTest(EndUserTesting):
 
 
     def _register_assurer(self, driver):
-        driver.get(self.baseUrl  + "/static/login.html?next=/v1/users/me")
-        driver.refresh()
+        self.goToLoginWithMeAsNext(driver)
         self.logout()
         time.sleep(1)
-        driver.get(self.baseUrl  + "/static/login.html?next=/v1/users/me")
-        driver.refresh()
+        self.goToLoginWithMeAsNext(driver)
         self.switchToTab('registration')
         self.fillInAndSubmitRegistrationForm(driver, password=self.thePassword, userid=self.assurer, email=self.assurerEmail)
         time.sleep(3)
-        self.assertEqual(self.baseUrl  + "/v1/users/me", driver.current_url)
+        self.assertEqual(self.backendUrl  + "/v1/users/me", driver.current_url)
         body = driver.find_element_by_css_selector("BODY").text
         self.assertRegexpMatches(body, r"^[\s\S]*assurances[\s\S]*$")
 
 
     def you_can_check_your_data_in_the_ME_url(self, driver):
-        driver.get(self.baseUrl  + "/v1/users/me")
+        driver.get(self.backendUrl  + "/v1/users/me")
         driver.save_screenshot("doc/screenshots/my_data.png")
         time.sleep(1)
-        self.assertEqual(self.baseUrl  + "/v1/users/me", driver.current_url)
+        self.assertEqual(self.backendUrl  + "/v1/users/me", driver.current_url)
         body = driver.find_element_by_css_selector("BODY").text
         self.assertRegexpMatches(body, r"^[\s\S]*assurances[\s\S]*$")
         self.assertRegexpMatches(body, r"^[\s\S]*assurer[\s\S]*$")
@@ -143,7 +145,7 @@ class EndUserRegistrationTest(EndUserTesting):
     def if_you_are_logged_in_and_all_the_informations_are_correct_the_oauth_page_redirects_to_the_redirect_uri_with_your_authorization_code_as_parameter(self, driver):
         uri = '/v1/oauth2/auth'
         query_string = '?response_type=code&client_id={0}&redirect_uri={1}'.format(self.appid, self.redirectUri)
-        fulluri = self.baseUrl + uri + query_string
+        fulluri = self.backendUrl + uri + query_string
         driver.get(fulluri)
         time.sleep(1)
         self.assertTrue(driver.current_url.startswith(self.redirectUri))
@@ -161,7 +163,7 @@ class EndUserRegistrationTest(EndUserTesting):
             client_id=self.appid,
             client_secret=self.appsecret,
             redirect_uri=self.redirectUri)
-        url = self.baseUrl + "/v1/oauth2/token"
+        url = self.backendUrl + "/v1/oauth2/token"
         resp = self.http.request("POST", url, fields=fields)
         self.assertEquals(resp.status, 200)
         answer = json.loads(resp.data)
@@ -172,7 +174,7 @@ class EndUserRegistrationTest(EndUserTesting):
 
     def the_server_can_get_your_user_info_with_your_access_token(self):
         headers = dict(Authorization='Bearer {0}'.format(self.accessToken))
-        resp = self.http.request("get", self.baseUrl + "/v1/users/me", headers=headers)
+        resp = self.http.request("get", self.backendUrl + "/v1/users/me", headers=headers)
         answer = json.loads(resp.data)
         user = User.getByEmail(self.assurerEmail)
         app = Application.get(self.appid)
