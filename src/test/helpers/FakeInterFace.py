@@ -9,6 +9,9 @@ class FakeMail(object):
     def send_message(self, subject, body, recipients, sender):
         msg = dict(
             subject=subject, body=body, recipients=recipients, sender=sender)
+        self.send(msg)
+
+    def send(self, msg):
         self.outbox.append(msg)
 
 class FakeApp(object):
