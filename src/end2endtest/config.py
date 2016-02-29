@@ -1,6 +1,5 @@
 # encoding: utf-8
 import os
-import tempfile
 
 def absolutePathForEnd2EndResource(fileName):
     return os.path.join(os.path.dirname(__file__), "..", "end2endtest", fileName)
@@ -32,29 +31,62 @@ class Config(object):
 #    ANCHOR_URL = "https://anchor.edemokraciagep.org/"
     ANCHOR_URL = "https://local.sso.edemokraciagep.org:8890/"
     PASSWORD_VERIFICATION_EMAIL_SUBJECT = "verification"
-    PASSWORD_VERIFICATION_EMAIL_BODY = """Dear {0.name},
-This is a verification email you got with a secret <a href="https://local.sso.edemokraciagep.org:8888/v1/verify_email/{0.secret}">secret<a>, and
-you have to send it back until {0.expiry}.
+    PASSWORD_VERIFICATION_EMAIL_BODY_TEXT = """Dear {0.name},
+This is a verification email.
+Go to https://local.sso.edemokraciagep.org:8888/v1/verify_email/{0.secret}
+you have to do it until {0.expiry}.
 
 Sincerely,
 The Test machine
 """
+    PASSWORD_VERIFICATION_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+This is a verification email.<br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/v1/verify_email/{0.secret}">here</a><br/>
+you have to do it until {0.expiry}.<br/>
+<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
+"""
     PASSWORD_RESET_EMAIL_SUBJECT = "password reset"
-    PASSWORD_RESET_EMAIL_BODY = """Dear {0.name},
-This is a reset email you got with a secret <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?secret={0.secret}">secret</a>, and
-you have to send it back until {0.expiry}.
+    PASSWORD_RESET_EMAIL_BODY_TEXT = """Dear {0.name},
+This is a reset email.
+Go to https://local.sso.edemokraciagep.org:8888/v1/password_reset?secret={0.secret}
+you have to do it until {0.expiry}.
 
 Sincerely,
 The Test machine
+"""
+    PASSWORD_RESET_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+This is a reset email.<br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/v1/password_reset?secret={0.secret}">Click</a><br/>
+you have to do it until {0.expiry}.<br/>
+<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
 """
 
     DEREGISTRATION_EMAIL_SUBJECT = "deregistration email"
-    DEREGISTRATION_EMAIL_BODY = """Dear {0.name},
-This is a deregistration email you got with a secret <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}">secret</a>, and
-you have to send it back until {0.expiry}.
+    DEREGISTRATION_EMAIL_BODY_TEXT = """Dear {0.name},
+This is a deregistration email.
+Go to https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}
+you have to do it until {0.expiry}.
 
 Sincerely,
 The Test machine
+"""
+    DEREGISTRATION_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+This is a deregistration email.<br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}">here</a><br/>
+you have to do it until {0.expiry}.<br/>
+<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
 """
 
 testSignatureAllOne = "d60d076693f99692539bc67e4b28aea33e0fc51b67ec68762716b57f58621852a6ef643b2b7bbcba0ae6acbb7f893122d47d87ae29c17413bb42ab0bba7d88b4"

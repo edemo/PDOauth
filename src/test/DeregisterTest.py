@@ -48,14 +48,15 @@ class DeregisterTest(PDUnitTest, UserUtil):
     def deregistration_email_contains_deregistration_secret(self):
         secret = self._getDeregistrationSecret()
         mail = self.controller.mail.outbox[0]
-        self.assertTrue(secret in mail['body'])
+        self.assertEmailContains(secret, mail)
 
     @test
     def deregistration_email_contains_DEREGISTRATION_URL(self):
         self._loginAndDeregister()
         mail = self.controller.mail.outbox[0]
         deregistrationUrl = self.controller.getConfig('DEREGISTRATION_URL')
-        self.assertTrue(deregistrationUrl in mail['body'])
+        print deregistrationUrl
+        self.assertEmailContains(deregistrationUrl, mail)
 
     @test
     def deregistration_doit_needs_deregistration_secret(self):
