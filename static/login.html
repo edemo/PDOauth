@@ -13,7 +13,7 @@
 	</head>
 
 	<body onload="pageScript.main()" >
-
+    <div id="msg"></div>
 <!-- Message container and popup -->
 			<div id="popup" class="popup-frame">
 				<div class="popup">
@@ -314,7 +314,7 @@
 						</form>
 						<hr/>
 						<p>Regisztráció böngészőben tárolt SSL kulccsal</p>
-						<form id="keygenform" method="post" action="/keygen">
+						<form id="keygenform" method="post" action="/v1/keygen">
 							<div class="formrow">
 								<div class="label" id="KeygenForm_pubkey_label">
 									a kulcs mérete:

@@ -116,7 +116,8 @@ var test=
 			XMLHttpRequest: testXMLHttpRequestObject,
 			location: window.location
 			},
-		debug: true
+		debug: true,
+		uribase: "/ada"
 	}
 
 console.log("runnning tests");
@@ -197,12 +198,12 @@ QUnit.test( "ajaxpost() can be mocked", function( assert ) {
 		// Initializing the test	
 	pageScript = new PageScript(test);
 	var testUrl = "/my_url";
-	var _uribase = uribase;
-	uribase = "base.uri.com";
+	var _uribase = pageScript.uribase;
+	pageScript.uribase = "base.uri.com";
 		// calling the unit		
 	pageScript.ajaxpost( testUrl, {data: "hello", name: "world"}, callbackForAJAXtest );
 		// asserts 
-	assert.ok(( pageScript.uri == uribase + testUrl &&
+	assert.ok(( pageScript.uri == pageScript.uribase + testUrl &&
 				pageScript.method == "POST" &&
 				pageScript.async === true),
 				"xmlhttp.open should be called with method='POST', url and async=true");
@@ -212,26 +213,26 @@ QUnit.test( "ajaxpost() can be mocked", function( assert ) {
 	assert.equal( pageScript.data, "data=hello&name=world", "xmlhttp.send should be called with a message in its argument" );
 	assert.equal( pageScript.callback.toString(), callbackForAJAXtest.toString(), "xmlhttp object should have the callback" );
 		// cleaning
-	uribase = _uribase;
+	pageScript.uribase = _uribase;
 });
 
 QUnit.test( "ajaxget() can be mocked", function( assert ) {
 		// Initializing the test		
 	pageScript = new PageScript(test)
 	var testUrl = "/my_url";
-	var _uribase = uribase;
-	uribase = "base.uri.com";
+	var _uribase = pageScript.uribase;
+	pageScript.uribase = "base.uri.com";
 		// calling the unit		
 	pageScript.ajaxget( testUrl, callbackForAJAXtest );
 		// asserts 
-	assert.ok(( pageScript.uri == uribase + testUrl &&
+	assert.ok(( pageScript.uri == pageScript.uribase + testUrl &&
 				pageScript.method == "GET" &&
 				pageScript.async === true ),
 				"xmlhttp.open should be called with method='GET', url and async=true");
 	assert.notOk( pageScript.data, "xmlhttp.open should be called without args" );
 	assert.equal( pageScript.callback.toString(), callbackForAJAXtest.toString(), "xmlhttp object should have the callback" );
 		// cleaning
-	uribase = _uribase;
+	pageScript.uribase = _uribase;
 });
 
 
@@ -494,7 +495,7 @@ QUnit.module( "get_me()" );
 QUnit.test( "should call '/v1/users/me' trough AJAX", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test)
-	var testUri = "/v1/users/me";
+	var testUri = test.uribase+"/v1/users/me";
 	var testMethod = "GET"
 		// calling the unit	
 	pageScript.get_me();
@@ -589,7 +590,7 @@ QUnit.test( "passwordReset calls /v1/password_reset with secret and password", f
 	document.getElementById("PasswordResetForm_OnLoginTab_secret_input").value = "thesecret";
 	document.getElementById("PasswordResetForm_OnLoginTab_password_input").value = "thepassword";
 	pageScript = new PageScript(test);
-	var testUri = "/v1/password_reset";
+	var testUri = test.uribase+"/v1/password_reset";
 	var testMethod = "POST";
 	var testData = "secret=thesecret&password=thepassword";
 	var testForm = "PasswordResetForm_OnLoginTab";
@@ -610,7 +611,7 @@ QUnit.test( "calls AJAX with method 'GET' on uri /v1/users/'email'/passwordreset
 		// Initializing the test
 	pageScript = new PageScript(test);
 	var testForm = "PasswordResetInitiateForm_OnLoginTab";
-	var testUri = "/v1/users/my@email.com/passwordreset";
+	var testUri = test.uribase+"/v1/users/my@email.com/passwordreset";
 	var testMethod = "GET";
 	document.getElementById( testForm + "_email_input" ).value = "my@email.com";
 		// calling the unit	
@@ -626,12 +627,12 @@ QUnit.test( "calls AJAX with method 'GET' on uri /v1/users/'email'/passwordreset
 QUnit.module( "login methods" ); 
 
 // password login
-QUnit.test( "login() calls /login with 'password' as credential type, username and password", function( assert ) {
+QUnit.test( "login() calls /v1/login with 'password' as credential type, username and password", function( assert ) {
 		// Initializing the test
 	document.getElementById("LoginForm_username_input").value = "theuser"
 	document.getElementById("LoginForm_password_input").value = "thepassword"
 	pageScript = new PageScript(test)
-	var testUri = "/login";
+	var testUri = test.uribase+"/v1/login";
 	var testMethod = "POST";
 	var testData = "credentialType=password&identifier=theuser&secret=thepassword";
 		// calling the unit	
@@ -677,16 +678,16 @@ QUnit.test( "sslLogin() should redirect to the SSL_LOGIN_BASE_URL uri", function
 });
 
 // login_with_facebook
-QUnit.test( "login_with_facebook calls /login with facebook as credential type, userid and access token", function( assert ) {
+QUnit.test( "login_with_facebook calls /v1/login with facebook as credential type, userid and access token", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test);
-	var testUri = "/login";
+	var testUri = test.uribase+"/v1/login";
 	var testMethod = "POST";
 	var testData = "credentialType=facebook&identifier=fbid&secret=accessToken";
 		// calling the unit	
 	pageScript.login_with_facebook( "fbid", "accessToken" );
 		// asserts	
-	assert.equal(pageScript.uri, testUri, "uri should be '/login'");
+	assert.equal(pageScript.uri, testUri, "uri should be '/v1/login'");
 	assert.equal(pageScript.data, testData, "data should contain 'facebook' as credential type, 'fbid' as userid, and 'accessToken' as secret");
 	assert.equal(pageScript.method, testMethod, "method should be POST");
 	assert.equal( pageScript.callback.toString(), pageScript.myCallback.toString(), "callback should be myCalback()" );
@@ -726,7 +727,7 @@ QUnit.test( "byEmail() should request the server for the data of the user select
 	var oldEmail = document.getElementById("ByEmailForm_email_input").value
 	document.getElementById("ByEmailForm_email_input").value = "email@address.com";
 	pageScript = new PageScript(test);
-	var checkUri = "/v1/user_by_email/email%40address.com"
+	var checkUri = test.uribase+"/v1/user_by_email/email%40address.com"
 	var checkMethod = "GET";
 	var checkCallback = pageScript.myCallback;
 		// calling the unit	
@@ -750,7 +751,7 @@ QUnit.test( "addAssurance() should call '/v1/add_assurance' with digest, assuran
 	document.getElementById("AddAssuranceForm_email_input").value = "email@e.mail";
 	test.win.document = {cookie:"csrf=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef"};
 	pageScript = new PageScript(test);
-	var checkUri = "/v1/add_assurance";
+	var checkUri = test.uribase+"/v1/add_assurance";
 	var checkData = "digest=digest&assurance=assurance&email=email%40e.mail&csrf_token=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef";
 	var checkMethod = "POST";
 	var checkCallback = pageScript.myCallback;
@@ -771,16 +772,16 @@ QUnit.test( "addAssurance() should call '/v1/add_assurance' with digest, assuran
 QUnit.module( "logout" ); 
 
 // logout()
-QUnit.test( "logout() should call AJAX with method 'GET' on uri /logout and callback should be logoutCallback()", function( assert ) {
+QUnit.test( "logout() should call AJAX with method 'GET' on uri /v1/logout and callback should be logoutCallback()", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test)
-	var testUri = "/logout";
+	var testUri = test.uribase+"/v1/logout";
 	var testMethod = "GET";
 	var checkCallback = pageScript.logoutCallback;	
 		// calling the unit	
 	pageScript.logout();
 		// asserts		
-	assert.equal(pageScript.uri, testUri, "uri should be '/logout'" );
+	assert.equal(pageScript.uri, testUri, "uri should be '/v1/logout'" );
 	assert.equal(pageScript.method, testMethod, "method should be 'GET'" );
 	assert.equal( pageScript.callback.toString(), checkCallback.toString(), "callback should be logoutCallback()" );
 });
@@ -828,6 +829,7 @@ QUnit.test( "should fill the 'QeryString.uris' array with the datas have coming 
 	pageScript = new PageScript(test);
 	var oldLocation = win.location
 	var testText =	'{"BASE_URL": "https://sso.edemokraciagep.org",' +
+					'"BACKEND_PATH": "/ada",'+
 					'"PASSWORD_RESET_FORM_URL": "https://sso.edemokraciagep.org/static/login.html",' +
 					'"SSL_LOGIN_BASE_URL": "https://sso.edemokraciagep.org:8080",' +
 					'"SSL_LOGOUT_URL": "https://sso.edemokraciagep.org/ssl_logout/",' +
@@ -881,7 +883,7 @@ QUnit.test( "register() calls /v1/register with all the data needed for registra
 	document.getElementById("RegistrationForm_secret_input").value = "secret";
 	document.getElementById("RegistrationForm_email_input").value = "email@mail.com";
 	document.getElementById("RegistrationForm_digest_input").value = "thedigest";
-	var checkUri = "/v1/register";
+	var checkUri = test.uribase+"/v1/register";
 	var checkData = "credentialType=password&identifier=identifier&secret=secret&email=email%40mail.com&digest=thedigest";
 	var checkMethod = "POST";
 	var checkCallback = pageScript.myCallback;
@@ -905,7 +907,7 @@ QUnit.test( "register() calls /v1/register with all the data needed for registra
 QUnit.test( "facebookregister_with_facebook() calls /v1/register with all the data needed for facebook registration", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test)
-	var checkUri = "/v1/register";
+	var checkUri = test.uribase+"/v1/register";
 	var checkData = "credentialType=facebook&identifier=userId&secret=accessToken&email=email%40example.com";
 	var checkMethod = "POST";
 	var checkCallback = pageScript.myCallback;
@@ -913,6 +915,7 @@ QUnit.test( "facebookregister_with_facebook() calls /v1/register with all the da
 	pageScript.register_with_facebook("userId", "accessToken", "email@example.com");
 		// asserts
 	assert.equal( pageScript.uri, checkUri, "uri should be '/v1/register'" );
+	
 	assert.equal( pageScript.data, checkData, "AJAX should get the stringified data" );
 	assert.equal( pageScript.method, checkMethod, "the method should be POST" );
 	assert.equal( pageScript.callback.toString(), checkCallback.toString(), "callback should be myCallback()" );
@@ -1121,7 +1124,7 @@ QUnit.test( "changeHash() should call '/v1/users/me/update_hash' to initiate cha
 	document.getElementById( testForm + "_digest_input").value = "this is the hash";
 	test.win.document = {cookie:"csrf=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef"};
 	pageScript = new PageScript(test)
-	var checkUri = "/v1/users/me/update_hash";
+	var checkUri = test.uribase+"/v1/users/me/update_hash";
 	var checkData = "digest=this%20is%20the%20hash&csrf_token=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef";
 	var checkMethod = "POST";
 	var checkCallback = pageScript.hashCallback;
@@ -1173,7 +1176,7 @@ QUnit.module( "refreshMe" );
 QUnit.test( "refreshMe() should call '/v1/users/me' trough AJAX for user's data", function( assert ) {
 		// Initializing the test
 	pageScript = new PageScript(test)
-	var testUri = "/v1/users/me";
+	var testUri = test.uribase+"/v1/users/me";
 	var testMethod = "GET"
 	var testCallback = pageScript.refreshCallback;
 		// calling the unit	
@@ -1261,7 +1264,7 @@ QUnit.test( "RemoveCredential().doRemove should call '/v1/remove_credential' to 
 	document.getElementById("Remove_Credential_Container").innerHtml=testDiv;
 	test.win.document = {cookie:"csrf=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef"};
 	pageScript = new PageScript(test)
-	var checkUri = "/v1/remove_credential";
+	var checkUri = test.uribase+"/v1/remove_credential";
 	var checkData = "csrf_token=64b0d60d-0d6f-4c47-80d5-1a698f67d2ef&credentialType=facebook&identifier=828377612368497";
 	var checkMethod = "POST";
 	var checkCallback = pageScript.myCallback;
@@ -1319,7 +1322,7 @@ QUnit.test( "addCredential() should send a POST request trough AJAX and callback
 	var testCredentialType= "the_credentialType";
 	var testIdentifier = "the_identifier";
 	var testSecret= "the_secret";
-	var checkUri = "/v1/add_credential";
+	var checkUri = test.uribase+"/v1/add_credential";
 	var checkMethod = "POST";
 	var checkData = "credentialType=the_credentialType&identifier=the_identifier&secret=the_secret";
 	var checkCallback = pageScript.addCredentialCallback
@@ -1340,7 +1343,7 @@ QUnit.test( "should initiate an AJAX process to add a password credential with u
 	document.getElementById("AddPasswordCredentialForm_username_input").value = "the_UserName";
 	document.getElementById("AddPasswordCredentialForm_password_input").value = "the_Password";
 	pageScript = new PageScript(test);
-	var checkUri = "/v1/add_credential";
+	var checkUri = test.uribase+"/v1/add_credential";
 	var checkMethod = "POST";
 	var checkData = "credentialType=password&identifier=the_UserName&secret=the_Password";
 	var checkCallback = pageScript.addCredentialCallback
@@ -1362,7 +1365,7 @@ QUnit.test( "should initiate an AJAX process to add a facebook credential with f
 	pageScript = new PageScript(test);
 	var testUserId = "the_fbUserID";
 	var tesAccessToken = "the_accessToken"
-	var checkUri = "/v1/add_credential";
+	var checkUri = test.uribase+"/v1/add_credential";
 	var checkMethod = "POST";
 	var checkData = "credentialType=facebook&identifier=the_fbUserID&secret=the_accessToken";
 	var checkCallback = pageScript.addCredentialCallback
@@ -1421,6 +1424,14 @@ QUnit.test( "menuHandler can hide and display the tabs", function( assert ) {
 	assert.equal(pageScript.activeButtonName,"registration","the 'registration' should be the active button");
 	assert.equal(pageScript.activeButton.id,"registration-menu","the 'registration-menu' should be the active button id");
 	assert.equal(pageScript.activeTab.id,"tab-content-registration","the 'tab-content-registration' should be the active tab id");
+});
+
+QUnit.module("keygen");
+QUnit.test( "keygen submit url is BACKEND_PATH+/v1/keygen", function( assert ) {
+	keygenForm = document.getElementById("keygenform");
+	pageScript = new PageScript(test)
+	var checkUri = window.location.origin+test.uribase+"/v1/keygen";
+	assert.equal(keygenForm.action, checkUri)
 });
 
 // main()

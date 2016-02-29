@@ -16,11 +16,11 @@ class DeregisterIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.data = dict()
             self.addDataBasedOnOptionValue('csrf_token', token, self.getCSRF(client))
             with mail.record_messages() as outbox:
-                resp = client.post(config.BASE_URL + '/deregister', data=self.data)
+                resp = client.post(config.BASE_URL + '/v1/deregister', data=self.data)
                 self.outbox = outbox
             if otoken is None and nologin is None:
                 msg=self.outbox[0]
-                body = msg.body
+                body = msg.html
                 self.secret = re.search(r'deregistration_secret=([^"]*)"', body).groups()[0]
         return resp
 
@@ -54,7 +54,7 @@ class DeregisterIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         self.data = dict()
         self.addDataBasedOnOptionValue('csrf_token', csrf, self.getCSRF(client))
         self.addDataBasedOnOptionValue('deregister_secret', secret, self.secret)
-        resp = client.post(config.BASE_URL + '/deregister_doit', data=self.data)
+        resp = client.post(config.BASE_URL + '/v1/deregister_doit', data=self.data)
         return resp
 
     @test

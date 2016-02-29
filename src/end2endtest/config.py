@@ -1,6 +1,5 @@
 # encoding: utf-8
 import os
-import tempfile
 
 def absolutePathForEnd2EndResource(fileName):
     return os.path.join(os.path.dirname(__file__), "..", "end2endtest", fileName)
@@ -16,6 +15,7 @@ class Config(object):
     MAIL_PORT = 1025
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
     BASE_URL = "https://local.sso.edemokraciagep.org:8888"
+    BACKEND_PATH = "/ada"
     COOKIE_DOMAIN = "local.sso.edemokraciagep.org"
     SSL_LOGIN_BASE_URL = "https://local.sso.edemokraciagep.org:8889"
     SSL_LOGOUT_URL = "https://local.sso.edemokraciagep.org:8889/ssl_logout/"
@@ -30,10 +30,67 @@ class Config(object):
     EMAIL_DOMAIN = "local.sso.edemokraciagep.org"
 #    ANCHOR_URL = "https://anchor.edemokraciagep.org/"
     ANCHOR_URL = "https://local.sso.edemokraciagep.org:8890/"
+    PASSWORD_VERIFICATION_EMAIL_SUBJECT = "verification"
+    PASSWORD_VERIFICATION_EMAIL_BODY_TEXT = """Dear {0.name},
+This is a verification email.
+Go to https://local.sso.edemokraciagep.org:8888/v1/verify_email/{0.secret}
+you have to do it until {0.expiry}.
 
-testSignature = "8800f4a1d480e920e681df9e6a8026f7418dfab6cac74d49c020468327b254d74fee5d7c52893a2bf73c3a48bafc0f34ddd4bae1fbe6aa37159838504fa441069a6b4cd8e8c6269dc099d43f63558831f26f65d1ced0ee11fd775efd9e1fc3f996b3c8584d2e081c0c321e86798f367c9691d88887264ec29a79229702687630"
-testSignatureAllOne = "73c6414bdcede8efd69706b6ada1196f837e79251d0a6a9d5b40461e53b98a8a7bdec785cd8d9cd20cf774f670741e684067aaa1c04a04710fa1e2eec712572b"
-testSignatureAllTwo = "9a68d3fa324c080afd29b3b950ac82ee8ad1c7e0ca5d0b85f9b223d04756b91e291352c125a11d2e901f9350bc5aaf8d829536711b8c7b0f40e58d1314f48cbc"
+Sincerely,
+The Test machine
+"""
+    PASSWORD_VERIFICATION_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+This is a verification email.<br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/v1/verify_email/{0.secret}">here</a><br/>
+you have to do it until {0.expiry}.<br/>
+<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
+"""
+    PASSWORD_RESET_EMAIL_SUBJECT = "password reset"
+    PASSWORD_RESET_EMAIL_BODY_TEXT = """Dear {0.name},
+This is a reset email.
+Go to https://local.sso.edemokraciagep.org:8888/v1/password_reset?secret={0.secret}
+you have to do it until {0.expiry}.
+
+Sincerely,
+The Test machine
+"""
+    PASSWORD_RESET_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+This is a reset email.<br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/v1/password_reset?secret={0.secret}">Click</a><br/>
+you have to do it until {0.expiry}.<br/>
+<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
+"""
+
+    DEREGISTRATION_EMAIL_SUBJECT = "deregistration email"
+    DEREGISTRATION_EMAIL_BODY_TEXT = """Dear {0.name},
+This is a deregistration email.
+Go to https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}
+you have to do it until {0.expiry}.
+
+Sincerely,
+The Test machine
+"""
+    DEREGISTRATION_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+This is a deregistration email.<br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}">here</a><br/>
+you have to do it until {0.expiry}.<br/>
+<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
+"""
+
+testSignatureAllOne = "d60d076693f99692539bc67e4b28aea33e0fc51b67ec68762716b57f58621852a6ef643b2b7bbcba0ae6acbb7f893122d47d87ae29c17413bb42ab0bba7d88b4"
+testSignatureAllTwo = "72bd4a1260f51aa6172862c1431e5e2537bf2d65ed74b9b76e4410760901f87cf892bb2621fa4d5d08e85a641ee8bc1026de8660caa61f4f206cd898c7ec6ef6"
 skipSlowTests = False
 skipFacebookTests = False
 #fbuser does not allow email for the fb app, fbuesr2 does

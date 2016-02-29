@@ -18,18 +18,15 @@ class EmailVerificationTests(IntegrationTest, UserTesting):
     def email_validation_gives_emailverification_assurance(self):
         self.setupRandom()
         with app.test_client() as client:
-            resp = self.register(client)
-            email = self.registeredEmail
-            logout_user()
-            self.assertUserResponse(resp)
-            self.validateUri=re.search('href="([^"]*)',self.outbox[0].body).group(1)
-            self.assertTrue(self.validateUri.startswith(config.BASE_URL + "/v1/verify_email/"))
+            email = self.registerAndObtainValidationUri()
+            self.assertTrue(self.validateUri.startswith(config.BASE_URL + "/v1/verify_email"))
         with app.test_client() as client:
             user = User.getByEmail(email)
             creds = Credential.getByUser(user)
             assurances = Assurance.getByUser(user)
             self.assertTrue(assurances.has_key(emailVerification) is False)
             resp = client.get(self.validateUri)
+            self.assertEqual(resp.status_code, 200)
             self.assertEqual(user.email, email)
             newcreds = Credential.getByUser(user)
             self.assertEquals(len(creds) - 1 , len(newcreds))
@@ -37,14 +34,19 @@ class EmailVerificationTests(IntegrationTest, UserTesting):
             self.assertTrue(assurances[emailVerification] is not None)
             user.rm()
 
+    def registerAndObtainValidationUri(self):
+        with app.test_client() as client:
+            resp = self.register(client) # @UnusedVariable
+            email = self.registeredEmail
+            logout_user()
+            self.assertUserResponse(resp)
+            self.validateUri = self.getValidateUri()
+        return email
+
     @test
     def email_verification_after_expiry_will_fail(self):
         self.setupRandom()
-        with app.test_client() as client:
-            resp = self.register(client)  # @UnusedVariable
-            email = self.registeredEmail
-            logout_user()
-            self.validateUri=re.search('href="([^"]*)',self.outbox[0].body).group(1)
+        email = self.registerAndObtainValidationUri()
         with app.test_client() as client:
             user = User.getByEmail(email)
             creds = Credential.getByUser(user)

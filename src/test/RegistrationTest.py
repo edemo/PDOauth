@@ -62,7 +62,7 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
     def _registerAndGetEmail(self):
         form = self.prepareLoginForm()
         self.controller.doRegistration(form)
-        msg = self.controller.mail.outbox[0]['body']
+        msg = self.controller.mail.outbox[0]
         return msg
 
     @test
@@ -78,7 +78,7 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
         cred = Credential.getByUser(current_user, 'emailcheck')
         base_url = self.controller.getConfig('BASE_URL')
         uri = "{0}/v1/verify_email/{1}".format(base_url,cred.secret)
-        self.assertTrue(uri in msg)
+        self.assertEmailContains(uri, msg)
 
     @test
     def user_cannot_register_twice_with_same_email_address(self):

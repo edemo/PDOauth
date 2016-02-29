@@ -23,11 +23,6 @@ class PasswordResetTest(PDUnitTest, UserUtil):
         self.assertEqual(self.data['message'],"Password reset email has successfully sent.")
 
     @test
-    def password_reset_email_subject_is_okay(self):
-        self._sendPasswordResetEmail()
-        self.assertEqual(self.outbox[0]['subject'], "Password Reset for {0}".format(self.controller.getConfig('SERVICE_NAME')))
-
-    @test
     def the_reset_link_is_in_the_reset_email_in_correct_form(self):
         passwordResetLink = self.the_reset_link_is_in_the_reset_email()
         self.assertTrue(re.match("https://.*?secret=[^&]*$",passwordResetLink))
@@ -35,13 +30,13 @@ class PasswordResetTest(PDUnitTest, UserUtil):
     @test
     def password_reset_link_contains_correct_secret(self):
         self.the_reset_link_is_in_the_reset_email()
-        self.assertEquals(self.tempcred.identifier, self.secret)
+        self.assertEquals(self.tempcred.secret, self.secret)
 
     @test
     def password_reset_credential_have_4_hours_expiration_time(self):
         now = time.time()
         self.the_reset_link_is_in_the_reset_email()
-        expiry = float(self.tempcred.secret) - now
+        expiry = self.tempcred.getExpirationTime() - now
         self.assertTrue(expiry > 14395 and expiry < 14405)
 
     @test
@@ -79,16 +74,17 @@ class PasswordResetTest(PDUnitTest, UserUtil):
     @test
     def no_password_reset_for_timed_out_temporary_credential(self):
         form = self.createPasswordResetFormWithSecret()
-        self.tempcred.secret = time.time() -1
+        self.tempcred.identifier = unicode(time.time() -1)
         self.assertReportedError(self.controller.doPasswordReset,(form,),
                 404, ['The secret has expired'])
+
 
     def countExpiredCreds(self):
         expiredcreds = []
         now = time.time()
         creds = Credential.query.filter_by(credentialType='email_for_password_reset') # @UndefinedVariable
         for client in creds:
-            if float(client.secret) < now:
+            if client.getExpirationTime() < now:
                 expiredcreds.append(client)
         return len(expiredcreds)
 
@@ -97,7 +93,7 @@ class PasswordResetTest(PDUnitTest, UserUtil):
         password = self.mkRandomPassword()
         secret = unicode(uuid4())
         for someone in User.query.all()[:5]:  # @UndefinedVariable
-            Credential.new(someone, 'email_for_password_reset', unicode(uuid4()), time.time()-1)
+            Credential.new(someone, 'email_for_password_reset', unicode(time.time()-1)+":"+unicode(uuid4()), unicode(uuid4()))
         self.assertTrue(self.countExpiredCreds()>=5)
         data = dict(password=password, secret=secret)
         self.assertReportedError(self.controller.doPasswordReset,(FakeForm(data),),

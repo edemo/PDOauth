@@ -5,6 +5,7 @@ from test.helpers.ResponseInfo import ResponseInfo
 from test.helpers.RandomUtil import RandomUtil
 from test.helpers.FakeInterFace import FakeForm
 from bs4 import BeautifulSoup
+import re
 
 class UserUtil(ResponseInfo, RandomUtil):
 
@@ -85,10 +86,23 @@ class UserUtil(ResponseInfo, RandomUtil):
 
     def the_reset_link_is_in_the_reset_email(self):
         self._sendPasswordResetEmail()
-        text = self.outbox[0]['body']
+        text = unicode(self.outbox[0].html)
         soup = BeautifulSoup(text)
         passwordResetLink = soup.find("a")['href']
         self.secret = passwordResetLink.split('?secret=')[1]
-        self.tempcred = Credential.get('email_for_password_reset',self.secret)
+        self.tempcred = Credential.getBySecret('email_for_password_reset',self.secret)
         return passwordResetLink
 
+    def getValidateUri(self):
+        return re.search('href="([^"]*)', self.outbox[0].html).group(1)
+
+    def assertEmailContains(self, thingToFind, message):
+        self.assertTrue(thingToFind in unicode(message.body))
+        self.assertTrue(thingToFind in unicode(message.html))
+
+    def assertGotAnEmailContaining(self, thingToFind):
+        message = self.mailer.mail.outbox[0]
+        self.assertEmailContains(thingToFind, message)
+
+    def assertSubjectIs(self, subject):
+        return self.assertEqual(self.mailer.mail.outbox[0].subject, subject)

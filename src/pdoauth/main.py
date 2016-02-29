@@ -36,11 +36,11 @@ STATIC_PATH=getStaticPath()
 def getUser(userid):
     return User.get(userid)
 
-@DECORATOR.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
+@DECORATOR.interfaceFunc("/v1/login", methods=["POST"], formClass= LoginForm, status=403)
 def login(form):
     return CONTROLLER.doLogin(form)
 
-@DECORATOR.interfaceFunc("/ssl_login", methods=["GET"])
+@DECORATOR.interfaceFunc("/v1/ssl_login", methods=["GET"])
 def ssl_login():
     return CONTROLLER.doSslLogin()
 
@@ -49,19 +49,19 @@ def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
     return AUTHPROVIDER.auth_interface()
 
-@DECORATOR.interfaceFunc("/keygen", methods=["POST"], formClass=KeygenForm)
+@DECORATOR.interfaceFunc("/v1/keygen", methods=["POST"], formClass=KeygenForm)
 def keygen(form):
     return CONTROLLER.doKeygen(form)
 
-@DECORATOR.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister(form):
     return CONTROLLER.doDeregister(form)
 
-@DECORATOR.interfaceFunc("/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister_doit(form):
     return CONTROLLER.doDeregistrationDoit(form)
 
-@DECORATOR.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/logout", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def logout():
     return CONTROLLER.doLogout()
 
@@ -122,7 +122,7 @@ def add_credential(form):
 def remove_credential(form):
     return CONTROLLER.doRemoveCredential(form)
 
-@DECORATOR.interfaceFunc("/uris", methods=["GET"])
+@DECORATOR.interfaceFunc("/v1/uris", methods=["GET"])
 def uriservice():
     return CONTROLLER.doUris()
 

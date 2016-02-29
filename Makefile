@@ -2,8 +2,10 @@ install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-ju
 
 checkall: install alltests xmldoc
 
+realclean:
+	rm -rf PDAnchor; git clean -fdx
 testenv:
-	docker run -v $$(pwd):/PDOauth -it magwas/edemotest:master
+	docker run -p 5900:5900 -v $$(pwd):/PDOauth -it magwas/edemotest:master
 
 static/qunit-1.18.0.js:
 	curl http://code.jquery.com/qunit/qunit-1.18.0.js -o static/qunit-1.18.0.js
