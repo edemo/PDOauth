@@ -31,6 +31,31 @@ class Config(object):
     EMAIL_DOMAIN = "local.sso.edemokraciagep.org"
 #    ANCHOR_URL = "https://anchor.edemokraciagep.org/"
     ANCHOR_URL = "https://local.sso.edemokraciagep.org:8890/"
+    PASSWORD_VERIFICATION_EMAIL_SUBJECT = "verification"
+    PASSWORD_VERIFICATION_EMAIL_BODY = """Dear {0.name},
+This is a verification email you got with a secret <a href="https://local.sso.edemokraciagep.org:8888/v1/verify_email/{0.secret}">secret<a>, and
+you have to send it back until {0.expiry}.
+
+Sincerely,
+The Test machine
+"""
+    PASSWORD_RESET_EMAIL_SUBJECT = "password reset"
+    PASSWORD_RESET_EMAIL_BODY = """Dear {0.name},
+This is a reset email you got with a secret <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?secret={0.secret}">secret</a>, and
+you have to send it back until {0.expiry}.
+
+Sincerely,
+The Test machine
+"""
+
+    DEREGISTRATION_EMAIL_SUBJECT = "deregistration email"
+    DEREGISTRATION_EMAIL_BODY = """Dear {0.name},
+This is a deregistration email you got with a secret <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}">secret</a>, and
+you have to send it back until {0.expiry}.
+
+Sincerely,
+The Test machine
+"""
 
 testSignatureAllOne = "d60d076693f99692539bc67e4b28aea33e0fc51b67ec68762716b57f58621852a6ef643b2b7bbcba0ae6acbb7f893122d47d87ae29c17413bb42ab0bba7d88b4"
 testSignatureAllTwo = "72bd4a1260f51aa6172862c1431e5e2537bf2d65ed74b9b76e4410760901f87cf892bb2621fa4d5d08e85a641ee8bc1026de8660caa61f4f206cd898c7ec6ef6"
