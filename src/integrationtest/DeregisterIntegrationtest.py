@@ -20,7 +20,7 @@ class DeregisterIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
                 self.outbox = outbox
             if otoken is None and nologin is None:
                 msg=self.outbox[0]
-                body = msg.attachments[0].data
+                body = msg.html
                 self.secret = re.search(r'deregistration_secret=([^"]*)"', body).groups()[0]
         return resp
 
