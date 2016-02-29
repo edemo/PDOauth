@@ -2,7 +2,9 @@
 from uuid import uuid4
 import time
 from pdoauth.models.Credential import Credential
-import random
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from flask_mail import Message
 
 class EmailData(object):
     def __init__(self, name, secret, expiry):
@@ -17,10 +19,17 @@ class EmailHandling(object):
 
     def sendEmail(self, user, secret, expiry, topic):
         emailData = EmailData(user.email, secret, expiry)
-        bodyCfg = topic + '_EMAIL_BODY'
+        bodyTextCfg = topic + '_EMAIL_BODY_TEXT'
+        bodyHtmlCfg = topic + '_EMAIL_BODY_HTML'
         subjectCfg = topic + '_EMAIL_SUBJECT'
-        text = self.getConfig(bodyCfg).format(emailData)
-        self.mail.send_message(subject=self.getConfig(subjectCfg), body=text, recipients=[user.email], sender=self.getConfig('SERVER_EMAIL_ADDRESS'))
+        text = self.getConfig(bodyTextCfg).format(emailData)
+        html = self.getConfig(bodyHtmlCfg).format(emailData)
+        msg = Message(recipients=[user.email],
+            body=text,
+            subject=self.getConfig(subjectCfg),
+            sender=self.getConfig('SERVER_EMAIL_ADDRESS'))
+        msg.attach("email.html", "text/html", html)
+        self.mail.send(msg)
 
     def sendPasswordVerificationEmail(self, user):
         secret=unicode(uuid4())

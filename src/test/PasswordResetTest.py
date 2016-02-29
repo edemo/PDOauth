@@ -8,7 +8,6 @@ from test.helpers.FakeInterFace import FakeForm
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.User import User
 from uuid import uuid4
-from pdoauth.ReportedError import ReportedError
 
 class PasswordResetTest(PDUnitTest, UserUtil):
 
@@ -22,11 +21,6 @@ class PasswordResetTest(PDUnitTest, UserUtil):
         status = self._sendPasswordResetEmail()
         self.assertEqual(status,200)
         self.assertEqual(self.data['message'],"Password reset email has successfully sent.")
-
-    @test
-    def password_reset_email_subject_is_okay(self):
-        self._sendPasswordResetEmail()
-        self.assertEqual(self.outbox[0]['subject'], "password reset")
 
     @test
     def the_reset_link_is_in_the_reset_email_in_correct_form(self):
