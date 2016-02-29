@@ -2,6 +2,8 @@ install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-ju
 
 checkall: install alltests xmldoc
 
+realclean:
+	rm -rf PDAnchor; git clean -fdx
 testenv:
 	docker run -p 5900:5900 -v $$(pwd):/PDOauth -it magwas/edemotest:master
 

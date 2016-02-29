@@ -89,6 +89,6 @@ class UserUtil(ResponseInfo, RandomUtil):
         soup = BeautifulSoup(text)
         passwordResetLink = soup.find("a")['href']
         self.secret = passwordResetLink.split('?secret=')[1]
-        self.tempcred = Credential.get('email_for_password_reset',self.secret)
+        self.tempcred = Credential.getBySecret('email_for_password_reset',self.secret)
         return passwordResetLink
 
