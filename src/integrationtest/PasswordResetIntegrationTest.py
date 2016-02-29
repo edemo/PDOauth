@@ -26,9 +26,7 @@ class PasswordResetIntegrationTest(IntegrationTest, PDUnitTest, UserUtil):
     def password_reset_link_leads_to_password_reset_form(self):
         passwordResetLink = self.the_reset_link_is_in_the_reset_email()
         with app.test_client() as client:
-            link,secret=passwordResetLink.split("?secret=")
-            data = dict(secret=secret, password="Exc3ptionally Strong p4svords R pine in the a55")
-            resp = client.post(link, data=data)
+            resp = client.get(passwordResetLink)
             self.assertEqual(resp.status_code, 200)
 
     @test
