@@ -52,7 +52,7 @@ The Test machine
     PASSWORD_RESET_EMAIL_SUBJECT = "password reset"
     PASSWORD_RESET_EMAIL_BODY_TEXT = """Dear {0.name},
 This is a reset email.
-Go to https://local.sso.edemokraciagep.org:8888/v1/password_reset?secret={0.secret}
+Go to https://local.sso.edemokraciagep.org:8888/static/login.html?secret={0.secret}
 you have to do it until {0.expiry}.
 
 Sincerely,
@@ -61,7 +61,7 @@ The Test machine
     PASSWORD_RESET_EMAIL_BODY_HTML = """<html><head></head><body>
 Dear {0.name},<br>
 This is a reset email.<br/>
-Click <a href="https://local.sso.edemokraciagep.org:8888/v1/password_reset?secret={0.secret}">Click</a><br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?secret={0.secret}">Click</a><br/>
 you have to do it until {0.expiry}.<br/>
 <br/>
 Sincerely,<br/>
