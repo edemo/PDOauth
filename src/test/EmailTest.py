@@ -43,7 +43,7 @@ class EmailTest(PDUnitTest, UserUtil):
         self.mailer.sendEmail(self.user, 'th1s1sth4s3cret', 4069139696, 'PASSWORD_RESET')
         message = self.mailer.mail.outbox[0]
         self.assertEqual(message.body,exampleBody);
-        self.assertEqual(message.attachments[0].data,exampleHtml);
+        self.assertEqual(message.html,exampleHtml);
         self.user.rm()
 
     @test
