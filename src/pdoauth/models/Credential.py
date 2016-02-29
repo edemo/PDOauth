@@ -50,12 +50,16 @@ class Credential(db.Model, ModelUtils):
         cred.save()
         return cred
 
+    def getExpirationTime(self):
+        credTime = float(self.identifier.split(':')[0])
+        return credTime
+
     @classmethod
     def deleteExpired(cls, credType):
         now = time.time()
         creds = Credential.query.filter_by(credentialType=credType).all()
         for c in creds:
-            if float(c.secret) < now:
+            if c.getExpirationTime() < now:
                 c.rm()
 
     def __repr__(self, *args, **kwargs):

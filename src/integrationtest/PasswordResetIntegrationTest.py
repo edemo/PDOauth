@@ -65,7 +65,7 @@ class PasswordResetIntegrationTest(IntegrationTest, PDUnitTest, UserUtil):
         password = self.mkRandomPassword()
         secret = unicode(uuid4())
         user = User.getByEmail(self.userCreationEmail)
-        Credential.new(user, 'email_for_password_reset', secret, time.time()+3600)
+        Credential.new(user, 'email_for_password_reset', unicode(time.time()+3600), secret)
         with app.test_client() as client:
             data = dict(password=password, secret=secret)
             resp = client.post("/v1/password_reset", data = data)

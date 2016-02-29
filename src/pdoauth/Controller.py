@@ -3,7 +3,6 @@ from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance, emailVerification
 from pdoauth.CredentialManager import CredentialManager
-from uuid import uuid4
 import time
 from flask import json
 from pdoauth.ReportedError import ReportedError
@@ -22,7 +21,6 @@ class Controller(
         WebInterface, Responses, EmailHandling,
         LoginHandling,  CertificateHandling):
     anotherUserUsingYourHash = "another user is using your hash"
-    passwordResetCredentialType = 'email_for_password_reset'
     moreUsersWarning = \
         "More users with the same hash; specify both hash and email"
     noShowAuthorization = "no authorization to show other users"
@@ -294,7 +292,7 @@ class Controller(
     def checkEmailverifyCredential(self, cred):
         if cred is None:
             raise ReportedError(["unknown token"], 404)
-        if float(cred.identifier) < time.time():
+        if cred.getExpirationTime() < time.time():
             raise ReportedError(["expired token"], 400)
 
     def getCredentialForEmailverifyToken(self, token):
@@ -313,19 +311,13 @@ class Controller(
         user = User.getByEmail(email)
         if user is None:
             raise ReportedError(['Invalid email address'])
-        passwordResetEmailExpiration = 14400
-        secret=unicode(uuid4())
-        expirationTime = time.time() + passwordResetEmailExpiration
-        Credential.new(
-            user, self.passwordResetCredentialType,
-            secret, unicode(expirationTime))
-        self.sendPasswordResetMail(user, secret, expirationTime)
+        self.sendPasswordResetMail(user)
         return self.simple_response(self.passwordResetSent)
 
     def doPasswordReset(self, form):
-        cred = Credential.get(
+        cred = Credential.getBySecret(
             self.passwordResetCredentialType, form.secret.data)
-        if cred is None or (float(cred.secret) < time.time()):
+        if cred is None or (cred.getExpirationTime() < time.time()):
             Credential.deleteExpired(self.passwordResetCredentialType)
             raise ReportedError(['The secret has expired'], 404)
         passcred = Credential.getByUser(cred.user, 'password')
