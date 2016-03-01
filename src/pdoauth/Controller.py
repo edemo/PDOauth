@@ -16,10 +16,12 @@ from pdoauth.Responses import Responses
 from pdoauth.models.Application import Application
 from pdoauth.models.AppMap import AppMap
 from pdoauth.models.AppAssurance import AppAssurance
+from pdoauth.Statistics import Statistics
 
 class Controller(
         WebInterface, Responses, EmailHandling,
-        LoginHandling,  CertificateHandling):
+        LoginHandling,  CertificateHandling,
+        Statistics):
     anotherUserUsingYourHash = "another user is using your hash"
     moreUsersWarning = \
         "More users with the same hash; specify both hash and email"
