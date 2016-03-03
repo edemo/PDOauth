@@ -30,7 +30,7 @@ clean:
 
 alltests: tests integrationtests end2endtest
 
-onlyend2endtest: install testsetup runanchor runserver runemail testsetup waitbeforebegin chrometest firefoxtest
+onlyend2endtest: install testsetup runanchor runserver runemail testsetup waitbeforebegin firefoxtest
 
 waitbeforebegin:
 	sleep 10
