@@ -2,6 +2,29 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import end2endtest.helpers.TestEnvironment as TE
+import sys
+
+class element_to_be_useable(object):
+    def __init__(self, locator):
+        self.locator = locator
+
+    def __call__(self, driver):
+        print self.locator
+        try:
+            element = driver.find_element(*self.locator)
+        except:
+            print sys.exc_info()
+            element = None
+        #print "e=",element
+        if element:
+            displayValue=element.value_of_css_property('display')
+            displayok = displayValue in ('block', 'inline','inline-block')
+            displayed = element.is_displayed()
+            enabled = element.is_enabled()
+            #print displayValue, displayed, enabled
+            if displayed and enabled and displayok:
+                return element
+        return False
 
 class SimpleActions(object):
     
@@ -17,14 +40,20 @@ class SimpleActions(object):
         self.assertEqual(self.currentProcess, name)
         self.logAction('</process>')
 
+    def waitUntilElementEnabled(self, fieldId):
+        element = WebDriverWait(TE.driver, 10).until(element_to_be_useable((By.ID,fieldId)))
+        return element
+
     def fillInField(self, fieldId, value):
         self.logAction('<fillinfield fieldid="{0}">'.format(fieldId))
-        TE.driver.find_element_by_id(fieldId).clear()
-        TE.driver.find_element_by_id(fieldId).send_keys(value)
+        element = self.waitUntilElementEnabled(fieldId)
+        element.clear()
+        element.send_keys(value)
 
     def click(self, fieldId):
         self.logAction('<click fieldid="{0}">'.format(fieldId))
-        return TE.driver.find_element_by_id(fieldId).click()
+        element = self.waitUntilElementEnabled(fieldId)
+        return element.click()
 
     def observeField(self, fieldId):
         self.logAction('<observe fieldid="{0}">'.format(fieldId))
@@ -55,10 +84,11 @@ class SimpleActions(object):
         return self.wait_on_element_text(By.ID, "PopupWindow_CloseButton", "Close")
 
     def waitLoginPage(self):
-        return self.wait_on_element_text(By.ID, "msg", "")
+        return self.waitUntilElementEnabled("qunit-header")
 
     def switchToTab(self,tab):
-        TE.driver.find_element_by_id("{0}-menu".format(tab)).click()
+        self.click("{0}-menu".format(tab))
+        self.waitUntilElementEnabled("tab-content-{0}".format(tab))
 
     def closeMessage(self):
         self.waitForMessage()

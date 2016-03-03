@@ -30,7 +30,10 @@ clean:
 
 alltests: tests integrationtests end2endtest
 
-onlyend2endtest: install testsetup runanchor runserver runemail testsetup chrometest firefoxtest
+onlyend2endtest: install testsetup runanchor runserver runemail testsetup waitbeforebegin chrometest firefoxtest
+
+waitbeforebegin:
+	sleep 10
 
 PDAnchor:
 	git clone https://github.com/edemo/PDAnchor.git

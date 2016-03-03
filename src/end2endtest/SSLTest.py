@@ -2,6 +2,7 @@ from twatson.unittest_annotations import Fixture, test
 from helpers.BrowsingUtil import BrowsingUtil,TE
 import time
 from selenium.webdriver.common.by import By
+import sys
 
 class SSLTest(Fixture,BrowsingUtil):
 
@@ -33,4 +34,7 @@ class SSLTest(Fixture,BrowsingUtil):
         self.assertTextInMeMsg(self.userCreationEmail)
 
     def tearDown(self):
-        TE.newBrowser()
+        print sys.exc_info()
+        if sys.exc_info() ==(None,None,None):
+            print "newbrowser"
+            TE.newBrowser()

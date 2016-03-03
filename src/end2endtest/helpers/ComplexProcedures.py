@@ -1,6 +1,6 @@
 import end2endtest.helpers.TestEnvironment as TE
 from pdoauth.models.Credential import Credential
-from Procedures import Procedures
+from end2endtest.helpers.Procedures import Procedures
 
 class ComplexProcedures(Procedures):
     def doPasswordResetWithNewPassword(self, password):
