@@ -39,10 +39,10 @@ runanchor: PDAnchor
 	make -C PDAnchor runserver
 
 firefoxtest:
-	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*.py"
+	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
 
 chrometest:
-	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -f -s src/end2endtest -p "*.py"
+	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
 
 end2endtest: onlyend2endtest killall
 

@@ -4,10 +4,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from pdoauth.models.Application import Application
-from end2endtest import config
 from pdoauth.models import User
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Assurance import Assurance
+from end2endtest import config
 
 print "setting up test environment"
 
@@ -48,7 +48,17 @@ logging.basicConfig(level=logging.DEBUG)
 baseUrl = config.Config.BASE_URL
 backendPath = config.Config.BACKEND_PATH
 backendUrl = baseUrl + backendPath
-loginUrl = baseUrl + "/static/login.html"
+sslBaseUrl = config.Config.SSL_LOGIN_BASE_URL
+loginPagePath = "/static/login.html"
+loginSSLUrl = sslBaseUrl + loginPagePath
+loginUrl = baseUrl + loginPagePath
 driver = getDriver()
 app = getApplication()
 assurerUser = getAssurerUser()
+logfile = open("doc/activitylog.xml","w")
+
+
+def newBrowser():
+    global driver
+    driver.quit()
+    driver = getDriver()

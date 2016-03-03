@@ -1,5 +1,5 @@
 from twatson.unittest_annotations import Fixture, test
-from end2endtest.helpers.BrowsingUtil import BrowsingUtil, TE
+from end2endtest.helpers.BrowsingUtil import BrowsingUtil
 from selenium.webdriver.common.by import By
 import config
 
@@ -9,8 +9,7 @@ class FacebookTest(Fixture, BrowsingUtil):
         self.goToLoginPage()
         self.handleFbRegistration(user=config.facebookUser1)
         self.wait_on_element_text(By.ID, "PopupWindow_CloseButton", "Close")
-        body = TE.driver.find_element_by_id("PopupWindow_MessageDiv").text
-        self.assertEqual("please give us an email in the registration form", body)
+        self.assertPopupTextIs("please give us an email in the registration form")
 
     @test
     def it_is_possible_to_register_with_facebook(self):
