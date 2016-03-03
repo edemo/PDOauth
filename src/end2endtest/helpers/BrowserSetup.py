@@ -7,29 +7,11 @@ import logging
 
 class BrowserSetup(object):
 
-    def switchToTab(self,tab):
-        self.driver.find_element_by_id("{0}-menu".format(tab)).click()
-		
+
     def logout(self):
         self.switchToTab("account")
         self.driver.find_element_by_id("logout_button").click()
 
-    def closePopup(self):
-        self.driver.find_element_by_id("PopupWindow_CloseButton").click()
-
-    def getDriver(self):
-        if os.environ.get("WEBDRIVER", None) == "chrome":
-            os.environ['PATH'] += ":/usr/lib/chromium-browser"
-            logging.basicConfig(level=logging.DEBUG)
-            options = Options()
-            options.add_argument("--no-sandbox")
-            theDriver = webdriver.Chrome(chrome_options = options)
-        else:
-            profile_directory = os.path.join(os.path.dirname(__file__),"..", "firefox-client-nossl-profile")
-            profile = FirefoxProfile(profile_directory)
-            profile.set_preference("security.default_personal_cert", "Select Automatically")
-            theDriver = webdriver.Firefox(firefox_profile=profile)
-        return theDriver
     
     def setupDriver(self):
         self.driver = self.getDriver()

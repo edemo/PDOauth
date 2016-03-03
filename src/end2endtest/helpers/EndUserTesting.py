@@ -1,10 +1,10 @@
 #pylint: disable=unused-import, line-too-long, too-many-arguments
 from integrationtest.helpers.UserTesting import UserTesting
 from twatson.unittest_annotations import Fixture, test  # @UnusedImport
-from end2endtest.helpers.BrowserSetup import BrowserSetup
 from end2endtest import config
 import time
 import assurancetool
+from end2endtest.helpers.BrowserSetup import BrowserSetup
 
 class EndUserTesting(Fixture, UserTesting, BrowserSetup):
     def setUp(self):

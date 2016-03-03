@@ -92,11 +92,20 @@ The Test machine
 testSignatureAllOne = "d60d076693f99692539bc67e4b28aea33e0fc51b67ec68762716b57f58621852a6ef643b2b7bbcba0ae6acbb7f893122d47d87ae29c17413bb42ab0bba7d88b4"
 testSignatureAllTwo = "72bd4a1260f51aa6172862c1431e5e2537bf2d65ed74b9b76e4410760901f87cf892bb2621fa4d5d08e85a641ee8bc1026de8660caa61f4f206cd898c7ec6ef6"
 skipSlowTests = False
-skipFacebookTests = False
+skipFacebookTests = True
 #fbuser does not allow email for the fb app, fbuesr2 does
-fbuser = "mag+tesztelek@magwas.rulez.org"
-fbpassword = "Elek the tester"
-fbuserid = "111507052513637"
-fbuser2 = "mag+elekne@magwas.rulez.org"
-fbpassword2 = "Elekne is tesztel"
+class FBUser(object):
+    def __init__(self,email, password, userid):
+        self.email = email
+        self.password = password
+        self.userid = userid
+
+facebookUser1 = FBUser(
+    "mag+tesztelek@magwas.rulez.org",
+    "Elek the tester",
+    "111507052513637")
+facebookUser2 = FBUser(
+    "mag+elekne2@magwas.rulez.org",
+    "Elekne is tesztel",
+    None)
 ca_certs = "src/end2endtest/server.crt"

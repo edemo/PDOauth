@@ -1,7 +1,6 @@
 import unittest, time
 import config
 from end2endtest.helpers.EndUserTesting import EndUserTesting, test
-import pdb
 
 class EndUserObtainingHashTest(EndUserTesting):
 
@@ -38,7 +37,6 @@ class EndUserObtainingHashTest(EndUserTesting):
         driver.get(self.backendUrl+"/static/login.html?next=/v1/users/me")
         time.sleep(1)
         self.switchToTab('assurer')
-        #pdb.set_trace()
         driver.find_element_by_id("AddAssuranceForm_predigest_input").clear()
         driver.find_element_by_id("AddAssuranceForm_predigest_input").send_keys("22222222220")
         driver.find_element_by_id("AddAssuranceForm_predigest_mothername").clear()
