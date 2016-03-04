@@ -1,0 +1,3 @@
+#!/bin/bash
+export PYTHONPATH=src:src/end2endtest:src/integrationtest:src/test
+python -m unittest $*

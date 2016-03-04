@@ -26,9 +26,9 @@ class EmailHandling(object):
         html = self.getConfig(bodyHtmlCfg).format(emailData)
         msg = Message(recipients=[user.email],
             body=text,
+            html=html,
             subject=self.getConfig(subjectCfg),
             sender=self.getConfig('SERVER_EMAIL_ADDRESS'))
-        msg.attach("email.html", "text/html", html)
         self.mail.send(msg)
 
     def sendPasswordVerificationEmail(self, user):
