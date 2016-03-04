@@ -55,7 +55,6 @@ class DeregisterTest(PDUnitTest, UserUtil):
         self._loginAndDeregister()
         mail = self.controller.mail.outbox[0]
         deregistrationUrl = self.controller.getConfig('DEREGISTRATION_URL')
-        print deregistrationUrl
         self.assertEmailContains(deregistrationUrl, mail)
 
     @test

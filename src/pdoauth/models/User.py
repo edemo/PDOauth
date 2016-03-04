@@ -66,7 +66,6 @@ class User(db.Model, ModelUtils):
         user = User.query.filter_by(userid=userid).first()
         return user
 
-    
     @classmethod
     def getByDigest(cls, digest):
         if digest == '' or digest is None:

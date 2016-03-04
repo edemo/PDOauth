@@ -30,7 +30,10 @@ clean:
 
 alltests: tests integrationtests end2endtest
 
-onlyend2endtest: install testsetup runanchor runserver runemail testsetup chrometest firefoxtest
+onlyend2endtest: install testsetup runanchor runserver runemail testsetup waitbeforebegin firefoxtest
+
+waitbeforebegin:
+	sleep 10
 
 PDAnchor:
 	git clone https://github.com/edemo/PDAnchor.git
@@ -39,10 +42,10 @@ runanchor: PDAnchor
 	make -C PDAnchor runserver
 
 firefoxtest:
-	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*.py"
+	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
 
 chrometest:
-	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -f -s src/end2endtest -p "*.py"
+	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
 
 end2endtest: onlyend2endtest killall
 
