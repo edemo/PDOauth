@@ -239,7 +239,10 @@ h3 {
                             <li><a href="./index.html#team" class="page-scroll">A csapat</a> </li>
                             <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li>
                             <li><a href="./index.html#contact" class="page-scroll">Kapcsolat</a> </li>
-							<li class="active"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a> </li>
+							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
+							<li id="nav-bar-register"><a href="./fiokom.html" class="page-scroll">Regisztráció</a></li>
+							<li id="nav-bar-my_account"><a href="./fiokom.html?section=account">Fiókom</a></li>
+							<li id="nav-bar-logout"><a href="javascript:void (0)" onclick="pageScript.logout()">Kijelentkezés</a></li>
                         </ul>
                      </nav>
                 </div><!-- /.container-fluid -->
@@ -572,6 +575,6 @@ h3 {
 		<!-- pagescript extension-->
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
-		<script type='text/javascript' src="fb.js"></script>
+		<script type='text/javascript' src="js/fb.js"></script>
 	</body>
 </html>

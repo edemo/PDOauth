@@ -31,7 +31,11 @@ function PageScript(test) {
     this.QueryString = QueryStringFunc();
     self.uribase=test.uribase;
 	this.isLoggedIn=false;
+	this.isAssurer=false;
 	
+	PageScript.prototype.getThis=function() {
+		return this
+	}
 	PageScript.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
 		if (win.XMLHttpRequest)
@@ -133,38 +137,40 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.initCallback = function(status, text) {
-		console.log(text)
 		var data = JSON.parse(text);
 		if (status != 200) {
-			self.menuHandler("login").menuActivate();
-			self.menuHandler("account").menuHide();
-			self.menuHandler("assurer").menuHide();
-			self.menuHandler("registration").menuUnhide();
+//			self.menuHandler("login").menuActivate();
+//			self.menuHandler("account").menuHide();
+//			self.menuHandler("assurer").menuHide();
+//			self.menuHandler("registration").menuUnhide();
 			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		}
 		else {
 			self.isLoggedIn=true
 			console.log(data)
-			if (!self.activeButton)	self.menuHandler("account").menuActivate();
-			else {
-				var a=["login", "register"];
-				if ( a.indexOf(self.activeButtonName) > -1 ) self.menuHandler("account").menuActivate();
-			}
-			self.menuHandler("login").menuHide();
-			self.menuHandler("registration").menuHide();
+//			if (!self.activeButton)	self.menuHandler("account").menuActivate();
+//			else {
+//				var a=["login", "register"];
+//				if ( a.indexOf(self.activeButtonName) > -1 ) self.menuHandler("account").menuActivate();
+//			}
+//			self.menuHandler("login").menuHide();
+//			self.menuHandler("registration").menuHide();
 			if (data.assurances) {
-				document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);
-				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
-				if (data.email) {
-					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
-					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
-				}
+//				document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);
+//				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
+//				if (data.email) {
+//					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
+//					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
+//				}
 				console.log(data.assurances.assurer)
-				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
-				else self.menuHandler("assurer").menuUnhide();
+//				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
+//				else self.menuHandler("assurer").menuUnhide();
+				if (!(data.assurances.assurer)) self.isAssurer=false;
+				else self.isAssurer=true;
 			}
-			self.fill_RemoveCredentialContainer(data);
+//			self.fill_RemoveCredentialContainer(data);
 		}
+		self.refreshTheNavbar()
 	}
 
 // Button actions
@@ -228,6 +234,7 @@ console.log(theUri)
 	}
 
 	PageScript.prototype.logoutCallback = function(status, text) {
+		console.log("logoutCallback")
 		var msg=self.processErrors(JSON.parse(text));
 		msg.callback=self.doLoadHome;
 		self.displayMsg(msg);	    		
@@ -238,25 +245,10 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.logout = function() {
+				console.log("logout")
 	    this.ajaxget("/v1/logout", this.logoutCallback)
 	}
 
-	PageScript.prototype.uriCallback = function(status,text) {
-		var data = JSON.parse(text);
-		if (status==200) {
-			self.QueryString.uris = data
-			self.uribase = self.QueryString.uris.BACKEND_PATH;
-			keygenForm = document.getElementById("keygenform");
-			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
-			loc = '' + win.location
-			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
-				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login',pageScript.initCallback, true)
-			}
-			self.ajaxget("/v1/users/me", self.initCallback)
-		}
-		else self.displayMsg(self.processErrors(data));
-	}
-	
 	PageScript.prototype.sslLogin = function() {
 		var loc = '' +win.location
 		var newloc = loc.replace(self.QueryString.uris.BASE_URL, self.QueryString.uris.SSL_LOGIN_BASE_URL)
@@ -594,6 +586,21 @@ console.log(theUri)
 	PageScript.prototype.queryString=function(){
 		this.secret=(self.QueryString.secret)?self.QueryString.secret:"";
 		this.section=(self.QueryString.section)?self.QueryString.section:"";
+	}
+	
+	PageScript.prototype.refreshTheNavbar=function(){
+		if (self.isLoggedIn) {
+			document.getElementById("nav-bar-login").style.display="none";
+			document.getElementById("nav-bar-register").style.display="none";
+			document.getElementById("nav-bar-my_account").style.display="block";
+			document.getElementById("nav-bar-logout").style.display="block";
+		}
+		else {
+			document.getElementById("nav-bar-my_account").style.display="none";
+			document.getElementById("nav-bar-logout").style.display="none";
+			document.getElementById("nav-bar-login").style.display="block";
+			document.getElementById("nav-bar-register").style.display="block";
+		}
 	}
 }
 
