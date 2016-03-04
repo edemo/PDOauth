@@ -13,4 +13,8 @@ class ModelUtils(Observable):
         session = db.session
         session.delete(self)
         session.commit()
+
+    @classmethod
+    def getStats(klass):
+        return klass.query.count()
         

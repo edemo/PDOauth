@@ -1,0 +1,577 @@
+ <!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+    <!-- Basic Page Needs
+    ================================================== -->
+        <meta charset="utf-8">
+        <title>ADA - anonim digitális azonosító</title>
+        <meta name="description" content="anonim digitális azonosító">
+        <!-- Mobile Specific Metas
+    ================================================== -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+         <!-- CSS
+         ================================================== -->
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="css/bootstrap.min.css"/>
+        <!-- FontAwesome -->
+        <link rel="stylesheet" href="css/font-awesome.min.css"/>
+        <!-- Animation -->
+        <link rel="stylesheet" href="css/animate.css" />
+        <!-- Owl Carousel -->
+        <link rel="stylesheet" href="css/owl.carousel.css"/>
+        <link rel="stylesheet" href="css/owl.theme.css"/>
+        <!-- Pretty Photo -->
+        <link rel="stylesheet" href="css/prettyPhoto.css"/>
+        <!-- Main color style -->
+        <link rel="stylesheet" href="css/red.css"/>
+        <!-- Template styles-->
+        <link rel="stylesheet" href="css/custom.css" />
+        <!-- Responsive -->
+        <link rel="stylesheet" href="css/responsive.css" />
+        <link rel="stylesheet" href="css/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+        <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
+    </head>
+		<script>
+		</script>
+		<style>
+*, *:after, *:before {
+    box-sizing: inherit;
+}
+html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+}
+body {
+    color: #606c76;
+    font-family: "Roboto","Helvetica Neue","Helvetica","Arial",sans-serif;
+    font-size: 1.6em;
+    font-weight: 300;
+    letter-spacing: .01em;
+    line-height: 1.6;
+}
+pre, xmp, plaintext, listing {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0px 1em;
+}
+pre {
+    background: #f4f5f6;
+    border-left: .3rem solid #EE3B24;
+    font-family: "Menlo","Consolas","Bitstream Vera Sans Mono","DejaVu Sans Mono","Monaco",monospace;
+}
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 2.5rem;
+}
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 2.5rem;
+}
+input, textarea, select, fieldset {
+    margin-bottom: 1.5rem;
+}
+fieldset {
+    border-width: 0;
+    padding: 0;
+}
+label, legend {
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: .5rem;
+}
+input[type='email'], input[type='number'], input[type='password'], input[type='search'], input[type='tel'], input[type='text'], input[type='url'], textarea, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: .1rem solid #d1d1d1;
+    border-radius: .4rem;
+    box-shadow: none;
+    height: 3.8rem;
+    padding: .6rem 1rem;
+    width: 100%;
+}
+.button, button, input[type='button'], input[type='reset'], input[type='submit'] {
+    background-color: #EE3B24;
+    border: .1rem solid #EE3B24;
+    border-radius: .4rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    height: 3.8rem;
+    letter-spacing: .1rem;
+    line-height: 3.8rem;
+    padding: 0 3rem;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.button:hover, button:hover, input[type='button']:hover, input[type='reset']:hover, input[type='submit']:hover {
+    background-color: #606c76;
+    border-color: #606c76;
+    color: #fff;
+    outline: 0;
+}
+.button:active, button:active, input[type='button']:active, input[type='reset']:active, input[type='submit']:active {
+    background-color: #707c76;
+    border-color: #606c76;
+    color: #fff;
+    outline: 0;
+	padding-top:1px
+}
+.wrapper {
+	top: 100px;
+	position: relative;
+	display: block;
+	width: 100%;
+	overflow: hidden;
+}
+.container_ {
+    margin: 0 auto;
+    max-width: 112rem;
+    padding: 0 2rem;
+    position: relative;
+    width: 100%;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	margin-bottom: 0;
+	max-width: 80.0rem;
+}
+.form {
+	max-width: 50.0rem;
+}		
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    margin-bottom: 2rem;
+    margin-top: 0;
+}
+h1 {
+    font-size: 4rem;
+    letter-spacing: -0.1rem;
+    line-height: 1.2;
+}
+h3 {
+    font-size: 3rem;
+    letter-spacing: -0.1rem;
+    line-height: 1.3;
+}
+p {
+    margin-top: 0;
+}
+.label-inline {
+    font-weight: normal;
+    display: inline-block;
+    margin-left: .5rem;
+}
+#footer {
+    margin-top: 120px;
+}
+button.social {
+    font-size: 3rem;
+    height: 3.8rem;
+	padding:0;
+	margin: 1rem 0;
+	width:5rem;
+}
+button.social:active {
+	padding-top:0}
+button.ssl{
+    font-weight: 700;
+    font-size: 2rem;
+    vertical-align: top;
+}
+button.inactive{
+	background-color: #E8E4E3;
+    border: .1rem solid #D8CCCB;
+}
+div.func{
+	display:none;
+}
+span.form-icon_ {
+	width: auto;
+    position: absolute;
+    right: 10px;
+    color: #DDD;
+    top: 4px;
+}
+
+@media (min-width: 40rem){
+h1 {
+    font-size: 5rem;
+}
+h3 {
+    font-size: 3.6rem;
+}}
+		</style>
+	</head>
+	<body onload="pageScript.main()">
+
+    <header id="section_header" class="navbar-fixed-top main-nav" role="banner">
+    	<div class="container">
+    		<!-- <div class="row"> -->
+                 <div class="navbar-header ">
+                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">
+                            <img src="images/logo/adalogo_379x143.png" alt="">
+                        </a>
+                 </div><!--Navbar header End-->
+                 	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
+                        <ul class="nav navbar-nav navbar-right ">
+                           	<li><a href="./index.html#slider_part" class="page-scroll">Home </a></li>
+                            <li><a href="./index.html#service"  class="page-scroll">Mi ez?</a> </li>
+                            <li><a href="./index.html#about-details" class="page-scroll">Rólunk</a> </li>
+                            <li><a href="./index.html#team" class="page-scroll">A csapat</a> </li>
+                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li>
+                            <li><a href="./index.html#contact" class="page-scroll">Kapcsolat</a> </li>
+							<li class="active"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a> </li>
+                        </ul>
+                     </nav>
+                </div><!-- /.container-fluid -->
+	</header>
+	<!-- content -->
+	<div class="wrapper">
+
+<!-- message box -->
+	<div id="myModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+    <!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h3 class="modal-title" id="PopupWindow_TitleDiv"></h3>
+				</div>
+				<div class="modal-body">
+				<div class="popup">
+					<div class="msg" id="PopupWindow_ErrorDiv"></div>
+					<div class="msg" id="PopupWindow_MessageDiv"></div>
+					<div class="msg" id="PopupWindow_SuccessDiv"></div>
+					<button id="PopupWindow_CloseButton" class="pbutton" type="button" onclick="javascript:pageScript.closePopup()">Close</button>
+				</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+		<div class="func" id="login_section">
+			<section class="container_">
+				<h3 class="title">Bejelentkezés</h3>
+			</section>
+			<section class="container_ form ">
+				<button class="social" title="Facebook bejelentkezés" type="button" onclick="facebook.fblogin()">
+					<i class="fa fa-facebook"></i>
+				</button>
+				<button class="social inactive" title="Google+ bejlentkezés" type="button" onclick="">
+					<i class="fa fa-google-plus"></i>
+				</button>
+                <button class="social inactive" title="Twitter bejlentkezés" type="button" onclick="">
+					<i class="fa fa-twitter"></i>
+				</button>
+                <button class="social inactive" title="Pinterest bejlentkezés" type="button" onclick="">
+					<i class="fa fa-github"></i>
+				</button>
+                <button class="social ssl" title="Bejlentkezés SSL kulccsal" type="button" onclick="">SSL</button>
+				<p></p>
+				<form id="loginform" action="" method="post" name="login">
+					<fieldset>
+						<!-- label for="LoginForm_username_input">Felhasználónév vagy email cím:</label -->
+						<div class="form-level">
+						<input class="input-block" name="username" type="text" placeholder="Felhasználónév vagy email cím" id="LoginForm_email_input">
+						<span class="form-icon_"><i class="fa fa-envelope-o"></i>/<i class="fa fa-user"></i></span>
+						</div>
+						<div class="form-level">
+						<!-- label for="LoginForm_password_input">Jelszó:</label -->
+						<input class="input-block" type="text" placeholder="*********" id="LoginForm_password_input">
+						<span class="form-icon_"><i class=" fa fa-lock"></i></span>
+						</div>
+						<button type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
+					</fieldset>
+				</form>
+			</section>
+			<section class="container_">
+				<h4>Elfelejtettem a jelszavam</h4>
+				<p>A gombra kattintva kezdeményezhető a jelszó cseréje.</br>
+				A <b>fent megadott</b> email címedre küldünk egy aktíváló kódot. A levélben található linkre kattintva visszajutsz ide, és megadhatsz egy új jelszót.</p>
+			</section>
+			<section class="container_ form">
+				<form>
+					<button type="button" onclick="javascript:pageScript.InitiatePasswordReset('LoginForm')">Új jelszót szeretnék</button>
+				</form>
+			</section>
+			<a name="feltetelek"></a>
+			<section class="container_" >
+				<h4>Még nincs fiókom</h4>
+			<section>
+			<section class="container_ form">
+				<form>
+					<button type="button" onclick="javascript:pageScript.display('login_section','registration_section')">Regisztrálok</button>
+				</form>
+			</section>
+		</div>
+<!-- End login section -->
+	
+<!-- Regisztration -->
+		<div class="func" id="registration_section">
+			<section class="container_">
+				<h3 class="title">Regisztráció</h3>
+			</section>
+			<section class="container_ ">
+				<form id="keygenform" method="post" action="/ada/v1/keygen">
+					<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
+					<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked="">
+					<div class="form">
+						<label for="LoginForm_username_input">Email cím:</label>
+						<input name="email" type="text" placeholder="pikurics13@valahol.hu" id="KeygenForm_email_input">
+					</div>
+				</form>
+				<p><b>Válaszd ki hogyan akarsz regisztrálni</b></p>
+				<button class="social" title="felhasználónév + jelszó" type="button" onclick="javascript:pageScript.login()">
+					<i class="fa fa-tag"></i>
+				</button>
+				<button class="social" title="Facebook fiókkal" type="button" onclick="javascript:pageScript.login()">
+					<i class="fa fa-facebook"></i>
+				</button>
+				<button class="social inactive" title="Google+ fiókkal" type="button" onclick="">
+					<i class="fa fa-google-plus"></i>
+				</button>
+                <button class="social inactive" title="Twitter fiókkal" type="button" onclick="">
+					<i class="fa fa-twitter"></i>
+				</button>
+                <button class="social inactive" title="Github fiókkal" type="button" onclick="">
+					<i class="fa fa-github"></i>
+				</button>
+                <button class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="document.getElementById('keygenform').submit();">SSL</button>
+				<form id="RegistrationForm" action="" method="post" name="registration">
+					<fieldset>
+						<label for="LoginForm_username_input">Felhasználónév (nem kötelező)</label>
+						<input name="username" type="text" placeholder="Pikurics13" id="LoginForm_username_input">
+						<label for="LoginForm_password_input">Jelszó:</label>
+						<input type="text" placeholder="*********" id="LoginForm_password_input">
+						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is. A felhasználónév minimum 4 max 255 karakter hosszú</p>
+			
+				<div class="digest-input">
+					<p class="note">Az alábbi adatokat nem tárolja a rendszer. 
+											Az "titkos kód gép" szolgáltatással egy titkosított kódot generálunk belőle, amiből a személyi szám nem nyerhető vissza. 
+											A titkosított kódot magad is előállíthatod 
+						<a class="link" target="_blank" href="https://anchor.edemokraciagep.org"> itt</a>
+											, és akkor be kell másolnod a lenti "tikos kód" mezőbe</p>
+					<label>személyi szám:</label>
+					<input name="digest" type="text" id="RegistrationForm_predigest_input">
+					<label>Anyja neve:</label>
+					<input name="digest" type="text" id="RegistrationForm_predigest_mothername" onkeyup="PageScript.convert_mothername('RegistrationForm')">
+					<input type="text" id="RegistrationForm_predigest_label_mothername_normalized">
+
+					<button class="button" type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Titkos kód létrehozása</button>
+				</div>
+												<label>titkos kód:</label>
+											<textarea class="digest" name="digest" type="text" id="RegistrationForm_digest_input"></textarea>
+		
+										<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is. A felhasználónév minimum 4 max 255 karakter hosszú</p>
+			
+
+
+				<button type="button" onclick="javascript:pageScript.login()">Regisztrálok</button>
+									</fieldset>
+									</form>
+			</section>
+		</div>
+	
+<!-- End registration section -->	
+
+<!-- My account -->
+		<div class="func" id="my_account_section">
+			<section class="container_">
+				<h3 class="title">Fiókom</h3>
+			</section>
+		</div>
+<!-- End my account section -->
+
+<!-- Email verification success -->
+		<div class="func" id="email_verification_section">
+			<section class="container_">
+				<h3 class="title">Felhasználói fiók aktiválása</h3>
+				<p>A felhasználói fiókod aktiválása sikerült. Most már be tudsz jelentkezni. Ide még lehetne tenni egy linket a "fiókom" UI használatához.</p>
+				<button type="button" onclick="javascript:pageScript.display('email_verification_section')">Ok</button>
+			</section>
+		</div>
+<!-- End email verification success section -->
+
+<!-- Delete account -->
+		<div class="func" id="deregistration_section">
+			<section class="container_">
+				<h3 class="title">Fiók törlése</h3>
+				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük. 
+				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be. 
+				A <b>digitális igazolványaid</b> is <b>törlődnek</b> a rendszerből.</p>
+				<p>Az alábbi checkbox kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
+				<div class="example-send-yourself-copy">
+					<input type="checkbox" id="accept" name="accept" value="accept">
+					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
+				</div>
+				<button type="button" onclick="javascript:pageScript.doDeregister()">Törlöm a fiókom</button>
+			</section>
+		</div>
+<!-- End delete account section -->
+
+<!-- Password reset -->
+		<div class="func" id="password_reset_section">
+			<section class="container_">
+				<h3 class="title">Új jelszó megadása</h3>
+			</section>
+			<section class="container_ form">
+				<form id="PasswordResetForm">
+					<fieldset>
+						<input type="text" class="disabled" id="PasswordResetForm_secret_input">
+						<label for="PasswordResetForm_password_input">Jelszó:</label>
+						<input type="text" placeholder="*********" id="PasswordResetForm_password_input">
+						<button type="button" onclick="javascript:pageScript.login()">Jelszó mentése</button>
+					</fieldset>
+				</form>
+			</section>
+		</div>
+<!-- End password reset section -->	
+	</div>
+
+<!-- Footer Area Start -->
+
+<section id="footer">
+    <div class="footer_top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Main Menu</h3>
+                    <div class="footer_menu">
+                        <ul>
+                            <li><a href="#about">Home</a></li>
+                            <li><a href="#service">Service</a></li>
+                            <li><a href="#portfolio">Portfolio</a></li>
+                            <li><a href="#blog">Blog</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Useful Links</h3>
+                    <div class="footer_menu">
+                        <ul>
+                            <li><a href="#">Terms of use</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#"> inventore natus ullam eum</a></li>
+                            <li><a href="#">consectetur adipisicing elit.</a></li>
+                            <li><a href="#">Frequently Asked Questions</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Contact us</h3>
+                    <div class="footer_menu_contact">
+                        <ul>
+                            <li> <i class="fa fa-home"></i>
+                                <span> 12 Segun Bagicha, 10th Floor </span></li>
+                            <li><i class="fa fa-globe"></i>
+                                <span> +880-12345678</span></li>
+                            <li><i class="fa fa-phone"></i>
+                                <span> info@mail.com</span></li>
+                            <li><i class="fa fa-map-marker"></i>
+                            <span> www.web.com</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Tags</h3>
+                    <div class="footer_menu tags">
+                        <a href="#"> Design</a>
+                        <a href="#"> User Interface</a>
+                        <a href="#"> Graphics</a>
+                        <a href="#"> Web Design</a>
+                        <a href="#"> Development</a>
+                        <a href="#"> Asp.net</a>
+                        <a href="#"> Bootstrap</a>
+                        <a href="#"> Joomla</a>
+                        <a href="#"> SEO</a>
+                        <a href="#"> Wordepress</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="footer_b">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="footer_bottom">
+						<p class="text-block">
+							<a href="http://e.demokracia.rulez.org">KDE Alapítvány</a> ADA - Anonim Digitális Azonosító szolgáltatása 
+							<a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Nevezd meg! - Így add tovább! 4.0 Nemzetközi Licenc</a> alatt van.
+						</p>
+						<p>
+ 						<a href="http://creativecommons.org/licenses/by-sa/4.0/">
+							<img alt="Creative Commons Licenc" src="https://camo.githubusercontent.com/e170e276291254896665fa8f612b99fe5b7dd005/68747470733a2f2f692e6372656174697665636f6d6d6f6e732e6f72672f6c2f62792d73612f342e302f38387833312e706e67" data-canonical-src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" style="max-width:100%;">
+						</a>
+						</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="footer_mid pull-right">
+<!-- temporaly hidden
+                        <ul class="social-contact list-inline">
+                            <li> <a href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li> <a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li> <a href="#"><i class="fa fa-rss"></i></a></li>
+                            <li> <a href="#"><i class="fa fa-google-plus"></i> </a></li>
+                            <li><a href="#"> <i class="fa fa-linkedin"></i></a></li>
+                            <li><a href="#"> <i class="fa fa-pinterest"></i></a></li>
+                        </ul>
+-->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Footer Area End -->
+
+<!-- Back To Top Button -->
+    <div id="back-top">
+        <a href="#slider_part" class="scroll" data-scroll>
+            <button class="btn btn-primary" title="Back to Top"><i class="fa fa-angle-up"></i></button>
+        </a>
+    </div>
+    <!-- End Back To Top Button -->
+		<!-- initialize jQuery Library -->
+        <!-- Main jquery -->
+		<script type="text/javascript" src="js/jquery.js"></script>
+        <!-- Bootstrap jQuery -->
+		<script src="js/bootstrap.min.js"></script>
+		<!-- pagescript -->
+		<script src="js/script.js"></script>
+		<!-- pagescript extension-->
+		<script src="js/account.js"></script>
+		<!-- facebook stuff -->
+		<script type='text/javascript' src="fb.js"></script>
+	</body>
+</html>
