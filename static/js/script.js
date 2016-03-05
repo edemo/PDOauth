@@ -32,6 +32,32 @@ function PageScript(test) {
     self.uribase=test.uribase;
 	this.isLoggedIn=false;
 	this.isAssurer=false;
+	this.registrationMethode="pw";
+	
+	PageScript.prototype.setRegistrationMethode=function(methode){
+		self.registrationMethode=methode;
+		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) {e.className=e.className.replace(" active",""); console.log(e.className) } );
+		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
+		var heading
+		switch (methode) {
+			case "pw":
+				heading="felhasználónév / jelszó"
+				document.getElementById("registration-form-password-container").style.display="block";
+				document.getElementById("registration-form-username-container").style.display="block";
+			break;
+			case "fb":
+				heading="facebook fiókom"
+				document.getElementById("registration-form-password-container").style.display="none";
+				document.getElementById("registration-form-username-container").style.display="none";
+			break;
+			case "ssl":
+				heading="SSL kulcs"
+				document.getElementById("registration-form-password-container").style.display="none";
+				document.getElementById("registration-form-username-container").style.display="none";
+			break;
+		}
+		document.getElementById("registration-form-method-heading").innerHTML="Regisztráció "+heading+" használatával";
+	}
 	
 	PageScript.prototype.getThis=function() {
 		return this
@@ -102,11 +128,22 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {
-		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
-		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
+		userdata = '\
+		<table>\
+			<tr>\
+				<td><b>e-mail cím:</b></td>\
+				<td id="email-change">'+data.email+'</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			<tr>\
+				<td><b>felhasználó azonosító:</b></td>\
+				<td>'+data.userid+'</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			'
 		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
 		userdata +="<p><b>tanusítványok:</b></p>"
-		userdata +="<ul>"
+		userdata +="</table><ul>"
 		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
 		userdata +="</ul>"
 		userdata +="<p><b>hitelesítési módok:</b></p>"
@@ -115,17 +152,85 @@ console.log(theUri)
 		userdata +="</ul>"
 		return userdata;		
 	}
-
+		PageScript.prototype.parseSettings = function(data) {
+		userdata = '\
+		<table>\
+			<tr>\
+				<td><b>e-mail cím:</b></td>\
+				<td id="email-change">'+data.email+'</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			<tr>\
+				<td><b>felhasználó azonosító:</b></td>\
+				<td>'+data.userid+'</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			'
+		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
+		userdata +="<p><b>tanusítványok:</b></p>"
+		userdata +="</table><ul>"
+		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
+		userdata +="</ul>"
+		userdata +="<p><b>hitelesítési módok:</b></p>"
+		userdata +="<ul>"
+		for(i in data.credentials) userdata += "<li>"+data.credentials[i].credentialType+"</li>" ;
+		userdata +="</ul>"
+		return userdata;		
+	}
+		PageScript.prototype.parseAssurancing = function(data) {
+		userdata = '\
+		<table>\
+			<tr>\
+				<td><b>e-mail cím:</b></td>\
+				<td id="email-change">'+data.email+'</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			<tr>\
+				<td><b>felhasználó azonosító:</b></td>\
+				<td>'+data.userid+'</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			'
+		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
+		userdata +="<p><b>tanusítványok:</b></p>"
+		userdata +="</table><ul>"
+		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
+		userdata +="</ul>"
+		userdata +="<p><b>hitelesítési módok:</b></p>"
+		userdata +="<ul>"
+		for(i in data.credentials) userdata += "<li>"+data.credentials[i].credentialType+"</li>" ;
+		userdata +="</ul>"
+		return userdata;		
+	}
+	
+	PageScript.prototype.loginCallback=function(status, text){
+		var data = JSON.parse(text)
+		if (status == 200 ) {
+			self.isLoggedIn=true
+			self.get_me()
+			self.refreshTheNavbar()
+			self.displayTheSection()
+		}
+		else {
+			this.msg = self.processErrors(data)
+			this.msg.callback = self.get_me;
+			self.displayMsg(this.msg);			
+		}
+	}
+	
+// oldie	
 	PageScript.prototype.myCallback = function(status, text) {
 		var data = JSON.parse(text);
-		if (status == 200) {
-			if(self.QueryString.next) {
+
+		
+		if (status == 200 ) {
+			if( self.page=="account" && self.QueryString.next) {
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
-		this.msg = self.processErrors(data)
-		this.msg.callback = self.get_me;
-		self.displayMsg(this.msg);
+			this.msg = self.processErrors(data)
+			this.msg.callback = self.get_me;
+			self.displayMsg(this.msg);
 	}
 
 	PageScript.prototype.doRedirect = function(href){ 
@@ -156,21 +261,33 @@ console.log(theUri)
 //			self.menuHandler("login").menuHide();
 //			self.menuHandler("registration").menuHide();
 			if (data.assurances) {
-//				document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);
+				document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
+				document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
+//				document.getElementById("me_Applications").innerHTML=self.parseSettings(data);
 //				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
 //				if (data.email) {
 //					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
 //					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
 //				}
-				console.log(data.assurances.assurer)
+				console.log(data)
 //				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
 //				else self.menuHandler("assurer").menuUnhide();
 				if (!(data.assurances.assurer)) self.isAssurer=false;
-				else self.isAssurer=true;
+				else {
+					self.isAssurer=true;
+					document.getElementById("assurance-giving").innerHTML=self.parseAssurancing(data);
+				}
 			}
 //			self.fill_RemoveCredentialContainer(data);
 		}
 		self.refreshTheNavbar()
+		if (self.page=="account") {
+			if (self.QueryString.section) {
+				if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+				else return;
+			}
+			else self.displayTheSection();
+		}
 	}
 
 // Button actions
@@ -192,7 +309,7 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.login = function() {
-	    username = document.getElementById("LoginForm_username_input").value;
+	    username = document.getElementById("LoginForm_email_input").value;
 	    var onerror=false;
 		var errorMsg="";
 		if (username=="") {
@@ -208,9 +325,9 @@ console.log(theUri)
 		else {
 			username = encodeURIComponent(username);	
 			password = encodeURIComponent(password);
-			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
-			document.getElementById("DeRegisterForm_identifier_input").value=username;
-			document.getElementById("DeRegisterForm_secret_input").value=password;
+			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.loginCallback)
+//			document.getElementById("DeRegisterForm_identifier_input").value=username;
+//			document.getElementById("DeRegisterForm_secret_input").value=password;
 		}
 	}
 
@@ -222,9 +339,9 @@ console.log(theUri)
 	    	identifier: username,
 	    	secret: password
 	    }
-	    this.ajaxpost("/v1/login", data , this.myCallback)
-		document.getElementById("DeRegisterForm_identifier_input").value=username;
-		document.getElementById("DeRegisterForm_secret_input").value=password;
+	    this.ajaxpost("/v1/login", data , this.loginCallback)
+//		document.getElementById("DeRegisterForm_identifier_input").value=username;
+//		document.getElementById("DeRegisterForm_secret_input").value=password;
 	}
 
 	PageScript.prototype.byEmail = function() {
@@ -234,10 +351,19 @@ console.log(theUri)
 	}
 
 	PageScript.prototype.logoutCallback = function(status, text) {
-		console.log("logoutCallback")
-		var msg=self.processErrors(JSON.parse(text));
-		msg.callback=self.doLoadHome;
-		self.displayMsg(msg);	    		
+console.log("logoutCallback")
+		data=JSON.parse(text)
+		if (data.error)	self.displayError();
+		else {
+			var loc = '' +win.location
+			var newloc = loc.replace(self.QueryString.uris.SSL_LOGIN_BASE_URL, self.QueryString.uris.BASE_URL)
+			if (newloc!=loc) self.doRedirect( newloc );
+			self.isLoggedIn=false
+			self.refreshTheNavbar();
+			if (self.page=="account") {
+				self.displayTheSection("login");
+			}
+		}
 	}
 	
 	PageScript.prototype.doLoadHome = function() {
@@ -256,6 +382,7 @@ console.log(theUri)
 	}
 
 	PageScript.prototype.register = function() {
+		//document.getElementById('registration-keygenform').submit();
 	    credentialType = document.getElementById("RegistrationForm_credentialType_input").value;
 	    identifier = document.getElementById("RegistrationForm_identifier_input").value;
 	    secret = document.getElementById("RegistrationForm_secret_input").value;
