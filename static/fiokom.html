@@ -404,7 +404,7 @@ h3 {
 					</button>
 					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
 				</div>
-				<h4 id="registration-form-method-heading" >Regisztráció felhasználónév / jelszó segítségével</h4>
+				<h4 id="registration-form-method-heading" >Regisztráció email cím és/vagy felhasználónév és jelszó segítségével</h4>
 				<form id="registration-keygenform" method="post" action="/ada/v1/keygen" class="form">
 					<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
 					<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked="">
@@ -422,22 +422,26 @@ h3 {
 						</div>
 				</form>
 						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is. A felhasználónév minimum 4 max 255 karakter hosszú</p>
-			
+
+				<h4>Elkészítem a Titkos Kódom</h4>
+				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni.</p>
 				<div class="digest-input">
-					<p class="note">Az alábbi adatokat nem tárolja a rendszer. 
-											Az "titkos kód gép" szolgáltatással egy titkosított kódot generálunk belőle, amiből a személyi szám nem nyerhető vissza. 
-											A titkosított kódot magad is előállíthatod 
+					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
+						</div>
+							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
+							melyekből az eredeti adatok nem nyerhetők vissza. 
+							A Titkos Kódot magad is előállíthatod 
 						<a class="link" target="_blank" href="https://anchor.edemokraciagep.org"> itt</a>
-											, és akkor be kell másolnod a lenti "tikos kód" mezőbe</p>
+											, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
 				</div>
-					<h4>titkos kód</h4>
+				
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
 						<a href="https://testanchor.edemokraciagep.org" target="blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
 						</a>
 <div id="code-generation-input" class="form">
 						<div class="bordered">
-						<label for="input">Személyi szám:</label>
+						<label for="input">Személyi azonosító:</label>
 						<input type="text" placeholder="" id="RegistrationForm_predigest_input">
 						<label for="mothername">Anyja neve:</label>
 						<input type="text" placeholder="" id="RegistrationForm_predigest_mothername">
