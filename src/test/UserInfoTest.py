@@ -11,7 +11,6 @@ from pdoauth.AuthProvider import AuthProvider
 from pdoauth.models.AppAssurance import AppAssurance
 from pdoauth.models.AppMap import AppMap
 from test import config
-import pdb
 
 class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
 
