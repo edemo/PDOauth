@@ -652,35 +652,48 @@ console.log("logoutCallback")
 		else self.displayMsg({success:"<p class='success'>Hitelesítési mód sikeresen hozzáadva</p>", title:"", callback:self.get_me});
 	}
 
-	PageScript.prototype.deRegister = function() {
-		self.ajaxget( "/v1/users/me", self.doDeregister )
+
+	PageScript.prototype.doDeregister = function() {
+		if ( document.getElementById("accept_deregister").checked ) {
+			if ( self.QueryString.secret ) {
+				text = {	csrf_token: self.getCookie("csrf"),
+							deregister_secret: self.QueryString.secret
+							}
+				self.ajaxpost( "/v1/deregister_doit", text, self.deregisterCallback )
+			}
+			else {
+				var msg={ 	title:"Hibaüzenet",
+							error:"Hiányzik a hitelesítő token"}
+				self.displayMsg(msg);			
+			}
+		}
+		else {
+			var msg={ 	title:"Hibaüzenet",
+						error:"A fiók törlésével kapcsolatos figyelmeztetést tudomásul kell venni. (A checkbox-ot x-eld be!)"}
+			self.displayMsg(msg);	
+		}			
 	}
 	
 	PageScript.prototype.initiateDeregister = function(theForm) {
 		text = { csrf_token: self.getCookie("csrf") }
-		self.ajaxpost("/v1/users/deregister", text, self.myCallback)
+		self.ajaxpost("/v1/deregister", text, self.myCallback)
 	}
 	
-	PageScript.prototype.doDeregister = function(status, text) {
+	PageScript.prototype.deregisterCallback = function(status, text) {
 		if (status != 200) {
-			document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>Hibás autentikáció</p>";
-			return;
+			var data = JSON.parse(text);
+			var msg=self.processErrors(data)
 		}
 		else {
-			var data = JSON.parse(text);
-			text = {
-				csrf_token: self.getCookie("csrf"),
-				credentialType: "password",
-				identifier: document.getElementById("DeRegisterForm_identifier_input").value,
-				secret: document.getElementById("DeRegisterForm_secret_input").value
+			self.isLoggedIn=false
+			self.refreshTheNavbar();
+			if (self.page=="account") {
+				self.displayTheSection("login");
 			}
-			self.ajaxpost("/v1/deregister", text, function(status, text){
-				var data = JSON.parse(text);
-				var msg=self.processErrors(data)
-				msg.callback=self.get_me;
-				self.displayMsg(msg);
-			})
+			var msg=self.processErrors(data)
+			msg.callback=self.doRedirect(self.QueryString.uris.START_URL);
 		}
+		self.displayMsg(msg);
 	}
 			
 

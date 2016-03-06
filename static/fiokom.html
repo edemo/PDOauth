@@ -280,12 +280,10 @@ h3 {
                  </div><!--Navbar header End-->
                  	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
                         <ul class="nav navbar-nav navbar-right ">
-                           	<li><a href="./index.html#slider_part" class="page-scroll">Home </a></li>
-                            <li><a href="./index.html#service"  class="page-scroll">Mi ez?</a> </li>
-                            <li><a href="./index.html#about-details" class="page-scroll">Rólunk</a> </li>
-                            <li><a href="./index.html#team" class="page-scroll">A csapat</a> </li>
-                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li>
-                            <li><a href="./index.html#contact" class="page-scroll">Kapcsolat</a> </li>
+                           	<li><a href="./index.html" class="">Home </a></li>
+                            <li><a href="./user_howto.html"  class="">Hogyan működik?</a> </li>
+                            <li><a href="./about_us.html" class="">Rólunk</a> </li>
+<!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
 							<li id="nav-bar-login">
 								<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('login')">Bejelentkezés</a>
 							</li>
@@ -575,7 +573,7 @@ h3 {
 		<div class="func" id="email_verification_section">
 			<section class="container_">
 				<h3 class="title">Felhasználói fiók aktiválása</h3>
-				<p>A felhasználói fiókod aktiválása sikerült. Most már be tudsz jelentkezni. Ide még lehetne tenni egy linket a "fiókom" UI használatához.</p>
+				<p id="email_verification_message"></p>
 				<button type="button" onclick="javascript:pageScript.display('email_verification_section')">Ok</button>
 			</section>
 		</div>
@@ -590,7 +588,7 @@ h3 {
 				A <b>digitális igazolványaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi checkbox kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
 				<div class="example-send-yourself-copy">
-					<input type="checkbox" id="accept" name="accept" value="accept">
+					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
 					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
 				</div>
 				<button type="button" onclick="javascript:pageScript.doDeregister()">Törlöm a fiókom</button>
