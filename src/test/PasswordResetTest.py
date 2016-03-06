@@ -72,7 +72,17 @@ class PasswordResetTest(PDUnitTest, UserUtil):
         self.controller.doPasswordReset(form)
         with self.assertRaises(ReportedError) as context:
             self.controller.doPasswordReset(form)
-        self.assertTrue(context.exception.status,404)
+        self.assertEquals(context.exception.status,404)
+
+    @test
+    def password_reset_creates_password_if_it_does_not_exists(self):
+        form = self.createPasswordResetFormWithSecret()
+        user = User.getByEmail(self.userCreationEmail)
+        passcred = Credential.getByUser(user, "password")
+        passcred.rm()
+        self.controller.doPasswordReset(form)
+        newPassCred = Credential.getByUser(user, "password")
+        self.assertEqual(newPassCred.secret, CredentialManager.protect_secret(self.newPassword))
 
     @test
     def successful_password_clears_the_temporary_credential(self):

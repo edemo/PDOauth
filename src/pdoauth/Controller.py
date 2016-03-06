@@ -326,7 +326,11 @@ class Controller(
             Credential.deleteExpired(self.passwordResetCredentialType)
             raise ReportedError(['The secret has expired'], 404)
         passcred = Credential.getByUser(cred.user, 'password')
-        passcred.secret = CredentialManager.protect_secret(form.password.data)
+        protectedSecret = CredentialManager.protect_secret(form.password.data)
+        if not passcred:
+            passcred = Credential.new(cred.user, "password", cred.user.email, protectedSecret)
+        else:
+            passcred.secret = protectedSecret
         cred.rm()
         return self.simple_response('Password successfully changed')
 
