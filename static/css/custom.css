@@ -2649,3 +2649,7 @@ iframe{
     right: 10px;
     top: -10px;
 }
+
+#nav-bar-logout, #nav-bar-my_account, #nav-bar-register, #nav-bar-login {
+	display:none;
+}

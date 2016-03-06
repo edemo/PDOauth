@@ -34,30 +34,7 @@ function PageScript(test) {
 	this.isAssurer=false;
 	this.registrationMethode="pw";
 	
-	PageScript.prototype.setRegistrationMethode=function(methode){
-		self.registrationMethode=methode;
-		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) {e.className=e.className.replace(" active",""); console.log(e.className) } );
-		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
-		var heading
-		switch (methode) {
-			case "pw":
-				heading="felhasználónév / jelszó"
-				document.getElementById("registration-form-password-container").style.display="block";
-				document.getElementById("registration-form-username-container").style.display="block";
-			break;
-			case "fb":
-				heading="facebook fiókom"
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
-			break;
-			case "ssl":
-				heading="SSL kulcs"
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
-			break;
-		}
-		document.getElementById("registration-form-method-heading").innerHTML="Regisztráció "+heading+" használatával";
-	}
+
 	
 	PageScript.prototype.getThis=function() {
 		return this
@@ -425,23 +402,6 @@ console.log("logoutCallback")
 		self.doRedirect( newloc );
 	}
 
-	PageScript.prototype.register = function() {
-		//document.getElementById('registration-keygenform').submit();
-	    credentialType = document.getElementById("RegistrationForm_credentialType_input").value;
-	    identifier = document.getElementById("RegistrationForm_identifier_input").value;
-	    secret = document.getElementById("RegistrationForm_secret_input").value;
-	    email = document.getElementById("RegistrationForm_email_input").value;
-	    digest = document.getElementById("RegistrationForm_digest_input").value;
-	    text= {
-	    	credentialType: credentialType,
-	    	identifier: identifier,
-	    	secret: secret,
-	    	email: email,
-	    	digest: digest
-	    }
-	    this.ajaxpost("/v1/register", text, this.myCallback)
-	}
-	
 	PageScript.prototype.register_with_facebook = function(userId, accessToken, email) {
 	    username = userId;
 	    password = accessToken;
@@ -652,35 +612,48 @@ console.log("logoutCallback")
 		else self.displayMsg({success:"<p class='success'>Hitelesítési mód sikeresen hozzáadva</p>", title:"", callback:self.get_me});
 	}
 
-	PageScript.prototype.deRegister = function() {
-		self.ajaxget( "/v1/users/me", self.doDeregister )
+
+	PageScript.prototype.doDeregister = function() {
+		if ( document.getElementById("accept_deregister").checked ) {
+			if ( self.QueryString.secret ) {
+				text = {	csrf_token: self.getCookie("csrf"),
+							deregister_secret: self.QueryString.secret
+							}
+				self.ajaxpost( "/v1/deregister_doit", text, self.deregisterCallback )
+			}
+			else {
+				var msg={ 	title:"Hibaüzenet",
+							error:"Hiányzik a hitelesítő token"}
+				self.displayMsg(msg);			
+			}
+		}
+		else {
+			var msg={ 	title:"Hibaüzenet",
+						error:"A fiók törlésével kapcsolatos figyelmeztetést tudomásul kell venni. (A checkbox-ot x-eld be!)"}
+			self.displayMsg(msg);	
+		}			
 	}
 	
 	PageScript.prototype.initiateDeregister = function(theForm) {
 		text = { csrf_token: self.getCookie("csrf") }
-		self.ajaxpost("/v1/users/deregister", text, self.myCallback)
+		self.ajaxpost("/v1/deregister", text, self.myCallback)
 	}
 	
-	PageScript.prototype.doDeregister = function(status, text) {
+	PageScript.prototype.deregisterCallback = function(status, text) {
 		if (status != 200) {
-			document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>Hibás autentikáció</p>";
-			return;
+			var data = JSON.parse(text);
+			var msg=self.processErrors(data)
 		}
 		else {
-			var data = JSON.parse(text);
-			text = {
-				csrf_token: self.getCookie("csrf"),
-				credentialType: "password",
-				identifier: document.getElementById("DeRegisterForm_identifier_input").value,
-				secret: document.getElementById("DeRegisterForm_secret_input").value
+			self.isLoggedIn=false
+			self.refreshTheNavbar();
+			if (self.page=="account") {
+				self.displayTheSection("login");
 			}
-			self.ajaxpost("/v1/deregister", text, function(status, text){
-				var data = JSON.parse(text);
-				var msg=self.processErrors(data)
-				msg.callback=self.get_me;
-				self.displayMsg(msg);
-			})
+			var msg=self.processErrors(data)
+			msg.callback=self.doRedirect(self.QueryString.uris.START_URL);
 		}
+		self.displayMsg(msg);
 	}
 			
 

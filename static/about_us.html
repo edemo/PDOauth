@@ -64,15 +64,14 @@
                  </div><!--Navbar header End-->
                  	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
                         <ul class="nav navbar-nav navbar-right ">
-                           	<li><a href="index.html#slider_part" class="page-scroll">Home </a></li>
-                            <li><a href="index.html#service"  class="page-scroll">Mi ez?</a> </li>
-                            <li><a href="index.html#about-details" class="page-scroll">Rólunk</a> </li>
-                            <li><a href="index.html#team" class="page-scroll">A csapat</a> </li>
-                            <li><a href="index.html#blog" class="page-scroll">Blog</a> </li>
-                            <li><a href="index.html#contact" class="page-scroll">Kapcsolat</a> </li>
-							<li><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
-							<li class="my_account"><a href="./fiokom.html?section=account">Fiókom</a></li>
-							<li class="logout"><a href="javascipt:void">Kijelentkezés</a></li>
+                           	<li><a href="./index.html" class="">Home </a></li>
+                            <li><a href="./user_howto.html"  class="">Hogyan működik?</a> </li>
+                            <li><a href="./about_us.html" class="active">Rólunk</a></li>
+<!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
+							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
+							<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
+							<li id="nav-bar-my_account"><a href="./fiokom.html">Fiókom</a></li>
+							<li id="nav-bar-logout"><a href="javascript:void (0)" onclick="javascipt:pageScript.logout()">Kijelentkezés</a></li>
                         </ul>
                      </nav>
                 </div><!-- /.container-fluid -->
@@ -335,7 +334,7 @@ adataik feletti rendelkezést megtarthassák - az Adával elsősorban számukra 
 		<!-- pagescript -->
 		<script src="js/script.js"></script>
 		<!-- pagescript extension-->
-		<script src="js/account.js"></script>
+		<script src="js/base.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="fb.js"></script>
 	</body>

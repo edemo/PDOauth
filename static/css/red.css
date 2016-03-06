@@ -30,6 +30,9 @@
 ul.navbar-nav > .active > a{
     color:#EE3B24!important;
 }
+ul.navbar-nav  a.active {
+    color:#EE3B24!important;
+}
 ul.navbar-nav > li > a:hover{
     color:#EE3B24!important;
 }
