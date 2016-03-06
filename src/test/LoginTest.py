@@ -1,12 +1,13 @@
 from test.helpers.PDUnitTest import PDUnitTest, test
 from test.helpers.UserUtil import UserUtil
+from pdoauth.models.User import User
 
 class LoginTest(PDUnitTest, UserUtil):
     @test
     def password_login_works_with_username_and_password(self):
         form = self.prepareLoginForm()
         self.controller.doLogin(form)
-        self.assertTrue(self.userCreationEmail, self.controller.getCurrentUser().email)
+        self.assertEqual(self.userCreationEmail, self.controller.getCurrentUser().email)
 
     @test
     def login_sets_the_csrf_cookie(self):
@@ -28,3 +29,10 @@ class LoginTest(PDUnitTest, UserUtil):
     def authentication_with_bad_secret_is_rejected(self):
         form = self.prepareLoginForm(secret = self.mkRandomPassword())
         self.assertReportedError(self.controller.doLogin, [form], 403, ["Bad username or password"])
+
+    @test
+    def user_can_use_email_with_password_authentication(self):
+        form = self.prepareLoginForm()
+        form.vals['identifier'].data=self.userCreationEmail
+        self.controller.doLogin(form)
+        self.assertEqual(self.userCreationEmail, self.controller.getCurrentUser().email)
