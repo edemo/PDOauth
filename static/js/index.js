@@ -5,6 +5,7 @@
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		this.ajaxget("/adauris", this.uriCallback)
+
 	}
 
 	PageScript.prototype.uriCallback = function(status,text) {
@@ -18,6 +19,7 @@
 				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login',pageScript.initCallback, true)
 			}
 			self.ajaxget("/v1/users/me", self.initCallback)
+			self.getStatistics()
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
