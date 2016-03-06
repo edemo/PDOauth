@@ -60,15 +60,13 @@
                  </div><!--Navbar header End-->
                  	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
                         <ul class="nav navbar-nav navbar-right ">
-                           	<li class="active"> <a href="#slider_part" class="page-scroll">Home </a></li>
-                            <li><a href="#service"  class="page-scroll">Mi ez?</a></li>
-                            <li><a href="#about-details" class="page-scroll">Rólunk</a></li>
-                            <li><a href="#team" class="page-scroll">A csapat</a></li>
-                            <li><a href="#blog" class="page-scroll">Blog</a></li>
-                            <li><a href="#contact" class="page-scroll">Kapcsolat</a></li>
+                           	<li><a href="./index.html" class="active">Home </a></li>
+                            <li><a href="./user_howto.html"  class="">Hogyan működik?</a> </li>
+                            <li><a href="./about_us.html" class="">Rólunk</a> </li>
+<!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
 							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
-							<li id="nav-bar-register"><a href="./fiokom.html" class="page-scroll">Regisztráció</a></li>
-							<li id="nav-bar-my_account"><a href="./fiokom.html?section=account">Fiókom</a></li>
+							<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
+							<li id="nav-bar-my_account"><a href="./fiokom.html">Fiókom</a></li>
 							<li id="nav-bar-logout"><a href="javascript:void (0)" onclick="javascipt:pageScript.logout()">Kijelentkezés</a></li>
                         </ul>
                      </nav>
@@ -581,7 +579,7 @@ Csatlakozz közösségünkhöz, ahol nyilt forráskódú szoftvereket és közö
                                     <li><a href="https://plus.google.com/103027190788103881287"><i class="fa fa-google-plus"></i></a></li>
                                     <li><a href="https://www.linkedin.com/in/gy%C3%B6rgy-peng-1b150530"><i class="fa fa-linkedin-square"></i></a></li>
                                     <li><a href="https://github.com/Claymanus"><i class="fa fa-github"></i></a></li>
-                                    <li><a href=""><i class="fa fa-skype"></i></a></li>
+                                    <li><a href="mailto:gypeng@adatom.hu"><i class="fa fa-envelope"></i></a></li>
                                 </ul>
                                 <p>Azonnal visszatérünk a normális állapotokhoz, mihelyst bizonyosak leszünk abban, hogy mi is a normális</p>
                             </div>
@@ -602,10 +600,10 @@ Csatlakozz közösségünkhöz, ahol nyilt forráskódú szoftvereket és közö
                                     <li><a href=""><i class="fa fa-github"></i></a></li>
                                     <li><a href=""><i class="fa fa-skype"></i></a></li>
                                 </ul>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus dignissimos, maxime ea excepturi veritatis itaque. </p>
+                                <p>"Foied vinom pipafo, cra carefo" Ma bort iszom és holnap nem lesz </p>
                             </div>
                         </div>
-                        <h3>dr. Szabó Károly</h3>
+                        <h3>Szabó Károly</h3>
                         <h5>Szociológus<br>az irányító testület tagja</h5> 
                     </div>
                 </div>  <!-- item wrapper end -->
@@ -658,257 +656,6 @@ Csatlakozz közösségünkhöz, ahol nyilt forráskódú szoftvereket és közö
 <div class="clearfix"></div>
 
 
-<!-- bLOG Start -->
-<!-- temporaly hidden 
-<section id="blog">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="feature_header text-center">
-                    <h3 class="feature_title">Our <b>Blog</b></h3>
-                    <h4 class="feature_sub">Lorem ipsum dolor sit amet, consectetur adipisicing elit. </h4>
-                    <div class="divider"></div>
-                </div>
-            </div>  <!-- Col-md-12 End --
-        </div>
-        <div class="row">
-             <div class="blog-timeline">
-                <div id="owl-blog" class="owl-carousel owl-theme">
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                               <a href="blog-single.html"><img src="images/blog/pic3.jpg" alt="" class="img-responsive"></a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                                <a href="blog-single.html"><img src="images/blog/pic4.jpg" alt="" class="img-responsive"></a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                           <a href="blog-single.html"> <h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                                <a href="blog-single.html"><img src="images/blog/pic2.jpg" alt="" class="img-responsive"></a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                                <a href="blog-single.html"><img src="images/blog/pic5.jpg" alt="" class="img-responsive"> </a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                                <a href="blog-single.html"><img src="images/blog/pic1.jpg" alt="" class="img-responsive"></a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                                <a href="blog-single.html"><img src="images/blog/pic3.jpg" alt="" class="img-responsive"></a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                                <a href="blog-single.html"><img src="images/blog/pic2.jpg" alt="" class="img-responsive"></a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                               <a href="blog-single.html"><img src="images/blog/pic4.jpg" alt="" class="img-responsive"></a> 
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                                <a href="blog-single.html"><img src="images/blog/pic1.jpg" alt="" class="img-responsive"></a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                    <div class="item ">
-                        <div class="single_blog">
-                            <div class="post_img text-center">
-                                <a href="blog-single.html"><img src="images/blog/pic5.jpg" alt="" class="img-responsive"></a>
-                                <div class="post-date">
-                                    <span>25</span> 6
-                                </div>
-                            </div>
-                            <a href="blog-single.html"><h4>Lorem ipsum dolor sit amet</h4></a>
-                            <ul class="list-inline">
-                                <li> <i class="fa fa-pencil"></i> John Smith</li>
-                                <li> <i class="fa fa-comments"></i> 12</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus provident quae maxime consequuntur atque.</p>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- blog Timeline End --
-        </div>
-    </div>
-</section>
-<!-- bLOG End -->
-
-<!-- Client Carousel Start -->
-<!-- temporaly hidden
-  <section id="client">
-  	<div class="container">
-  	<h3 class="text-center wow slideInLeft">Regisztrált alkalmazások</h3>
-        <div class="row wow fadeInLeft">
-          <div id="client-carousel" class="col-sm-12 owl-carousel owl-theme text-center client-carousel">
-            <div class="item client_logo">
-              <a href="//patyicivil.hu">
-                <img src="images/clients/client1.png" alt="client" class="img-responsive">
-				patyicivil
-              </a>
-            </div>
-            <div class="item client_logo">
-              <a href="#">
-                <img src="images/clients/client2.png" alt="client" class="img-responsive">
-              </a>
-            </div>
-            <div class="item client_logo">
-              <a href="#">
-                <img src="images/clients/client3.png" alt="client" class="img-responsive">
-              </a>
-            </div>
-            <div class="item client_logo">
-              <a href="#">
-                <img src="images/clients/client4.png" alt="client" class="img-responsive">
-              </a>
-            </div>
-            <div class="item client_logo">
-              <a href="#">
-                <img src="images/clients/client5.png" alt="client" class="img-responsive">
-              </a>
-            </div>
-            <div class="item client_logo">
-              <a href="#">
-                <img src="images/clients/client6.png" alt="client" class="img-responsive">
-              </a>
-            </div>
-            <div class="item client_logo">
-              <a href="#">
-                <img src="images/clients/client7.png" alt="client" class="img-responsive">
-              </a>
-            </div>
-            <div class="item client_logo">
-              <a href="#">
-                <img src="images/clients/client8.png" alt="client" class="img-responsive">
-              </a>
-            </div>
-          </div><!-- Owl carousel end --
-        </div><!-- Main row end --
-  	</div>
-  </section>
-<!-- Client Carousel End -->
-
-<!-- Conatct Area Start-->
-
-<section id="contact">
-    <div class="container">
-        <div class="row">
-  			<div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="feature_header text-center">
-                    <h3 class="feature_title">Kapcsolatfelvétel</b></h3>
-                    <h4 class="feature_sub"><a class="contact" href="mailto:info@adatom.hu"><span class="fa fa-envelope-o"></span></a></h4>
-                </div>
-  			</div>
-        </div>
-    </div>
-</section>
 <!-- Footer Area Start -->
 
 <section id="footer">

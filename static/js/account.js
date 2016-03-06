@@ -28,7 +28,6 @@
 					self.unhideSection(self.QueryString.section+"_section")
 					break;
 				case "emailcheck" :
-					self.modNavbarItem();
 					self.QueryString.section="email_verification"
 					self.unhideSection(self.QueryString.section+"_section")
 					break;
@@ -90,10 +89,29 @@
 			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
 				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login',pageScript.initCallback, true)
 			}
+			if (self.QueryString.section && self.QueryString.section=="email_verification"){
+				if (self.QueryString.secret) self.verifyEmail()
+			}
 			self.ajaxget("/v1/users/me", self.initCallback)
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
+	
+	PageScript.prototype.verifyEmail=function() {
+		self.ajaxget( "/v1/verify_email/"+self.QueryString.secret, self.emailVerificationCallback )
+	}	
+	
+	PageScript.prototype.emailVerificationCallback=function(status, text) {
+		var message
+		if (status==200) {
+			message="Az email címed ellenőrzése sikerült."
+		}
+		else {
+			message="Az email címed ellenőrzése <b>nem</b> sikerült.<p></p>"+text
+		}
+		document.getElementById("email_verification_message").innerHTML=message
+	}
+	
 	PageScript.prototype.navigateToTheSection=function(section) {
 		if (self.QueryString.section) self.doRedirect(self.QueryString.uris.BASE_URL+"/fiokom.html");
 		else self.displayTheSection(section)
@@ -122,5 +140,55 @@
 		}
 	}
 	
+	PageScript.prototype.setRegistrationMethode=function(methode){
+		self.registrationMethode=methode;
+		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) {e.className=e.className.replace(" active",""); console.log(e.className) } );
+		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
+		var heading
+		switch (methode) {
+			case "pw":
+				heading="felhasználónév / jelszó"
+				document.getElementById("registration-form-password-container").style.display="block";
+				document.getElementById("registration-form-username-container").style.display="block";
+			break;
+			case "fb":
+				heading="facebook fiókom"
+				document.getElementById("registration-form-password-container").style.display="none";
+				document.getElementById("registration-form-username-container").style.display="none";
+			break;
+			case "ssl":
+				heading="SSL kulcs"
+				document.getElementById("registration-form-password-container").style.display="none";
+				document.getElementById("registration-form-username-container").style.display="none";
+			break;
+		}
+		document.getElementById("registration-form-method-heading").innerHTML="Regisztráció "+heading+" használatával";
+	}
+
+	PageScript.prototype.register = function(credentialtype) {
+		//document.getElementById('registration-keygenform').submit();
+	    var identifier = document.getElementById("RegistrationForm_identifier_input").value;
+	    var secret = document.getElementById("RegistrationForm_secret_input").value;
+	    var email = document.getElementById("RegistrationForm_email_input").value;
+	    var digest = document.getElementById("RegistrationForm_digest_input").value;
+	    text= {
+	    	credentialType: credentialType,
+	    	identifier: identifier,
+	    	secret: secret,
+	    	email: email,
+	    	digest: digest
+	    }
+	    this.ajaxpost("/v1/register", text, this.myCallback)
+	}
+	
+	PageScript.prototype.doRegister=function() {
+		var msg
+		switch (self.registrationMethode) {
+			case "pw":
+				if (msg=self.checkNeededInputGiven(fields)) displayMsg(msg);
+				else self.register("password")
+			break;
+		}
+	}
 }()
 )
