@@ -287,13 +287,13 @@ h3 {
                             <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li>
                             <li><a href="./index.html#contact" class="page-scroll">Kapcsolat</a> </li>
 							<li id="nav-bar-login">
-								<a href="javascript:void (0)" onclick="javascript:pageScript.displayTheSection('login')">Bejelentkezés</a>
+								<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('login')">Bejelentkezés</a>
 							</li>
 							<li id="nav-bar-register">
 								<a href="javascript:void (0)" onclick="javascript:pageScript.displayTheSection('register')">Regisztráció</a>
 							</li>
 							<li id="nav-bar-my_account">
-								<a href="javascript:void (0)" onclick="javascript:pageScript.displayTheSection('my_account')">Fiókom</a>
+								<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('my_account')">Fiókom</a>
 							</li>
 							<li id="nav-bar-logout">
 								<a href="javascript:void (0)" onclick="pageScript.logout()">Kijelentkezés</a>
@@ -532,6 +532,7 @@ h3 {
                                     <div class="c-tab">
                                          <h4><b>Beállítások</b></h4>
 										 <div id="me_Settings"></div>
+										 <button type="button" onclick="javascript:pageScript.initiateDeregister('userdata_editform')">Törlöm a fiókom</button>
                                     </div>
                                 </div>
                           </div>
@@ -544,6 +545,7 @@ h3 {
 											Ez a felület sajnos még nincs kész, de már dolgozunk rajta
                                          </p>
 										 <div id="me_Applications"></div>
+
                                     </div>
                                 </div>
                           </div>

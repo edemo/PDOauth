@@ -12,22 +12,28 @@
 				[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
 					break;
 				case "registration" :
-					document.getElementById("register_section").style.display="block"
+					self.QueryString.section="register"
+					self.unhideSection(self.QueryString.section+"_section")
 					break;
 				case "account" :
-					document.getElementById("my_account_section").style.display="block"
+					self.QueryString.section="my_account"
+					self.unhideSection(self.QueryString.section+"_section")
 					break;
 				case "pwreset" :
-					document.getElementById("password_reset_section").style.display="block"
+					self.QueryString.section="password_reset"
+					self.unhideSection(self.QueryString.section+"_section")
 					break;
 				case "deregistration" :
-					document.getElementById("deregistration_section").style.display="block"
+					self.QueryString.section="deregistration"
+					self.unhideSection(self.QueryString.section+"_section")
 					break;
 				case "emailcheck" :
-					document.getElementById("email_verification_section").style.display="block"
+					self.modNavbarItem();
+					self.QueryString.section="email_verification"
+					self.unhideSection(self.QueryString.section+"_section")
 					break;
 				case "login" :
-					document.getElementById("login_section").style.display="block"
+					self.unhideSection(section+"_section")
 					break;
 				default:
 			}
@@ -35,6 +41,9 @@
 		if (self.QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 		}
+	}
+	PageScript.prototype.modNavbarItem=function(){
+		document.getElementById("")
 	}
 	PageScript.prototype.hideAllSection=function(){
 		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
@@ -84,6 +93,10 @@
 			self.ajaxget("/v1/users/me", self.initCallback)
 		}
 		else self.displayMsg(self.processErrors(data));
+	}
+	PageScript.prototype.navigateToTheSection=function(section) {
+		if (self.QueryString.section) self.doRedirect(self.QueryString.uris.BASE_URL+"/fiokom.html");
+		else self.displayTheSection(section)
 	}
 	
 	PageScript.prototype.displayTheSection=function(section) {

@@ -92,6 +92,7 @@ function PageScript(test) {
 		l = []
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		var dataString = l.join("&")
+		console.log(uri+' - '+data)
 		xmlhttp.send( dataString );
 	}
 
@@ -127,58 +128,98 @@ console.log(theUri)
 			return msg;
 	}
 	
+	PageScript.prototype.parseSettings = function(data) {
+		var result = '\
+		<table>\
+			<tr>\
+				<td nowrap><b>E-mail cím:</b></td>\
+				<td id="email-change">\
+					<input type="text" value="'+data.email+'" id="userdata_editform_email_input">\
+					</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			<tr>\
+				<td nowrap><b>Titkós kód</b></td>\
+				<td>\
+					<pre><code>'+((data.hash)?data.hash:"")+'</code></pre>\
+				</td>\
+				<td>\
+					<a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a>\
+				</td>\
+		</table>\
+		<h4><b>Hitelesítési módjaim:</b></h4>\
+		<table>';
+		var c={	pw:["Jelszavas","password"],
+				fb:["Facebook","facebook"],
+				ssl:["SSL kulcs","certificate"] 
+				};
+		for( var i in c) {
+					result +='\
+			<tr id="'+i+'-credential-list">\
+				<th>'+c[i][0]+'</th>\
+				<th>\
+					<a onclick="javascript:pageScript.addItem(\"'+i+'\").edit" class="btn fa fa-plus"></a>\
+				</th>\
+			</tr>'
+			for(var j=0; j<data.credentials.length; j++) {
+				console.log(c[i][1]+' - '+data.credentials[j].credentialType)
+				if (data.credentials[j].credentialType==c[i][1]) {
+					result += '\
+			<tr>\
+				<td id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</td>\
+				<td>\
+					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\'password\')" class="btn fa fa-trash"></a>\
+				</td>\
+			</tr>'
+				}
+			}
+		}
+		result +='\
+		</table>'
+		return result;		
+	}
+	
 	PageScript.prototype.parseUserdata = function(data) {
-		userdata = '\
+		var result ='\
 		<table>\
-			<tr>\
-				<td><b>e-mail cím:</b></td>\
-				<td id="email-change">'+data.email+'</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
-			</tr>\
 			<tr>\
 				<td><b>felhasználó azonosító:</b></td>\
 				<td>'+data.userid+'</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
 			</tr>\
-			'
-		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
-		userdata +="<p><b>tanusítványok:</b></p>"
-		userdata +="</table><ul>"
-		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
-		userdata +="</ul>"
-		userdata +="<p><b>hitelesítési módok:</b></p>"
-		userdata +="<ul>"
-		for(i in data.credentials) userdata += "<li>"+data.credentials[i].credentialType+"</li>" ;
-		userdata +="</ul>"
-		return userdata;		
-	}
-		PageScript.prototype.parseSettings = function(data) {
-		userdata = '\
+		</table>\
+		<h4><b>Tanusítványaim:</b></h4>\
 		<table>\
-			<tr>\
-				<td><b>e-mail cím:</b></td>\
-				<td id="email-change">'+data.email+'</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
-			</tr>\
-			<tr>\
-				<td><b>felhasználó azonosító:</b></td>\
-				<td>'+data.userid+'</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
-			</tr>\
-			'
-		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
-		userdata +="<p><b>tanusítványok:</b></p>"
-		userdata +="</table><ul>"
-		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
-		userdata +="</ul>"
-		userdata +="<p><b>hitelesítési módok:</b></p>"
-		userdata +="<ul>"
-		for(i in data.credentials) userdata += "<li>"+data.credentials[i].credentialType+"</li>" ;
-		userdata +="</ul>"
-		return userdata;		
+			<thead>\
+				<tr>\
+					<th>Igazolvány</th>\
+					<th>Kiállító</th>\
+					<th>Kiállítás dátuma</th>\
+				</tr>\
+			<tbody>'
+		for(assurance in data.assurances) {
+			console.log(data.assurances[assurance])
+			for( var i=0; i<data.assurances[assurance].length; i++){
+				console.log(data.assurances[assurance][i])
+				result += '\
+				<tr>\
+					<td>'+data.assurances[assurance][i].name+'</td>\
+					<td>'+data.assurances[assurance][i].assurer+'</td>\
+					<td>'+self.timestampToString(data.assurances[assurance][i].timestamp)+'</td>\
+				</tr>'
+			}
+		}
+		result += '\
+			</tbody>\
+		</table>'
+		return result
 	}
-		PageScript.prototype.parseAssurancing = function(data) {
-		userdata = '\
+		PageScript.prototype.timestampToString=function(timestamp){
+			var date=new Date(timestamp*1000)
+			return date.toLocaleDateString();
+		}
+		
+	PageScript.prototype.parseAssurancing = function(data) {
+		var userdata = '\
 		<table>\
 			<tr>\
 				<td><b>e-mail cím:</b></td>\
@@ -220,9 +261,10 @@ console.log(theUri)
 	
 // oldie	
 	PageScript.prototype.myCallback = function(status, text) {
-		var data = JSON.parse(text);
 
-		
+		if (status!=500) {
+		var data = JSON.parse(text);
+	
 		if (status == 200 ) {
 			if( self.page=="account" && self.QueryString.next) {
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
@@ -231,6 +273,8 @@ console.log(theUri)
 			this.msg = self.processErrors(data)
 			this.msg.callback = self.get_me;
 			self.displayMsg(this.msg);
+		}
+		else console.log(text);
 	}
 
 	PageScript.prototype.doRedirect = function(href){ 
@@ -554,8 +598,8 @@ console.log("logoutCallback")
 	
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
-		self.doRemove = function() {
-			credentialType = document.getElementById(this.formName+"_credentialType").innerHTML;
+		self.doRemove = function(type) {
+			credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML;
 			identifier = document.getElementById(this.formName+"_identifier").innerHTML;
 			text = {
 				csrf_token: self.getCookie("csrf"),
@@ -607,13 +651,14 @@ console.log("logoutCallback")
 		if (status != 200) self.displayMsg({error:"<p class='warning'>"+data.errors+"</p>",title:"Hibaüzenet:"});
 		else self.displayMsg({success:"<p class='success'>Hitelesítési mód sikeresen hozzáadva</p>", title:"", callback:self.get_me});
 	}
-	
-	PageScript.prototype.initiateDeregister = function() {
-		self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/deregister", self.myCallback)
-	}
-	
+
 	PageScript.prototype.deRegister = function() {
 		self.ajaxget( "/v1/users/me", self.doDeregister )
+	}
+	
+	PageScript.prototype.initiateDeregister = function(theForm) {
+		text = { csrf_token: self.getCookie("csrf") }
+		self.ajaxpost("/v1/users/deregister", text, self.myCallback)
 	}
 	
 	PageScript.prototype.doDeregister = function(status, text) {
@@ -713,6 +758,21 @@ console.log("logoutCallback")
 	PageScript.prototype.queryString=function(){
 		this.secret=(self.QueryString.secret)?self.QueryString.secret:"";
 		this.section=(self.QueryString.section)?self.QueryString.section:"";
+	}
+	PageScript.prototype.getStatistics=function(){
+		this.ajaxget("/v1/statistics", self.statCallback)
+	}
+	
+	PageScript.prototype.statCallback=function(status, text) {
+		data=JSON.parse(text)
+		if (data.error)	self.displayError();
+		else {
+				document.getElementById("user-counter").innerHTML=data.users
+				document.getElementById("magyar-counter").innerHTML=data.assurances.teszt
+				document.getElementById("assurer-counter").innerHTML=data.assurances.assurer
+				document.getElementById("application-counter").innerHTML=data.applications
+			
+		}
 	}
 	
 	PageScript.prototype.refreshTheNavbar=function(){
