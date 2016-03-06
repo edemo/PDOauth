@@ -142,7 +142,7 @@
 	
 	PageScript.prototype.setRegistrationMethode=function(methode){
 		self.registrationMethode=methode;
-		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) {e.className=e.className.replace(" active",""); console.log(e.className) } );
+		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) { e.className=e.className.replace(" active",""); } );
 		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
 		var heading
 		switch (methode) {
@@ -155,6 +155,7 @@
 				heading="facebook fiókom"
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
+				facebook.fbregister()
 			break;
 			case "ssl":
 				heading="SSL kulcs"
@@ -167,10 +168,10 @@
 
 	PageScript.prototype.register = function(credentialtype) {
 		//document.getElementById('registration-keygenform').submit();
-	    var identifier = document.getElementById("RegistrationForm_identifier_input").value;
-	    var secret = document.getElementById("RegistrationForm_secret_input").value;
-	    var email = document.getElementById("RegistrationForm_email_input").value;
-	    var digest = document.getElementById("RegistrationForm_digest_input").value;
+	    var identifier = document.getElementById("registration-form__identifier_input").value;
+	    var secret = document.getElementById("registration-form__secret_input").value;
+	    var email = document.getElementById("registration-form__email_input").value;
+	    var digest = document.getElementById("registration-form__digest_input").value;
 	    text= {
 	    	credentialType: credentialType,
 	    	identifier: identifier,
@@ -182,12 +183,17 @@
 	}
 	
 	PageScript.prototype.doRegister=function() {
-		var msg
 		switch (self.registrationMethode) {
 			case "pw":
-				if (msg=self.checkNeededInputGiven(fields)) displayMsg(msg);
-				else self.register("password")
-			break;
+				self.register("password")
+				break;
+			case "fb":
+				self.register("facebook")
+				break;
+			case "ssl":
+				self.register("certificate")
+				break;
+			
 		}
 	}
 }()
