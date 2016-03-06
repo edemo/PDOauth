@@ -89,7 +89,7 @@ function FaceBook(pageScript) {
 		}
 	}
 
-	FaceBook.prototype.registerCallBack = function(response) {
+	FaceBook.prototype.registerCallBack_ = function(response) {
 		var self = this;
 	    self.loggedIn = response;
 		if (response.status === 'connected') {
@@ -110,6 +110,20 @@ function FaceBook(pageScript) {
 		    });
 		} else {
 		  self.pageScript.displayMsg({ title:"Facebook", error:'Facebook login is unsuccessful' })
+		} 
+	}
+	
+	FaceBook.prototype.registerCallBack = function(response) {
+		var self = this;
+	    self.loggedIn = response;
+		if (response.status === 'connected') {
+			FB.api('/me', function(response2) {
+				document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
+				document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
+				document.getElementById("registration-form_email_input").value=response2.email;
+		    });
+		} else {
+		  self.pageScript.displayMsg({ title:"Facebook hiba", error:'Nem sikerült adatot kapni a Facebook-tól' })
 		} 
 	}
 	
