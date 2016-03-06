@@ -26,7 +26,12 @@ class CredentialManager(object):
     def getCredentialFromForm(cls, form):
         cred = Credential.get('password', form.identifier.data)
         if cred is None:
-            return None
+            user = User.getByEmail(form.identifier.data)
+            if user is None:
+                return None
+            cred = Credential.getByUser(user, "password")
+            if cred is None:
+                return None
         hashed = cls.protect_secret(form.secret.data)
         if cred.secret == hashed:
             return cred
