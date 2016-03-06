@@ -34,30 +34,7 @@ function PageScript(test) {
 	this.isAssurer=false;
 	this.registrationMethode="pw";
 	
-	PageScript.prototype.setRegistrationMethode=function(methode){
-		self.registrationMethode=methode;
-		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) {e.className=e.className.replace(" active",""); console.log(e.className) } );
-		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
-		var heading
-		switch (methode) {
-			case "pw":
-				heading="felhasználónév / jelszó"
-				document.getElementById("registration-form-password-container").style.display="block";
-				document.getElementById("registration-form-username-container").style.display="block";
-			break;
-			case "fb":
-				heading="facebook fiókom"
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
-			break;
-			case "ssl":
-				heading="SSL kulcs"
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
-			break;
-		}
-		document.getElementById("registration-form-method-heading").innerHTML="Regisztráció "+heading+" használatával";
-	}
+
 	
 	PageScript.prototype.getThis=function() {
 		return this
@@ -425,23 +402,6 @@ console.log("logoutCallback")
 		self.doRedirect( newloc );
 	}
 
-	PageScript.prototype.register = function() {
-		//document.getElementById('registration-keygenform').submit();
-	    credentialType = document.getElementById("RegistrationForm_credentialType_input").value;
-	    identifier = document.getElementById("RegistrationForm_identifier_input").value;
-	    secret = document.getElementById("RegistrationForm_secret_input").value;
-	    email = document.getElementById("RegistrationForm_email_input").value;
-	    digest = document.getElementById("RegistrationForm_digest_input").value;
-	    text= {
-	    	credentialType: credentialType,
-	    	identifier: identifier,
-	    	secret: secret,
-	    	email: email,
-	    	digest: digest
-	    }
-	    this.ajaxpost("/v1/register", text, this.myCallback)
-	}
-	
 	PageScript.prototype.register_with_facebook = function(userId, accessToken, email) {
 	    username = userId;
 	    password = accessToken;

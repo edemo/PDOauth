@@ -409,17 +409,15 @@ h3 {
 					<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
 					<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked="">
 					<div id="registration-form-email-container" class="form-level">
-						<input class="input-block" name="email" type="text" placeholder="Email cím" id="KeygenForm_email_input">
+						<input class="input-block" name="email" type="text" placeholder="Email cím" id="registration-form_email_input">
 						<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
 					</div>
-				</form>			
-				<form id="registration-form" action="" method="post" name="registration" class="form">
 						<div id="registration-form-username-container" class="form-level">
-							<input class="input-block" name="username" type="text" placeholder="Felhasználónév (nem kötelező)" id="registration-form_username_input">
+							<input class="input-block" name="username" type="text" placeholder="Felhasználónév (nem kötelező)" id="registration-form_identifier_input">
 							<span class="form-icon_"><i class=" fa fa-user"></i></span>
 						</div>
 						<div id="registration-form-password-container" class="form-level">
-							<input class="input-block" type="text" placeholder="Jelszó" id="registration-form_password_input">
+							<input class="input-block" type="text" placeholder="Jelszó" id="registration-form_secret_input">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 				</form>
@@ -448,8 +446,8 @@ h3 {
 
 </div>
 </div>
-											<textarea class="digest" name="digest" type="text" id="RegistrationForm_digest_input"></textarea>
-				<button type="button" onclick="javascript:pageScript.login()">Regisztrálok</button>
+						<textarea class="digest" name="digest" type="text" id="RegistrationForm_digest_input"></textarea>
+				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
 			</section>
 		</div>
 	

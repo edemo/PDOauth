@@ -22,5 +22,11 @@
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
+	
+	PageScript.prototype.initCallback = function(status, text) {
+		self.isLoggedIn=(status == 200)
+		self.refreshTheNavbar()
+	}
+	
 }()
 )

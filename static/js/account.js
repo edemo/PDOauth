@@ -140,5 +140,55 @@
 		}
 	}
 	
+	PageScript.prototype.setRegistrationMethode=function(methode){
+		self.registrationMethode=methode;
+		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) {e.className=e.className.replace(" active",""); console.log(e.className) } );
+		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
+		var heading
+		switch (methode) {
+			case "pw":
+				heading="felhasználónév / jelszó"
+				document.getElementById("registration-form-password-container").style.display="block";
+				document.getElementById("registration-form-username-container").style.display="block";
+			break;
+			case "fb":
+				heading="facebook fiókom"
+				document.getElementById("registration-form-password-container").style.display="none";
+				document.getElementById("registration-form-username-container").style.display="none";
+			break;
+			case "ssl":
+				heading="SSL kulcs"
+				document.getElementById("registration-form-password-container").style.display="none";
+				document.getElementById("registration-form-username-container").style.display="none";
+			break;
+		}
+		document.getElementById("registration-form-method-heading").innerHTML="Regisztráció "+heading+" használatával";
+	}
+
+	PageScript.prototype.register = function(credentialtype) {
+		//document.getElementById('registration-keygenform').submit();
+	    var identifier = document.getElementById("RegistrationForm_identifier_input").value;
+	    var secret = document.getElementById("RegistrationForm_secret_input").value;
+	    var email = document.getElementById("RegistrationForm_email_input").value;
+	    var digest = document.getElementById("RegistrationForm_digest_input").value;
+	    text= {
+	    	credentialType: credentialType,
+	    	identifier: identifier,
+	    	secret: secret,
+	    	email: email,
+	    	digest: digest
+	    }
+	    this.ajaxpost("/v1/register", text, this.myCallback)
+	}
+	
+	PageScript.prototype.doRegister=function() {
+		var msg
+		switch (self.registrationMethode) {
+			case "pw":
+				if (msg=self.checkNeededInputGiven(fields)) displayMsg(msg);
+				else self.register("password")
+			break;
+		}
+	}
 }()
 )
