@@ -28,6 +28,7 @@ class Controller(
     noShowAuthorization = "no authorization to show other users"
     passwordResetSent = "Password reset email has successfully sent."
     cannotDeleteLoginCred = "You cannot delete the login you are using"
+    noSuchUser = "No such user"
 
     def setAuthUser(self, userid, authenticator):
         self.getSession()['auth_user']=(userid, authenticator)
@@ -273,6 +274,8 @@ class Controller(
 
     def getDataOfUserForAuthenticator(self, userid, authuser, authenticator):
         user = User.get(userid)
+        if not user:
+                raise ReportedError([self.noSuchUser], status=404)
         if self.doesUserAskOwnData(userid, authenticator):
             return self.shownDataForUser(user)
         if self.doesUserAskForOthersData(authuser, authenticator):

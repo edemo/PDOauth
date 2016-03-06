@@ -94,6 +94,16 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
         self.assertTrue(context.exception.status,403)
 
     @test
+    def querying_nonexistent_user_gives_404(self):
+        self._createAssurer()
+        with self.assertRaises(ReportedError) as context:
+            userid = self.controller.getCurrentUser().userid
+            self.controller.getSession()['auth_user'] =  (userid, userid)
+            resp = self.controller.doShowUser("nonexisting")
+            print resp
+        self.assertTrue(context.exception.status,404)
+
+    @test
     def users_with_assurer_assurance_can_get_user_by_email(self):
         self._createAssurer()
         self.setupRandom()
