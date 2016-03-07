@@ -10,8 +10,11 @@ class CertificateHandling(CryptoUtils):
         identifier, digest = self.parseCert(cert)
         Credential.new(user, "certificate", identifier, digest)
 
-    def registerAndLoginCertUser(self, email, cert):
-        cred = self.loginOrRegisterCertUser(cert, [email])
+    def registerAndLoginCertUser(self, form, cert):
+        cred = self.loginOrRegisterCertUser(cert, [form.email.data])
+        digestField = getattr(form, "digest", False)
+        if cred and digestField and digestField.data:
+            self.checkAndUpdateHash(form,cred.user)
         self.loginUser(cred)
 
     def extractCertFromForm(self, form):
@@ -32,13 +35,12 @@ class CertificateHandling(CryptoUtils):
         return resp
 
     def doKeygen(self, form):
-        email = form.email.data
         certAsPem, certObj = self.extractCertFromForm(form)
         user = self.getCurrentUser()
         if user.is_authenticated():
             self.addCertCredentialToUser(certAsPem, user)
         else:
-            self.registerAndLoginCertUser(email, certAsPem)
+            self.registerAndLoginCertUser(form, certAsPem)
         return self.createCertResponse(certObj)
 
     def getEmailFromQueryParameters(self):
