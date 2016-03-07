@@ -405,55 +405,56 @@ h3 {
 					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
 				</div>
 				<h4 id="registration-form-method-heading" >Regisztráció email cím és/vagy felhasználónév és jelszó segítségével</h4>
-				<form id="registration-keygenform" method="post" action="/ada/v1/keygen" class="form">
-					<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
-					<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked="">
-					<div id="registration-form-email-container" class="form-level">
-						<input class="input-block" name="email" type="text" placeholder="Email cím" id="registration-form_email_input">
-						<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
-					</div>
+				<form id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
+					<div class="form">
+						<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
+						<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked>
+						<div id="registration-form-email-container" class="form-level">
+							<input class="input-block" name="email" type="text" placeholder="Email cím" id="registration-form_email_input">
+							<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
+						</div>
 						<div id="registration-form-username-container" class="form-level">
 							<input class="input-block" name="username" type="text" placeholder="Felhasználónév (nem kötelező)" id="registration-form_identifier_input">
 							<span class="form-icon_"><i class=" fa fa-user"></i></span>
+							<p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
 						</div>
 						<div id="registration-form-password-container" class="form-level">
-							<input class="input-block" type="text" placeholder="Jelszó" id="registration-form_secret_input">
+							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
+							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
 						</div>
-				</form>
-						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is. A felhasználónév minimum 4 max 255 karakter hosszú</p>
-
+					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
 				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni.</p>
-				<div class="digest-input">
-					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
-						</div>
-							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
-							melyekből az eredeti adatok nem nyerhetők vissza. 
-							A Titkos Kódot magad is előállíthatod 
-						<a class="link" target="_blank" href="https://anchor.edemokraciagep.org"> itt</a>
-											, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
-				</div>
+				<p class="note">
+A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
+Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
+melyekből az eredeti adatok nem nyerhetők vissza. 
+A Titkos Kódot magad is előállíthatod 
+					<a class="link" target="_blank" href="https://anchor.edemokraciagep.org"> itt</a>, 
+és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe
+				</p>
 				
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
 						<a href="https://testanchor.edemokraciagep.org" target="blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
 						</a>
-<div id="code-generation-input" class="form">
-						<div class="bordered">
-						<label for="input">Személyi azonosító:</label>
-						<input type="text" placeholder="" id="RegistrationForm_predigest_input">
-						<label for="mothername">Anyja neve:</label>
-						<input type="text" placeholder="" id="RegistrationForm_predigest_mothername">
-						<button type="button" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">A kód előállítása</button><div class="monitor" id="RegistrationForm_monitor"></div>
-						<div id="message"></div>
-
-</div>
-</div>
-						<textarea class="digest" name="digest" type="text" id="registration-form_digest_input"></textarea>
+						<div id="code-generation-input" class="form">
+							<div class="bordered">
+								<label for="input">Személyi azonosító:</label>
+								<input type="text" placeholder="" id="registration-keygenform_predigest_input">
+								<label for="mothername">Anyja neve:</label>
+								<input type="text" placeholder="" id="registration-keygenform_predigest_mothername">
+								<button type="button" onclick="pageScript.digestGetter('registration-keygenform').getDigest()">A kód előállítása</button><div class="monitor" id="RegistrationForm_monitor"></div>
+								<div id="message"></div>
+							</div>
+						</div>
+						<textarea class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
+					</form>
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
 			</section>
 		</div>
+
 	
 <!-- End registration section -->	
 
@@ -739,5 +740,6 @@ h3 {
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
+		<iframe name="ssl" onload="console.log('loaded')"></iframe>
 	</body>
 </html>
