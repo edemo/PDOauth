@@ -166,12 +166,12 @@
 		document.getElementById("registration-form-method-heading").innerHTML="Regisztráció "+heading+" használatával";
 	}
 
-	PageScript.prototype.register = function(credentialtype) {
-		//document.getElementById('registration-keygenform').submit();
-	    var identifier = document.getElementById("registration-form__identifier_input").value;
-	    var secret = document.getElementById("registration-form__secret_input").value;
-	    var email = document.getElementById("registration-form__email_input").value;
-	    var digest = document.getElementById("registration-form__digest_input").value;
+	PageScript.prototype.register = function(credentialType) {
+		//
+	    var identifier = document.getElementById("registration-form_identifier_input").value;
+	    var secret = document.getElementById("registration-form_secret_input").value;
+	    var email = document.getElementById("registration-form_email_input").value;
+	    var digest = document.getElementById("registration-keygenform_digest_input").value;
 	    text= {
 	    	credentialType: credentialType,
 	    	identifier: identifier,
@@ -191,9 +191,9 @@
 				self.register("facebook")
 				break;
 			case "ssl":
-				self.register("certificate")
+				document.getElementById('registration-keygenform').submit();
+//				self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
 				break;
-			
 		}
 	}
 }()
