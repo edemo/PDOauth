@@ -137,8 +137,19 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
     @test
     def you_can_register_with_a_generated_certificate_via_keygen(self):
         self._sslRegister()
-        self.assertTrue(self.controller.getCurrentUser().email, self.userCreationEmail)
+        self.assertEqual(self.controller.getCurrentUser().email, self.userCreationEmail)
 
+    @test
+    def you_can_give_a_hash_with_ssl_registration(self):
+        self.setupUserCreationData()
+        data = dict(email=self.userCreationEmail, pubkey=SPKAC)
+        theHash = self.createHash()
+        data["digest"]= theHash
+        self.controller.doKeygen(FakeForm(data))
+        self.assertEqual(self.controller.getCurrentUser().email, self.userCreationEmail)
+        self.assertEqual(self.controller.getCurrentUser().hash, theHash)
+        
+        
     @test
     def registration_sets_the_csrf_cookie(self):
         form = self.prepareLoginForm()
