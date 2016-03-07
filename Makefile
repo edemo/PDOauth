@@ -86,7 +86,7 @@ killall: killserver killemail killanchor
 killanchor:
 	 make -C PDAnchor killserver
 
-xmldoc: doc/html/documentation.html doc/html/commitlog.html
+xmldoc: doc/xml/commitlog.xml doc/xml/doc.xml
 
 doc/xml/doc.xml: doc/xml/commitlog.xml doc/xml/buildinfo.xml doc/xml
 	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
