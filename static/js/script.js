@@ -344,8 +344,6 @@ console.log(theUri)
 		}
 		if (onerror==true) self.displayMsg({error:errorMsg, title:'Hibaüzenet'});
 		else {
-			username = encodeURIComponent(username);	
-			password = encodeURIComponent(password);
 			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.loginCallback)
 //			document.getElementById("DeRegisterForm_identifier_input").value=username;
 //			document.getElementById("DeRegisterForm_secret_input").value=password;
