@@ -57,7 +57,8 @@
 		$("#myModal").modal();
 		if (!msg.callback) msg.callback="";
 		this.msgCallback=msg.callback; //only for testing
-		document.getElementById("PopupWindow_CloseButton").onclick = function() {self.closePopup(msg.callback)}
+		document.getElementById("PopupWindow_CloseButton1").onclick = function() {self.closePopup(msg.callback)}
+		document.getElementById("PopupWindow_CloseButton2").onclick = function() {self.closePopup(msg.callback)}
 		document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
 		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_MessageDiv").innerHTML = "";
@@ -182,6 +183,23 @@
 	    this.ajaxpost("/v1/register", text, this.myCallback)
 	}
 	
+	PageScript.prototype.sslCallback=function() {
+		console.log("sslCallback")
+		response=document.getElementById("SSL").contentDocument.body.innerHTML
+		if (response=="") self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
+		else {
+			var msg
+			if (data=JSON.parse(response)) {
+				msg=self.processErrors(data)
+			}
+			else {
+				msg.title="Szerverhiba"
+				msg.error="response"
+			}
+			self.displayMsg(msg)
+		}
+	}	
+	
 	PageScript.prototype.doRegister=function() {
 		switch (self.registrationMethode) {
 			case "pw":
@@ -191,7 +209,11 @@
 				self.register("facebook")
 				break;
 			case "ssl":
+				self.isLoggedIn=true;
+				document.getElementById("SSL").onload=self.sslCallback;
+				self.displayTheSection()
 				document.getElementById('registration-keygenform').submit();
+				console.log("after submit")
 //				self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
 				break;
 		}

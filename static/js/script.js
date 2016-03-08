@@ -638,18 +638,15 @@ console.log("logoutCallback")
 	}
 	
 	PageScript.prototype.deregisterCallback = function(status, text) {
-		if (status != 200) {
-			var data = JSON.parse(text);
-			var msg=self.processErrors(data)
-		}
-		else {
+		var data = JSON.parse(text);
+		var msg=self.processErrors(data)
+		if (status == 200) {
 			self.isLoggedIn=false
 			self.refreshTheNavbar();
 			if (self.page=="account") {
 				self.displayTheSection("login");
 			}
-			var msg=self.processErrors(data)
-			msg.callback=self.doRedirect(self.QueryString.uris.START_URL);
+			msg.callback=function(){self.doRedirect(self.QueryString.uris.START_URL)};
 		}
 		self.displayMsg(msg);
 	}
