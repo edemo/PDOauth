@@ -28,7 +28,9 @@ class LoginIntegrationTest(IntegrationTest, UserTesting):
             resp = client.post(config.BASE_URL + '/v1/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
-            self.assertEqual('{{"errors": ["secret: Field must be at least 8 characters long.", "secret: password should contain lowercase", "secret: password should contain uppercase", "secret: password should contain digit", {0}]}}'.format(credErr),
+            self.assertEqual('{{"errors": ["secret: Field must be at least 8 characters long.",\
+ "secret: password should contain lowercase", "secret: password should contain uppercase",\
+ "secret: password should contain digit", {0}]}}'.format(credErr),
                 text)
 
     @test

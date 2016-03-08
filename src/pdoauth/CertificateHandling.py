@@ -4,6 +4,10 @@ import urlparse
 from pdoauth.ReportedError import ReportedError
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.CryptoUtils import CryptoUtils
+import pdoauth.I18n  # @UnusedImport
+
+youHaveToRegisterFirst = _("You have to register first")
+noCertificateGiven = _("No certificate given")
 
 class CertificateHandling(CryptoUtils):
     def addCertCredentialToUser(self, cert, user):
@@ -52,7 +56,7 @@ class CertificateHandling(CryptoUtils):
 
     def registerCertUser(self, email, identifier, digest, cred):
         if email is None:
-            raise ReportedError(["You have to register first"], 403)
+            raise ReportedError([youHaveToRegisterFirst], 403)
         theEmail = email[0]
         CredentialManager.create_user_with_creds("certificate", identifier, digest, theEmail)
         cred = Credential.get("certificate", identifier)
@@ -61,7 +65,7 @@ class CertificateHandling(CryptoUtils):
 
     def loginOrRegisterCertUser(self, cert, email):
         if cert is None or cert == '':
-            raise ReportedError(["No certificate given"], 403)
+            raise ReportedError([noCertificateGiven], 403)
         identifier, digest = self.parseCert(cert)
         cred = Credential.get("certificate", identifier)
         if cred is None:

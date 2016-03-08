@@ -3,6 +3,10 @@ from test.helpers.PDUnitTest import PDUnitTest, test
 from test.helpers.UserUtil import UserUtil
 from pdoauth.AuthProvider import AuthProvider
 from test.helpers.AuthProviderUtil import AuthProviderUtil
+from pdoauth.models.Application import Application
+from test import config
+from test.helpers.FakeInterFace import FakeInterface, FakeApp
+from pdoauth.ReportedError import ReportedError
 
 class AuthProviderTest(PDUnitTest, UserUtil, AuthProviderUtil):
 
@@ -11,7 +15,9 @@ class AuthProviderTest(PDUnitTest, UserUtil, AuthProviderUtil):
         self.app = self.createApp()
         self.createLoggedInUser()
         self.authProvider = AuthProvider(self.controller.interface)
+        self.authProvider.app = FakeApp()
         self.setDefaultParams()
+
     @test
     def code_can_be_obtained_in_auth_interface(self):
         self.callAuthInterface()
@@ -72,3 +78,21 @@ class AuthProviderTest(PDUnitTest, UserUtil, AuthProviderUtil):
         self.tokenParams['scope'] = None
         data = self.obtainCodeAndCallTokenInterface()
         self.assertCorrectKeysInTokenReply(data)
+
+    @test
+    def unauthenticated_user_is_redirected_to_login_page_when_tries_to_do_oauth_with_us_2(self):
+        controller=AuthProvider(FakeInterface())
+        controller.app = FakeApp()
+        redirectUri = 'https://client.example.com/oauth/redirect'
+        self.setupRandom()
+        appid = "app2-{0}".format(self.randString)
+        self.appsecret = "secret2-{0}".format(self.randString)
+        app = Application.new(appid, self.appsecret, redirectUri)
+        uri = "v1/oauth2/auth?response_type=code&client_id={0}&redirect_uri=https%3A%2F%2Fclient.example.com%2Foauth%2Fredirect".format(app.appid)
+        controller.interface.set_request_context(url=uri)
+        with self.assertRaises(ReportedError) as e:
+            controller.auth_interface()
+        self.assertEquals(302,e.exception.status)
+        print "\n", e.exception.uri
+        print e.exception.descriptor
+        self.assertTrue(e.exception.uri.startswith(config.BASE_URL + "/static/login.html"))

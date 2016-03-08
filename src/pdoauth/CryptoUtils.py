@@ -4,17 +4,17 @@ from M2Crypto import EVP, X509
 from OpenSSL import crypto
 import time
 from pdoauth.ReportedError import ReportedError
-import string
+from string import ascii_letters, digits
 import random
 
-UNICODE_ASCII_CHARACTERS = (string.ascii_letters.decode('ascii') +
-    string.digits.decode('ascii'))
+UNICODE_ASCII_CHARACTERS = (ascii_letters.decode('ascii') +  # @UndefinedVariable
+    digits.decode('ascii'))
 
 
 class CryptoUtils(object):
 
     def randomAsciiString(self, length):
-        return ''.join([random.choice(UNICODE_ASCII_CHARACTERS) for x in xrange(length)])
+        return ''.join([random.choice(UNICODE_ASCII_CHARACTERS) for x in xrange(length)])  # @UnusedVariable
 
     def contentsOfFileNamedInConfig(self, confkey):
         decorated = open(self.getConfig(confkey))

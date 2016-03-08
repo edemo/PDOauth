@@ -17,18 +17,42 @@ from pdoauth.models.Application import Application
 from pdoauth.models.AppMap import AppMap
 from pdoauth.models.AppAssurance import AppAssurance
 from pdoauth.Statistics import Statistics
+import I18n  # @UnusedImport
+
+anotherUserUsingYourHash = _("another user is using your hash")
+moreUsersWarning = _("More users with the same hash; specify both hash and email")
+noShowAuthorization = _("no authorization to show other users")
+passwordResetSent = _("Password reset email has been successfully sent.")
+cannotDeleteLoginCred = _("You cannot delete the login you are using")
+noSuchUser = _("No such user")
+badAuthHeader = _("bad Authorization header")
+noAuthorization = _("no authorization")
+authenticationNeeded = _("authentication needed")
+loggedOut = _('logged out')
+deregistrationEmailSent = _('deregistration email has been sent')
+secretIsNeededForDeregistrationDoit = _("secret is needed for deregistration_doit")
+notLoggedIn = _("not logged in")
+badDeregistrationSecret = _("bad deregistration secret")
+youAreDeregistered = _('you are deregistered')
+newHashRegistered = _('new hash registered')
+oldPasswordDoesNotMatch = _("old password does not match")
+passwordChangedSuccessfully = _('password changed succesfully')
+thisUserDoesNotHaveThatDigest = _('This user does not have that digest')
+noUserWithThisHash = _('No user with this hash')
+unknownToken = _("unknown token")
+emailVerifiedOK = _("email verified OK")
+invalidEmailAdress = _('Invalid email address')
+expiredToken = _("expired token")
+passwordSuccessfullyChanged = _('Password successfully changed')
+theSecretHasExpired = _('The secret has expired')
+noSuchCredential = _('No such credential')
+credentialRemoved = _('credential removed')
+addedAssurance = 'added assurance'
 
 class Controller(
         WebInterface, Responses, EmailHandling,
         LoginHandling,  CertificateHandling,
         Statistics):
-    anotherUserUsingYourHash = "another user is using your hash"
-    moreUsersWarning = \
-        "More users with the same hash; specify both hash and email"
-    noShowAuthorization = "no authorization to show other users"
-    passwordResetSent = "Password reset email has successfully sent."
-    cannotDeleteLoginCred = "You cannot delete the login you are using"
-    noSuchUser = "No such user"
 
     def setAuthUser(self, userid, authenticator):
         self.getSession()['auth_user']=(userid, authenticator)
@@ -41,18 +65,18 @@ class Controller(
         elif authHeader:
             headerSplit = authHeader.split(" ")
             if len(headerSplit)!= 2:
-                raise ReportedError(["bad Authorization header",authHeader], status=403)
+                raise ReportedError([badAuthHeader,authHeader], status=403)
             token = headerSplit[1]
             tokeninfo = TokenInfoByAccessKey.find(token).tokeninfo
             appid = tokeninfo.client_id
             targetuserid = tokeninfo.user_id
             self.setAuthUser(targetuserid, appid)
         else:
-            raise ReportedError(["no authorization"], status=403)
+            raise ReportedError([noAuthorization], status=403)
 
     def redirectIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
-            resp = self.error_response(["authentication needed"], 302)
+            resp = self.error_response([authenticationNeeded], 302)
             startUrl = self.app.config.get("START_URL")
             nextArg = {"next":self.getRequest().url}
             uri = "{1}?{0}".format(urlencode(nextArg), startUrl)
@@ -61,7 +85,7 @@ class Controller(
 
     def jsonErrorIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
-            raise ReportedError(["not logged in"], status=403)
+            raise ReportedError([notLoggedIn], status=403)
 
     def doLogin(self,form):
         credentialType = form.credentialType.data
@@ -72,11 +96,11 @@ class Controller(
 
     def doLogout(self):
         self.logOut()
-        return self.simple_response('logged out')
+        return self.simple_response(loggedOut)
 
     def doDeregister(self,form):
         self.sendDeregisterMail(self.getCurrentUser())
-        return self.simple_response('deregistration email has been sent')
+        return self.simple_response(deregistrationEmailSent)
 
     def removeCredentials(self, user):
         creds = Credential.getByUser(user)
@@ -97,13 +121,13 @@ class Controller(
         secret = form.deregister_secret.data
         if secret is None:
             raise ReportedError(
-                ["secret is needed for deregistration_doit"],400)
+                [secretIsNeededForDeregistrationDoit],400)
         deregistrationCredential = Credential.getBySecret('deregister', secret)
         if deregistrationCredential is None:
-            raise ReportedError(["bad deregistration secret"],400)
+            raise ReportedError([badDeregistrationSecret],400)
         user = deregistrationCredential.user
         self.removeUser(user)
-        return self.simple_response('you are deregistered')
+        return self.simple_response(youAreDeregistered)
 
     def isAnyoneHandAssurredOf(self, anotherUsers):
         for anotherUser in anotherUsers:
@@ -122,8 +146,8 @@ class Controller(
             anotherUsers = User.getByDigest(form.digest.data)
             if anotherUsers:
                 if self.isAnyoneHandAssurredOf(anotherUsers):
-                    raise ReportedError([self.anotherUserUsingYourHash], 400)
-                additionalInfo["message"] = self.anotherUserUsingYourHash
+                    raise ReportedError([anotherUserUsingYourHash], 400)
+                additionalInfo["message"] = anotherUserUsingYourHash
         user.hash = digest
         user.save()
         assurances = Assurance.listByUser(user)
@@ -135,7 +159,7 @@ class Controller(
     def doUpdateHash(self,form):
         user = self.getCurrentUser()
         additionalInfo  = self.checkAndUpdateHash(form,user)
-        return self.simple_response('new hash registered', additionalInfo)
+        return self.simple_response(newHashRegistered, additionalInfo)
 
     def doRegistration(self, form):
         cred = CredentialManager.create_user_with_creds(
@@ -158,11 +182,11 @@ class Controller(
         cred = Credential.getByUser(user, 'password')
         oldSecret = CredentialManager.protect_secret(form.oldPassword.data)
         if cred.secret != oldSecret:
-            raise ReportedError(["old password does not match"])
+            raise ReportedError([oldPasswordDoesNotMatch])
         secret = CredentialManager.protect_secret(form.newPassword.data)
         cred.secret = secret
         cred.save()
-        return self.simple_response('password changed succesfully')
+        return self.simple_response(passwordChangedSuccessfully)
 
     def doGetByEmail(self, email):
         current_user = self.getCurrentUser()
@@ -170,9 +194,9 @@ class Controller(
         if assurances.has_key('assurer'):
             user = User.getByEmail(email)
             if user is None:
-                raise ReportedError(["no such user"], status=404)
+                raise ReportedError([noSuchUser], status=404)
             return self.as_dict(user)
-        raise ReportedError(["no authorization"], status=403)
+        raise ReportedError([noAuthorization], status=403)
 
     def deleteDigestFromOtherUsers(self, user, digest):
         if digest:
@@ -184,14 +208,14 @@ class Controller(
 
     def assureExactlyOneUserInList(self, users):
         if len(users) == 0:
-            raise ReportedError(['No user with this hash'], 400)
+            raise ReportedError([noUserWithThisHash], 400)
         if len(users) > 1:
-            raise ReportedError([self.moreUsersWarning], 400)
+            raise ReportedError([moreUsersWarning], 400)
 
 
     def checkUserAgainsDigest(self, digest, user):
         if digest is not None and user.hash != digest:
-            raise ReportedError(['This user does not have that digest'], 400)
+            raise ReportedError([thisUserDoesNotHaveThatDigest], 400)
 
     def getUserForEmailAndOrHash(self, digest, email):
         if email:
@@ -212,7 +236,7 @@ class Controller(
     def assureUserHaveTheGivingAssurancesFor(self, neededAssurance):
         assurances = Assurance.getByUser(self.getCurrentUser())
         if not self.isAssuredToAddAssurance(assurances, neededAssurance):
-            raise ReportedError(["no authorization"], 403)
+            raise ReportedError([noAuthorization], 403)
 
     def doAddAssurance(self, form):
         neededAssurance = form.assurance.data
@@ -220,7 +244,7 @@ class Controller(
         user = self.getUserForEmailAndOrHash(
                 form.digest.data, form.email.data)
         Assurance.new(user, neededAssurance, self.getCurrentUser())
-        msg = "added assurance {0} for {1}".format(neededAssurance, user.email)
+        msg = '["{2}","{0}","{1}"]'.format(neededAssurance, user.email,addedAssurance)
         return self.simple_response(msg)
 
 
@@ -275,7 +299,7 @@ class Controller(
     def getDataOfUserForAuthenticator(self, userid, authuser, authenticator):
         user = User.get(userid)
         if not user:
-                raise ReportedError([self.noSuchUser], status=404)
+                raise ReportedError([noSuchUser], status=404)
         if self.doesUserAskOwnData(userid, authenticator):
             return self.shownDataForUser(user)
         if self.doesUserAskForOthersData(authuser, authenticator):
@@ -283,7 +307,7 @@ class Controller(
             if assurances.has_key('assurer'):
                 return self.shownDataForAssurer(user)
             else:
-                raise ReportedError([self.noShowAuthorization], status=403)
+                raise ReportedError([noShowAuthorization], status=403)
         return self.shownDataForApp(user, authenticator)
 
     def doShowUser(self, userid):
@@ -296,9 +320,9 @@ class Controller(
 
     def checkEmailverifyCredential(self, cred):
         if cred is None:
-            raise ReportedError(["unknown token"], 404)
+            raise ReportedError([unknownToken], 404)
         if cred.getExpirationTime() < time.time():
-            raise ReportedError(["expired token"], 400)
+            raise ReportedError([expiredToken], 400)
 
     def getCredentialForEmailverifyToken(self, token):
         cred = Credential.getBySecret('emailcheck', token)
@@ -310,21 +334,21 @@ class Controller(
         user = cred.user
         Assurance.new(user,emailVerification,user)
         cred.rm()
-        return self.simple_response("email verified OK")
+        return self.simple_response(emailVerifiedOK)
 
     def doSendPasswordResetEmail(self, email):
         user = User.getByEmail(email)
         if user is None:
-            raise ReportedError(['Invalid email address'])
+            raise ReportedError([invalidEmailAdress])
         self.sendPasswordResetMail(user)
-        return self.simple_response(self.passwordResetSent)
+        return self.simple_response(passwordResetSent)
 
     def doPasswordReset(self, form):
         cred = Credential.getBySecret(
             self.passwordResetCredentialType, form.secret.data)
         if cred is None or (cred.getExpirationTime() < time.time()):
             Credential.deleteExpired(self.passwordResetCredentialType)
-            raise ReportedError(['The secret has expired'], 404)
+            raise ReportedError([theSecretHasExpired], 404)
         passcred = Credential.getByUser(cred.user, 'password')
         protectedSecret = CredentialManager.protect_secret(form.password.data)
         if not passcred:
@@ -332,7 +356,7 @@ class Controller(
         else:
             passcred.secret = protectedSecret
         cred.rm()
-        return self.simple_response('Password successfully changed')
+        return self.simple_response(passwordSuccessfullyChanged)
 
 
     def isLoginCredential(self, form, session):
@@ -343,12 +367,12 @@ class Controller(
     def doRemoveCredential(self, form):
         session = self.getSession()
         if self.isLoginCredential(form, session):
-            raise ReportedError([self.cannotDeleteLoginCred],400)
+            raise ReportedError([cannotDeleteLoginCred],400)
         cred=Credential.get(form.credentialType.data, form.identifier.data)
         if cred is None:
-            raise ReportedError(['No such credential'], 404)
+            raise ReportedError([noSuchCredential], 404)
         cred.rm()
-        return self.simple_response('credential removed')
+        return self.simple_response(credentialRemoved)
 
     def doAddCredential(self, form):
         user = self.getCurrentUser()
