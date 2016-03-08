@@ -8,6 +8,7 @@ from test.helpers.FakeInterFace import FakeForm
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.User import User
 from uuid import uuid4
+from pdoauth.ReportedError import ReportedError
 
 class PasswordResetTest(PDUnitTest, UserUtil):
 
@@ -20,7 +21,7 @@ class PasswordResetTest(PDUnitTest, UserUtil):
     def password_reset_email_send_returns_success_message(self):
         status = self._sendPasswordResetEmail()
         self.assertEqual(status,200)
-        self.assertEqual(self.data['message'],"Password reset email has successfully sent.")
+        self.assertEqual(self.data['message'],"Password reset email has been successfully sent.")
 
     @test
     def the_reset_link_is_in_the_reset_email_in_correct_form(self):
@@ -64,6 +65,24 @@ class PasswordResetTest(PDUnitTest, UserUtil):
         self.controller.doPasswordReset(form)
         self.user = User.getByEmail(self.userCreationEmail)
         self.cred = Credential.getByUser(self.user, "password")
+
+    @test
+    def reusing_password_reset_secret_gives_error(self):
+        form = self.createPasswordResetFormWithSecret()
+        self.controller.doPasswordReset(form)
+        with self.assertRaises(ReportedError) as context:
+            self.controller.doPasswordReset(form)
+        self.assertEquals(context.exception.status,404)
+
+    @test
+    def password_reset_creates_password_if_it_does_not_exists(self):
+        form = self.createPasswordResetFormWithSecret()
+        user = User.getByEmail(self.userCreationEmail)
+        passcred = Credential.getByUser(user, "password")
+        passcred.rm()
+        self.controller.doPasswordReset(form)
+        newPassCred = Credential.getByUser(user, "password")
+        self.assertEqual(newPassCred.secret, CredentialManager.protect_secret(self.newPassword))
 
     @test
     def successful_password_clears_the_temporary_credential(self):

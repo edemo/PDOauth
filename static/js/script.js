@@ -31,7 +31,14 @@ function PageScript(test) {
     this.QueryString = QueryStringFunc();
     self.uribase=test.uribase;
 	this.isLoggedIn=false;
+	this.isAssurer=false;
+	this.registrationMethode="pw";
 	
+
+	
+	PageScript.prototype.getThis=function() {
+		return this
+	}
 	PageScript.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
 		if (win.XMLHttpRequest)
@@ -62,6 +69,7 @@ function PageScript(test) {
 		l = []
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		var dataString = l.join("&")
+		console.log(uri+' - '+data)
 		xmlhttp.send( dataString );
 	}
 
@@ -97,12 +105,113 @@ console.log(theUri)
 			return msg;
 	}
 	
+	PageScript.prototype.parseSettings = function(data) {
+		var result = '\
+		<table>\
+			<tr>\
+				<td nowrap><b>E-mail cím:</b></td>\
+				<td id="email-change">\
+					<input type="text" value="'+data.email+'" id="userdata_editform_email_input">\
+					</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			<tr>\
+				<td nowrap><b>Titkós kód</b></td>\
+				<td>\
+					<pre><code>'+((data.hash)?data.hash:"")+'</code></pre>\
+				</td>\
+				<td>\
+					<a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a>\
+				</td>\
+		</table>\
+		<h4><b>Hitelesítési módjaim:</b></h4>\
+		<table>';
+		var c={	pw:["Jelszavas","password"],
+				fb:["Facebook","facebook"],
+				ssl:["SSL kulcs","certificate"] 
+				};
+		for( var i in c) {
+					result +='\
+			<tr id="'+i+'-credential-list">\
+				<th>'+c[i][0]+'</th>\
+				<th>\
+					<a onclick="javascript:pageScript.addItem(\"'+i+'\").edit" class="btn fa fa-plus"></a>\
+				</th>\
+			</tr>'
+			for(var j=0; j<data.credentials.length; j++) {
+				console.log(c[i][1]+' - '+data.credentials[j].credentialType)
+				if (data.credentials[j].credentialType==c[i][1]) {
+					result += '\
+			<tr>\
+				<td id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</td>\
+				<td>\
+					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\'password\')" class="btn fa fa-trash"></a>\
+				</td>\
+			</tr>'
+				}
+			}
+		}
+		result +='\
+		</table>'
+		return result;		
+	}
+	
 	PageScript.prototype.parseUserdata = function(data) {
-		userdata = "<p><b>e-mail cím:</b> "+data.email+"</p>"
-		userdata +="<p><b>felhasználó azonosító:</b> "+data.userid+"</p>"
+		var result ='\
+		<table>\
+			<tr>\
+				<td><b>felhasználó azonosító:</b></td>\
+				<td>'+data.userid+'</td>\
+			</tr>\
+		</table>\
+		<h4><b>Tanusítványaim:</b></h4>\
+		<table>\
+			<thead>\
+				<tr>\
+					<th>Igazolvány</th>\
+					<th>Kiállító</th>\
+					<th>Kiállítás dátuma</th>\
+				</tr>\
+			<tbody>'
+		for(assurance in data.assurances) {
+			console.log(data.assurances[assurance])
+			for( var i=0; i<data.assurances[assurance].length; i++){
+				console.log(data.assurances[assurance][i])
+				result += '\
+				<tr>\
+					<td>'+data.assurances[assurance][i].name+'</td>\
+					<td>'+data.assurances[assurance][i].assurer+'</td>\
+					<td>'+self.timestampToString(data.assurances[assurance][i].timestamp)+'</td>\
+				</tr>'
+			}
+		}
+		result += '\
+			</tbody>\
+		</table>'
+		return result
+	}
+		PageScript.prototype.timestampToString=function(timestamp){
+			var date=new Date(timestamp*1000)
+			return date.toLocaleDateString();
+		}
+		
+	PageScript.prototype.parseAssurancing = function(data) {
+		var userdata = '\
+		<table>\
+			<tr>\
+				<td><b>e-mail cím:</b></td>\
+				<td id="email-change">'+data.email+'</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			<tr>\
+				<td><b>felhasználó azonosító:</b></td>\
+				<td>'+data.userid+'</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+			</tr>\
+			'
 		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
 		userdata +="<p><b>tanusítványok:</b></p>"
-		userdata +="<ul>"
+		userdata +="</table><ul>"
 		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
 		userdata +="</ul>"
 		userdata +="<p><b>hitelesítési módok:</b></p>"
@@ -111,17 +220,38 @@ console.log(theUri)
 		userdata +="</ul>"
 		return userdata;		
 	}
-
+	
+	PageScript.prototype.loginCallback=function(status, text){
+		var data = JSON.parse(text)
+		if (status == 200 ) {
+			self.isLoggedIn=true
+			self.get_me()
+			self.refreshTheNavbar()
+			self.displayTheSection()
+		}
+		else {
+			this.msg = self.processErrors(data)
+			this.msg.callback = self.get_me;
+			self.displayMsg(this.msg);			
+		}
+	}
+	
+// oldie	
 	PageScript.prototype.myCallback = function(status, text) {
+
+		if (status!=500) {
 		var data = JSON.parse(text);
-		if (status == 200) {
-			if(self.QueryString.next) {
+	
+		if (status == 200 ) {
+			if( self.page=="account" && self.QueryString.next) {
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
-		this.msg = self.processErrors(data)
-		this.msg.callback = self.get_me;
-		self.displayMsg(this.msg);
+			this.msg = self.processErrors(data)
+			this.msg.callback = self.get_me;
+			self.displayMsg(this.msg);
+		}
+		else console.log(text);
 	}
 
 	PageScript.prototype.doRedirect = function(href){ 
@@ -133,37 +263,51 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.initCallback = function(status, text) {
-		console.log(text)
 		var data = JSON.parse(text);
 		if (status != 200) {
-			self.menuHandler("login").menuActivate();
-			self.menuHandler("account").menuHide();
-			self.menuHandler("assurer").menuHide();
-			self.menuHandler("registration").menuUnhide();
+//			self.menuHandler("login").menuActivate();
+//			self.menuHandler("account").menuHide();
+//			self.menuHandler("assurer").menuHide();
+//			self.menuHandler("registration").menuUnhide();
 			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		}
 		else {
 			self.isLoggedIn=true
 			console.log(data)
-			if (!self.activeButton)	self.menuHandler("account").menuActivate();
-			else {
-				var a=["login", "register"];
-				if ( a.indexOf(self.activeButtonName) > -1 ) self.menuHandler("account").menuActivate();
-			}
-			self.menuHandler("login").menuHide();
-			self.menuHandler("registration").menuHide();
+//			if (!self.activeButton)	self.menuHandler("account").menuActivate();
+//			else {
+//				var a=["login", "register"];
+//				if ( a.indexOf(self.activeButtonName) > -1 ) self.menuHandler("account").menuActivate();
+//			}
+//			self.menuHandler("login").menuHide();
+//			self.menuHandler("registration").menuHide();
 			if (data.assurances) {
-				document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);
-				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
-				if (data.email) {
-					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
-					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
+				document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
+				document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
+//				document.getElementById("me_Applications").innerHTML=self.parseSettings(data);
+//				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
+//				if (data.email) {
+//					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
+//					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
+//				}
+				console.log(data)
+//				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
+//				else self.menuHandler("assurer").menuUnhide();
+				if (!(data.assurances.assurer)) self.isAssurer=false;
+				else {
+					self.isAssurer=true;
+					document.getElementById("assurance-giving").innerHTML=self.parseAssurancing(data);
 				}
-				console.log(data.assurances.assurer)
-				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
-				else self.menuHandler("assurer").menuUnhide();
 			}
-			self.fill_RemoveCredentialContainer(data);
+//			self.fill_RemoveCredentialContainer(data);
+		}
+		self.refreshTheNavbar()
+		if (self.page=="account") {
+			if (self.QueryString.section) {
+				if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+				else return;
+			}
+			else self.displayTheSection();
 		}
 	}
 
@@ -186,7 +330,7 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.login = function() {
-	    username = document.getElementById("LoginForm_username_input").value;
+	    username = document.getElementById("LoginForm_email_input").value;
 	    var onerror=false;
 		var errorMsg="";
 		if (username=="") {
@@ -202,9 +346,9 @@ console.log(theUri)
 		else {
 			username = encodeURIComponent(username);	
 			password = encodeURIComponent(password);
-			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.myCallback)
-			document.getElementById("DeRegisterForm_identifier_input").value=username;
-			document.getElementById("DeRegisterForm_secret_input").value=password;
+			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.loginCallback)
+//			document.getElementById("DeRegisterForm_identifier_input").value=username;
+//			document.getElementById("DeRegisterForm_secret_input").value=password;
 		}
 	}
 
@@ -216,9 +360,9 @@ console.log(theUri)
 	    	identifier: username,
 	    	secret: password
 	    }
-	    this.ajaxpost("/v1/login", data , this.myCallback)
-		document.getElementById("DeRegisterForm_identifier_input").value=username;
-		document.getElementById("DeRegisterForm_secret_input").value=password;
+	    this.ajaxpost("/v1/login", data , this.loginCallback)
+//		document.getElementById("DeRegisterForm_identifier_input").value=username;
+//		document.getElementById("DeRegisterForm_secret_input").value=password;
 	}
 
 	PageScript.prototype.byEmail = function() {
@@ -228,9 +372,19 @@ console.log(theUri)
 	}
 
 	PageScript.prototype.logoutCallback = function(status, text) {
-		var msg=self.processErrors(JSON.parse(text));
-		msg.callback=self.doLoadHome;
-		self.displayMsg(msg);	    		
+console.log("logoutCallback")
+		data=JSON.parse(text)
+		if (data.error)	self.displayError();
+		else {
+			var loc = '' +win.location
+			var newloc = loc.replace(self.QueryString.uris.SSL_LOGIN_BASE_URL, self.QueryString.uris.BASE_URL)
+			if (newloc!=loc) self.doRedirect( newloc );
+			self.isLoggedIn=false
+			self.refreshTheNavbar();
+			if (self.page=="account") {
+				self.displayTheSection("login");
+			}
+		}
 	}
 	
 	PageScript.prototype.doLoadHome = function() {
@@ -238,47 +392,16 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.logout = function() {
+				console.log("logout")
 	    this.ajaxget("/v1/logout", this.logoutCallback)
 	}
 
-	PageScript.prototype.uriCallback = function(status,text) {
-		var data = JSON.parse(text);
-		if (status==200) {
-			self.QueryString.uris = data
-			self.uribase = self.QueryString.uris.BACKEND_PATH;
-			keygenForm = document.getElementById("keygenform");
-			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
-			loc = '' + win.location
-			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
-				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login',pageScript.initCallback, true)
-			}
-			self.ajaxget("/v1/users/me", self.initCallback)
-		}
-		else self.displayMsg(self.processErrors(data));
-	}
-	
 	PageScript.prototype.sslLogin = function() {
 		var loc = '' +win.location
 		var newloc = loc.replace(self.QueryString.uris.BASE_URL, self.QueryString.uris.SSL_LOGIN_BASE_URL)
 		self.doRedirect( newloc );
 	}
 
-	PageScript.prototype.register = function() {
-	    credentialType = document.getElementById("RegistrationForm_credentialType_input").value;
-	    identifier = document.getElementById("RegistrationForm_identifier_input").value;
-	    secret = document.getElementById("RegistrationForm_secret_input").value;
-	    email = document.getElementById("RegistrationForm_email_input").value;
-	    digest = document.getElementById("RegistrationForm_digest_input").value;
-	    text= {
-	    	credentialType: credentialType,
-	    	identifier: identifier,
-	    	secret: secret,
-	    	email: email,
-	    	digest: digest
-	    }
-	    this.ajaxpost("/v1/register", text, this.myCallback)
-	}
-	
 	PageScript.prototype.register_with_facebook = function(userId, accessToken, email) {
 	    username = userId;
 	    password = accessToken;
@@ -435,8 +558,8 @@ console.log(theUri)
 	
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
-		self.doRemove = function() {
-			credentialType = document.getElementById(this.formName+"_credentialType").innerHTML;
+		self.doRemove = function(type) {
+			credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML;
 			identifier = document.getElementById(this.formName+"_identifier").innerHTML;
 			text = {
 				csrf_token: self.getCookie("csrf"),
@@ -488,35 +611,49 @@ console.log(theUri)
 		if (status != 200) self.displayMsg({error:"<p class='warning'>"+data.errors+"</p>",title:"Hibaüzenet:"});
 		else self.displayMsg({success:"<p class='success'>Hitelesítési mód sikeresen hozzáadva</p>", title:"", callback:self.get_me});
 	}
-	
-	PageScript.prototype.initiateDeregister = function() {
-		self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/deregister", self.myCallback)
-	}
-	
-	PageScript.prototype.deRegister = function() {
-		self.ajaxget( "/v1/users/me", self.doDeregister )
-	}
-	
-	PageScript.prototype.doDeregister = function(status, text) {
-		if (status != 200) {
-			document.getElementById("DeRegisterForm_ErrorMsg").innerHTML="<p class='warning'>Hibás autentikáció</p>";
-			return;
+
+
+	PageScript.prototype.doDeregister = function() {
+		if ( document.getElementById("accept_deregister").checked ) {
+			if ( self.QueryString.secret ) {
+				text = {	csrf_token: self.getCookie("csrf"),
+							deregister_secret: self.QueryString.secret
+							}
+				self.ajaxpost( "/v1/deregister_doit", text, self.deregisterCallback )
+			}
+			else {
+				var msg={ 	title:"Hibaüzenet",
+							error:"Hiányzik a hitelesítő token"}
+				self.displayMsg(msg);			
+			}
 		}
 		else {
+			var msg={ 	title:"Hibaüzenet",
+						error:"A fiók törlésével kapcsolatos figyelmeztetést tudomásul kell venni. (A checkbox-ot x-eld be!)"}
+			self.displayMsg(msg);	
+		}			
+	}
+	
+	PageScript.prototype.initiateDeregister = function(theForm) {
+		text = { csrf_token: self.getCookie("csrf") }
+		self.ajaxpost("/v1/deregister", text, self.myCallback)
+	}
+	
+	PageScript.prototype.deregisterCallback = function(status, text) {
+		if (status != 200) {
 			var data = JSON.parse(text);
-			text = {
-				csrf_token: self.getCookie("csrf"),
-				credentialType: "password",
-				identifier: document.getElementById("DeRegisterForm_identifier_input").value,
-				secret: document.getElementById("DeRegisterForm_secret_input").value
-			}
-			self.ajaxpost("/v1/deregister", text, function(status, text){
-				var data = JSON.parse(text);
-				var msg=self.processErrors(data)
-				msg.callback=self.get_me;
-				self.displayMsg(msg);
-			})
+			var msg=self.processErrors(data)
 		}
+		else {
+			self.isLoggedIn=false
+			self.refreshTheNavbar();
+			if (self.page=="account") {
+				self.displayTheSection("login");
+			}
+			var msg=self.processErrors(data)
+			msg.callback=self.doRedirect(self.QueryString.uris.START_URL);
+		}
+		self.displayMsg(msg);
 	}
 			
 
@@ -594,6 +731,36 @@ console.log(theUri)
 	PageScript.prototype.queryString=function(){
 		this.secret=(self.QueryString.secret)?self.QueryString.secret:"";
 		this.section=(self.QueryString.section)?self.QueryString.section:"";
+	}
+	PageScript.prototype.getStatistics=function(){
+		this.ajaxget("/v1/statistics", self.statCallback)
+	}
+	
+	PageScript.prototype.statCallback=function(status, text) {
+		data=JSON.parse(text)
+		if (data.error)	self.displayError();
+		else {
+				document.getElementById("user-counter").innerHTML=data.users
+				document.getElementById("magyar-counter").innerHTML=data.assurances.teszt
+				document.getElementById("assurer-counter").innerHTML=data.assurances.assurer
+				document.getElementById("application-counter").innerHTML=data.applications
+			
+		}
+	}
+	
+	PageScript.prototype.refreshTheNavbar=function(){
+		if (self.isLoggedIn) {
+			document.getElementById("nav-bar-login").style.display="none";
+			document.getElementById("nav-bar-register").style.display="none";
+			document.getElementById("nav-bar-my_account").style.display="block";
+			document.getElementById("nav-bar-logout").style.display="block";
+		}
+		else {
+			document.getElementById("nav-bar-my_account").style.display="none";
+			document.getElementById("nav-bar-logout").style.display="none";
+			document.getElementById("nav-bar-login").style.display="block";
+			document.getElementById("nav-bar-register").style.display="block";
+		}
 	}
 }
 

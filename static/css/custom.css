@@ -973,7 +973,7 @@ padding: 8px 15px;
 }
 
 .tab-content >.active{
-    margin-top: 55px;
+    margin-top: -18px;
 }
 .tab-content img{
     width: 90%;
@@ -1641,7 +1641,7 @@ padding: 8px 15px;
     color: #7F7F7F;
     padding: 15px 15px 12px;
     border-radius:0px;
-    text-transform: capitalize!important;
+/*    text-transform: capitalize!important; */
     padding-left: 70px;
 }
  .right textarea{
@@ -2648,4 +2648,8 @@ iframe{
     background: #EE3B24;
     right: 10px;
     top: -10px;
+}
+
+#nav-bar-logout, #nav-bar-my_account, #nav-bar-register, #nav-bar-login {
+	display:none;
 }

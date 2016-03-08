@@ -1,11 +1,10 @@
 (function(){	
 	var self;
-	PageScript.prototype.page = "index";
+	PageScript.prototype.page = "blog";
 
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		this.ajaxget("/adauris", this.uriCallback)
-
 	}
 
 	PageScript.prototype.uriCallback = function(status,text) {
@@ -28,5 +27,6 @@
 		self.isLoggedIn=(status == 200)
 		self.refreshTheNavbar()
 	}
+	
 }()
 )

@@ -5,7 +5,7 @@ checkall: install alltests xmldoc
 realclean:
 	rm -rf PDAnchor; git clean -fdx
 testenv:
-	docker run -p 5900:5900 -v $$(pwd):/PDOauth -it magwas/edemotest:master
+	docker run -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master
 
 static/qunit-1.18.0.js:
 	curl http://code.jquery.com/qunit/qunit-1.18.0.js -o static/qunit-1.18.0.js
@@ -28,7 +28,7 @@ jquery:
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
-alltests: tests integrationtests end2endtest
+alltests: tests integrationtests 
 
 onlyend2endtest: install testsetup runanchor runserver runemail testsetup waitbeforebegin firefoxtest
 
@@ -86,7 +86,7 @@ killall: killserver killemail killanchor
 killanchor:
 	 make -C PDAnchor killserver
 
-xmldoc: doc/html/documentation.html doc/html/commitlog.html
+xmldoc: doc/xml/commitlog.xml doc/xml/doc.xml
 
 doc/xml/doc.xml: doc/xml/commitlog.xml doc/xml/buildinfo.xml doc/xml
 	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
@@ -126,4 +126,7 @@ doc/static/docbook.css: static/docbook.css
 
 doc/html/documentation.html: doc/html/documentation.docbook doc/static/docbook.css
 	java -jar lib/saxon9he.jar -xsl:src/doc/docbook2html.xslt -s:doc/html/documentation.docbook >doc/html/documentation.html
+
+messages.pot:
+	pygettext -av src
 

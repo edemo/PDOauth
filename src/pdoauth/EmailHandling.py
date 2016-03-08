@@ -2,8 +2,6 @@
 from uuid import uuid4
 import time
 from pdoauth.models.Credential import Credential
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from flask_mail import Message
 
 class EmailData(object):

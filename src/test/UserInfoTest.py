@@ -91,7 +91,17 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
         target = User.getByEmail(self.userCreationEmail)
         with self.assertRaises(ReportedError) as context:
             self.showUserByCurrentUser(target.userid)
-        self.assertTrue(context.exception.status,403)
+        self.assertEqual(context.exception.status,403)
+
+    @test
+    def querying_nonexistent_user_gives_404(self):
+        self._createAssurer()
+        with self.assertRaises(ReportedError) as context:
+            userid = self.controller.getCurrentUser().userid
+            self.controller.getSession()['auth_user'] =  (userid, userid)
+            resp = self.controller.doShowUser("nonexisting")
+            print resp
+        self.assertEqual(context.exception.status,404)
 
     @test
     def users_with_assurer_assurance_can_get_user_by_email(self):
@@ -110,7 +120,7 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
         target = User.getByEmail(self.userCreationEmail)
         with self.assertRaises(ReportedError) as context:
             self.controller.doGetByEmail('u'+target.email)
-        self.assertTrue(context.exception.status,404)
+        self.assertEqual(context.exception.status,404)
 
     @test
     def users_without_assurer_assurance_cannot_get_user_by_email(self):
@@ -119,7 +129,7 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
         target = User.getByEmail(self.userCreationEmail)
         with self.assertRaises(ReportedError) as context:
             self.controller.doGetByEmail(target.email)
-        self.assertTrue(context.exception.status,403)
+        self.assertEqual(context.exception.status,403)
 
     @test
     def user_id_shown_to_the_application_differs_from_the_user_id(self):

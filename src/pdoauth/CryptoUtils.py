@@ -4,17 +4,18 @@ from M2Crypto import EVP, X509
 from OpenSSL import crypto
 import time
 from pdoauth.ReportedError import ReportedError
-import string
+from string import ascii_letters, digits
 import random
+from pdoauth.Messages import errorInCert
 
-UNICODE_ASCII_CHARACTERS = (string.ascii_letters.decode('ascii') +
-    string.digits.decode('ascii'))
+UNICODE_ASCII_CHARACTERS = (ascii_letters.decode('ascii') +  # @UndefinedVariable
+    digits.decode('ascii'))
 
 
 class CryptoUtils(object):
 
     def randomAsciiString(self, length):
-        return ''.join([random.choice(UNICODE_ASCII_CHARACTERS) for x in xrange(length)])
+        return ''.join([random.choice(UNICODE_ASCII_CHARACTERS) for x in xrange(length)])  # @UnusedVariable
 
     def contentsOfFileNamedInConfig(self, confkey):
         decorated = open(self.getConfig(confkey))
@@ -39,9 +40,8 @@ class CryptoUtils(object):
         try:
             x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
         except Exception:
-            raise ReportedError(["error in cert", cert],400)
+            raise ReportedError([errorInCert, cert],400)
         digest = x509.digest('sha1')
         commonName = x509.get_subject().commonName.encode('raw_unicode_escape').decode('utf-8')
         identifier = u"{0}/{1}".format(digest, commonName)
         return identifier, digest
-

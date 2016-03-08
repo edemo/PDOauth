@@ -205,6 +205,53 @@ span.form-icon_ {
     color: #DDD;
     top: 4px;
 }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+th:first-child, td:first-child {
+    padding-left: 0;
+}
+
+th, td {
+    border-bottom: .1rem solid #e1e1e1;
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+}
+
+.main-tab-content .c-tab a.btn {
+background-color: #EE3B24;
+    border: 1px solid #EE3B24;
+	color: #fff;
+}
+
+.main-tab-content .c-tab a.btn:hover {
+background-color: #000;
+border: 1px solid #000;
+	color: #fff;
+}
+#registration-form-method-selector button.active{
+	background-color:black;
+}
+#code-generation-input{
+	display: none;
+}
+.bordered {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    background-color: #FFFEF8;
+}
+
+.bordered input {
+background-color: #fff}
 
 @media (min-width: 40rem){
 h1 {
@@ -233,13 +280,22 @@ h3 {
                  </div><!--Navbar header End-->
                  	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
                         <ul class="nav navbar-nav navbar-right ">
-                           	<li><a href="./index.html#slider_part" class="page-scroll">Home </a></li>
-                            <li><a href="./index.html#service"  class="page-scroll">Mi ez?</a> </li>
-                            <li><a href="./index.html#about-details" class="page-scroll">Rólunk</a> </li>
-                            <li><a href="./index.html#team" class="page-scroll">A csapat</a> </li>
-                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li>
-                            <li><a href="./index.html#contact" class="page-scroll">Kapcsolat</a> </li>
-							<li class="active"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a> </li>
+                           	<li><a href="./index.html" class="">Home </a></li>
+                            <li><a href="./user_howto.html"  class="">Hogyan működik?</a> </li>
+                            <li><a href="./about_us.html" class="">Rólunk</a> </li>
+<!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
+							<li id="nav-bar-login">
+								<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('login')">Bejelentkezés</a>
+							</li>
+							<li id="nav-bar-register">
+								<a href="javascript:void (0)" onclick="javascript:pageScript.displayTheSection('register')">Regisztráció</a>
+							</li>
+							<li id="nav-bar-my_account">
+								<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('my_account')">Fiókom</a>
+							</li>
+							<li id="nav-bar-logout">
+								<a href="javascript:void (0)" onclick="pageScript.logout()">Kijelentkezés</a>
+							</li>
                         </ul>
                      </nav>
                 </div><!-- /.container-fluid -->
@@ -272,7 +328,7 @@ h3 {
 
 		</div>
 	</div>
-
+		<div id="message" class="message-hidden"><div>
 		<div class="func" id="login_section">
 			<section class="container_">
 				<h3 class="title">Bejelentkezés</h3>
@@ -290,7 +346,7 @@ h3 {
                 <button class="social inactive" title="Pinterest bejlentkezés" type="button" onclick="">
 					<i class="fa fa-github"></i>
 				</button>
-                <button class="social ssl" title="Bejlentkezés SSL kulccsal" type="button" onclick="">SSL</button>
+                <button class="social ssl" title="Bejlentkezés SSL kulccsal" type="button" onclick="javascript:pageScript.sslLogin()">SSL</button>
 				<p></p>
 				<form id="loginform" action="" method="post" name="login">
 					<fieldset>
@@ -301,7 +357,7 @@ h3 {
 						</div>
 						<div class="form-level">
 						<!-- label for="LoginForm_password_input">Jelszó:</label -->
-						<input class="input-block" type="text" placeholder="*********" id="LoginForm_password_input">
+						<input class="input-block" type="password" placeholder="*********" id="LoginForm_password_input">
 						<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 						<button type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
@@ -319,82 +375,86 @@ h3 {
 				</form>
 			</section>
 			<a name="feltetelek"></a>
-			<section class="container_" >
-				<h4>Még nincs fiókom</h4>
-			<section>
-			<section class="container_ form">
-				<form>
-					<button type="button" onclick="javascript:pageScript.display('login_section','registration_section')">Regisztrálok</button>
-				</form>
-			</section>
 		</div>
 <!-- End login section -->
 	
 <!-- Regisztration -->
-		<div class="func" id="registration_section">
+		<div class="func" id="register_section">
 			<section class="container_">
 				<h3 class="title">Regisztráció</h3>
 			</section>
 			<section class="container_ ">
-				<form id="keygenform" method="post" action="/ada/v1/keygen">
-					<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
-					<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked="">
-					<div class="form">
-						<label for="LoginForm_username_input">Email cím:</label>
-						<input name="email" type="text" placeholder="pikurics13@valahol.hu" id="KeygenForm_email_input">
-					</div>
-				</form>
-				<p><b>Válaszd ki hogyan akarsz regisztrálni</b></p>
-				<button class="social" title="felhasználónév + jelszó" type="button" onclick="javascript:pageScript.login()">
-					<i class="fa fa-tag"></i>
-				</button>
-				<button class="social" title="Facebook fiókkal" type="button" onclick="javascript:pageScript.login()">
-					<i class="fa fa-facebook"></i>
-				</button>
-				<button class="social inactive" title="Google+ fiókkal" type="button" onclick="">
-					<i class="fa fa-google-plus"></i>
-				</button>
-                <button class="social inactive" title="Twitter fiókkal" type="button" onclick="">
-					<i class="fa fa-twitter"></i>
-				</button>
-                <button class="social inactive" title="Github fiókkal" type="button" onclick="">
-					<i class="fa fa-github"></i>
-				</button>
-                <button class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="document.getElementById('keygenform').submit();">SSL</button>
-				<form id="RegistrationForm" action="" method="post" name="registration">
-					<fieldset>
-						<label for="LoginForm_username_input">Felhasználónév (nem kötelező)</label>
-						<input name="username" type="text" placeholder="Pikurics13" id="LoginForm_username_input">
-						<label for="LoginForm_password_input">Jelszó:</label>
-						<input type="text" placeholder="*********" id="LoginForm_password_input">
-						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is. A felhasználónév minimum 4 max 255 karakter hosszú</p>
 			
-				<div class="digest-input">
-					<p class="note">Az alábbi adatokat nem tárolja a rendszer. 
-											Az "titkos kód gép" szolgáltatással egy titkosított kódot generálunk belőle, amiből a személyi szám nem nyerhető vissza. 
-											A titkosított kódot magad is előállíthatod 
-						<a class="link" target="_blank" href="https://anchor.edemokraciagep.org"> itt</a>
-											, és akkor be kell másolnod a lenti "tikos kód" mezőbe</p>
-					<label>személyi szám:</label>
-					<input name="digest" type="text" id="RegistrationForm_predigest_input">
-					<label>Anyja neve:</label>
-					<input name="digest" type="text" id="RegistrationForm_predigest_mothername" onkeyup="PageScript.convert_mothername('RegistrationForm')">
-					<input type="text" id="RegistrationForm_predigest_label_mothername_normalized">
-
-					<button class="button" type="button" id="RegistrationForm_getDigestButton" onclick="pageScript.digestGetter('RegistrationForm').getDigest()">Titkos kód létrehozása</button>
+				<H4>Válaszd ki hogyan akarsz regisztrálni</h4>
+				<div id="registration-form-method-selector" class="form">
+					<button id="registration-form-method-selector-pw" class="social active" title="felhasználónév + jelszó" type="button" onclick="javascript:pageScript.setRegistrationMethode('pw')">
+						<i class="fa fa-tag"></i>
+					</button>
+					<button id="registration-form-method-selector-fb" class="social" title="Facebook fiókkal" type="button" onclick="javascript:pageScript.setRegistrationMethode('fb')">
+						<i class="fa fa-facebook"></i>
+					</button>
+					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button" onclick="">
+						<i class="fa fa-google-plus"></i>
+					</button>
+					<button id="registration-form-method-selector-tw" class="social inactive" title="Twitter fiókkal" type="button" onclick="">
+						<i class="fa fa-twitter"></i>
+					</button>
+					<button id="registration-form-method-selector-git" class="social inactive" title="Github fiókkal" type="button" onclick="">
+						<i class="fa fa-github"></i>
+					</button>
+					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
 				</div>
-												<label>titkos kód:</label>
-											<textarea class="digest" name="digest" type="text" id="RegistrationForm_digest_input"></textarea>
-		
-										<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is. A felhasználónév minimum 4 max 255 karakter hosszú</p>
-			
-
-
-				<button type="button" onclick="javascript:pageScript.login()">Regisztrálok</button>
-									</fieldset>
-									</form>
+				<h4 id="registration-form-method-heading" >Regisztráció email cím és/vagy felhasználónév és jelszó segítségével</h4>
+				<form id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
+					<div class="form">
+						<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
+						<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked>
+						<div id="registration-form-email-container" class="form-level">
+							<input class="input-block" name="email" type="text" placeholder="Email cím" id="registration-form_email_input">
+							<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
+						</div>
+						<div id="registration-form-username-container" class="form-level">
+							<input class="input-block" name="username" type="text" placeholder="Felhasználónév (nem kötelező)" id="registration-form_identifier_input">
+							<span class="form-icon_"><i class=" fa fa-user"></i></span>
+							<p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
+						</div>
+						<div id="registration-form-password-container" class="form-level">
+							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
+							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
+							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
+						</div>
+					</div>
+				<h4>Elkészítem a Titkos Kódom</h4>
+				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni.</p>
+				<p class="note">
+A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
+Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
+melyekből az eredeti adatok nem nyerhetők vissza. 
+A Titkos Kódot magad is előállíthatod 
+					<a class="link" target="_blank" href="https://anchor.edemokraciagep.org"> itt</a>, 
+és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe
+				</p>
+				
+						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
+						<a href="https://testanchor.edemokraciagep.org" target="blank">
+							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
+						</a>
+						<div id="code-generation-input" class="form">
+							<div class="bordered">
+								<label for="input">Személyi azonosító:</label>
+								<input type="text" placeholder="" id="registration-keygenform_predigest_input">
+								<label for="mothername">Anyja neve:</label>
+								<input type="text" placeholder="" id="registration-keygenform_predigest_mothername">
+								<button type="button" onclick="pageScript.digestGetter('registration-keygenform').getDigest()">A kód előállítása</button><div class="monitor" id="RegistrationForm_monitor"></div>
+								<div id="message"></div>
+							</div>
+						</div>
+						<textarea class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
+					</form>
+				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
 			</section>
 		</div>
+
 	
 <!-- End registration section -->	
 
@@ -403,6 +463,112 @@ h3 {
 			<section class="container_">
 				<h3 class="title">Fiókom</h3>
 			</section>
+			<section>
+				<div class="container">
+
+					<div class="row">
+            <div class="feature-tab">
+               <div class="col-md-2 col-sm-3 col-xs-12">
+                    <ul class="nav nav-tabs main-tab-list text-center" role="tablist">
+					
+                          <li role="presentation" class="active">
+                            <a href="#1" role="tab" data-toggle="tab" >
+                              <div class="single-tab">
+                                    <div class="f-icon">
+                                        <i class="fa fa-table"></i>
+                                    </div>
+                                </div>
+                                 <h4>Adataim</h4>
+                            </a>
+                          </li>
+						  
+                          <li role="presentation">
+                            <a href="#2" role="tab" data-toggle="tab">
+                                <div class="single-tab">
+                                    <div class="f-icon">
+                                        <i class="fa fa-wrench"></i>
+                                    </div>
+                                </div>
+                                <h4>Beállítások</h4>
+                            </a>
+                          </li>
+						  
+                          <li role="presentation">
+                            <a href="#3" role="tab" data-toggle="tab">
+                                <div class="single-tab">
+                                    <div class="f-icon">
+                                        <i class="fa fa-cubes"></i>
+                                    </div>
+                                </div>
+                                <h4>Alkalmazásaim</h4>
+                            </a>
+                          </li>
+						  
+                          <li role="presentation"  class="func" id="assurer_section">
+                            <a href="#4" role="tab" data-toggle="tab">
+                                <div class="single-tab">
+                                    <div class="f-icon">
+                                        <i class="fa fa-user-secret"></i>
+                                    </div>
+                                </div>
+                                <h4>Tanusítói felület</h4>
+                            </a>
+                          </li>
+						  
+                    </ul>
+                </div>  <!-- col-md-12 end -->
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    <div class="tab-content main-tab-content">
+                          <div role="tabpanel" class="tab-pane active " id="1">
+                                <div class="col-md-12 col-sm-9">
+                                    <div class="c-tab">
+                                         <h4><b>Adataim</b></h4>
+                                         <div id="me_Data"></div>
+                                    </div>
+                                </div> 
+                          </div>
+						  
+                          <div role="tabpanel" class="tab-pane" id="2">
+                                <div class="col-md-12 col-sm-9">
+                                    <div class="c-tab">
+                                         <h4><b>Beállítások</b></h4>
+										 <div id="me_Settings"></div>
+										 <button type="button" onclick="javascript:pageScript.initiateDeregister('userdata_editform')">Törlöm a fiókom</button>
+                                    </div>
+                                </div>
+                          </div>
+						  
+                          <div role="tabpanel" class="tab-pane" id="3">
+                                <div class="col-md-12 col-sm-9">
+                                    <div class="c-tab">
+                                         <h4><b>Alkalmazásaim</b></h4>
+                                         <p>
+											Ez a felület sajnos még nincs kész, de már dolgozunk rajta
+                                         </p>
+										 <div id="me_Applications"></div>
+
+                                    </div>
+                                </div>
+                          </div>
+						  
+                          <div role="tabpanel" class="tab-pane" id="4">
+                               <div class="col-md-12 col-sm-9">
+                                    <div class="c-tab">
+                                         <h4><b>Tanusítói felület</b></h4>
+                                         <div id="check-the-user" ></div>
+										 <div id="assurance-giving" ></div>
+                                    </div>
+                                </div>
+                          </div>
+                      </div>
+                </div>
+
+                 
+            </div>
+        </div>
+    </div>
+</section>
+<!-- About us End -->
 		</div>
 <!-- End my account section -->
 
@@ -410,7 +576,7 @@ h3 {
 		<div class="func" id="email_verification_section">
 			<section class="container_">
 				<h3 class="title">Felhasználói fiók aktiválása</h3>
-				<p>A felhasználói fiókod aktiválása sikerült. Most már be tudsz jelentkezni. Ide még lehetne tenni egy linket a "fiókom" UI használatához.</p>
+				<p id="email_verification_message"></p>
 				<button type="button" onclick="javascript:pageScript.display('email_verification_section')">Ok</button>
 			</section>
 		</div>
@@ -425,7 +591,7 @@ h3 {
 				A <b>digitális igazolványaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi checkbox kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
 				<div class="example-send-yourself-copy">
-					<input type="checkbox" id="accept" name="accept" value="accept">
+					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
 					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
 				</div>
 				<button type="button" onclick="javascript:pageScript.doDeregister()">Törlöm a fiókom</button>
@@ -441,10 +607,11 @@ h3 {
 			<section class="container_ form">
 				<form id="PasswordResetForm">
 					<fieldset>
+						<label for="PasswordResetForm_password_input">Az emial-ből jött titok:</label>
 						<input type="text" class="disabled" id="PasswordResetForm_secret_input">
-						<label for="PasswordResetForm_password_input">Jelszó:</label>
-						<input type="text" placeholder="*********" id="PasswordResetForm_password_input">
-						<button type="button" onclick="javascript:pageScript.login()">Jelszó mentése</button>
+						<label for="PasswordResetForm_password_input">Új jelszó:</label>
+						<input type="password" placeholder="*********" id="PasswordResetForm_password_input">
+						<button type="button" onclick="javascript:pageScript.doPasswordReset()">Jelszó mentése</button>
 					</fieldset>
 				</form>
 			</section>
@@ -572,6 +739,7 @@ h3 {
 		<!-- pagescript extension-->
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
-		<script type='text/javascript' src="fb.js"></script>
+		<script type='text/javascript' src="js/fb.js"></script>
+		<iframe name="ssl" onload="console.log('loaded')"></iframe>
 	</body>
 </html>

@@ -2,6 +2,13 @@
 from wtforms import validators
 from flask.globals import session
 from wtforms.validators import ValidationError
+from pdoauth.Messages import credErrString, passwordShouldContainLowercase, passwordShouldContainUppercase,\
+    passwordShouldContainDigit, secretShouldContainLowercase,\
+    secretShouldContainDigit
+
+credentialTypes = ['password', 'facebook', 'certificate']
+
+credErr = '"{0} {1}."'.format(credErrString, ", ".join(credentialTypes))
 
 def csrfCheck(self, field):
     if not session.has_key('csrf_token'):
@@ -12,18 +19,17 @@ def csrfCheck(self, field):
 
 def optional(validator):
     return [validators.Optional()] + validator
-credentialTypes = ['password', 'facebook', 'certificate']
-credErr = '"credentialType: Invalid value, must be one of: {0}."'.format(", ".join(credentialTypes))
+
 
 credentialValidator = [validators.AnyOf(values=credentialTypes)]
 userNameValidator = [validators.Length(min=4, max=250)]
 passwordValidator = [validators.Length(min=8),
-                     validators.Regexp(".*[a-z].*", message="password should contain lowercase"),
-                     validators.Regexp(".*[A-Z].*", message="password should contain uppercase"),
-                     validators.Regexp(".*[0-9].*", message="password should contain digit")]
+                     validators.Regexp(".*[a-z].*", message=passwordShouldContainLowercase),
+                     validators.Regexp(".*[A-Z].*", message=passwordShouldContainUppercase),
+                     validators.Regexp(".*[0-9].*", message=passwordShouldContainDigit)]
 secretValidator = [validators.Length(min=8),
-                     validators.Regexp(".*[a-z].*", message="password should contain lowercase"),
-                     validators.Regexp(".*[0-9].*", message="password should contain digit")]
+                     validators.Regexp(".*[a-z].*", message=secretShouldContainLowercase),
+                     validators.Regexp(".*[0-9].*", message=secretShouldContainDigit)]
 emailValidator = [validators.Email()]
 digestValidator = [validators.Length(min=128, max=128), validators.regexp("[0-9A-Fa-f]*")]
 assuranceValidator = [validators.Length(min=4, max=50)]

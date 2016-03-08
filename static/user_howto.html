@@ -64,15 +64,14 @@
                  </div><!--Navbar header End-->
                  	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
                         <ul class="nav navbar-nav navbar-right ">
-                           	<li class="active"> <a href="#slider_part" class="page-scroll">Home </a></li>
-                            <li><a href="index.html#service"  class="page-scroll">Mi ez?</a> </li>
-                            <li><a href="index.html#about-details" class="page-scroll">Rólunk</a> </li>
-                            <li><a href="index.html#team" class="page-scroll">A csapat</a> </li>
-                            <li><a href="index.html#blog" class="page-scroll">Blog</a> </li>
-                            <li><a href="index.html#contact" class="page-scroll">Kapcsolat</a> </li>
-							<li><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
-							<li class="my_account"><a href="./fiokom.html?section=account">Fiókom</a></li>
-							<li class="logout"><a href="javascipt:void">Kijelentkezés</a></li>
+                           	<li><a href="./index.html" class="">Home </a></li>
+                            <li><a href="./user_howto.html" class="active">Hogyan működik?</a> </li>
+                            <li><a href="./about_us.html" class="">Rólunk</a> </li>
+<!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
+							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
+							<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
+							<li id="nav-bar-my_account"><a href="./fiokom.html">Fiókom</a></li>
+							<li id="nav-bar-logout"><a href="javascript:void (0)" onclick="javascipt:pageScript.logout()">Kijelentkezés</a></li>
                         </ul>
                      </nav>
                 </div><!-- /.container-fluid -->
@@ -99,6 +98,38 @@
                 <!-- Portfolio item slider start -->
             <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                  <div class="blog-desc">
+					<div id="sort">
+						<h3>Röviden</h3>
+						<p>
+Regisztrálj az ADA-ba meglévő Facebook fiókoddal! De a hagyományos 
+felhasználónév/jelszó adatok megadásával, valamint a modern SSL kulcs módszerrel 
+is megteheted. Egy működő e-mail címre mindenképpen szükség lesz.
+A regisztráció feltétele, hogy megismerd és elfogadd a 
+<a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">felhasználási feltételeket</a>, 
+és az <a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">adatkezelési szabályzatunkat.</a>
+						</p>
+						<p>kép</p>
+						<p>
+Az e-mail címedre küldjük el a fiókod aktiválásához szükséges információkat. 
+Ha nem érkezik meg rövid időn belül, akkor nézd meg a spam mappában is.
+<b>Kattints a visszaigazoló email linkjére</b> és jöhet a következő lépés! 
+						</p>
+						<p>kép</p>
+						<p>
+<b>Lépj be a szolgáltatásba</b> az a regisztrációnál használt módszerrel (fb, jelszó, SSL) ..
+Ha a regisztráció során még nem tetted volna meg, <b>készíts magadnak egy Titkos Kódot</b>.
+Ezt a kódot a egy algoritmus néhány személyes adatodból készíti el. Az így kapott titkos kód ellenőrzésre szolgál és csak a tiéd.
+						</p>
+						<p>
+<b>Igényelj magyar igazolást!</b>
+A saját fiókodban kattints a "magyar igazolás igénylése" gombra, majd figyeld az email-fiókodat.
+(Majd ha ilyen lesz, addig csak írj egy emailt a neked szimpatikus tanusítónak.)
+Hamarosan emailben jelentkezünk, hogy hol és mikor tudjuk kiadni az igazolást. Ehhez személyesen is találkoznunk kell.
+						</p>
+						<p>
+Kérdéseid vannak? Nézd meg a legyakoribb kérdésekre adott válaszainkat! link a gyikre
+						</p>
+					</div>
 					<div id="registration">
 						<h3>Regisztráció</h3>
 					</div>
@@ -304,7 +335,7 @@
 		<!-- pagescript -->
 		<script src="js/script.js"></script>
 		<!-- pagescript extension-->
-		<script src="js/account.js"></script>
+		<script src="js/base.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="fb.js"></script>
 	</body>

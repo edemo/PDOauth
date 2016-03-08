@@ -3,6 +3,7 @@ from flask_login import logout_user
 from integrationtest import config
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from test.helpers.CryptoTestUtil import SPKAC
 
 class RegistrationIntegrationTest(IntegrationTest, UserTesting):
 
@@ -63,3 +64,17 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
             self.assertEquals(resp.status_code, 400)
             text = self.getResponseText(resp)
             self.assertTrue(text.startswith('{"errors": ["identifier: '))
+
+    @test
+    def you_can_give_a_hash_with_ssl_registration(self):
+        self.setupUserCreationData()
+        with app.test_client() as client:
+            data = dict(email=self.userCreationEmail, pubkey=SPKAC)
+            theHash = self.createHash()
+            data["digest"]= theHash
+            resp = client.post(config.BASE_URL + '/v1/keygen', data=data)
+            self.assertEqual(resp.status_code, 200)
+            resp = client.get(config.BASE_URL + '/v1/users/me')
+            respData = resp.data
+            self.assertTrue(self.userCreationEmail in respData)
+            self.assertTrue(theHash in respData)

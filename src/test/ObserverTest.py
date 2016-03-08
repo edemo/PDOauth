@@ -22,4 +22,3 @@ class ObserverTest(PDUnitTest):
         observable = TestObservable()
         observable.notify("event")
         self.assertTrue(TestObserver.eventFired)
- 
