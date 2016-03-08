@@ -21,7 +21,7 @@ class PasswordResetTest(PDUnitTest, UserUtil):
     def password_reset_email_send_returns_success_message(self):
         status = self._sendPasswordResetEmail()
         self.assertEqual(status,200)
-        self.assertEqual(self.data['message'],"Password reset email has successfully sent.")
+        self.assertEqual(self.data['message'],"Password reset email has been successfully sent.")
 
     @test
     def the_reset_link_is_in_the_reset_email_in_correct_form(self):

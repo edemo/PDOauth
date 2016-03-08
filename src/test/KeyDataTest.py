@@ -4,7 +4,7 @@ from pdoauth.models.KeyData import KeyData
 class KeyDataTest(Fixture):
 
     def setUp(self):
-        kd = KeyData('client_id2', 'user_id2', 'access_key2', 'refresh_key2', 'authorization_code2')
+        KeyData('client_id2', 'user_id2', 'access_key2', 'refresh_key2', 'authorization_code2')
 
     @test  
     def KeyData_can_be_created_with_client_id__user_id__acess_key__refresh_key_and_authorization_code(self):
