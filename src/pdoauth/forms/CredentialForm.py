@@ -1,8 +1,7 @@
 from pdoauth.models.Credential import Credential
 from wtforms.validators import ValidationError
 from pdoauth.forms.LoginForm import LoginForm
-
-thereIsAlreadyAUserWithThatUsername = _("There is already a user with that username")
+from pdoauth.Messages import thereIsAlreadyAUserWithThatUsername
 
 class CredentialForm(LoginForm):
     def validate_identifier(self, field):

@@ -7,21 +7,11 @@ from pdoauth.Responses import Responses
 from pdoauth.ReportedError import ReportedError
 from pdoauth.CryptoUtils import CryptoUtils
 from collections import namedtuple
-import pdoauth.I18n  # @UnusedImport
+from pdoauth.Messages import invalidGrant, invalidClient,\
+    missingParameterUrlQuery, missingParameterResponse, missingParameterClientId,\
+    missingRequiredParam, unsupportedGrantType, unsupportedResponseType,\
+    unauthorizedClient, invalidRequest, invalidScope, accessDenied
 
-
-missingParameterUrlQuery = _('Missing parameter redirect_uri in URL query')
-missingParameterResponse = _('Missing parameter response_type in URL query')
-missingParameterClientId = _('Missing parameter client_id in URL query')
-unsupportedGrantType = _('unsupported_grant_type')
-invalidClient = _('invalid_client')
-unsupportedResponseType = _('unsupported_response_type')
-unauthorizedClient = _('unauthorized_client')
-invalidScope = _('invalid_scope')
-invalidRequest = _('Invalid request')
-accessDenied = _('access_denied')
-invalidGrant = _('invalid_grant')
-missingRequiredParam = "Missing required OAuth 2.0 POST param"
 
 TokenInfo = namedtuple('TokenInfo','access_token, token_type, expires_in, refresh_token')
 class AuthProvider(WebInterface, Responses, CryptoUtils):

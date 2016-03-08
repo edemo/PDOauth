@@ -2,16 +2,12 @@
 from wtforms import validators
 from flask.globals import session
 from wtforms.validators import ValidationError
-import pdoauth.I18n
+from pdoauth.Messages import credErrString, passwordShouldContainLowercase, passwordShouldContainUppercase,\
+    passwordShouldContainDigit, secretShouldContainLowercase,\
+    secretShouldContainDigit
 
 credentialTypes = ['password', 'facebook', 'certificate']
 
-passwordShouldContainLowercase = _("password should contain lowercase")
-passwordShouldContainUppercase = _("password should contain uppercase")
-passwordShouldContainDigit = _("password should contain digit")
-secretShouldContainLowercase = _("secret should contain lowercase")
-secretShouldContainDigit = _("secret should contain digit")
-credErrString = _("credentialType: Invalid value, must be one of:")
 credErr = '"{0} {1}."'.format(credErrString, ", ".join(credentialTypes))
 
 def csrfCheck(self, field):

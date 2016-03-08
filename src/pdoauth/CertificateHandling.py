@@ -4,10 +4,8 @@ import urlparse
 from pdoauth.ReportedError import ReportedError
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.CryptoUtils import CryptoUtils
-import pdoauth.I18n  # @UnusedImport
-
-youHaveToRegisterFirst = _("You have to register first")
-noCertificateGiven = _("No certificate given")
+from pdoauth.Messages import noCertificateGiven
+from pdoauth.LoginHandling import youHaveToRegisterFirst
 
 class CertificateHandling(CryptoUtils):
     def addCertCredentialToUser(self, cert, user):

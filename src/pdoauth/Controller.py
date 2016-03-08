@@ -17,37 +17,17 @@ from pdoauth.models.Application import Application
 from pdoauth.models.AppMap import AppMap
 from pdoauth.models.AppAssurance import AppAssurance
 from pdoauth.Statistics import Statistics
-import I18n  # @UnusedImport
+from pdoauth.Messages import badAuthHeader, noAuthorization,\
+    authenticationNeeded, notLoggedIn, loggedOut, deregistrationEmailSent,\
+    secretIsNeededForDeregistrationDoit, badDeregistrationSecret,\
+    youAreDeregistered, anotherUserUsingYourHash, newHashRegistered,\
+    passwordChangedSuccessfully, noSuchUser, noUserWithThisHash,\
+    moreUsersWarning, oldPasswordDoesNotMatch, thisUserDoesNotHaveThatDigest,\
+    addedAssurance, noShowAuthorization, unknownToken, expiredToken,\
+    emailVerifiedOK, invalidEmailAdress, passwordResetSent, theSecretHasExpired,\
+    passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
+    credentialRemoved
 
-anotherUserUsingYourHash = _("another user is using your hash")
-moreUsersWarning = _("More users with the same hash; specify both hash and email")
-noShowAuthorization = _("no authorization to show other users")
-passwordResetSent = _("Password reset email has been successfully sent.")
-cannotDeleteLoginCred = _("You cannot delete the login you are using")
-noSuchUser = _("No such user")
-badAuthHeader = _("bad Authorization header")
-noAuthorization = _("no authorization")
-authenticationNeeded = _("authentication needed")
-loggedOut = _('logged out')
-deregistrationEmailSent = _('deregistration email has been sent')
-secretIsNeededForDeregistrationDoit = _("secret is needed for deregistration_doit")
-notLoggedIn = _("not logged in")
-badDeregistrationSecret = _("bad deregistration secret")
-youAreDeregistered = _('you are deregistered')
-newHashRegistered = _('new hash registered')
-oldPasswordDoesNotMatch = _("old password does not match")
-passwordChangedSuccessfully = _('password changed succesfully')
-thisUserDoesNotHaveThatDigest = _('This user does not have that digest')
-noUserWithThisHash = _('No user with this hash')
-unknownToken = _("unknown token")
-emailVerifiedOK = _("email verified OK")
-invalidEmailAdress = _('Invalid email address')
-expiredToken = _("expired token")
-passwordSuccessfullyChanged = _('Password successfully changed')
-theSecretHasExpired = _('The secret has expired')
-noSuchCredential = _('No such credential')
-credentialRemoved = _('credential removed')
-addedAssurance = 'added assurance'
 
 class Controller(
         WebInterface, Responses, EmailHandling,
