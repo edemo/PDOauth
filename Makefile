@@ -127,3 +127,6 @@ doc/static/docbook.css: static/docbook.css
 doc/html/documentation.html: doc/html/documentation.docbook doc/static/docbook.css
 	java -jar lib/saxon9he.jar -xsl:src/doc/docbook2html.xslt -s:doc/html/documentation.docbook >doc/html/documentation.html
 
+messages.pot:
+	pygettext -av src
+
