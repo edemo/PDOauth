@@ -28,5 +28,21 @@
 		self.isLoggedIn=(status == 200)
 		self.refreshTheNavbar()
 	}
+	
+	PageScript.prototype.getStatistics=function(){
+		this.ajaxget("/v1/statistics", self.statCallback)
+	}
+	
+	PageScript.prototype.statCallback=function(status, text) {
+		data=JSON.parse(text)
+		if (data.error)	self.displayError();
+		else {
+				document.getElementById("user-counter").innerHTML=data.users
+				document.getElementById("magyar-counter").innerHTML=data.assurances.magyar
+				document.getElementById("assurer-counter").innerHTML=data.assurances.assurer
+				document.getElementById("application-counter").innerHTML=data.applications
+			
+		}
+	}
 }()
 )

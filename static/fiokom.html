@@ -322,7 +322,6 @@ h3 {
 
 		</div>
 	</div>
-		<div id="message" class="message-hidden"><div>
 		<div class="func" id="login_section">
 			<section class="container_">
 				<h3 class="title">Bejelentkezés</h3>
@@ -424,9 +423,8 @@ h3 {
 A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
 Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
 melyekből az eredeti adatok nem nyerhetők vissza. 
-A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod a lenti "Tikos Kód" mezőbe
+A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe.
 				</p>
-				
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
 						<a href="https://testanchor.edemokraciagep.org" target="blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
@@ -434,14 +432,14 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
 						<div id="code-generation-input" class="form">
 							<div class="bordered">
 								<label for="input">Személyi azonosító:</label>
-								<input type="text" placeholder="" id="registration-keygenform_predigest_input">
+								<input type="text" placeholder="" id="registration-keygenform_predigest_input" onkeyup="pageScript.convert_mothername('registration-keygenform_predigest')">
 								<label for="mothername">Anyja neve:</label>
-								<input type="text" placeholder="" id="registration-keygenform_predigest_mothername">
-								<button type="button" onclick="pageScript.digestGetter('registration-keygenform').getDigest()">A kód előállítása</button><div class="monitor" id="RegistrationForm_monitor"></div>
-								<div id="message"></div>
+								<input type="text" placeholder="" id="registration-keygenform_predigest_mothername" onkeyup="pageScript.convert_mothername('registration-keygenform_predigest')">
+								<button type="button" onclick="pageScript.digestGetter('registration-keygenform').getDigest()">A kód előállítása</button>
+								<div class="monitor" id="registration-keygenform_predigest_monitor"></div>
 							</div>
 						</div>
-						<textarea class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
+						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
 					</form>
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
 			</section>
@@ -547,7 +545,64 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
                                <div class="col-md-12 col-sm-9">
                                     <div class="c-tab">
                                          <h4><b>Tanusítói felület</b></h4>
-                                         <div id="check-the-user" ></div>
+                                         <div id="check-the-user" >
+						<p>Felhasználó adatainak lekérdezése</p>
+						<form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
+							<div class="formrow">
+								<div class="label" id="ByEmailForm_email_label">
+									e-mail cím:
+								</div>
+								<input name="email" type="text" id="ByEmailForm_email_input">
+								<div class="formrow">
+									<input class="pbutton" type="submit" value="Mutasd" id="ByEmailForm_submitButton">
+								</div>
+							</div>
+							<div class="msg" id="userdata" style="max-width: 600px;  margin-left: 10px;"></div>
+						</form>
+						
+						<hr>
+						
+						<p>Felhasználó ellenőrzése</p>
+						<form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_predigest_label">
+									személyi szám:
+								</div>
+								<input name="digest" type="text" id="AddAssuranceForm_predigest_input">
+							</div>
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_predigest_label_mothername">
+									Anyja neve:
+								</div>
+								<input name="digest" type="text" id="AddAssuranceForm_predigest_mothername" onkeyup="PageScript.convert_mothername('AddAssuranceForm')">
+								<div class="label" id="AddAssuranceForm_predigest_label_mothername_normalized"></div>
+							</div>
+								<button class="pbutton" type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">
+									Titkos kód generálása
+								</button>
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_digest_label">
+									titkós kód:
+								</div>
+								<input name="digest" type="text" id="AddAssuranceForm_digest_input">
+							</div>
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_assurance_label">
+									ellenőrzési szint:
+								</div>
+								<input name="assurance" type="text" id="AddAssuranceForm_assurance_input">
+							</div>
+							<div class="formrow">
+								<div class="label" id="AddAssuranceForm_email_label">
+									e-mail cím:
+								</div>
+								<input name="email" type="text" id="AddAssuranceForm_email_input">
+							</div>
+							<div class="formrow">
+								<input class="pbutton" type="submit" value="Tanusítvány kiadása" id="AddAssuranceForm_submitButton">
+							</div>
+						</form>
+			          </div>
 										 <div id="assurance-giving" ></div>
                                     </div>
                                 </div>
@@ -567,9 +622,9 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
 <!-- Email verification success -->
 		<div class="func" id="email_verification_section">
 			<section class="container_">
-				<h3 class="title">Felhasználói fiók aktiválása</h3>
+				<h3 class="title">Email cím validálása</h3>
 				<p id="email_verification_message"></p>
-				<button type="button" onclick="javascript:pageScript.display('email_verification_section')">Ok</button>
+				<button type="button" onclick="javascript:pageScript.doRedirect('fiokom.html')">Ok</button>
 			</section>
 		</div>
 <!-- End email verification success section -->
