@@ -17,7 +17,7 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:4
 msgid "There is already a user with that email"
-msgstr ""
+msgstr "Ezzel az email-el már van felhasználó"
 
 #: src/pdoauth/Messages.py:5
 msgid "There is already a user with that username"
