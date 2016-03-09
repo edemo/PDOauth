@@ -218,5 +218,34 @@
 				break;
 		}
 	}
+
+//Getdigest functions	
+	PageScript.prototype.normalizeString = function(val) {
+		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
+		var unaccented="ouooueauiouooueaui";
+		var s = "";
+		
+		for (var i = 0, len = val.length; i < len; i++) {
+		  c = val[i];
+		  if(c.match('[abcdefghijklmnopqrstuvwxyz]')) {
+		    s=s+c;
+		  } else if(c.match('[ABCDEFGHIJKLMNOPQRSTUVXYZ]')) {
+		    s=s+c.toLowerCase();
+		  } else if(c.match('['+accented+']')) {
+		    for (var j = 0, alen = accented.length; j <alen; j++) {
+		      if(c.match(accented[j])) {
+		        s=s+unaccented[j];
+		      }
+		    }
+		  }
+		}
+		return s;
+	}
+	
+	PageScript.prototype.convert_mothername = function(formName) {
+		var inputElement = document.getElementById( formName+"_mothername");
+		var outputElement = document.getElementById( formName+"_monitor");
+		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
+	}
 }()
 )

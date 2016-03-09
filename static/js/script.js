@@ -240,20 +240,37 @@ console.log(theUri)
 	PageScript.prototype.myCallback = function(status, text) {
 
 		if (status!=500) {
-		var data = JSON.parse(text);
-	
-		if (status == 200 ) {
-			if( self.page=="account" && self.QueryString.next) {
-				self.doRedirect(decodeURIComponent(self.QueryString.next))
+			var data = JSON.parse(text);
+			var msg = self.processErrors(data)
+			if (status == 200 ) {
+				if( self.page=="account"){
+					if( self.QueryString.next) {
+						self.doRedirect(decodeURIComponent(self.QueryString.next))
+					}
+				}
 			}
-		}
-			this.msg = self.processErrors(data)
-			this.msg.callback = self.get_me;
-			self.displayMsg(this.msg);
+			self.displayMsg(msg);
 		}
 		else console.log(text);
 	}
-
+	
+	PageScript.prototype.reloadCallback = function(status, text) {
+		if (status!=500) {
+			var data = JSON.parse(text);
+			var msg = self.processErrors(data)
+			if (status == 200 ) {
+				if( self.page=="account"){
+					if( self.QueryString.next) {
+						self.doRedirect(decodeURIComponent(self.QueryString.next))
+					}
+					msg.callback = function(){self.doRedirect("fiokom.html")};
+				}
+			}
+			self.displayMsg(msg);
+		}
+		else console.log(text);
+	}
+	
 	PageScript.prototype.doRedirect = function(href){ 
 		win.location=href	
 	}
@@ -296,7 +313,7 @@ console.log(theUri)
 				if (!(data.assurances.assurer)) self.isAssurer=false;
 				else {
 					self.isAssurer=true;
-					document.getElementById("assurance-giving").innerHTML=self.parseAssurancing(data);
+//					document.getElementById("assurance-giving").innerHTML=self.parseAssurancing(data);
 				}
 			}
 //			self.fill_RemoveCredentialContainer(data);
@@ -316,7 +333,7 @@ console.log(theUri)
 	PageScript.prototype.doPasswordReset = function() {
 		secret = document.getElementById("PasswordResetForm_secret_input").value;
 	    password = document.getElementById("PasswordResetForm_password_input").value;
-	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.myCallback)
+	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.reloadCallback)
 	}
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
@@ -686,34 +703,7 @@ console.log("logoutCallback")
 
 
 
-	PageScript.prototype.normalizeString = function(val) {
-		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
-		var unaccented="ouooueauiouooueaui";
-		var s = "";
-		
-		for (var i = 0, len = val.length; i < len; i++) {
-		  c = val[i];
-		  if(c.match('[abcdefghijklmnopqrstuvwxyz]')) {
-		    s=s+c;
-		  } else if(c.match('[ABCDEFGHIJKLMNOPQRSTUVXYZ]')) {
-		    s=s+c.toLowerCase();
-		  } else if(c.match('['+accented+']')) {
-		    for (var j = 0, alen = accented.length; j <alen; j++) {
-		      if(c.match(accented[j])) {
-		        s=s+unaccented[j];
-		      }
-		    }
-		  }
-		}
-		return s;
-	}
-	
-	PageScript.convert_mothername = function(formName) {
-		var inputElement = document.getElementById( formName+"_predigest_mothername");
-		var outputElement = document.getElementById( formName+"_predigest_label_mothername_normalized");
-		outputElement.innerHTML=self.normalizeString(inputElement.value);
-	}
-	
+
 	PageScript.prototype.display = function(toHide, toDisplay){
 		if (toHide) document.getElementById(toHide).style.display="none";
 		if (toDisplay) { 
@@ -728,21 +718,6 @@ console.log("logoutCallback")
 	PageScript.prototype.queryString=function(){
 		this.secret=(self.QueryString.secret)?self.QueryString.secret:"";
 		this.section=(self.QueryString.section)?self.QueryString.section:"";
-	}
-	PageScript.prototype.getStatistics=function(){
-		this.ajaxget("/v1/statistics", self.statCallback)
-	}
-	
-	PageScript.prototype.statCallback=function(status, text) {
-		data=JSON.parse(text)
-		if (data.error)	self.displayError();
-		else {
-				document.getElementById("user-counter").innerHTML=data.users
-				document.getElementById("magyar-counter").innerHTML=data.assurances.teszt
-				document.getElementById("assurer-counter").innerHTML=data.assurances.assurer
-				document.getElementById("application-counter").innerHTML=data.applications
-			
-		}
 	}
 	
 	PageScript.prototype.refreshTheNavbar=function(){
@@ -759,6 +734,13 @@ console.log("logoutCallback")
 			document.getElementById("nav-bar-register").style.display="block";
 		}
 	}
+	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
+    var offset = this.offsetHeight - this.clientHeight;
+    var resizeTextarea = function(el) {
+        jQuery(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+    };
+    jQuery(this).on('keyup input', function() { resizeTextarea(this); }).removeAttr('data-autoresize');
+});
 }
 
 pageScript = new PageScript();
