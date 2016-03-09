@@ -71,7 +71,7 @@ class DeregisterIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         with app.test_client() as client:
             resp = self._doDeregisterDoit(client,secret=False)
             self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["deregister_secret: Field must be at least 8 characters long.", "deregister_secret: password should contain lowercase", "deregister_secret: password should contain digit"]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["deregister_secret: Field must be at least 8 characters long.", "deregister_secret: secret should contain lowercase", "deregister_secret: secret should contain digit"]}', self.getResponseText(resp))
 
     @test
     def you_need_valid_csrf_token_for_deregister_doit(self):
@@ -95,7 +95,7 @@ class DeregisterIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         with app.test_client() as client:
             resp = self._doDeregisterDoit(client, secret=False)
             self.assertEquals(resp.status_code, 400)
-            self.assertEqual('{"errors": ["deregister_secret: Field must be at least 8 characters long.", "deregister_secret: password should contain lowercase", "deregister_secret: password should contain digit"]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["deregister_secret: Field must be at least 8 characters long.", "deregister_secret: secret should contain lowercase", "deregister_secret: secret should contain digit"]}', self.getResponseText(resp))
 
     @test
     def you_need_valid_deregister_secret_for_deregister_doit(self):

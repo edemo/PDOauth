@@ -1,0 +1,229 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2016-03-08 12:05+CET\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: src/pdoauth/Messages.py:4
+msgid "There is already a user with that email"
+msgstr ""
+
+#: src/pdoauth/Messages.py:5
+msgid "There is already a user with that username"
+msgstr ""
+
+#: src/pdoauth/Messages.py:6
+msgid "password should contain lowercase"
+msgstr ""
+
+#: src/pdoauth/Messages.py:7
+msgid "password should contain uppercase"
+msgstr ""
+
+#: src/pdoauth/Messages.py:8
+msgid "password should contain digit"
+msgstr ""
+
+#: src/pdoauth/Messages.py:9
+msgid "secret should contain lowercase"
+msgstr ""
+
+#: src/pdoauth/Messages.py:10
+msgid "secret should contain digit"
+msgstr ""
+
+#: src/pdoauth/Messages.py:11
+msgid "credentialType: Invalid value, must be one of:"
+msgstr ""
+
+#: src/pdoauth/Messages.py:12
+msgid "Missing parameter redirect_uri in URL query"
+msgstr ""
+
+#: src/pdoauth/Messages.py:13
+msgid "Missing parameter response_type in URL query"
+msgstr ""
+
+#: src/pdoauth/Messages.py:14
+msgid "Missing parameter client_id in URL query"
+msgstr ""
+
+#: src/pdoauth/Messages.py:15
+msgid "unsupported_grant_type"
+msgstr ""
+
+#: src/pdoauth/Messages.py:16
+msgid "invalid_client"
+msgstr ""
+
+#: src/pdoauth/Messages.py:17
+msgid "unsupported_response_type"
+msgstr ""
+
+#: src/pdoauth/Messages.py:18
+msgid "unauthorized_client"
+msgstr ""
+
+#: src/pdoauth/Messages.py:19
+msgid "invalid_scope"
+msgstr ""
+
+#: src/pdoauth/Messages.py:20
+msgid "Invalid request"
+msgstr ""
+
+#: src/pdoauth/Messages.py:21
+msgid "access_denied"
+msgstr ""
+
+#: src/pdoauth/Messages.py:22
+msgid "invalid_grant"
+msgstr ""
+
+#: src/pdoauth/Messages.py:24 src/pdoauth/Messages.py:59
+msgid "You have to register first"
+msgstr ""
+
+#: src/pdoauth/Messages.py:25
+msgid "No certificate given"
+msgstr ""
+
+#: src/pdoauth/Messages.py:26
+msgid "another user is using your hash"
+msgstr ""
+
+#: src/pdoauth/Messages.py:27
+msgid "More users with the same hash; specify both hash and email"
+msgstr ""
+
+#: src/pdoauth/Messages.py:28
+msgid "no authorization to show other users"
+msgstr ""
+
+#: src/pdoauth/Messages.py:29
+msgid "Password reset email has been successfully sent."
+msgstr ""
+
+#: src/pdoauth/Messages.py:30
+msgid "You cannot delete the login you are using"
+msgstr ""
+
+#: src/pdoauth/Messages.py:31
+msgid "No such user"
+msgstr ""
+
+#: src/pdoauth/Messages.py:32
+msgid "bad Authorization header"
+msgstr ""
+
+#: src/pdoauth/Messages.py:33
+msgid "no authorization"
+msgstr ""
+
+#: src/pdoauth/Messages.py:34
+msgid "authentication needed"
+msgstr ""
+
+#: src/pdoauth/Messages.py:35
+msgid "logged out"
+msgstr ""
+
+#: src/pdoauth/Messages.py:36
+msgid "deregistration email has been sent"
+msgstr ""
+
+#: src/pdoauth/Messages.py:37
+msgid "secret is needed for deregistration_doit"
+msgstr ""
+
+#: src/pdoauth/Messages.py:38
+msgid "not logged in"
+msgstr ""
+
+#: src/pdoauth/Messages.py:39
+msgid "bad deregistration secret"
+msgstr ""
+
+#: src/pdoauth/Messages.py:40
+msgid "you are deregistered"
+msgstr ""
+
+#: src/pdoauth/Messages.py:41
+msgid "new hash registered"
+msgstr ""
+
+#: src/pdoauth/Messages.py:42
+msgid "old password does not match"
+msgstr ""
+
+#: src/pdoauth/Messages.py:43
+msgid "password changed succesfully"
+msgstr ""
+
+#: src/pdoauth/Messages.py:44
+msgid "This user does not have that digest"
+msgstr ""
+
+#: src/pdoauth/Messages.py:45
+msgid "No user with this hash"
+msgstr ""
+
+#: src/pdoauth/Messages.py:46
+msgid "unknown token"
+msgstr ""
+
+#: src/pdoauth/Messages.py:47
+msgid "email verified OK"
+msgstr ""
+
+#: src/pdoauth/Messages.py:48
+msgid "Invalid email address"
+msgstr ""
+
+#: src/pdoauth/Messages.py:49
+msgid "expired token"
+msgstr ""
+
+#: src/pdoauth/Messages.py:50
+msgid "Password successfully changed"
+msgstr ""
+
+#: src/pdoauth/Messages.py:51
+msgid "The secret has expired"
+msgstr ""
+
+#: src/pdoauth/Messages.py:52
+msgid "No such credential"
+msgstr ""
+
+#: src/pdoauth/Messages.py:53
+msgid "credential removed"
+msgstr ""
+
+#: src/pdoauth/Messages.py:55
+msgid "error in cert"
+msgstr ""
+
+#: src/pdoauth/Messages.py:56
+msgid "Inactive or disabled user"
+msgstr ""
+
+#: src/pdoauth/Messages.py:57
+msgid "Bad username or password"
+msgstr ""
+
+#: src/pdoauth/Messages.py:58
+msgid "Cannot login to facebook"
+msgstr ""
+
