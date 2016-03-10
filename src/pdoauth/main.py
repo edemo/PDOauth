@@ -19,6 +19,7 @@ from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.forms.TokenInterfaceForm import TokenInterfaceForm
 from pdoauth.AppHandler import AppHandler
+from pdoauth.forms.AppCanEmailForm import AppCanEmailForm
 
 webInterface = FlaskInterface() # pylint: disable=invalid-name
 CONTROLLER = Controller(webInterface)
@@ -122,6 +123,11 @@ def add_credential(form):
 @DECORATOR.interfaceFunc("/v1/getmyapps", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def get_my_apps():
     return APPHANDLER.getApplistInterFace()
+
+@DECORATOR.interfaceFunc("/v1/setappcanemail", methods=["POST"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn,
+    formClass = AppCanEmailForm)
+def set_app_can_email(form):
+    return APPHANDLER.setAppCanEmail(form)
 
 @DECORATOR.interfaceFunc("/v1/remove_credential", methods=["POST"],
     formClass=CredentialIdentifierForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
