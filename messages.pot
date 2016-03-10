@@ -21,7 +21,7 @@ msgstr "Ezzel az email-el már van felhasználó"
 
 #: src/pdoauth/Messages.py:5
 msgid "There is already a user with that username"
-msgstr "A név már foglalt"
+msgstr "A  Felhasználó név már foglalt"
 
 #: src/pdoauth/Messages.py:6
 msgid "password should contain lowercase"
@@ -41,7 +41,7 @@ msgstr "A jelszónak tartalmaznia kell kisbetűket"
 
 #: src/pdoauth/Messages.py:10
 msgid "secret should contain digit"
-msgstr "A jelszónak tartalmaznia kell számokat    ?"
+msgstr "A jelszónak tartalmaznia kell számokat"
 
 #: src/pdoauth/Messages.py:11
 msgid "credentialType: Invalid value, must be one of:"
@@ -65,7 +65,7 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:16
 msgid "invalid_client"
-msgstr "Nincs ilyen Felhasználó     ?"
+msgstr ""
 
 #: src/pdoauth/Messages.py:17
 msgid "unsupported_response_type"
@@ -81,11 +81,11 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:20
 msgid "Invalid request"
-msgstr "Érvénytelen kérés"
+msgstr ""
 
 #: src/pdoauth/Messages.py:21
 msgid "access_denied"
-msgstr " Ehhez nincs hozzáférésed"
+msgstr "Ehhez nincs hozzáférésed"
 
 #: src/pdoauth/Messages.py:22
 msgid "invalid_grant"
@@ -97,7 +97,7 @@ msgstr "Ehhez először regisztrálnod kell"
 
 #: src/pdoauth/Messages.py:25
 msgid "No certificate given"
-msgstr ""
+msgstr "Nincs SSL kulcs"
 
 #: src/pdoauth/Messages.py:26
 msgid "another user is using your hash"
@@ -111,7 +111,7 @@ msgstr "Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhas
 
 #: src/pdoauth/Messages.py:28
 msgid "no authorization to show other users"
-msgstr "Nincs jogod más felhasználók adatait nézni    ?"
+msgstr "Nincs jogod más felhasználók adatait nézni"
 
 #: src/pdoauth/Messages.py:29
 msgid "Password reset email has been successfully sent."
@@ -211,11 +211,11 @@ msgstr "Nincs ilyen hitelesítésed"
 
 #: src/pdoauth/Messages.py:53
 msgid "credential removed"
-msgstr "A hitelesítés törölve"
+msgstr "A hitelesítési mód törölve"
 
 #: src/pdoauth/Messages.py:55
 msgid "error in cert"
-msgstr "Hibás tanúsítvány"
+msgstr "Hibás SSL tanúsítvány"
 
 #: src/pdoauth/Messages.py:56
 msgid "Inactive or disabled user"
