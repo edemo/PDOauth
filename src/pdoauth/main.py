@@ -18,6 +18,7 @@ from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.forms.TokenInterfaceForm import TokenInterfaceForm
+from pdoauth.AppHandler import AppHandler
 
 webInterface = FlaskInterface() # pylint: disable=invalid-name
 CONTROLLER = Controller(webInterface)
@@ -25,6 +26,7 @@ CONTROLLER.mail = mail
 CONTROLLER.app = app
 DECORATOR = Decorators(app, webInterface)
 AUTHPROVIDER = AuthProvider(webInterface)
+APPHANDLER = AppHandler(webInterface)
 
 def getStaticPath():
     staticDirectory = os.path.join(os.path.dirname(__file__),"..", "..", "static")
@@ -116,6 +118,10 @@ def add_assurance(form):
     formClass=CredentialForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def add_credential(form):
     return CONTROLLER.doAddCredential(form)
+
+@DECORATOR.interfaceFunc("/v1/getmyapps", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def get_my_apps():
+    return APPHANDLER.getApplistInterFace()
 
 @DECORATOR.interfaceFunc("/v1/remove_credential", methods=["POST"],
     formClass=CredentialIdentifierForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)

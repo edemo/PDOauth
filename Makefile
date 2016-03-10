@@ -86,7 +86,7 @@ killall: killserver killemail killanchor
 killanchor:
 	 make -C PDAnchor killserver
 
-xmldoc: doc/xml/commitlog.xml doc/xml/doc.xml
+xmldoc: doc/xml/commitlog.xml doc/xml/doc.xml doc/html/documentation.html
 
 doc/xml/doc.xml: doc/xml/commitlog.xml doc/xml/buildinfo.xml doc/xml
 	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
@@ -109,7 +109,7 @@ tmp/saxon.zip:
 lib/saxon9he.jar: tmp/saxon.zip
 	mkdir -p lib;unzip -u -d lib  tmp/saxon.zip saxon9he.jar
 
-doc/xml/intermediate.xml: lib/saxon9he.jar doc/xml/doc.xml doc/screenshots/unittests.xml
+doc/xml/intermediate.xml: lib/saxon9he.jar doc/xml/doc.xml #doc/screenshots/unittests.xml
 	java -jar lib/saxon9he.jar -xsl:src/doc/intermediate.xsl -s:doc/xml/doc.xml >doc/xml/intermediate.xml
 
 doc/html/commitlog.docbook: doc/xml/commitlog.xml doc/html
