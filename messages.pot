@@ -21,27 +21,27 @@ msgstr "Ezzel az email-el már van felhasználó"
 
 #: src/pdoauth/Messages.py:5
 msgid "There is already a user with that username"
-msgstr ""
+msgstr "A  Felhasználó név már foglalt"
 
 #: src/pdoauth/Messages.py:6
 msgid "password should contain lowercase"
-msgstr ""
+msgstr "A jelszónak tartalmaznia kell kisbetűket"
 
 #: src/pdoauth/Messages.py:7
 msgid "password should contain uppercase"
-msgstr ""
+msgstr "A jelszónak tartalmaznia kell nagybetűket"
 
 #: src/pdoauth/Messages.py:8
 msgid "password should contain digit"
-msgstr ""
+msgstr "A jelszónak tartalmaznia kell számokat"
 
 #: src/pdoauth/Messages.py:9
 msgid "secret should contain lowercase"
-msgstr ""
+msgstr "A jelszónak tartalmaznia kell kisbetűket"
 
 #: src/pdoauth/Messages.py:10
 msgid "secret should contain digit"
-msgstr ""
+msgstr "A jelszónak tartalmaznia kell számokat"
 
 #: src/pdoauth/Messages.py:11
 msgid "credentialType: Invalid value, must be one of:"
@@ -85,7 +85,7 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:21
 msgid "access_denied"
-msgstr ""
+msgstr "Ehhez nincs hozzáférésed"
 
 #: src/pdoauth/Messages.py:22
 msgid "invalid_grant"
@@ -93,35 +93,37 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:24 src/pdoauth/Messages.py:59
 msgid "You have to register first"
-msgstr ""
+msgstr "Ehhez először regisztrálnod kell"
 
 #: src/pdoauth/Messages.py:25
 msgid "No certificate given"
-msgstr ""
+msgstr "Nincs SSL kulcs"
 
 #: src/pdoauth/Messages.py:26
 msgid "another user is using your hash"
-msgstr ""
+msgstr "Egy másik Felhasználó is megadta ezt a Titkos kódot. Amennyiben nem a saját adataidat használtad töröld ezt a 
+Titkos Kódot. Ha a Titkos Kód a te adataidból készült, akkor haladéktalanul kezdeményezd a tanúsításodat.
+Ezzel megakadályozod, hogy  visszaéljenek az adataiddal."
 
 #: src/pdoauth/Messages.py:27
 msgid "More users with the same hash; specify both hash and email"
-msgstr ""
+msgstr "Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhasználó email címét is"
 
 #: src/pdoauth/Messages.py:28
 msgid "no authorization to show other users"
-msgstr ""
+msgstr "Nincs jogod más felhasználók adatait nézni"
 
 #: src/pdoauth/Messages.py:29
 msgid "Password reset email has been successfully sent."
-msgstr ""
+msgstr "A jelszó megváltoztatásához szükséges emailt elküldtük neked"
 
 #: src/pdoauth/Messages.py:30
 msgid "You cannot delete the login you are using"
-msgstr ""
+msgstr "Ezt a bejelentkezési módot nem törölheted, mert éppen ezt használod"
 
 #: src/pdoauth/Messages.py:31
 msgid "No such user"
-msgstr ""
+msgstr "Nincs ilyen Felhasználó"
 
 #: src/pdoauth/Messages.py:32
 msgid "bad Authorization header"
@@ -129,55 +131,55 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:33
 msgid "no authorization"
-msgstr ""
+msgstr "Nincs jogod hozzá"
 
 #: src/pdoauth/Messages.py:34
 msgid "authentication needed"
-msgstr ""
+msgstr "Be kell jelentkezned"
 
 #: src/pdoauth/Messages.py:35
 msgid "logged out"
-msgstr ""
+msgstr "Kijelentkezve"
 
 #: src/pdoauth/Messages.py:36
 msgid "deregistration email has been sent"
-msgstr ""
+msgstr "A fiók törléséhez szükséges email elküldtük"
 
 #: src/pdoauth/Messages.py:37
 msgid "secret is needed for deregistration_doit"
-msgstr ""
+msgstr "A fiókod törléséhez add meg a jelszavad!"
 
 #: src/pdoauth/Messages.py:38
 msgid "not logged in"
-msgstr ""
+msgstr "Nem vagy bejelentkezve"
 
 #: src/pdoauth/Messages.py:39
 msgid "bad deregistration secret"
-msgstr ""
+msgstr "Hibás jelszó"
 
 #: src/pdoauth/Messages.py:40
 msgid "you are deregistered"
-msgstr ""
+msgstr "A fiókodat töröltük"
 
 #: src/pdoauth/Messages.py:41
 msgid "new hash registered"
-msgstr ""
+msgstr "A Titkos Kódot lecseréltük"
 
 #: src/pdoauth/Messages.py:42
 msgid "old password does not match"
-msgstr ""
+msgstr "A régi jelszó hibás"
 
 #: src/pdoauth/Messages.py:43
 msgid "password changed succesfully"
-msgstr ""
+msgstr "A jelszavad sikeresen megváltoztattad"
 
 #: src/pdoauth/Messages.py:44
 msgid "This user does not have that digest"
-msgstr ""
+msgstr "A Felhasználónak nincs Titkos Kódja"
 
 #: src/pdoauth/Messages.py:45
 msgid "No user with this hash"
-msgstr ""
+msgstr "Ehhez a Titkos Kódhoz nincs Felhasználó"
 
 #: src/pdoauth/Messages.py:46
 msgid "unknown token"
@@ -185,11 +187,11 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:47
 msgid "email verified OK"
-msgstr ""
+msgstr "Az emailcím rendben"
 
 #: src/pdoauth/Messages.py:48
 msgid "Invalid email address"
-msgstr ""
+msgstr "Nem jó emailcím"
 
 #: src/pdoauth/Messages.py:49
 msgid "expired token"
@@ -197,33 +199,33 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:50
 msgid "Password successfully changed"
-msgstr ""
+msgstr "A jelszavada tsikeresen megváltoztattad"
 
 #: src/pdoauth/Messages.py:51
 msgid "The secret has expired"
-msgstr ""
+msgstr "Lejárt a módosításra  rendelkezésre álló idő"
 
 #: src/pdoauth/Messages.py:52
 msgid "No such credential"
-msgstr ""
+msgstr "Nincs ilyen hitelesítésed"
 
 #: src/pdoauth/Messages.py:53
 msgid "credential removed"
-msgstr ""
+msgstr "A hitelesítési mód törölve"
 
 #: src/pdoauth/Messages.py:55
 msgid "error in cert"
-msgstr ""
+msgstr "Hibás SSL tanúsítvány"
 
 #: src/pdoauth/Messages.py:56
 msgid "Inactive or disabled user"
-msgstr ""
+msgstr "Nem aktív vagy felfüggesztett felhasználó "
 
 #: src/pdoauth/Messages.py:57
 msgid "Bad username or password"
-msgstr ""
+msgstr "Hibás felhasználó név vagy jelszó"
 
 #: src/pdoauth/Messages.py:58
 msgid "Cannot login to facebook"
-msgstr ""
+msgstr "Nem lehet a Facebook fiókot elérni"
 
