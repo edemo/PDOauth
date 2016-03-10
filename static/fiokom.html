@@ -37,9 +37,6 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
         <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
-    </head>
-		<script>
-		</script>
 		<style>
 *, *:after, *:before {
     box-sizing: inherit;
@@ -87,9 +84,6 @@ label, legend {
     margin-bottom: .5rem;
 }
 input[type='email'], input[type='number'], input[type='password'], input[type='search'], input[type='tel'], input[type='text'], input[type='url'], textarea, select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
     background-color: transparent;
     border: .1rem solid #d1d1d1;
     border-radius: .4rem;
@@ -222,7 +216,7 @@ th:first-child, td:first-child {
 
 th, td {
     border-bottom: .1rem solid #e1e1e1;
-    padding: 1.2rem 1.5rem;
+    padding: 0.5rem 1.5rem;
     text-align: left;
 }
 
@@ -237,6 +231,24 @@ background-color: #000;
 border: 1px solid #000;
 	color: #fff;
 }
+
+.main-tab-content .c-tab a.btn_ {
+background-color: transparent;
+    border: 1px solid #EE3B24;
+	color: #EE3B24;
+}
+
+.main-tab-content .c-tab a.btn_:hover {
+background-color: #000;
+border: 1px solid #000;
+	color: #fff;
+}
+
+table.multiheader th{
+    background-color: #F4F5F6;
+    padding-left: 59px;
+}
+
 #registration-form-method-selector button.active{
 	background-color:black;
 }
@@ -260,6 +272,24 @@ h1 {
 h3 {
     font-size: 3.6rem;
 }}
+
+div.monitor {
+    float: right;
+    font-size: 1.3rem;
+    background-color: #F5EFEF;
+    border-radius: 5px;
+    padding: 5px;
+    width: 50%;
+    word-wrap: break-word;
+}
+pre.credential-item {
+    word-wrap: break-word;
+    white-space: pre-line;
+    border: none;
+    background: transparent;
+    margin: 0px;
+    padding: 0;
+}
 		</style>
 	</head>
 	<body onload="pageScript.main()">
@@ -310,25 +340,21 @@ h3 {
     <!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button id="PopupWindow_CloseButton1" type="button" class="close" data-dismiss="modal" onclick="javascript:pageScript.closePopup()">&times;</button>
 					<h3 class="modal-title" id="PopupWindow_TitleDiv"></h3>
 				</div>
 				<div class="modal-body">
-				<div class="popup">
 					<div class="msg" id="PopupWindow_ErrorDiv"></div>
 					<div class="msg" id="PopupWindow_MessageDiv"></div>
 					<div class="msg" id="PopupWindow_SuccessDiv"></div>
-					<button id="PopupWindow_CloseButton" class="pbutton" type="button" onclick="javascript:pageScript.closePopup()">Close</button>
-				</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button id="PopupWindow_CloseButton2" type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript:pageScript.closePopup()">Close</button>
 				</div>
 			</div>
 
 		</div>
 	</div>
-		<div id="message" class="message-hidden"><div>
 		<div class="func" id="login_section">
 			<section class="container_">
 				<h3 class="title">Bejelentkezés</h3>
@@ -405,7 +431,7 @@ h3 {
 					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
 				</div>
 				<h4 id="registration-form-method-heading" >Regisztráció email cím és/vagy felhasználónév és jelszó segítségével</h4>
-				<form id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
+				<form target="ssl" id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
 					<div class="form">
 						<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
 						<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked>
@@ -430,25 +456,31 @@ h3 {
 A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
 Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
 melyekből az eredeti adatok nem nyerhetők vissza. 
-A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod a lenti "Tikos Kód" mezőbe
+A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe.
 				</p>
-				
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
-						<a href="https://testanchor.edemokraciagep.org" target="blank">
+						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
 						</a>
 						<div id="code-generation-input" class="form">
 							<div class="bordered">
 								<label for="input">Személyi azonosító:</label>
-								<input type="text" placeholder="" id="registration-keygenform_predigest_input">
+								<input type="text" placeholder="" id="registration-keygenform_predigest_input" onkeyup="pageScript.convert_mothername('registration-keygenform_predigest')">
 								<label for="mothername">Anyja neve:</label>
-								<input type="text" placeholder="" id="registration-keygenform_predigest_mothername">
-								<button type="button" onclick="pageScript.digestGetter('registration-keygenform').getDigest()">A kód előállítása</button><div class="monitor" id="RegistrationForm_monitor"></div>
-								<div id="message"></div>
+								<input type="text" placeholder="" id="registration-keygenform_predigest_mothername" onkeyup="pageScript.convert_mothername('registration-keygenform_predigest')">
+								<button type="button" onclick="pageScript.digestGetter('registration-keygenform').getDigest()">A kód előállítása</button>
+								<div class="monitor" id="registration-keygenform_predigest_monitor"></div>
 							</div>
 						</div>
-						<textarea class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
+						<div style="margin-top:40px">
+						<label for="digest">Titkos Kód:</label>
+						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
+						</div>
 					</form>
+					<input type="checkbox" id="registration-keygenform_confirmField" name="accept" value="accept">
+					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az 
+					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">adatkezelési irányelveket</a> megértettem és elfogadom</label>
+
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
 			</section>
 		</div>
@@ -540,9 +572,6 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
                                 <div class="col-md-12 col-sm-9">
                                     <div class="c-tab">
                                          <h4><b>Alkalmazásaim</b></h4>
-                                         <p>
-											Ez a felület sajnos még nincs kész, de már dolgozunk rajta
-                                         </p>
 										 <div id="me_Applications"></div>
 
                                     </div>
@@ -553,8 +582,28 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
                                <div class="col-md-12 col-sm-9">
                                     <div class="c-tab">
                                          <h4><b>Tanusítói felület</b></h4>
-                                         <div id="check-the-user" ></div>
-										 <div id="assurance-giving" ></div>
+                                         <div id="check-the-user" class="form">
+											<p>Felhasználó adatainak lekérdezése</p>
+											<label for="email">A felhasználó email címe</label>
+											<input name="email" type="text" id="ByEmailForm_email_input">
+											<button onclick="javascript:pageScript.byEmail()" type="button">Lekérdezés</button>
+										</div>
+										<div id="assurance-giving" class="form" >
+											<p>Igazolás kiadása</p>
+											<label for="input">Személyi azonosító:</label>
+											<input type="text" placeholder="" id="assurancing_predigest_input" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
+											<label for="mothername">Anyja neve:</label>
+											<input type="text" placeholder="" id="assurancing_predigest_mothername" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
+											<button type="button" onclick="pageScript.digestGetter('assurancing').getDigest()">A kód előállítása</button>
+											<div class="monitor" id="assurancing_predigest_monitor"></div>
+											<label for="digest">Titkos Kód:</label>
+											<textarea data-autoresize class="digest" name="digest" type="text" id="assurancing_digest_input"></textarea>
+											<label for="digest">Kiadható assurancok:</label>
+											<select id="assurance-giving_assurance_selector">
+											
+											</select>
+											<button type="button" onclick="javascript:pageScript.addAssurance()">Igazolás kiadása</button>
+										</div>
                                     </div>
                                 </div>
                           </div>
@@ -573,9 +622,9 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
 <!-- Email verification success -->
 		<div class="func" id="email_verification_section">
 			<section class="container_">
-				<h3 class="title">Felhasználói fiók aktiválása</h3>
+				<h3 class="title">Email cím validálása</h3>
 				<p id="email_verification_message"></p>
-				<button type="button" onclick="javascript:pageScript.display('email_verification_section')">Ok</button>
+				<button type="button" onclick="javascript:pageScript.doRedirect('fiokom.html')">Ok</button>
 			</section>
 		</div>
 <!-- End email verification success section -->
@@ -586,7 +635,7 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
 				<h3 class="title">Fiók törlése</h3>
 				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük. 
 				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be. 
-				A <b>digitális igazolványaid</b> is <b>törlődnek</b> a rendszerből.</p>
+				A <b>digitális igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi checkbox kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
 				<div class="example-send-yourself-copy">
 					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
@@ -605,8 +654,7 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
 			<section class="container_ form">
 				<form id="PasswordResetForm">
 					<fieldset>
-						<label for="PasswordResetForm_password_input">Az emial-ből jött titok:</label>
-						<input type="text" class="disabled" id="PasswordResetForm_secret_input">
+						<input type="text" class="disabled" id="PasswordResetForm_secret_input" style="display:none;">
 						<label for="PasswordResetForm_password_input">Új jelszó:</label>
 						<input type="password" placeholder="*********" id="PasswordResetForm_password_input">
 						<button type="button" onclick="javascript:pageScript.doPasswordReset()">Jelszó mentése</button>
@@ -738,6 +786,6 @@ A Titkos Kódot magad is előállíthatod és akkor  azt csak be kell másolnod 
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
-		<iframe name="ssl" onload="console.log('loaded')"></iframe>
+		<iframe id="SSL" name="ssl" onload="console.log('loaded')"></iframe>
 	</body>
 </html>

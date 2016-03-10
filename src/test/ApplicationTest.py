@@ -51,3 +51,14 @@ class ApplicationTest(Fixture):
         self.assertRaises(
             NonHttpsRedirectUri, Application.new,
             "test app3", "secret3", "http://test.app/redirecturi1")
+
+    @test
+    def by_default_the_application_cannot_email(self):
+        self.assertEqual(False,self.app.can_email)
+        
+    @test
+    def can_email_is_saved(self):
+        self.app.can_email = True
+        self.app.save()
+        app = Application.get(self.app.appid)
+        self.assertEqual(True, app.can_email)

@@ -57,7 +57,8 @@
 		$("#myModal").modal();
 		if (!msg.callback) msg.callback="";
 		this.msgCallback=msg.callback; //only for testing
-		document.getElementById("PopupWindow_CloseButton").onclick = function() {self.closePopup(msg.callback)}
+		document.getElementById("PopupWindow_CloseButton1").onclick = function() {self.closePopup(msg.callback)}
+		document.getElementById("PopupWindow_CloseButton2").onclick = function() {self.closePopup(msg.callback)}
 		document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
 		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_MessageDiv").innerHTML = "";
@@ -93,6 +94,7 @@
 				if (self.QueryString.secret) self.verifyEmail()
 			}
 			self.ajaxget("/v1/users/me", self.initCallback)
+			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
@@ -182,19 +184,156 @@
 	    this.ajaxpost("/v1/register", text, this.myCallback)
 	}
 	
-	PageScript.prototype.doRegister=function() {
-		switch (self.registrationMethode) {
-			case "pw":
-				self.register("password")
-				break;
-			case "fb":
-				self.register("facebook")
-				break;
-			case "ssl":
-				document.getElementById('registration-keygenform').submit();
-//				self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
-				break;
+	PageScript.prototype.sslCallback=function() {
+		console.log("sslCallback")
+		response=document.getElementById("SSL").contentDocument.body.innerHTML
+		if (response=="") self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
+		else {
+			var msg
+			if (data=JSON.parse(response)) {
+				msg=self.processErrors(data)
+			}
+			else {
+				msg.title="Szerverhiba"
+				msg.error="response"
+			}
+			self.displayMsg(msg)
 		}
+	}	
+	
+	PageScript.prototype.doRegister=function() {
+		if ( document.getElementById("registration-keygenform_confirmField").checked ) {
+			switch (self.registrationMethode) {
+				case "pw":
+					self.register("password")
+					break;
+				case "fb":
+					self.register("facebook")
+					break;
+				case "ssl":
+					self.isLoggedIn=true;
+					document.getElementById("SSL").onload=self.sslCallback;
+					self.displayTheSection()
+					document.getElementById('registration-keygenform').submit();
+					console.log("after submit")
+//					self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
+					break;
+			}
+		}
+		else self.displayMsg({title:"Felhasználási feltételek",error:"A regisztrácó feltétele a felhasználási feltételek elfogadása. Ha megértetted és elfogadod, kattints a regisztrálok gomb felett található a checkboxra "})
+	}
+
+//Getdigest functions	
+	PageScript.prototype.normalizeString = function(val) {
+		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
+		var unaccented="ouooueauiouooueaui";
+		var s = "";
+		
+		for (var i = 0, len = val.length; i < len; i++) {
+		  c = val[i];
+		  if(c.match('[abcdefghijklmnopqrstuvwxyz]')) {
+		    s=s+c;
+		  } else if(c.match('[ABCDEFGHIJKLMNOPQRSTUVXYZ]')) {
+		    s=s+c.toLowerCase();
+		  } else if(c.match('['+accented+']')) {
+		    for (var j = 0, alen = accented.length; j <alen; j++) {
+		      if(c.match(accented[j])) {
+		        s=s+unaccented[j];
+		      }
+		    }
+		  }
+		}
+		return s;
+	}
+	
+	PageScript.prototype.digestGetter = function(formName) {
+		var formName=formName
+		var digestCallback
+		
+		digestCallback = function(status,text,xml) {
+					console.log("cllaback "+formName)
+					console.log("cllaback "+text)
+			if (status==200) {
+				var diegestInput=document.getElementById(formName + "_digest_input")
+				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
+				$("#"+formName + "_digest_input").trigger('keyup');
+				document.getElementById(formName + "_predigest_input").value = "";
+				self.displayMsg({success:"<p class='success'>A titkosítás sikeres</p>"});
+			} else {
+				self.displayMsg({error:"<p class='warning'>" + text + "</p>"});
+			}
+		}
+	
+		this.getDigest = function() {
+			console.log(formName)
+			text = this.createXmlForAnchor(formName)
+			if (text == null)
+				return;
+			console.log(text)
+			http = self.ajaxBase(digestCallback);
+			http.open("POST",self.QueryString.uris.ANCHOR_URL+"anchor",true);
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		  	http.setRequestHeader("Content-length", text.length);
+		  	http.setRequestHeader("Connection", "close");
+			http.send(text);
+		}
+	
+		this.createXmlForAnchor = function(formName) {
+			console.log(formName)
+			personalId = document.getElementById(formName+"_predigest_input").value;
+			motherValue = document.getElementById(formName+"_predigest_mothername").value;
+			mothername = self.normalizeString(motherValue);
+			if ( personalId == "") {
+				self.displayMsg({error:"<p class='warning'>A személyi szám nincs megadva</p>"})
+				return;
+			}
+			if ( mothername == "") {
+				self.displayMsg({error:"<p class='warning'>Anyja neve nincs megadva</p>"})
+				return;
+			}
+			return ("<request><id>"+personalId+"</id><mothername>"+mothername+"</mothername></request>");
+		}
+		
+		return this
+	}
+	
+	PageScript.prototype.convert_mothername = function(formName) {
+		var inputElement = document.getElementById( formName+"_mothername");
+		var outputElement = document.getElementById( formName+"_monitor");
+		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
+	}
+	
+	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
+		var offset = this.offsetHeight - this.clientHeight;
+		var resizeTextarea = function(el) {
+			jQuery(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+		};
+		jQuery(this).on('keyup input', function() { resizeTextarea(this); }).removeAttr('data-autoresize');
+	});
+	
+// assuring functions
+
+	PageScript.prototype.byEmail = function() {
+	    var email = document.getElementById("ByEmailForm_email_input").value;
+		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
+		else {
+			email = encodeURIComponent(email)
+			this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
+		}
+	}
+	
+	PageScript.prototype.addAssurance = function() {
+	    digest = document.getElementById("assurancing_digest_input").value;
+	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
+	    email = document.getElementById("ByEmailForm_email_input").value;
+	    csrf_token = this.getCookie('csrf');
+	    text= {
+	    	digest: digest,
+	    	assurance: assurance,
+	    	email: email,
+	    	csrf_token: csrf_token
+	    }
+	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
 	}
 }()
 )
