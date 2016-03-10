@@ -2,6 +2,8 @@ from pdoauth.models.Application import Application
 from pdoauth.models.AppMap import AppMap
 import json
 from pdoauth.WebInterface import WebInterface
+from pdoauth.ReportedError import ReportedError
+from pdoauth import Messages
 
 class AppHandler(WebInterface):
 
@@ -31,3 +33,22 @@ class AppHandler(WebInterface):
     def getApplistInterFace(self):
         user = self.getCurrentUser()
         return self.getApplistAsJson(user)
+    
+    def setCanEmail(self, appName, user, value):
+        app = Application.find(appName)
+        if app == None:
+            raise ReportedError(Messages.unknownApplication)
+        theMap = AppMap.get(app, user)
+        theMap.can_email = value
+
+    
+    def setAppCanEmail(self, form):
+        user = self.getCurrentUser()
+        print (form.appname.data, user, form.canemail.data)
+        self.setCanEmail(form.appname.data, user, form.canemail.data)
+        return self.getApplistAsJson(user)
+    
+    
+
+    
+    

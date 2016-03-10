@@ -9,14 +9,17 @@ app.extensions["mail"].suppress = True
 
 class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
 
-    def login(self, client):
-        self.setupRandom()
-        user = self.createUserWithCredentials().user
-        self.userid = user.userid
+    def login(self, client, user = None):
+        if user is None:
+            self.setupRandom()
+            user = self.createUserWithCredentials().user
+            self.userid = user.userid
+            user.username = self.userCreationUserid
+            user.password = self.usercreationPassword
         data = {
                 'credentialType': 'password',
-                'identifier': self.userCreationUserid,
-                'secret': self.usercreationPassword
+                'identifier': user.username,
+                'secret': user.password
         }
         resp = client.post(config.BASE_URL+'/v1/login', data=data)
         return resp
