@@ -37,10 +37,10 @@
 		data=JSON.parse(text)
 		if (data.error)	self.displayError();
 		else {
-				document.getElementById("user-counter").innerHTML=data.users
-				document.getElementById("magyar-counter").innerHTML=data.assurances.magyar
-				document.getElementById("assurer-counter").innerHTML=data.assurances.assurer
-				document.getElementById("application-counter").innerHTML=data.applications
+				document.getElementById("user-counter").innerHTML=(data.users)?data.users:0
+				document.getElementById("magyar-counter").innerHTML=(data.assurances.magyar)?data.assurances.magyar:0
+				document.getElementById("assurer-counter").innerHTML=(data.assurances.assurer)?data.assurances.assurer:0
+				document.getElementById("application-counter").innerHTML=(data.applications)?data.applications:0
 			
 		}
 	}
