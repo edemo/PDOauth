@@ -81,11 +81,11 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:20
 msgid "Invalid request"
-msgstr ""
+msgstr "Érvénytelen kérés"
 
 #: src/pdoauth/Messages.py:21
 msgid "access_denied"
-msgstr ""
+msgstr " Ehhez nincs hozzáférésed"
 
 #: src/pdoauth/Messages.py:22
 msgid "invalid_grant"
@@ -111,7 +111,7 @@ msgstr "Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhas
 
 #: src/pdoauth/Messages.py:28
 msgid "no authorization to show other users"
-msgstr ""
+msgstr "Nincs jogod más felhasználók adatait nézni    ?"
 
 #: src/pdoauth/Messages.py:29
 msgid "Password reset email has been successfully sent."
@@ -131,11 +131,11 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:33
 msgid "no authorization"
-msgstr ""
+msgstr "Nincs jogod hozzá"
 
 #: src/pdoauth/Messages.py:34
 msgid "authentication needed"
-msgstr ""
+msgstr "Be kell jelentkezned"
 
 #: src/pdoauth/Messages.py:35
 msgid "logged out"
@@ -203,15 +203,15 @@ msgstr "A jelszavada tsikeresen megváltoztattad"
 
 #: src/pdoauth/Messages.py:51
 msgid "The secret has expired"
-msgstr ""
+msgstr "Lejárt a módosításra  rendelkezésre álló idő"
 
 #: src/pdoauth/Messages.py:52
 msgid "No such credential"
-msgstr ""
+msgstr "Nincs ilyen hitelesítésed"
 
 #: src/pdoauth/Messages.py:53
 msgid "credential removed"
-msgstr ""
+msgstr "A hitelesítés törölve"
 
 #: src/pdoauth/Messages.py:55
 msgid "error in cert"
