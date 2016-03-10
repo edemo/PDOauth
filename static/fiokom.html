@@ -216,7 +216,7 @@ th:first-child, td:first-child {
 
 th, td {
     border-bottom: .1rem solid #e1e1e1;
-    padding: 1.2rem 1.5rem;
+    padding: 0.5rem 1.5rem;
     text-align: left;
 }
 
@@ -244,6 +244,10 @@ border: 1px solid #000;
 	color: #fff;
 }
 
+table.multiheader th{
+    background-color: #F4F5F6;
+    padding-left: 59px;
+}
 
 #registration-form-method-selector button.active{
 	background-color:black;
@@ -468,9 +472,15 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
 								<div class="monitor" id="registration-keygenform_predigest_monitor"></div>
 							</div>
 						</div>
+						<div style="margin-top:40px">
 						<label for="digest">Titkos Kód:</label>
 						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
+						</div>
 					</form>
+					<input type="checkbox" id="registration-keygenform_confirmField" name="accept" value="accept">
+					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az 
+					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">adatkezelési irányelveket</a> megértettem és elfogadom</label>
+
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
 			</section>
 		</div>
@@ -562,9 +572,6 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
                                 <div class="col-md-12 col-sm-9">
                                     <div class="c-tab">
                                          <h4><b>Alkalmazásaim</b></h4>
-                                         <p>
-											Ez a felület sajnos még nincs kész, de már dolgozunk rajta
-                                         </p>
 										 <div id="me_Applications"></div>
 
                                     </div>
@@ -582,7 +589,7 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
 											<button onclick="javascript:pageScript.byEmail()" type="button">Lekérdezés</button>
 										</div>
 										<div id="assurance-giving" class="form" >
-											<p>Tanusítvány kiadása</p>
+											<p>Igazolás kiadása</p>
 											<label for="input">Személyi azonosító:</label>
 											<input type="text" placeholder="" id="assurancing_predigest_input" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
 											<label for="mothername">Anyja neve:</label>
@@ -595,7 +602,7 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
 											<select id="assurance-giving_assurance_selector">
 											
 											</select>
-											<button type="button" onclick="javascript:pageScript.addAssurance()">Tanusítvány kiadása</button>
+											<button type="button" onclick="javascript:pageScript.addAssurance()">Igazolás kiadása</button>
 										</div>
                                     </div>
                                 </div>
@@ -628,7 +635,7 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
 				<h3 class="title">Fiók törlése</h3>
 				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük. 
 				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be. 
-				A <b>digitális igazolványaid</b> is <b>törlődnek</b> a rendszerből.</p>
+				A <b>digitális igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi checkbox kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
 				<div class="example-send-yourself-copy">
 					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
@@ -647,8 +654,7 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
 			<section class="container_ form">
 				<form id="PasswordResetForm">
 					<fieldset>
-						<label for="PasswordResetForm_password_input">Az emial-ből jött titok:</label>
-						<input type="text" class="disabled" id="PasswordResetForm_secret_input">
+						<input type="text" class="disabled" id="PasswordResetForm_secret_input" style="display:none;">
 						<label for="PasswordResetForm_password_input">Új jelszó:</label>
 						<input type="password" placeholder="*********" id="PasswordResetForm_password_input">
 						<button type="button" onclick="javascript:pageScript.doPasswordReset()">Jelszó mentése</button>

@@ -111,7 +111,7 @@ console.log(theUri)
 				<td id="email-change">\
 					<input type="text" value="'+data.email+'" id="userdata_editform_email_input">\
 					</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a></td>\
 			</tr>\
 			<tr>\
 				<td nowrap><b>Titkós kód</b></td>\
@@ -119,40 +119,75 @@ console.log(theUri)
 					<pre><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
 				<td>\
-					<a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a>\
+					<a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a>\
 				</td>\
 		</table>\
 		<h4><b>Hitelesítési módjaim:</b></h4>\
-		<table>';
-		var c={	pw:["Jelszavas","password"],
-				fb:["Facebook","facebook"],
-				ssl:["SSL kulcs","certificate"],
-				git:["Github","github"]
+		<table class="multiheader">';
+		var c={	pw:["Jelszavas","password","",true],
+				fb:["Facebook","facebook","facebook.add_fb_credential()",false],
+				ssl:["SSL kulcs","certificate","",true],
+				git:["Github","github","",false]
 				};
+		var credential_list = ""
 		for( var i in c) {
-					result +='\
-			<tr id="'+i+'-credential-list">\
-				<th>'+c[i][0]+'</th>\
-				<th>\
-					<a onclick="javascript:pageScript.addItem(\"'+i+'\").edit" class="btn fa fa-plus"></a>\
-				</th>\
-			</tr>'
+			credential_list = ""
 			for(var j=0; j<data.credentials.length; j++) {
-				console.log(c[i][1]+' - '+data.credentials[j].credentialType)
 				if (data.credentials[j].credentialType==c[i][1]) {
-					result += '\
+					credential_list += '\
 			<tr>\
-				<td  id="Credential-Item-'+j+'_identifier"><pre class="credential-item">'+data.credentials[j].identifier+'</pre></td>\
+				<td  ><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
 				<td>\
 					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\''+c[i][1]+'\')" class="btn btn_ fa fa-trash"></a>\
 				</td>\
 			</tr>'
 				}
 			}
+			credential_header='\
+			<tr id="'+i+'-credential-list">\
+				<th>'+c[i][0]+'</th>\
+				<th>'
+			if (c[i][3] || credential_list==''  ) {
+				credential_header +='\
+					<a onclick="javascript:'+c[i][2]+'" class="btn fa fa-plus"></a>';
+			}
+			credential_header +='\
+				</th>\
+			</tr>'
+			result+=credential_header+credential_list
 		}
 		result +='\
 		</table>'
 		return result;		
+	}
+	PageScript.prototype.myappsCallback = function(status,text){
+		console.log(text)
+		if (status!=200) return;
+		var aps=JSON.parse(text)
+		console.log(aps)
+		var applist='\
+		<table>\
+			<tr>\
+				<th>app neve</th>\
+				<th>link</th>\
+				<th>azonosítóm</th>\
+				<th>can email</th>\
+				<th>allow</th>\
+			</tr>'
+		for(app in aps){
+		console.log(app)
+			applist+='\
+			<tr>\
+				<td>'+aps[app].name+'</td>\
+				<td><a href="//'+aps[app].hostname+'">'+aps[app].hostname+'</a></td>\
+				<td>'+aps[app].username+'</td>\
+				<td>'+aps[app].can_email+'</td>\
+				<td>'+aps[app].email_enabled+'</td>\
+			</tr>'
+		}	
+		applist +='\
+		</table>';
+		document.getElementById("me_Applications").innerHTML=applist;
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {
@@ -163,19 +198,17 @@ console.log(theUri)
 				<td>'+data.userid+'</td>\
 			</tr>\
 		</table>\
-		<h4><b>Tanusítványaim:</b></h4>\
+		<h4><b>Igazolásaim:</b></h4>\
 		<table>\
 			<thead>\
 				<tr>\
-					<th>Igazolvány</th>\
+					<th>Megnevezés</th>\
 					<th>Kiállító</th>\
 					<th>Kiállítás dátuma</th>\
 				</tr>\
 			<tbody>'
 		for(assurance in data.assurances) {
-			console.log(data.assurances[assurance])
 			for( var i=0; i<data.assurances[assurance].length; i++){
-				console.log(data.assurances[assurance][i])
 				result += '\
 				<tr>\
 					<td>'+data.assurances[assurance][i].name+'</td>\
@@ -248,6 +281,21 @@ console.log(theUri)
 		else console.log(text);
 	}
 	
+	PageScript.prototype.meCallback = function(status, text) {
+
+		if (status!=500) {
+			var data = JSON.parse(text);
+			var msg = self.processErrors(data)
+			if (status == 200 ) {
+				if( self.page=="account"){
+					self.get_me()
+				}
+			}
+			self.displayMsg(msg);
+		}
+		else console.log(text);
+	}
+	
 	PageScript.prototype.reloadCallback = function(status, text) {
 		if (status!=500) {
 			var data = JSON.parse(text);
@@ -283,6 +331,7 @@ console.log(theUri)
 			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		}
 		else {
+			self.ajaxget('/v1/getmyapps',self.myappsCallback)
 			self.isLoggedIn=true
 			console.log(data)
 //			if (!self.activeButton)	self.menuHandler("account").menuActivate();
@@ -437,22 +486,7 @@ console.log("logoutCallback")
 		self.displayMsg({error:'<p class="warning">Ez a funkció sajnos még nem működik</p>'});	
 		}
 	
-	PageScript.createXmlForAnchor = function(formName) {
-		personalId = document.getElementById(formName+"_predigest_input").value;
-		motherValue = document.getElementById(formName+"_predigest_mothername").value;
-		mothername = self.normalizeString(motherValue);
-		
-		if ( personalId == "") {
-			self.displayMsg({error:"<p class='warning'>A személyi szám nincs megadva</p>"})
-			return;
-		}
-		if ( mothername == "") {
-			self.displayMsg({error:"<p class='warning'>Anyja neve nincs megadva</p>"})
-			return;
-		}
-		return ("<request><id>"+personalId+"</id><mothername>"+mothername+"</mothername></request>");
 
-	}
 
 
 	PageScript.prototype.changeHash = function() {
@@ -525,7 +559,7 @@ console.log("logoutCallback")
 	
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
-		self.doRemove = function(type) {
+		this.doRemove = function(type) {
 			credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML;
 			identifier = document.getElementById(this.formName+"_identifier").innerHTML;
 			text = {
@@ -533,7 +567,8 @@ console.log("logoutCallback")
 				credentialType: credentialType,
 				identifier: identifier
 			}
-			this.ajaxpost("/v1/remove_credential", text, self.myCallback);
+			console.log("text")
+			this.ajaxpost("/v1/remove_credential", text, self.meCallback);
 		}
 		return self
 	}
