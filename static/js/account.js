@@ -94,6 +94,7 @@
 				if (self.QueryString.secret) self.verifyEmail()
 			}
 			self.ajaxget("/v1/users/me", self.initCallback)
+			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
@@ -242,10 +243,72 @@
 		return s;
 	}
 	
+	PageScript.prototype.digestGetter = function(formName) {
+		self.formName = formName
+		
+		self.digestCallback = function(status,text,xml) {
+			if (status==200) {
+				var diegestInput=document.getElementById(self.formName + "_digest_input")
+				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
+				$("#"+self.formName + "_digest_input").trigger('keyup');
+				document.getElementById(self.formName + "_predigest_input").value = "";
+				self.displayMsg({success:"<p class='success'>A titkosítás sikeres</p>"});
+			} else {
+				self.displayMsg({error:"<p class='warning'>" + text + "</p>"});
+			}
+		}
+	
+		self.getDigest = function() {
+			text = PageScript.createXmlForAnchor(self.formName)
+			if (text == null)
+				return;
+			http = this.ajaxBase(this.digestCallback);
+			http.open("POST",self.QueryString.uris.ANCHOR_URL+"/anchor",true);
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		  	http.setRequestHeader("Content-length", text.length);
+		  	http.setRequestHeader("Connection", "close");
+			http.send(text);
+		}
+		return self
+	}	
+	
 	PageScript.prototype.convert_mothername = function(formName) {
 		var inputElement = document.getElementById( formName+"_mothername");
 		var outputElement = document.getElementById( formName+"_monitor");
 		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
+	}
+	
+	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
+		var offset = this.offsetHeight - this.clientHeight;
+		var resizeTextarea = function(el) {
+			jQuery(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+		};
+		jQuery(this).on('keyup input', function() { resizeTextarea(this); }).removeAttr('data-autoresize');
+	});
+	
+// assuring functions
+
+	PageScript.prototype.byEmail = function() {
+	    var email = document.getElementById("ByEmailForm_email_input").value;
+		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
+		else {
+			email = encodeURIComponent(email)
+			this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
+		}
+	}
+	
+	PageScript.prototype.addAssurance = function() {
+	    digest = document.getElementById("assurancing_predigest_input").value;
+	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
+	    email = document.getElementById("ByEmailForm_email_input").value;
+	    csrf_token = this.getCookie('csrf');
+	    text= {
+	    	digest: digest,
+	    	assurance: assurance,
+	    	email: email,
+	    	csrf_token: csrf_token
+	    }
+	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
 	}
 }()
 )

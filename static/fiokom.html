@@ -84,9 +84,6 @@ label, legend {
     margin-bottom: .5rem;
 }
 input[type='email'], input[type='number'], input[type='password'], input[type='search'], input[type='tel'], input[type='text'], input[type='url'], textarea, select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
     background-color: transparent;
     border: .1rem solid #d1d1d1;
     border-radius: .4rem;
@@ -234,6 +231,20 @@ background-color: #000;
 border: 1px solid #000;
 	color: #fff;
 }
+
+.main-tab-content .c-tab a.btn_ {
+background-color: transparent;
+    border: 1px solid #EE3B24;
+	color: #EE3B24;
+}
+
+.main-tab-content .c-tab a.btn_:hover {
+background-color: #000;
+border: 1px solid #000;
+	color: #fff;
+}
+
+
 #registration-form-method-selector button.active{
 	background-color:black;
 }
@@ -257,6 +268,24 @@ h1 {
 h3 {
     font-size: 3.6rem;
 }}
+
+div.monitor {
+    float: right;
+    font-size: 1.3rem;
+    background-color: #F5EFEF;
+    border-radius: 5px;
+    padding: 5px;
+    width: 50%;
+    word-wrap: break-word;
+}
+pre.credential-item {
+    word-wrap: break-word;
+    white-space: pre-line;
+    border: none;
+    background: transparent;
+    margin: 0px;
+    padding: 0;
+}
 		</style>
 	</head>
 	<body onload="pageScript.main()">
@@ -426,7 +455,7 @@ melyekből az eredeti adatok nem nyerhetők vissza.
 A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe.
 				</p>
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
-						<a href="https://testanchor.edemokraciagep.org" target="blank">
+						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
 						</a>
 						<div id="code-generation-input" class="form">
@@ -439,6 +468,7 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
 								<div class="monitor" id="registration-keygenform_predigest_monitor"></div>
 							</div>
 						</div>
+						<label for="digest">Titkos Kód:</label>
 						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
 					</form>
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
@@ -545,65 +575,28 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
                                <div class="col-md-12 col-sm-9">
                                     <div class="c-tab">
                                          <h4><b>Tanusítói felület</b></h4>
-                                         <div id="check-the-user" >
-						<p>Felhasználó adatainak lekérdezése</p>
-						<form id="ByEmailForm" action="javascript:pageScript.byEmail()" method="post" name="byEmail">
-							<div class="formrow">
-								<div class="label" id="ByEmailForm_email_label">
-									e-mail cím:
-								</div>
-								<input name="email" type="text" id="ByEmailForm_email_input">
-								<div class="formrow">
-									<input class="pbutton" type="submit" value="Mutasd" id="ByEmailForm_submitButton">
-								</div>
-							</div>
-							<div class="msg" id="userdata" style="max-width: 600px;  margin-left: 10px;"></div>
-						</form>
-						
-						<hr>
-						
-						<p>Felhasználó ellenőrzése</p>
-						<form id="AddAssuranceForm" action="javascript:pageScript.addAssurance()" method="post" name="addAssurance">
-							<div class="formrow">
-								<div class="label" id="AddAssuranceForm_predigest_label">
-									személyi szám:
-								</div>
-								<input name="digest" type="text" id="AddAssuranceForm_predigest_input">
-							</div>
-							<div class="formrow">
-								<div class="label" id="AddAssuranceForm_predigest_label_mothername">
-									Anyja neve:
-								</div>
-								<input name="digest" type="text" id="AddAssuranceForm_predigest_mothername" onkeyup="PageScript.convert_mothername('AddAssuranceForm')">
-								<div class="label" id="AddAssuranceForm_predigest_label_mothername_normalized"></div>
-							</div>
-								<button class="pbutton" type="button" id="AddAssuranceForm_getDigestButton" onclick="pageScript.digestGetter('AddAssuranceForm').getDigest()">
-									Titkos kód generálása
-								</button>
-							<div class="formrow">
-								<div class="label" id="AddAssuranceForm_digest_label">
-									titkós kód:
-								</div>
-								<input name="digest" type="text" id="AddAssuranceForm_digest_input">
-							</div>
-							<div class="formrow">
-								<div class="label" id="AddAssuranceForm_assurance_label">
-									ellenőrzési szint:
-								</div>
-								<input name="assurance" type="text" id="AddAssuranceForm_assurance_input">
-							</div>
-							<div class="formrow">
-								<div class="label" id="AddAssuranceForm_email_label">
-									e-mail cím:
-								</div>
-								<input name="email" type="text" id="AddAssuranceForm_email_input">
-							</div>
-							<div class="formrow">
-								<input class="pbutton" type="submit" value="Tanusítvány kiadása" id="AddAssuranceForm_submitButton">
-							</div>
-						</form>
-			          </div>
-										 <div id="assurance-giving" ></div>
+                                         <div id="check-the-user" class="form">
+											<p>Felhasználó adatainak lekérdezése</p>
+											<label for="email">A felhasználó email címe</label>
+											<input name="email" type="text" id="ByEmailForm_email_input">
+											<button onclick="javascript:pageScript.byEmail()" type="button">Lekérdezés</button>
+										</div>
+										<div id="assurance-giving" class="form" >
+											<p>Tanusítvány kiadása</p>
+											<label for="input">Személyi azonosító:</label>
+											<input type="text" placeholder="" id="assurancing_predigest_input" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
+											<label for="mothername">Anyja neve:</label>
+											<input type="text" placeholder="" id="assurancing_predigest_mothername" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
+											<button type="button" onclick="pageScript.digestGetter('assurancing').getDigest()">A kód előállítása</button>
+											<div class="monitor" id="assurancing_predigest_monitor"></div>
+											<label for="digest">Titkos Kód:</label>
+											<textarea data-autoresize class="digest" name="digest" type="text" id="assurancing_digest_input"></textarea>
+											<label for="digest">Kiadható assurancok:</label>
+											<select id="assurance-giving_assurance_selector">
+											
+											</select>
+											<button type="button" onclick="javascript:pageScript.addAssurance()">Tanusítvány kiadása</button>
+										</div>
                                     </div>
                                 </div>
                           </div>

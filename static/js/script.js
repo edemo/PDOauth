@@ -22,7 +22,6 @@ QueryStringFunc = function (win) { //http://stackoverflow.com/questions/979975/h
     return query_string;
 };
 
-
 function PageScript(test) {
 	var self = this
 	test=test || { debug: false, uribase: "" }
@@ -34,11 +33,10 @@ function PageScript(test) {
 	this.isAssurer=false;
 	this.registrationMethode="pw";
 	
-
-	
 	PageScript.prototype.getThis=function() {
 		return this
 	}
+	
 	PageScript.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
 		if (win.XMLHttpRequest)
@@ -128,7 +126,8 @@ console.log(theUri)
 		<table>';
 		var c={	pw:["Jelszavas","password"],
 				fb:["Facebook","facebook"],
-				ssl:["SSL kulcs","certificate"] 
+				ssl:["SSL kulcs","certificate"],
+				git:["Github","github"]
 				};
 		for( var i in c) {
 					result +='\
@@ -143,9 +142,9 @@ console.log(theUri)
 				if (data.credentials[j].credentialType==c[i][1]) {
 					result += '\
 			<tr>\
-				<td id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</td>\
+				<td  id="Credential-Item-'+j+'_identifier"><pre class="credential-item">'+data.credentials[j].identifier+'</pre></td>\
 				<td>\
-					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\'password\')" class="btn fa fa-trash"></a>\
+					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\''+c[i][1]+'\')" class="btn btn_ fa fa-trash"></a>\
 				</td>\
 			</tr>'
 				}
@@ -195,30 +194,25 @@ console.log(theUri)
 			return date.toLocaleDateString();
 		}
 		
-	PageScript.prototype.parseAssurancing = function(data) {
-		var userdata = '\
-		<table>\
-			<tr>\
-				<td><b>e-mail cím:</b></td>\
-				<td id="email-change">'+data.email+'</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
-			</tr>\
-			<tr>\
-				<td><b>felhasználó azonosító:</b></td>\
-				<td>'+data.userid+'</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn fa fa-edit"></a></td>\
-			</tr>\
-			'
-		userdata +='<p><b>hash:</b></p><pre>'+data.hash+"</pre>"
-		userdata +="<p><b>tanusítványok:</b></p>"
-		userdata +="</table><ul>"
-		for(ass in data.assurances) userdata += "<li>"+ass+"</li>"; 
-		userdata +="</ul>"
-		userdata +="<p><b>hitelesítési módok:</b></p>"
-		userdata +="<ul>"
-		for(i in data.credentials) userdata += "<li>"+data.credentials[i].credentialType+"</li>" ;
-		userdata +="</ul>"
-		return userdata;		
+	PageScript.prototype.parseAssurances = function(data) {
+		var selector = ''
+		var text
+		for(ass in data.assurances) {
+			var pos
+			console.log(typeof(ass))
+			console.log(ass+' - ' + ass.indexOf("."))
+			console.log(pos=ass.indexOf("."))
+			if ( pos=ass.indexOf(".")+1 ) {
+				text=ass.slice(pos)
+				selector += '\
+				<option value="'+text+'">\
+				'+text+'\
+				</option>\
+				';
+				console.log(text)
+			}
+		}
+		return selector;		
 	}
 	
 	PageScript.prototype.loginCallback=function(status, text){
@@ -302,6 +296,7 @@ console.log(theUri)
 				document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
 				document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
 //				document.getElementById("me_Applications").innerHTML=self.parseSettings(data);
+				document.getElementById("assurance-giving_assurance_selector").innerHTML=self.parseAssurances(data);
 //				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
 //				if (data.email) {
 //					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
@@ -380,11 +375,6 @@ console.log(theUri)
 //		document.getElementById("DeRegisterForm_secret_input").value=password;
 	}
 
-	PageScript.prototype.byEmail = function() {
-	    var email = document.getElementById("ByEmailForm_email_input").value;
-	    email = encodeURIComponent(email)
-	    this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
-	}
 
 	PageScript.prototype.logoutCallback = function(status, text) {
 console.log("logoutCallback")
@@ -442,20 +432,7 @@ console.log("logoutCallback")
 	    return "";
 	} 
 	
-	PageScript.prototype.addAssurance = function() {
-	    digest = document.getElementById("AddAssuranceForm_digest_input").value;
-	    assurance = document.getElementById("AddAssuranceForm_assurance_input").value;
-	    email = document.getElementById("AddAssuranceForm_email_input").value;
-	    csrf_token = this.getCookie('csrf');
-	    text= {
-	    	digest: digest,
-	    	assurance: assurance,
-	    	email: email,
-	    	csrf_token: csrf_token
-	    }
-	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
-	}
-	
+
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
 		self.displayMsg({error:'<p class="warning">Ez a funkció sajnos még nem működik</p>'});	
 		}
@@ -476,32 +453,7 @@ console.log("logoutCallback")
 		return ("<request><id>"+personalId+"</id><mothername>"+mothername+"</mothername></request>");
 
 	}
-	PageScript.prototype.digestGetter = function(formName) {
-		self.formName = formName
-		
-		self.idCallback = function(status,text,xml) {
-			if (status==200) {
-		    	document.getElementById(self.formName + "_digest_input").value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
-				document.getElementById(self.formName + "_predigest_input").value = "";
-				self.displayMsg({success:"<p class='success'>A titkosítás sikeres</p>"});
-			} else {
-				self.displayMsg({error:"<p class='warning'>" + text + "</p>"});
-			}
-		}
-	
-		self.getDigest = function() {
-			text = PageScript.createXmlForAnchor(self.formName)
-			if (text == null)
-				return;
-			http = this.ajaxBase(this.idCallback);
-			http.open("POST",self.QueryString.uris.ANCHOR_URL+"/anchor",true);
-			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		  	http.setRequestHeader("Content-length", text.length);
-		  	http.setRequestHeader("Connection", "close");
-			http.send(text);
-		}
-		return self
-	}
+
 
 	PageScript.prototype.changeHash = function() {
 	    digest = document.getElementById("ChangeHashForm_digest_input").value;
@@ -732,14 +684,7 @@ console.log("logoutCallback")
 			document.getElementById("nav-bar-register").style.display="block";
 		}
 	}
-	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
-    var offset = this.offsetHeight - this.clientHeight;
-    var resizeTextarea = function(el) {
-        jQuery(el).css('height', 'auto').css('height', el.scrollHeight + offset);
-    };
-    jQuery(this).on('keyup input', function() { resizeTextarea(this); }).removeAttr('data-autoresize');
-});
-}
 
+}
 pageScript = new PageScript();
 
