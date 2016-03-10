@@ -1,6 +1,5 @@
 from test.helpers.PDUnitTest import PDUnitTest, test
 from test.helpers.UserUtil import UserUtil
-from pdoauth.models.User import User
 
 class LoginTest(PDUnitTest, UserUtil):
     @test
