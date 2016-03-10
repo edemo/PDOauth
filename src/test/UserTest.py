@@ -4,6 +4,8 @@ from test.helpers.UserUtil import UserUtil
 from test.helpers.PDUnitTest import PDUnitTest, test
 from pdoauth.models.User import User
 from test.helpers.CryptoTestUtil import CryptoTestUtil
+from pdoauth.ReportedError import ReportedError
+from pdoauth.Messages import noHashGiven
 
 class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
@@ -101,8 +103,12 @@ class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
     @test
     def getByDigest_does_not_allow_empty_digest(self):
-        self.assertRaises(ValueError, User.getByDigest,'')
+        with self.assertRaises(ReportedError) as context:
+            User.getByDigest('')
+        self.assertEqual(noHashGiven,context.exception.descriptor)
 
     @test
     def getByDigest_does_not_allow_null_digest(self):
-        self.assertRaises(ValueError, User.getByDigest,None)
+        with self.assertRaises(ReportedError) as context:
+            User.getByDigest(None)
+        self.assertEqual(noHashGiven,context.exception.descriptor)

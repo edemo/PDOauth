@@ -57,5 +57,5 @@ inactiveOrDisabledUser = _("Inactive or disabled user")
 badUserNameOrPassword = _("Bad username or password")
 cannotLoginToFacebook = _("Cannot login to facebook")
 youHaveToRegisterFirst = _("You have to register first")
-
-
+unknownApplication = _("Unknown application")
+noHashGiven = _("No hash given")

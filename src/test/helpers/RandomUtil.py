@@ -3,7 +3,8 @@ import string
 
 class RandomUtil(object):
 
-    def mkRandomString(self, length):
+    @staticmethod
+    def mkRandomString(length):
         return ''.join(
             random.choice(string.ascii_letters) for _ in range(length))
 
@@ -17,9 +18,9 @@ class RandomUtil(object):
     def setupRandom(self):
         self.randString = self.mkRandomString(6)
 
-    def createRandomUserId(self):
-        self.setupRandom()
-        userid = "aaa_{0}".format(self.randString)
+    @classmethod
+    def createRandomUserId(cls):
+        userid = "aaa_{0}".format(cls.mkRandomString(6))
         return userid
 
     def setupUserCreationData(self, userid=None, password=None, email=None):
