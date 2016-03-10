@@ -4,6 +4,7 @@ from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String, BOOLEAN, Integer
 import uuid
 from pdoauth.ReportedError import ReportedError
+from pdoauth.Messages import noHashGiven
 
 class AlreadyExistingUser(Exception):
     pass
@@ -69,5 +70,5 @@ class User(db.Model, ModelUtils):
     @classmethod
     def getByDigest(cls, digest):
         if digest == '' or digest is None:
-            raise ValueError()
+            raise ReportedError(noHashGiven)
         return cls.query.filter_by(hash=digest).all()
