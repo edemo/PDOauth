@@ -6,6 +6,7 @@ from pdoauth.models.AppMap import AppMap
 from pdoauth.models.Application import Application
 from pdoauth.AppHandler import AppHandler
 import random
+from test.helpers.FakeInterFace import FakeInterface
 
 
 class AppInfoTest(PDUnitTest, UserUtil, AuthProviderUtil):
@@ -15,6 +16,8 @@ class AppInfoTest(PDUnitTest, UserUtil, AuthProviderUtil):
         self.createTestAppMaps()
         self.app = self.boundApps.pop()
         self.boundApps.add(self.app)
+        controller = AppHandler(FakeInterface)
+        self.appList = controller.getAppList(self.user)
 
     def createTestAppMaps(self):
         self.boundApps = set()
@@ -57,50 +60,40 @@ class AppInfoTest(PDUnitTest, UserUtil, AuthProviderUtil):
         
     @test
     def there_is_a_list_of_all_apps_denoting_the_user_data_associated_with_them(self):
-        controller = AppHandler()
-        appList = controller.getAppList(self.user)
         foundApps = set()
         print foundApps
-        for entry in appList:
-            app = Application.find(entry.name)
+        for entry in self.appList:
+            app = Application.find(entry['name'])
             foundApps.add(app)
         self.assertEqual(self.allApps, foundApps)
 
     @test
     def the_list_entries_contain_the_can_email_attribute_of_application(self):
-        controller = AppHandler()
-        appList = controller.getAppList(self.user)
-        for app in appList:
-            self.assertEqual(app.can_email,Application.find(app.name).can_email)
+        for app in self.appList:
+            self.assertEqual(app['can_email'],Application.find(app['name']).can_email)
     @test
     def the_list_entries_contain_whether_the_user_enabled_emailing(self):
-        controller = AppHandler()
-        appList = controller.getAppList(self.user)
         missingCount= 0
-        for entry in appList:
-            app = Application.find(entry.name)
+        for entry in self.appList:
+            app = Application.find(entry['name'])
             mapEntry=AppMap.find(app,self.user)
             if mapEntry:
-                self.assertEqual(entry.email_enabled, mapEntry.can_email)
+                self.assertEqual(entry['email_enabled'], mapEntry.can_email)
             else:
                 missingCount += 1
-        self.assertTrue(missingCount < len(appList))
+        self.assertTrue(missingCount < len(self.appList))
         self.assertTrue(missingCount > 0)
 
     @test
     def the_list_entries_contain_the_proxy_username(self):
-        controller = AppHandler()
-        appList = controller.getAppList(self.user)
-        for entry in appList:
-            app = Application.find(entry.name)
+        for entry in self.appList:
+            app = Application.find(entry['name'])
             mapEntry=AppMap.find(app,self.user)
             if mapEntry:
-                self.assertEqual(entry.username, mapEntry.userid)
+                self.assertEqual(entry['username'], mapEntry.userid)
 
     @test
     def the_list_entries_contain_the_app_hostname(self):
-        controller = AppHandler()
-        appList = controller.getAppList(self.user)
-        for entry in appList:
-            app = Application.find(entry.name)
-            self.assertEqual(entry.hostname, app.redirect_uri.split('/')[2])
+        for entry in self.appList:
+            app = Application.find(entry['name'])
+            self.assertEqual(entry['hostname'], app.redirect_uri.split('/')[2])

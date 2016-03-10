@@ -1,28 +1,33 @@
 from pdoauth.models.Application import Application
 from pdoauth.models.AppMap import AppMap
 import json
+from pdoauth.WebInterface import WebInterface
 
-class UserAppEntry(object):
-    def __init__(self,app,user):
-        self.name = app.name
-        self.can_email = app.can_email
-        self.hostname = app.redirect_uri.split('/')[2]
-        appMapEntry =AppMap.find(app, user)
+class AppHandler(WebInterface):
+
+    def createUserAppMapEntry(self, user, app):
+        entry = dict(name=app.name, 
+            can_email=app.can_email, 
+            hostname=app.redirect_uri.split('/')[2])
+        appMapEntry = AppMap.find(app, user)
         if appMapEntry:
-            self.email_enabled = appMapEntry.can_email
-            self.username = appMapEntry.userid
+            entry['email_enabled'] = appMapEntry.can_email
+            entry['username'] = appMapEntry.userid
         else:
-            self.email_enabled = None
-            self.username = None
-    def __repr__(self):
-        d = dict()
-        for field in ["name", "can_email", "hostname", "email_enabled", "username"]:
-            d[field] = getattr(self,field)
-        return json.dumps(d)
+            entry['email_enabled'] = None
+            entry['username'] = None
+        return entry
 
-class AppHandler(object):
     def getAppList(self, user):
         ret = list()
         for app in Application.all():
-            ret.append(UserAppEntry(app,user))
+            entry = self.createUserAppMapEntry(user, app)
+            ret.append(entry)
         return ret
+
+    def getApplistAsJson(self,user):
+        return json.dumps(self.getAppList(user))
+
+    def getApplistInterFace(self):
+        user = self.getCurrentUser()
+        return self.getApplistAsJson(user)
