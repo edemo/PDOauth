@@ -1,3 +1,4 @@
+# encoding: utf-8
 import gettext
 gettext.install('PDOauth')
 
@@ -59,3 +60,5 @@ cannotLoginToFacebook = _("Cannot login to facebook")
 youHaveToRegisterFirst = _("You have to register first")
 unknownApplication = _("Unknown application")
 noHashGiven = _("No hash given")
+exceptionSendingEmail = _("Nem sikerült elküldeni a levelet: {0}")
+
