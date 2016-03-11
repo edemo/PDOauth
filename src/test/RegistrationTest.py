@@ -6,6 +6,7 @@ from pdoauth.models.Credential import Credential
 from Crypto.Hash.SHA256 import SHA256Hash
 from test.helpers.CryptoTestUtil import CryptoTestUtil, SPKAC
 from pdoauth.models.Assurance import Assurance
+from pdoauth.models.User import User
 
 class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
@@ -115,6 +116,7 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
             [form],
             400,
             ['another user is using your hash'])
+        self.assertEqual(None, User.getByEmail(self.userCreationEmail))
 
     @test
     def the_emailverification_assurance_does_not_count_in_hash_collision(self):
@@ -160,3 +162,19 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
     def ssl_registration_sets_the_csrf_cookie(self):
         resp = self._sslRegister()
         self.assertTrue("csrf=" in unicode(resp.headers['Set-Cookie']))
+
+    @test
+    def hash_collision_in_ssl_registration_does_not_leave_a_stale_user(self):
+        theHash = self.createHash()
+        anotherUser = self.createUserWithCredentials().user
+        anotherUser.hash = theHash
+        Assurance.new(anotherUser, "test", anotherUser)
+        self.setupUserCreationData()
+        data = dict(email=self.userCreationEmail,
+                    pubkey=SPKAC,
+                    digest=theHash)
+        self.assertReportedError(self.controller.doKeygen,
+            [FakeForm(data)],
+            400,
+            ['another user is using your hash'])
+        self.assertEqual(None, User.getByEmail(self.userCreationEmail))
