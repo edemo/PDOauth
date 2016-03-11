@@ -40,6 +40,7 @@ class AppHandler(WebInterface):
             raise ReportedError(Messages.unknownApplication)
         theMap = AppMap.get(app, user)
         theMap.can_email = value
+        theMap.save()
 
     
     def setAppCanEmail(self, form):
