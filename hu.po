@@ -246,3 +246,25 @@ msgstr "Nincs megadva Titkos Kód"
 #, python-brace-format
 msgid "Nem sikerült elküldeni a levelet: {0}"
 msgstr ""
+
+msgid "magyar"
+msgstr "magyar assurance"
+
+msgid "emailverification"
+msgstr "az emailcíme ellenőrzött"
+
+msgid "assurer"
+msgstr "aki nézheti más adatát"
+
+msgid "assurer.magyar"
+msgstr "magyar tanusító"
+
+msgid "assurer.assurer"
+msgstr "assurer-t tud kiadni"
+
+msgid "assurer.vizsgazott"
+msgstr "vizsgabiztos"
+
+msgid "assurer.{0}"
+msgstr "ilyen igazolást tud kiadni: {0}"
+
