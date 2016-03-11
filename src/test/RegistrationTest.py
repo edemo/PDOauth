@@ -7,6 +7,8 @@ from Crypto.Hash.SHA256 import SHA256Hash
 from test.helpers.CryptoTestUtil import CryptoTestUtil, SPKAC
 from pdoauth.models.Assurance import Assurance
 from pdoauth.models.User import User
+import time
+from uuid import uuid4
 
 class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
@@ -37,6 +39,15 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
         current_user = self.controller.getCurrentUser()
         cred = Credential.getByUser(current_user, 'emailcheck')
         self.assertTrue(cred)
+
+    @test
+    def timed_out_emailcheck_credentials_are_cleared_in_registration(self):
+        for someone in User.query.all()[:5]:  # @UndefinedVariable
+            Credential.new(someone, 'emailcheck', unicode(time.time()-1)+":"+unicode(uuid4()), unicode(uuid4()))
+        self.assertTrue(self.countExpiredCreds('emailcheck')>=5)
+        form = self.prepareLoginForm()
+        self.controller.doRegistration(form)
+        self.assertTrue(self.countExpiredCreds('emailcheck')==0)
 
     @test
     def the_emailcheck_secret_is_not_shown_in_the_registration_answer(self):
