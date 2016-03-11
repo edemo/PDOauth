@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-10 23:50+0100\n"
+"POT-Creation-Date: 2016-03-11 18:42+0100\n"
 "PO-Revision-Date: 2016-03-10 23:30+0100\n"
 "Last-Translator: mag <mag@magwas.rulez.org>\n"
 "Language-Team: Hungarian\n"
@@ -14,91 +14,92 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/pdoauth/Messages.py:4
+#: src/pdoauth/Messages.py:4 src/pdoauth/Messages.py:5
 msgid "There is already a user with that email"
 msgstr "Ezzel az email-el már van felhasználó"
 
-#: src/pdoauth/Messages.py:5
+#: src/pdoauth/Messages.py:5 src/pdoauth/Messages.py:6
 msgid "There is already a user with that username"
 msgstr "A  Felhasználó név már foglalt"
 
-#: src/pdoauth/Messages.py:6
+#: src/pdoauth/Messages.py:6 src/pdoauth/Messages.py:7
 msgid "password should contain lowercase"
 msgstr "A jelszónak tartalmaznia kell kisbetűket"
 
-#: src/pdoauth/Messages.py:7
+#: src/pdoauth/Messages.py:7 src/pdoauth/Messages.py:8
 msgid "password should contain uppercase"
 msgstr "A jelszónak tartalmaznia kell nagybetűket"
 
-#: src/pdoauth/Messages.py:8
+#: src/pdoauth/Messages.py:8 src/pdoauth/Messages.py:9
 msgid "password should contain digit"
 msgstr "A jelszónak tartalmaznia kell számokat"
 
-#: src/pdoauth/Messages.py:9
+#: src/pdoauth/Messages.py:9 src/pdoauth/Messages.py:10
 msgid "secret should contain lowercase"
 msgstr "A jelszónak tartalmaznia kell kisbetűket"
 
-#: src/pdoauth/Messages.py:10
+#: src/pdoauth/Messages.py:10 src/pdoauth/Messages.py:11
 msgid "secret should contain digit"
 msgstr "A jelszónak tartalmaznia kell számokat"
 
-#: src/pdoauth/Messages.py:11
+#: src/pdoauth/Messages.py:11 src/pdoauth/Messages.py:12
 msgid "credentialType: Invalid value, must be one of:"
 msgstr "hibás credential típus"
 
-#: src/pdoauth/Messages.py:12
+#: src/pdoauth/Messages.py:12 src/pdoauth/Messages.py:13
 msgid "Missing parameter redirect_uri in URL query"
 msgstr "hiányzó paraméter: redrect_uri"
 
-#: src/pdoauth/Messages.py:13
+#: src/pdoauth/Messages.py:13 src/pdoauth/Messages.py:14
 msgid "Missing parameter response_type in URL query"
 msgstr "hiányzó paraméter: response_type"
 
-#: src/pdoauth/Messages.py:14
+#: src/pdoauth/Messages.py:14 src/pdoauth/Messages.py:15
 msgid "Missing parameter client_id in URL query"
 msgstr "hiányzó paraméter: client_id"
 
-#: src/pdoauth/Messages.py:15
+#: src/pdoauth/Messages.py:15 src/pdoauth/Messages.py:16
 msgid "unsupported_grant_type"
 msgstr "nem támogatott grant típus"
 
-#: src/pdoauth/Messages.py:16
+#: src/pdoauth/Messages.py:16 src/pdoauth/Messages.py:17
 msgid "invalid_client"
 msgstr "hibás kliens"
 
-#: src/pdoauth/Messages.py:17
+#: src/pdoauth/Messages.py:17 src/pdoauth/Messages.py:18
 msgid "unsupported_response_type"
 msgstr "nem támogatott választípus"
 
-#: src/pdoauth/Messages.py:18
+#: src/pdoauth/Messages.py:18 src/pdoauth/Messages.py:19
 msgid "unauthorized_client"
 msgstr "a kliensnek nincs jogosultsága"
 
-#: src/pdoauth/Messages.py:19
+#: src/pdoauth/Messages.py:19 src/pdoauth/Messages.py:20
 msgid "invalid_scope"
 msgstr "hibás kód"
 
-#: src/pdoauth/Messages.py:20
+#: src/pdoauth/Messages.py:20 src/pdoauth/Messages.py:21
 msgid "Invalid request"
 msgstr "hibás kérés"
 
-#: src/pdoauth/Messages.py:21
+#: src/pdoauth/Messages.py:21 src/pdoauth/Messages.py:22
 msgid "access_denied"
 msgstr "Ehhez nincs hozzáférésed"
 
-#: src/pdoauth/Messages.py:22
+#: src/pdoauth/Messages.py:22 src/pdoauth/Messages.py:23
 msgid "invalid_grant"
 msgstr "hibás grant"
 
 #: src/pdoauth/Messages.py:24 src/pdoauth/Messages.py:59
+#: src/pdoauth/Messages.py:25 src/pdoauth/Messages.py:60
 msgid "You have to register first"
 msgstr "Ehhez először regisztrálnod kell"
 
-#: src/pdoauth/Messages.py:25
+#: src/pdoauth/Messages.py:25 src/pdoauth/Messages.py:26
 msgid "No certificate given"
 msgstr "Nincs SSL kulcs"
 
-#: src/pdoauth/Messages.py:26
+#: src/pdoauth/Messages.py:26 src/pdoauth/Messages.py:27
 msgid "another user is using your hash"
 msgstr ""
 "Egy másik Felhasználó is megadta ezt a Titkos kódot. Amennyiben nem a saját "
@@ -106,137 +107,164 @@ msgstr ""
 "adataidból készült, akkor haladéktalanul kezdeményezd a tanúsításodat.Ezzel "
 "megakadályozod, hogy  visszaéljenek az adataiddal."
 
-#: src/pdoauth/Messages.py:27
+#: src/pdoauth/Messages.py:27 src/pdoauth/Messages.py:28
 msgid "More users with the same hash; specify both hash and email"
 msgstr ""
 "Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhasználó "
 "email címét is"
 
-#: src/pdoauth/Messages.py:28
+#: src/pdoauth/Messages.py:28 src/pdoauth/Messages.py:29
 msgid "no authorization to show other users"
 msgstr "Nincs jogod más felhasználók adatait nézni"
 
-#: src/pdoauth/Messages.py:29
+#: src/pdoauth/Messages.py:29 src/pdoauth/Messages.py:30
 msgid "Password reset email has been successfully sent."
 msgstr "A jelszó megváltoztatásához szükséges emailt elküldtük neked"
 
-#: src/pdoauth/Messages.py:30
+#: src/pdoauth/Messages.py:30 src/pdoauth/Messages.py:31
 msgid "You cannot delete the login you are using"
 msgstr "Ezt a bejelentkezési módot nem törölheted, mert éppen ezt használod"
 
-#: src/pdoauth/Messages.py:31
+#: src/pdoauth/Messages.py:31 src/pdoauth/Messages.py:32
 msgid "No such user"
 msgstr "Nincs ilyen Felhasználó"
 
-#: src/pdoauth/Messages.py:32
+#: src/pdoauth/Messages.py:32 src/pdoauth/Messages.py:33
 msgid "bad Authorization header"
 msgstr ""
 
-#: src/pdoauth/Messages.py:33
+#: src/pdoauth/Messages.py:33 src/pdoauth/Messages.py:34
 msgid "no authorization"
 msgstr "Nincs jogod hozzá"
 
-#: src/pdoauth/Messages.py:34
+#: src/pdoauth/Messages.py:34 src/pdoauth/Messages.py:35
 msgid "authentication needed"
 msgstr "Be kell jelentkezned"
 
-#: src/pdoauth/Messages.py:35
+#: src/pdoauth/Messages.py:35 src/pdoauth/Messages.py:36
 msgid "logged out"
 msgstr "Kijelentkezve"
 
-#: src/pdoauth/Messages.py:36
+#: src/pdoauth/Messages.py:36 src/pdoauth/Messages.py:37
 msgid "deregistration email has been sent"
 msgstr "A fiók törléséhez szükséges email elküldtük"
 
-#: src/pdoauth/Messages.py:37
+#: src/pdoauth/Messages.py:37 src/pdoauth/Messages.py:38
 msgid "secret is needed for deregistration_doit"
 msgstr "A fiókod törléséhez add meg a jelszavad!"
 
-#: src/pdoauth/Messages.py:38
+#: src/pdoauth/Messages.py:38 src/pdoauth/Messages.py:39
 msgid "not logged in"
 msgstr "Nem vagy bejelentkezve"
 
-#: src/pdoauth/Messages.py:39
+#: src/pdoauth/Messages.py:39 src/pdoauth/Messages.py:40
 msgid "bad deregistration secret"
 msgstr "Hibás jelszó"
 
-#: src/pdoauth/Messages.py:40
+#: src/pdoauth/Messages.py:40 src/pdoauth/Messages.py:41
 msgid "you are deregistered"
 msgstr "A fiókodat töröltük"
 
-#: src/pdoauth/Messages.py:41
+#: src/pdoauth/Messages.py:41 src/pdoauth/Messages.py:42
 msgid "new hash registered"
 msgstr "A Titkos Kódot lecseréltük"
 
-#: src/pdoauth/Messages.py:42
+#: src/pdoauth/Messages.py:42 src/pdoauth/Messages.py:43
 msgid "old password does not match"
 msgstr "A régi jelszó hibás"
 
-#: src/pdoauth/Messages.py:43
+#: src/pdoauth/Messages.py:43 src/pdoauth/Messages.py:44
 msgid "password changed succesfully"
 msgstr "A jelszavad sikeresen megváltoztattad"
 
-#: src/pdoauth/Messages.py:44
+#: src/pdoauth/Messages.py:44 src/pdoauth/Messages.py:45
 msgid "This user does not have that digest"
 msgstr "A Felhasználónak nincs Titkos Kódja"
 
-#: src/pdoauth/Messages.py:45
+#: src/pdoauth/Messages.py:45 src/pdoauth/Messages.py:46
 msgid "No user with this hash"
 msgstr "Ehhez a Titkos Kódhoz nincs Felhasználó"
 
-#: src/pdoauth/Messages.py:46
+#: src/pdoauth/Messages.py:46 src/pdoauth/Messages.py:47
 msgid "unknown token"
 msgstr "ismeretlen token"
 
-#: src/pdoauth/Messages.py:47
+#: src/pdoauth/Messages.py:47 src/pdoauth/Messages.py:48
 msgid "email verified OK"
 msgstr "Az emailcím rendben"
 
-#: src/pdoauth/Messages.py:48
+#: src/pdoauth/Messages.py:48 src/pdoauth/Messages.py:49
 msgid "Invalid email address"
 msgstr "Nem jó emailcím"
 
-#: src/pdoauth/Messages.py:49
+#: src/pdoauth/Messages.py:49 src/pdoauth/Messages.py:50
 msgid "expired token"
 msgstr "lejárt token"
 
-#: src/pdoauth/Messages.py:50
+#: src/pdoauth/Messages.py:50 src/pdoauth/Messages.py:51
 msgid "Password successfully changed"
 msgstr "A jelszavada tsikeresen megváltoztattad"
 
-#: src/pdoauth/Messages.py:51
+#: src/pdoauth/Messages.py:51 src/pdoauth/Messages.py:52
 msgid "The secret has expired"
 msgstr "Lejárt a módosításra  rendelkezésre álló idő"
 
-#: src/pdoauth/Messages.py:52
+#: src/pdoauth/Messages.py:52 src/pdoauth/Messages.py:53
 msgid "No such credential"
 msgstr "Nincs ilyen hitelesítésed"
 
-#: src/pdoauth/Messages.py:53
+#: src/pdoauth/Messages.py:53 src/pdoauth/Messages.py:54
 msgid "credential removed"
 msgstr "A hitelesítési mód törölve"
 
-#: src/pdoauth/Messages.py:55
+#: src/pdoauth/Messages.py:55 src/pdoauth/Messages.py:56
 msgid "error in cert"
 msgstr "Hibás SSL tanúsítvány"
 
-#: src/pdoauth/Messages.py:56
+#: src/pdoauth/Messages.py:56 src/pdoauth/Messages.py:57
 msgid "Inactive or disabled user"
 msgstr "Nem aktív vagy felfüggesztett felhasználó "
 
-#: src/pdoauth/Messages.py:57
+#: src/pdoauth/Messages.py:57 src/pdoauth/Messages.py:58
 msgid "Bad username or password"
 msgstr "Hibás felhasználó név vagy jelszó"
 
-#: src/pdoauth/Messages.py:58
+#: src/pdoauth/Messages.py:58 src/pdoauth/Messages.py:59
 msgid "Cannot login to facebook"
 msgstr "Nem lehet a Facebook fiókot elérni"
 
-#: src/pdoauth/Messages.py:60
+#: src/pdoauth/Messages.py:60 src/pdoauth/Messages.py:61
 msgid "Unknown application"
 msgstr "ismeretlen alkalmazás"
 
-#: src/pdoauth/Messages.py:61
+#: src/pdoauth/Messages.py:61 src/pdoauth/Messages.py:62
 #, fuzzy
 msgid "No hash given"
 msgstr "Nincs megadva Titkos Kód"
+
+#: src/pdoauth/Messages.py:63
+#, python-brace-format
+msgid "Nem sikerült elküldeni a levelet: {0}"
+msgstr ""
+
+msgid "magyar"
+msgstr "magyar assurance"
+
+msgid "emailverification"
+msgstr "az emailcíme ellenőrzött"
+
+msgid "assurer"
+msgstr "aki nézheti más adatát"
+
+msgid "assurer.magyar"
+msgstr "magyar tanusító"
+
+msgid "assurer.assurer"
+msgstr "assurer-t tud kiadni"
+
+msgid "assurer.vizsgazott"
+msgstr "vizsgabiztos"
+
+msgid "assurer.{0}"
+msgstr "ilyen igazolást tud kiadni: {0}"
+

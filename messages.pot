@@ -8,231 +8,237 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-10 23:50+0100\n"
+"POT-Creation-Date: 2016-03-11 18:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/pdoauth/Messages.py:4
+#: src/pdoauth/Messages.py:4 src/pdoauth/Messages.py:5
 msgid "There is already a user with that email"
 msgstr ""
 
-#: src/pdoauth/Messages.py:5
+#: src/pdoauth/Messages.py:5 src/pdoauth/Messages.py:6
 msgid "There is already a user with that username"
 msgstr ""
 
-#: src/pdoauth/Messages.py:6
+#: src/pdoauth/Messages.py:6 src/pdoauth/Messages.py:7
 msgid "password should contain lowercase"
 msgstr ""
 
-#: src/pdoauth/Messages.py:7
+#: src/pdoauth/Messages.py:7 src/pdoauth/Messages.py:8
 msgid "password should contain uppercase"
 msgstr ""
 
-#: src/pdoauth/Messages.py:8
+#: src/pdoauth/Messages.py:8 src/pdoauth/Messages.py:9
 msgid "password should contain digit"
 msgstr ""
 
-#: src/pdoauth/Messages.py:9
+#: src/pdoauth/Messages.py:9 src/pdoauth/Messages.py:10
 msgid "secret should contain lowercase"
 msgstr ""
 
-#: src/pdoauth/Messages.py:10
+#: src/pdoauth/Messages.py:10 src/pdoauth/Messages.py:11
 msgid "secret should contain digit"
 msgstr ""
 
-#: src/pdoauth/Messages.py:11
+#: src/pdoauth/Messages.py:11 src/pdoauth/Messages.py:12
 msgid "credentialType: Invalid value, must be one of:"
 msgstr ""
 
-#: src/pdoauth/Messages.py:12
+#: src/pdoauth/Messages.py:12 src/pdoauth/Messages.py:13
 msgid "Missing parameter redirect_uri in URL query"
 msgstr ""
 
-#: src/pdoauth/Messages.py:13
+#: src/pdoauth/Messages.py:13 src/pdoauth/Messages.py:14
 msgid "Missing parameter response_type in URL query"
 msgstr ""
 
-#: src/pdoauth/Messages.py:14
+#: src/pdoauth/Messages.py:14 src/pdoauth/Messages.py:15
 msgid "Missing parameter client_id in URL query"
 msgstr ""
 
-#: src/pdoauth/Messages.py:15
+#: src/pdoauth/Messages.py:15 src/pdoauth/Messages.py:16
 msgid "unsupported_grant_type"
 msgstr ""
 
-#: src/pdoauth/Messages.py:16
+#: src/pdoauth/Messages.py:16 src/pdoauth/Messages.py:17
 msgid "invalid_client"
 msgstr ""
 
-#: src/pdoauth/Messages.py:17
+#: src/pdoauth/Messages.py:17 src/pdoauth/Messages.py:18
 msgid "unsupported_response_type"
 msgstr ""
 
-#: src/pdoauth/Messages.py:18
+#: src/pdoauth/Messages.py:18 src/pdoauth/Messages.py:19
 msgid "unauthorized_client"
 msgstr ""
 
-#: src/pdoauth/Messages.py:19
+#: src/pdoauth/Messages.py:19 src/pdoauth/Messages.py:20
 msgid "invalid_scope"
 msgstr ""
 
-#: src/pdoauth/Messages.py:20
+#: src/pdoauth/Messages.py:20 src/pdoauth/Messages.py:21
 msgid "Invalid request"
 msgstr ""
 
-#: src/pdoauth/Messages.py:21
+#: src/pdoauth/Messages.py:21 src/pdoauth/Messages.py:22
 msgid "access_denied"
 msgstr ""
 
-#: src/pdoauth/Messages.py:22
+#: src/pdoauth/Messages.py:22 src/pdoauth/Messages.py:23
 msgid "invalid_grant"
 msgstr ""
 
 #: src/pdoauth/Messages.py:24 src/pdoauth/Messages.py:59
+#: src/pdoauth/Messages.py:25 src/pdoauth/Messages.py:60
 msgid "You have to register first"
 msgstr ""
 
-#: src/pdoauth/Messages.py:25
+#: src/pdoauth/Messages.py:25 src/pdoauth/Messages.py:26
 msgid "No certificate given"
 msgstr ""
 
-#: src/pdoauth/Messages.py:26
+#: src/pdoauth/Messages.py:26 src/pdoauth/Messages.py:27
 msgid "another user is using your hash"
 msgstr ""
 
-#: src/pdoauth/Messages.py:27
+#: src/pdoauth/Messages.py:27 src/pdoauth/Messages.py:28
 msgid "More users with the same hash; specify both hash and email"
 msgstr ""
 
-#: src/pdoauth/Messages.py:28
+#: src/pdoauth/Messages.py:28 src/pdoauth/Messages.py:29
 msgid "no authorization to show other users"
 msgstr ""
 
-#: src/pdoauth/Messages.py:29
+#: src/pdoauth/Messages.py:29 src/pdoauth/Messages.py:30
 msgid "Password reset email has been successfully sent."
 msgstr ""
 
-#: src/pdoauth/Messages.py:30
+#: src/pdoauth/Messages.py:30 src/pdoauth/Messages.py:31
 msgid "You cannot delete the login you are using"
 msgstr ""
 
-#: src/pdoauth/Messages.py:31
+#: src/pdoauth/Messages.py:31 src/pdoauth/Messages.py:32
 msgid "No such user"
 msgstr ""
 
-#: src/pdoauth/Messages.py:32
+#: src/pdoauth/Messages.py:32 src/pdoauth/Messages.py:33
 msgid "bad Authorization header"
 msgstr ""
 
-#: src/pdoauth/Messages.py:33
+#: src/pdoauth/Messages.py:33 src/pdoauth/Messages.py:34
 msgid "no authorization"
 msgstr ""
 
-#: src/pdoauth/Messages.py:34
+#: src/pdoauth/Messages.py:34 src/pdoauth/Messages.py:35
 msgid "authentication needed"
 msgstr ""
 
-#: src/pdoauth/Messages.py:35
+#: src/pdoauth/Messages.py:35 src/pdoauth/Messages.py:36
 msgid "logged out"
 msgstr ""
 
-#: src/pdoauth/Messages.py:36
+#: src/pdoauth/Messages.py:36 src/pdoauth/Messages.py:37
 msgid "deregistration email has been sent"
 msgstr ""
 
-#: src/pdoauth/Messages.py:37
+#: src/pdoauth/Messages.py:37 src/pdoauth/Messages.py:38
 msgid "secret is needed for deregistration_doit"
 msgstr ""
 
-#: src/pdoauth/Messages.py:38
+#: src/pdoauth/Messages.py:38 src/pdoauth/Messages.py:39
 msgid "not logged in"
 msgstr ""
 
-#: src/pdoauth/Messages.py:39
+#: src/pdoauth/Messages.py:39 src/pdoauth/Messages.py:40
 msgid "bad deregistration secret"
 msgstr ""
 
-#: src/pdoauth/Messages.py:40
+#: src/pdoauth/Messages.py:40 src/pdoauth/Messages.py:41
 msgid "you are deregistered"
 msgstr ""
 
-#: src/pdoauth/Messages.py:41
+#: src/pdoauth/Messages.py:41 src/pdoauth/Messages.py:42
 msgid "new hash registered"
 msgstr ""
 
-#: src/pdoauth/Messages.py:42
+#: src/pdoauth/Messages.py:42 src/pdoauth/Messages.py:43
 msgid "old password does not match"
 msgstr ""
 
-#: src/pdoauth/Messages.py:43
+#: src/pdoauth/Messages.py:43 src/pdoauth/Messages.py:44
 msgid "password changed succesfully"
 msgstr ""
 
-#: src/pdoauth/Messages.py:44
+#: src/pdoauth/Messages.py:44 src/pdoauth/Messages.py:45
 msgid "This user does not have that digest"
 msgstr ""
 
-#: src/pdoauth/Messages.py:45
+#: src/pdoauth/Messages.py:45 src/pdoauth/Messages.py:46
 msgid "No user with this hash"
 msgstr ""
 
-#: src/pdoauth/Messages.py:46
+#: src/pdoauth/Messages.py:46 src/pdoauth/Messages.py:47
 msgid "unknown token"
 msgstr ""
 
-#: src/pdoauth/Messages.py:47
+#: src/pdoauth/Messages.py:47 src/pdoauth/Messages.py:48
 msgid "email verified OK"
 msgstr ""
 
-#: src/pdoauth/Messages.py:48
+#: src/pdoauth/Messages.py:48 src/pdoauth/Messages.py:49
 msgid "Invalid email address"
 msgstr ""
 
-#: src/pdoauth/Messages.py:49
+#: src/pdoauth/Messages.py:49 src/pdoauth/Messages.py:50
 msgid "expired token"
 msgstr ""
 
-#: src/pdoauth/Messages.py:50
+#: src/pdoauth/Messages.py:50 src/pdoauth/Messages.py:51
 msgid "Password successfully changed"
 msgstr ""
 
-#: src/pdoauth/Messages.py:51
+#: src/pdoauth/Messages.py:51 src/pdoauth/Messages.py:52
 msgid "The secret has expired"
 msgstr ""
 
-#: src/pdoauth/Messages.py:52
+#: src/pdoauth/Messages.py:52 src/pdoauth/Messages.py:53
 msgid "No such credential"
 msgstr ""
 
-#: src/pdoauth/Messages.py:53
+#: src/pdoauth/Messages.py:53 src/pdoauth/Messages.py:54
 msgid "credential removed"
 msgstr ""
 
-#: src/pdoauth/Messages.py:55
+#: src/pdoauth/Messages.py:55 src/pdoauth/Messages.py:56
 msgid "error in cert"
 msgstr ""
 
-#: src/pdoauth/Messages.py:56
+#: src/pdoauth/Messages.py:56 src/pdoauth/Messages.py:57
 msgid "Inactive or disabled user"
 msgstr ""
 
-#: src/pdoauth/Messages.py:57
+#: src/pdoauth/Messages.py:57 src/pdoauth/Messages.py:58
 msgid "Bad username or password"
 msgstr ""
 
-#: src/pdoauth/Messages.py:58
+#: src/pdoauth/Messages.py:58 src/pdoauth/Messages.py:59
 msgid "Cannot login to facebook"
 msgstr ""
 
-#: src/pdoauth/Messages.py:60
+#: src/pdoauth/Messages.py:60 src/pdoauth/Messages.py:61
 msgid "Unknown application"
 msgstr ""
 
-#: src/pdoauth/Messages.py:61
+#: src/pdoauth/Messages.py:61 src/pdoauth/Messages.py:62
 msgid "No hash given"
+msgstr ""
+
+#: src/pdoauth/Messages.py:63
+#, python-brace-format
+msgid "Nem sikerült elküldeni a levelet: {0}"
 msgstr ""
