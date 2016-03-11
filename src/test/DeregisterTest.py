@@ -4,6 +4,8 @@ from pdoauth.models.Assurance import Assurance
 from test.helpers.PDUnitTest import PDUnitTest, test
 from test.helpers.UserUtil import UserUtil
 from test.helpers.FakeInterFace import FakeForm
+import time
+from uuid import uuid4
 
 class DeregisterTest(PDUnitTest, UserUtil):
 
@@ -99,3 +101,11 @@ class DeregisterTest(PDUnitTest, UserUtil):
         self._doDeregistrationDoit()
         user = User.getByEmail(self.userCreationEmail)
         self.assertTrue(user is None)
+
+    @test
+    def expired_deregistration_certificates_are_deleted_in_deregistration_initiation(self):
+        for someone in User.query.all()[:5]:  # @UndefinedVariable
+            Credential.new(someone, 'deregister', unicode(time.time()-1)+":"+unicode(uuid4()), unicode(uuid4()))
+        self.assertTrue(self.countExpiredCreds('deregister')>=5)
+        self._doDeregistrationDoit()
+        self.assertTrue(self.countExpiredCreds('deregister')==0)

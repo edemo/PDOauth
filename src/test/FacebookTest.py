@@ -1,4 +1,3 @@
-from pdoauth.models.Credential import Credential
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.ReportedError import ReportedError
 from test.helpers.FakeInterFace import FakeForm

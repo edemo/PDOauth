@@ -28,7 +28,6 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
     credentialRemoved
 
-
 class Controller(
         WebInterface, Responses, EmailHandling,
         LoginHandling,  CertificateHandling,
@@ -98,6 +97,7 @@ class Controller(
         user.rm()
 
     def doDeregistrationDoit(self, form):
+        Credential.deleteExpired('deregister')
         secret = form.deregister_secret.data
         if secret is None:
             raise ReportedError(
@@ -126,6 +126,7 @@ class Controller(
             anotherUsers = User.getByDigest(form.digest.data)
             if anotherUsers:
                 if self.isAnyoneHandAssurredOf(anotherUsers):
+                    user.rm()
                     raise ReportedError([anotherUserUsingYourHash], 400)
                 additionalInfo["message"] = anotherUserUsingYourHash
         user.hash = digest
@@ -142,6 +143,7 @@ class Controller(
         return self.simple_response(newHashRegistered, additionalInfo)
 
     def doRegistration(self, form):
+        Credential.deleteExpired('emailcheck')
         cred = CredentialManager.create_user_with_creds(
             form.credentialType.data,
             form.identifier.data,
@@ -324,10 +326,10 @@ class Controller(
         return self.simple_response(passwordResetSent)
 
     def doPasswordReset(self, form):
+        Credential.deleteExpired(self.passwordResetCredentialType)
         cred = Credential.getBySecret(
             self.passwordResetCredentialType, form.secret.data)
         if cred is None or (cred.getExpirationTime() < time.time()):
-            Credential.deleteExpired(self.passwordResetCredentialType)
             raise ReportedError([theSecretHasExpired], 404)
         passcred = Credential.getByUser(cred.user, 'password')
         protectedSecret = CredentialManager.protect_secret(form.password.data)

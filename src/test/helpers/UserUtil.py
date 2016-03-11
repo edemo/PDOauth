@@ -6,6 +6,7 @@ from test.helpers.RandomUtil import RandomUtil
 from test.helpers.FakeInterFace import FakeForm
 from bs4 import BeautifulSoup
 import re
+import time
 
 class UserUtil(ResponseInfo, RandomUtil):
 
@@ -106,3 +107,13 @@ class UserUtil(ResponseInfo, RandomUtil):
 
     def assertSubjectIs(self, subject):
         return self.assertEqual(self.mailer.mail.outbox[0].subject, subject)
+
+    def countExpiredCreds(self, credentialType = 'email_for_password_reset'):
+        expiredcreds = []
+        now = time.time()
+        creds = Credential.query.filter_by(credentialType=credentialType) # @UndefinedVariable
+        for client in creds:
+            if client.getExpirationTime() < now:
+                expiredcreds.append(client)
+        return len(expiredcreds)
+

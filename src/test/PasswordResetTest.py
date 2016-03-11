@@ -98,15 +98,6 @@ class PasswordResetTest(PDUnitTest, UserUtil):
                 404, ['The secret has expired'])
 
 
-    def countExpiredCreds(self):
-        expiredcreds = []
-        now = time.time()
-        creds = Credential.query.filter_by(credentialType='email_for_password_reset') # @UndefinedVariable
-        for client in creds:
-            if client.getExpirationTime() < now:
-                expiredcreds.append(client)
-        return len(expiredcreds)
-
     @test
     def bad_secret_clears_up_all_timed_out_temporary_credentials(self):
         password = self.mkRandomPassword()
