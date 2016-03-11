@@ -239,4 +239,4 @@ msgstr "ismeretlen alkalmazás"
 #: src/pdoauth/Messages.py:61
 #, fuzzy
 msgid "No hash given"
-msgstr "Nincs megadva hash"
+msgstr "Nincs megadva Titkos Kód"
