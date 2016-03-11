@@ -44,7 +44,6 @@ class AppHandler(WebInterface):
     
     def setAppCanEmail(self, form):
         user = self.getCurrentUser()
-        print (form.appname.data, user, form.canemail.data)
         self.setCanEmail(form.appname.data, user, form.canemail.data)
         return self.getApplistAsJson(user)
     

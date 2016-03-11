@@ -27,6 +27,7 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     emailVerifiedOK, invalidEmailAdress, passwordResetSent, theSecretHasExpired,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
     credentialRemoved
+from pdoauth.app import db
 
 
 class Controller(
@@ -126,6 +127,7 @@ class Controller(
             anotherUsers = User.getByDigest(form.digest.data)
             if anotherUsers:
                 if self.isAnyoneHandAssurredOf(anotherUsers):
+                    user.rm()
                     raise ReportedError([anotherUserUsingYourHash], 400)
                 additionalInfo["message"] = anotherUserUsingYourHash
         user.hash = digest
