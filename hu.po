@@ -248,23 +248,23 @@ msgid "Nem sikerült elküldeni a levelet: {0}"
 msgstr ""
 
 msgid "magyar"
-msgstr "magyar assurance"
+msgstr "magyar"
 
 msgid "emailverification"
-msgstr "az emailcíme ellenőrzött"
+msgstr "ellenőrzött email cím"
 
 msgid "assurer"
-msgstr "aki nézheti más adatát"
+msgstr "adat ellenőr"
 
 msgid "assurer.magyar"
-msgstr "magyar tanusító"
+msgstr "magyar Tanusító"
 
 msgid "assurer.assurer"
-msgstr "assurer-t tud kiadni"
+msgstr "Tanúsító kinevező"
 
 msgid "assurer.vizsgazott"
-msgstr "vizsgabiztos"
+msgstr "Vizsgabiztos"
 
 msgid "assurer.{0}"
-msgstr "ilyen igazolást tud kiadni: {0}"
+msgstr "{0} Tanúsító"
 
