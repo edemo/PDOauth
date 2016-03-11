@@ -114,7 +114,7 @@ console.log(theUri)
 				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a></td>\
 			</tr>\
 			<tr>\
-				<td nowrap><b>Titkós kód</b></td>\
+				<td nowrap><b>Titkos kód</b></td>\
 				<td>\
 					<pre><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
@@ -160,11 +160,12 @@ console.log(theUri)
 		</table>'
 		return result;		
 	}
+	
 	PageScript.prototype.myappsCallback = function(status,text){
 		console.log(text)
 		if (status!=200) return;
-		var aps=JSON.parse(text)
-		console.log(aps)
+		self.aps=JSON.parse(text)
+		console.log(self.aps)
 		var applist='\
 		<table>\
 			<tr>\
@@ -174,27 +175,42 @@ console.log(theUri)
 				<th>can email</th>\
 				<th>allow</th>\
 			</tr>'
-		for(app in aps){
-		console.log(app)
+		for(app in self.aps){ 
+		if (self.aps[app].username) { 
 			applist+='\
 			<tr>\
-				<td>'+aps[app].name+'</td>\
-				<td><a href="//'+aps[app].hostname+'">'+aps[app].hostname+'</a></td>\
-				<td>'+aps[app].username+'</td>\
-				<td>'+aps[app].can_email+'</td>\
-				<td>'+aps[app].email_enabled+'</td>\
+				<td>'+self.aps[app].name+'</td>\
+				<td><a href="//'+self.aps[app].hostname+'">'+self.aps[app].hostname+'</a></td>\
+				<td>'+self.aps[app].username+'</td>\
+				<td>'+self.aps[app].can_email+'</td>\
+				<td>\
+					<input type="checkbox" id="application-allow-email-me-'+app+'"\
+					'+((self.aps[app].email_enabled)?'checked':'')+'\
+					onclick="javascript: pageScript.setAppCanEmailMe('+app+')">\
+				</td>\
 			</tr>'
-		}	
+			}	
+		}
 		applist +='\
 		</table>';
 		document.getElementById("me_Applications").innerHTML=applist;
+	}
+	PageScript.prototype.setAppCanEmailMe=function(app){
+		var value=document.getElementById("application-allow-email-me-"+app).checked
+		var csrf_token = self.getCookie('csrf');
+	    text= {
+			canemail: value,
+	    	appname: self.aps[app].name,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost("/v1/setappcanemail", text, this.myCallback)
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {
 		var result ='\
 		<table>\
 			<tr>\
-				<td><b>felhasználó azonosító:</b></td>\
+				<td><b>Felhasználó azonosító:</b></td>\
 				<td>'+data.userid+'</td>\
 			</tr>\
 		</table>\
@@ -222,7 +238,8 @@ console.log(theUri)
 		</table>'
 		return result
 	}
-		PageScript.prototype.timestampToString=function(timestamp){
+	
+	PageScript.prototype.timestampToString=function(timestamp){
 			var date=new Date(timestamp*1000)
 			return date.toLocaleDateString();
 		}
@@ -450,11 +467,7 @@ console.log("logoutCallback")
 	    this.ajaxget("/v1/logout", this.logoutCallback)
 	}
 
-	PageScript.prototype.sslLogin = function() {
-		var loc = '' +win.location
-		var newloc = loc.replace(self.QueryString.uris.BASE_URL, self.QueryString.uris.SSL_LOGIN_BASE_URL)
-		self.doRedirect( newloc );
-	}
+
 
 	PageScript.prototype.register_with_facebook = function(userId, accessToken, email) {
 	    username = userId;
@@ -485,9 +498,6 @@ console.log("logoutCallback")
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
 		self.displayMsg({error:'<p class="warning">Ez a funkció sajnos még nem működik</p>'});	
 		}
-	
-
-
 
 	PageScript.prototype.changeHash = function() {
 	    digest = document.getElementById("ChangeHashForm_digest_input").value;
@@ -723,3 +733,24 @@ console.log("logoutCallback")
 }
 pageScript = new PageScript();
 
+/* ==============================================
+Back To Top Button
+=============================================== */  
+ 
+  $(window).scroll(function () {
+            if ($(this).scrollTop() > 50) {
+                $('#back-top').fadeIn();
+            } else {
+                $('#back-top').fadeOut();
+            }
+        });
+      // scroll body to 0px on click
+      $('#back-top').click(function () {
+          $('#back-top a').tooltip('hide');
+          $('body,html').animate({
+              scrollTop: 0
+          }, 800);
+          return false;
+      });
+      
+      $('#back-top').tooltip('hide');
