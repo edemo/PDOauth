@@ -112,19 +112,19 @@ lib/saxon9he.jar: tmp/saxon.zip
 doc/xml/intermediate.xml: lib/saxon9he.jar doc/xml/doc.xml #doc/screenshots/unittests.xml
 	java -jar lib/saxon9he.jar -xsl:src/doc/intermediate.xsl -s:doc/xml/doc.xml >doc/xml/intermediate.xml
 
-doc/html/commitlog.docbook: doc/xml/commitlog.xml doc/html
+doc/html/commitlog.docbook: lib/saxon9he.jar doc/xml/commitlog.xml doc/html
 	java -jar lib/saxon9he.jar -xsl:src/doc/commitlog.xsl -s:doc/xml/commitlog.xml >doc/html/commitlog.docbook
 
-doc/html/commitlog.html: doc/html/commitlog.docbook doc/static/docbook.css
+doc/html/commitlog.html: lib/saxon9he.jar doc/html/commitlog.docbook doc/static/docbook.css
 	java -jar lib/saxon9he.jar -xsl:src/doc/docbook2html.xslt -s:doc/html/commitlog.docbook >doc/html/commitlog.html
 
-doc/html/documentation.docbook: doc/xml/intermediate.xml doc/html
+doc/html/documentation.docbook: lib/saxon9he.jar doc/xml/intermediate.xml doc/html
 	java -jar lib/saxon9he.jar -xsl:src/doc/todocbook.xsl -s:doc/xml/intermediate.xml >doc/html/documentation.docbook
 
 doc/static/docbook.css: static/docbook.css
 	mkdir -p doc/static; cp static/docbook.css doc/static/docbook.css
 
-doc/html/documentation.html: doc/html/documentation.docbook doc/static/docbook.css
+doc/html/documentation.html: lib/saxon9he.jar doc/html/documentation.docbook doc/static/docbook.css
 	java -jar lib/saxon9he.jar -xsl:src/doc/docbook2html.xslt -s:doc/html/documentation.docbook >doc/html/documentation.html
 
 always:
