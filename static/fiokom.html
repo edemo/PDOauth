@@ -37,6 +37,7 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
         <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
+		<link rel="gettext" lang="hu" href="locale/hu.po" />
 		<style>
 *, *:after, *:before {
     box-sizing: inherit;
@@ -290,6 +291,10 @@ pre.credential-item {
     margin: 0px;
     padding: 0;
 }
+ul.disced {
+    list-style-type: disc;
+	margin-left: 50px;
+}
 		</style>
 	</head>
 	<body onload="pageScript.main()">
@@ -454,12 +459,13 @@ pre.credential-item {
 					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
 				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni.</p>
-				<p class="note">
-A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
-Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
-melyekből az eredeti adatok nem nyerhetők vissza. 
-A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe.
-				</p>
+				<div class="digest-input">
+					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
+							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
+							melyekből az eredeti adatok nem nyerhetők vissza. 
+							A Titkos Kódot magad is előállíthatod 
+							, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
+				</div>
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
 						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
@@ -593,6 +599,17 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
                           <div role="tabpanel" class="tab-pane" id="4">
                                 <div class="col-md-12 col-sm-9">
                                     <div class="c-tab">
+										<p><b>Ha szeretnél igazolást csináltatni magadnak, az alábbiakat kell tenned:</b></p>
+										<ul class="disced">
+											<li>ha még nem tetted volna meg, készítsd el a titkos kódod</li>
+											<li>válassz az alábbi listából egy tanusítót</li>
+											<li>a neve melletti gombra kattintva felveheted vele a kapcsolatot</li>
+											<li>beszéljetek meg egy személyes találkozót</li>
+											<li>a találkozóra vidd magaddal a lakcímkártyád és egy fényképes igazolványt</li>
+											<li>a tanusító leellenőrzi az adataidat, és kiállítja az igazolásodat</li>
+											<li>az új igazolásod látszódni fog az "adataim" fül alatt</li>
+											<li>a tanusításról kapsz egy pdf dokumentumot email-ben</li>
+										</ul>
                                          <h4><b>Tanusítók listája</b></h4>
 										 <div id="assurers"></div>
                                     </div>
@@ -795,12 +812,17 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
         </a>
     </div>
     <!-- End Back To Top Button -->
+
 		<!-- initialize jQuery Library -->
+		
         <!-- Main jquery -->
 		<script type="text/javascript" src="js/jquery.js"></script>
         <!-- Bootstrap jQuery -->
 		<script src="js/bootstrap.min.js"></script>
         <!-- SmoothScroll -->
+					<!-- gettext -->
+		<!--script type="text/javascript" src="js/prototype.js"></script-->
+		<script type="text/javascript" src="js/gettext.js"></script>
         <script type="text/javascript" src="js/smooth-scroll.js"></script>
 		<!-- Scroll to top -->
         <script type="text/javascript" src="js/jquery.scrollTo.js"></script>
@@ -810,6 +832,7 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
+
 		<iframe id="SSL" name="ssl" onload="console.log('loaded')"></iframe>
 	</body>
 </html>
