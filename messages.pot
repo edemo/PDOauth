@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-11 18:42+0100\n"
+"POT-Creation-Date: 2016-03-12 10:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -242,3 +242,24 @@ msgstr ""
 #, python-brace-format
 msgid "Nem sikerült elküldeni a levelet: {0}"
 msgstr ""
+
+msgid "magyar"
+msgstr "magyar assurance"
+
+msgid "emailverification"
+msgstr "az emailcíme ellenőrzött"
+
+msgid "assurer"
+msgstr "aki nézheti más adatát"
+
+msgid "assurer.magyar"
+msgstr "magyar tanusító"
+
+msgid "assurer.assurer"
+msgstr "assurer-t tud kiadni"
+
+msgid "assurer.vizsgazott"
+msgstr "vizsgabiztos"
+
+msgid "assurer.{0}"
+msgstr "ilyen igazolást tud kiadni: {0}"

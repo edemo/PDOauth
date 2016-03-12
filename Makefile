@@ -132,6 +132,6 @@ always:
 messages.pot: always
 	xgettext -L Python -j --package-name=PDOauth -o messages.pot src/pdoauth/Messages.py
 
-hu.po: messages.pot
-	msgmerge -U hu.po messages.pot
+static/locale/hu.po: messages.pot
+	msgmerge -U static/locale/hu.po messages.pot
 
