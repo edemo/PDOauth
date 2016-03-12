@@ -5,6 +5,9 @@ from test.helpers.FakeInterFace import FakeInterface, FakeMail, FakeApp
 from pdoauth.EmailHandling import EmailHandling
 from pdoauth.models.Credential import Credential
 from pdoauth.models import User
+from smtplib import SMTPException
+from pdoauth.ReportedError import ReportedError
+from pdoauth.Messages import exceptionSendingEmail
 
 exampleBody = """Dear abc@xyz.uw,
 This is a reset email.
@@ -30,10 +33,19 @@ class TestMailer(EmailHandling, FakeInterface):
     app = FakeApp()
     mail = FakeMail()
 
+class FailingMail(FakeMail):
+    def send(self,msg):
+        raise SMTPException('some smtp error')
+
+class FailingMailer(EmailHandling, FakeInterface):
+    app = FakeApp()
+    mail = FailingMail()
+
 class EmailTest(PDUnitTest, UserUtil):
 
     def setUp(self):
         self.mailer = TestMailer()
+        self.failingMailer = FailingMailer()
         cred = self.createUserWithCredentials()
         self.user = cred.user
 
@@ -109,6 +121,35 @@ class EmailTest(PDUnitTest, UserUtil):
         cred = Credential.getByUser(self.user,"deregister")
         self.assertGotAnEmailContaining(cred.secret)
 
+    @test
+    def verification_email_smtp_error_throws_ReportedError_and_removes_user(self):
+        email = self.user.email
+        with self.assertRaises(ReportedError):
+            self.failingMailer.sendPasswordVerificationEmail(self.user)
+        self.assertEqual(None, User.getByEmail(email))
+
+    @test
+    def password_reset_email_smtp_error_throws_ReportedError(self):
+        email = self.user.email
+        with self.assertRaises(ReportedError):
+            self.failingMailer.sendPasswordResetMail(self.user)
+        self.assertEqual(email, User.getByEmail(email).email)
+
+    @test
+    def deregistration_email_smtp_error_throws_ReportedError(self):
+        email = self.user.email
+        with self.assertRaises(ReportedError):
+            self.failingMailer.sendDeregisterMail(self.user)
+        self.assertEqual(email, User.getByEmail(email).email)
+
+    @test
+    def ReportedError_contains_localizable_message_and_original_error(self):
+        with self.assertRaises(ReportedError) as context:
+            self.failingMailer.sendDeregisterMail(self.user)
+        
+        self.assertEqual(context.exception.descriptor,
+            exceptionSendingEmail.format('some smtp error'))  # @UndefinedVariable
+        
     def tearDown(self):
         self.mailer.mail.outbox=list()
         user = User.getByEmail('abc@xyz.uw')

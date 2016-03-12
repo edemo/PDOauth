@@ -87,7 +87,7 @@ console.log(theUri)
 			var msg = {};
 			if (data.message) {
 				msg.title="Szerverüzenet";
-				msg.message="<p>message</p><p>"+data.message+"</p>";
+				msg.message="<p>"+_(data.message)+"</p>";
 			}
 			if (data.assurances) {
 				msg.title="A felhasználó adatai";
@@ -96,7 +96,7 @@ console.log(theUri)
 			if (data.errors) {
 				msg.title = "Hibaüzenet"
 				msg.error = "<ul>";
-				errs = data.errors;
+				errs = _(data.errors);
 				for ( err in errs ) msg.error += "<li>"+ errs[err] +"</li>" ;
 				msg.error += "</ul>";
 			}
@@ -114,7 +114,7 @@ console.log(theUri)
 				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a></td>\
 			</tr>\
 			<tr>\
-				<td nowrap><b>Titkós kód</b></td>\
+				<td nowrap><b>Titkos kód</b></td>\
 				<td>\
 					<pre><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
@@ -160,11 +160,10 @@ console.log(theUri)
 		</table>'
 		return result;		
 	}
+	
 	PageScript.prototype.myappsCallback = function(status,text){
-		console.log(text)
 		if (status!=200) return;
-		var aps=JSON.parse(text)
-		console.log(aps)
+		self.aps=JSON.parse(text)
 		var applist='\
 		<table>\
 			<tr>\
@@ -174,27 +173,42 @@ console.log(theUri)
 				<th>can email</th>\
 				<th>allow</th>\
 			</tr>'
-		for(app in aps){
-		console.log(app)
+		for(app in self.aps){ 
+		if (self.aps[app].username) { 
 			applist+='\
 			<tr>\
-				<td>'+aps[app].name+'</td>\
-				<td><a href="//'+aps[app].hostname+'">'+aps[app].hostname+'</a></td>\
-				<td>'+aps[app].username+'</td>\
-				<td>'+aps[app].can_email+'</td>\
-				<td>'+aps[app].email_enabled+'</td>\
+				<td>'+self.aps[app].name+'</td>\
+				<td><a href="//'+self.aps[app].hostname+'">'+self.aps[app].hostname+'</a></td>\
+				<td>'+self.aps[app].username+'</td>\
+				<td>'+self.aps[app].can_email+'</td>\
+				<td>\
+					<input type="checkbox" id="application-allow-email-me-'+app+'"\
+					'+((self.aps[app].email_enabled)?'checked':'')+'\
+					onclick="javascript: pageScript.setAppCanEmailMe('+app+')">\
+				</td>\
 			</tr>'
-		}	
+			}	
+		}
 		applist +='\
 		</table>';
 		document.getElementById("me_Applications").innerHTML=applist;
+	}
+	PageScript.prototype.setAppCanEmailMe=function(app){
+		var value=document.getElementById("application-allow-email-me-"+app).checked
+		var csrf_token = self.getCookie('csrf');
+	    text= {
+			canemail: value,
+	    	appname: self.aps[app].name,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost("/v1/setappcanemail", text, this.myCallback)
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {
 		var result ='\
 		<table>\
 			<tr>\
-				<td><b>felhasználó azonosító:</b></td>\
+				<td><b>Felhasználó azonosító:</b></td>\
 				<td>'+data.userid+'</td>\
 			</tr>\
 		</table>\
@@ -211,7 +225,7 @@ console.log(theUri)
 			for( var i=0; i<data.assurances[assurance].length; i++){
 				result += '\
 				<tr>\
-					<td>'+data.assurances[assurance][i].name+'</td>\
+					<td>'+_(data.assurances[assurance][i].name)+'</td>\
 					<td>'+data.assurances[assurance][i].assurer+'</td>\
 					<td>'+self.timestampToString(data.assurances[assurance][i].timestamp)+'</td>\
 				</tr>'
@@ -222,7 +236,8 @@ console.log(theUri)
 		</table>'
 		return result
 	}
-		PageScript.prototype.timestampToString=function(timestamp){
+	
+	PageScript.prototype.timestampToString=function(timestamp){
 			var date=new Date(timestamp*1000)
 			return date.toLocaleDateString();
 		}
@@ -232,9 +247,6 @@ console.log(theUri)
 		var text
 		for(ass in data.assurances) {
 			var pos
-			console.log(typeof(ass))
-			console.log(ass+' - ' + ass.indexOf("."))
-			console.log(pos=ass.indexOf("."))
 			if ( pos=ass.indexOf(".")+1 ) {
 				text=ass.slice(pos)
 				selector += '\
@@ -242,7 +254,6 @@ console.log(theUri)
 				'+text+'\
 				</option>\
 				';
-				console.log(text)
 			}
 		}
 		return selector;		
@@ -333,7 +344,6 @@ console.log(theUri)
 		else {
 			self.ajaxget('/v1/getmyapps',self.myappsCallback)
 			self.isLoggedIn=true
-			console.log(data)
 //			if (!self.activeButton)	self.menuHandler("account").menuActivate();
 //			else {
 //				var a=["login", "register"];
@@ -351,7 +361,6 @@ console.log(theUri)
 //					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
 //					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
 //				}
-				console.log(data)
 //				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
 //				else self.menuHandler("assurer").menuUnhide();
 				if (!(data.assurances.assurer)) self.isAssurer=false;
@@ -450,11 +459,7 @@ console.log("logoutCallback")
 	    this.ajaxget("/v1/logout", this.logoutCallback)
 	}
 
-	PageScript.prototype.sslLogin = function() {
-		var loc = '' +win.location
-		var newloc = loc.replace(self.QueryString.uris.BASE_URL, self.QueryString.uris.SSL_LOGIN_BASE_URL)
-		self.doRedirect( newloc );
-	}
+
 
 	PageScript.prototype.register_with_facebook = function(userId, accessToken, email) {
 	    username = userId;
@@ -485,9 +490,6 @@ console.log("logoutCallback")
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
 		self.displayMsg({error:'<p class="warning">Ez a funkció sajnos még nem működik</p>'});	
 		}
-	
-
-
 
 	PageScript.prototype.changeHash = function() {
 	    digest = document.getElementById("ChangeHashForm_digest_input").value;
@@ -723,3 +725,24 @@ console.log("logoutCallback")
 }
 pageScript = new PageScript();
 
+/* ==============================================
+Back To Top Button
+=============================================== */  
+ 
+  $(window).scroll(function () {
+            if ($(this).scrollTop() > 50) {
+                $('#back-top').fadeIn();
+            } else {
+                $('#back-top').fadeOut();
+            }
+        });
+      // scroll body to 0px on click
+      $('#back-top').click(function () {
+          $('#back-top a').tooltip('hide');
+          $('body,html').animate({
+              scrollTop: 0
+          }, 800);
+          return false;
+      });
+      
+      $('#back-top').tooltip('hide');

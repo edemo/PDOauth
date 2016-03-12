@@ -87,9 +87,6 @@
 			var keygenform = document.getElementById("registration-keygenform")
 			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
 			loc = '' + win.location
-			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
-				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login',pageScript.initCallback, true)
-			}
 			if (self.QueryString.section && self.QueryString.section=="email_verification"){
 				if (self.QueryString.secret) self.verifyEmail()
 			}
@@ -211,9 +208,7 @@
 					self.register("facebook")
 					break;
 				case "ssl":
-					self.isLoggedIn=true;
 					document.getElementById("SSL").onload=self.sslCallback;
-					self.displayTheSection()
 					document.getElementById('registration-keygenform').submit();
 					console.log("after submit")
 //					self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
@@ -223,6 +218,11 @@
 		else self.displayMsg({title:"Felhasználási feltételek",error:"A regisztrácó feltétele a felhasználási feltételek elfogadása. Ha megértetted és elfogadod, kattints a regisztrálok gomb felett található a checkboxra "})
 	}
 
+	PageScript.prototype.sslLogin = function() {
+		document.getElementById("SSL").onload=function(){win.location.reload()}
+		document.getElementById("SSL").src=self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login'
+	}
+	
 //Getdigest functions	
 	PageScript.prototype.normalizeString = function(val) {
 		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
@@ -258,9 +258,8 @@
 				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
 				$("#"+formName + "_digest_input").trigger('keyup');
 				document.getElementById(formName + "_predigest_input").value = "";
-				self.displayMsg({success:"<p class='success'>A titkosítás sikeres</p>"});
 			} else {
-				self.displayMsg({error:"<p class='warning'>" + text + "</p>"});
+				self.displayMsg({title:'Hibaüzenet',error:"<p class='warning'>" + text + "</p>"});
 			}
 		}
 	
@@ -326,7 +325,7 @@
 	    digest = document.getElementById("assurancing_digest_input").value;
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
-	    csrf_token = this.getCookie('csrf');
+	    csrf_token = self.getCookie('csrf');
 	    text= {
 	    	digest: digest,
 	    	assurance: assurance,

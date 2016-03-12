@@ -37,6 +37,7 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
         <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
+		<link rel="gettext" lang="hu" href="locale/hu.po" />
 		<style>
 *, *:after, *:before {
     box-sizing: inherit;
@@ -290,6 +291,10 @@ pre.credential-item {
     margin: 0px;
     padding: 0;
 }
+ul.disced {
+    list-style-type: disc;
+	margin-left: 50px;
+}
 		</style>
 	</head>
 	<body onload="pageScript.main()">
@@ -331,6 +336,7 @@ pre.credential-item {
                 </div><!-- /.container-fluid -->
 	</header>
 	<!-- content -->
+			<div id="top" style="margin-top:50px"></div>
 	<div class="wrapper">
 
 <!-- message box -->
@@ -355,6 +361,7 @@ pre.credential-item {
 
 		</div>
 	</div>
+
 		<div class="func" id="login_section">
 			<section class="container_">
 				<h3 class="title">Bejelentkezés</h3>
@@ -452,12 +459,13 @@ pre.credential-item {
 					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
 				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni.</p>
-				<p class="note">
-A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
-Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
-melyekből az eredeti adatok nem nyerhetők vissza. 
-A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe.
-				</p>
+				<div class="digest-input">
+					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
+							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
+							melyekből az eredeti adatok nem nyerhetők vissza. 
+							A Titkos Kódot magad is előállíthatod 
+							, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
+				</div>
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
 						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
@@ -534,8 +542,19 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
                             </a>
                           </li>
 						  
-                          <li role="presentation"  class="func" id="assurer_section">
+                          <li role="presentation">
                             <a href="#4" role="tab" data-toggle="tab">
+                                <div class="single-tab">
+                                    <div class="f-icon">
+                                        <i class="fa fa-check"></i>
+                                    </div>
+                                </div>
+                                <h4>Tanusítás</h4>
+                            </a>
+                          </li>
+						  
+                          <li role="presentation"  class="func" id="assurer_section">
+                            <a href="#5" role="tab" data-toggle="tab">
                                 <div class="single-tab">
                                     <div class="f-icon">
                                         <i class="fa fa-user-secret"></i>
@@ -573,23 +592,41 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
                                     <div class="c-tab">
                                          <h4><b>Alkalmazásaim</b></h4>
 										 <div id="me_Applications"></div>
-
                                     </div>
                                 </div>
                           </div>
 						  
                           <div role="tabpanel" class="tab-pane" id="4">
+                                <div class="col-md-12 col-sm-9">
+                                    <div class="c-tab">
+										<p><b>Ha szeretnél igazolást csináltatni magadnak, az alábbiakat kell tenned:</b></p>
+										<ul class="disced">
+											<li>ha még nem tetted volna meg, készítsd el a titkos kódod</li>
+											<li>válassz az alábbi listából egy tanusítót</li>
+											<li>a neve melletti gombra kattintva felveheted vele a kapcsolatot</li>
+											<li>beszéljetek meg egy személyes találkozót</li>
+											<li>a találkozóra vidd magaddal a lakcímkártyád és egy fényképes igazolványt</li>
+											<li>a tanusító leellenőrzi az adataidat, és kiállítja az igazolásodat</li>
+											<li>az új igazolásod látszódni fog az "adataim" fül alatt</li>
+											<li>a tanusításról kapsz egy pdf dokumentumot email-ben</li>
+										</ul>
+                                         <h4><b>Tanusítók listája</b></h4>
+										 <div id="assurers"></div>
+                                    </div>
+                                </div>
+                          </div>
+						  
+                          <div role="tabpanel" class="tab-pane" id="5">
                                <div class="col-md-12 col-sm-9">
                                     <div class="c-tab">
-                                         <h4><b>Tanusítói felület</b></h4>
-                                         <div id="check-the-user" class="form">
-											<p>Felhasználó adatainak lekérdezése</p>
+										<h4><b>Felhasználó adatainak lekérdezése</b></h4>
+										<div id="check-the-user" class="form">
 											<label for="email">A felhasználó email címe</label>
 											<input name="email" type="text" id="ByEmailForm_email_input">
 											<button onclick="javascript:pageScript.byEmail()" type="button">Lekérdezés</button>
 										</div>
+										<h4><b>Igazolás kiadása</b></h4>
 										<div id="assurance-giving" class="form" >
-											<p>Igazolás kiadása</p>
 											<label for="input">Személyi azonosító:</label>
 											<input type="text" placeholder="" id="assurancing_predigest_input" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
 											<label for="mothername">Anyja neve:</label>
@@ -770,22 +807,32 @@ A Titkos Kódot magad is előállíthatod és akkor csak azt kell bemásolnod a 
 
 <!-- Back To Top Button -->
     <div id="back-top">
-        <a href="#slider_part" class="scroll" data-scroll>
+        <a href="#top" class="scroll" data-scroll>
             <button class="btn btn-primary" title="Back to Top"><i class="fa fa-angle-up"></i></button>
         </a>
     </div>
     <!-- End Back To Top Button -->
+
 		<!-- initialize jQuery Library -->
+		
         <!-- Main jquery -->
 		<script type="text/javascript" src="js/jquery.js"></script>
         <!-- Bootstrap jQuery -->
 		<script src="js/bootstrap.min.js"></script>
+        <!-- SmoothScroll -->
+					<!-- gettext -->
+		<!--script type="text/javascript" src="js/prototype.js"></script-->
+		<script type="text/javascript" src="js/gettext.js"></script>
+        <script type="text/javascript" src="js/smooth-scroll.js"></script>
+		<!-- Scroll to top -->
+        <script type="text/javascript" src="js/jquery.scrollTo.js"></script>
 		<!-- pagescript -->
 		<script src="js/script.js"></script>
 		<!-- pagescript extension-->
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
+
 		<iframe id="SSL" name="ssl" onload="console.log('loaded')"></iframe>
 	</body>
 </html>
