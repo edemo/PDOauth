@@ -258,9 +258,8 @@
 				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
 				$("#"+formName + "_digest_input").trigger('keyup');
 				document.getElementById(formName + "_predigest_input").value = "";
-				self.displayMsg({success:"<p class='success'>A titkosítás sikeres</p>"});
 			} else {
-				self.displayMsg({error:"<p class='warning'>" + text + "</p>"});
+				self.displayMsg({title:'Hibaüzenet',error:"<p class='warning'>" + text + "</p>"});
 			}
 		}
 	

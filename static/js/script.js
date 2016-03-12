@@ -87,7 +87,7 @@ console.log(theUri)
 			var msg = {};
 			if (data.message) {
 				msg.title="Szerverüzenet";
-				msg.message="<p>message</p><p>"+data.message+"</p>";
+				msg.message="<p>"+_(data.message)+"</p>";
 			}
 			if (data.assurances) {
 				msg.title="A felhasználó adatai";
@@ -96,7 +96,7 @@ console.log(theUri)
 			if (data.errors) {
 				msg.title = "Hibaüzenet"
 				msg.error = "<ul>";
-				errs = data.errors;
+				errs = _(data.errors);
 				for ( err in errs ) msg.error += "<li>"+ errs[err] +"</li>" ;
 				msg.error += "</ul>";
 			}
@@ -162,10 +162,8 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.myappsCallback = function(status,text){
-		console.log(text)
 		if (status!=200) return;
 		self.aps=JSON.parse(text)
-		console.log(self.aps)
 		var applist='\
 		<table>\
 			<tr>\
@@ -227,7 +225,7 @@ console.log(theUri)
 			for( var i=0; i<data.assurances[assurance].length; i++){
 				result += '\
 				<tr>\
-					<td>'+data.assurances[assurance][i].name+'</td>\
+					<td>'+_(data.assurances[assurance][i].name)+'</td>\
 					<td>'+data.assurances[assurance][i].assurer+'</td>\
 					<td>'+self.timestampToString(data.assurances[assurance][i].timestamp)+'</td>\
 				</tr>'
@@ -249,9 +247,6 @@ console.log(theUri)
 		var text
 		for(ass in data.assurances) {
 			var pos
-			console.log(typeof(ass))
-			console.log(ass+' - ' + ass.indexOf("."))
-			console.log(pos=ass.indexOf("."))
 			if ( pos=ass.indexOf(".")+1 ) {
 				text=ass.slice(pos)
 				selector += '\
@@ -259,7 +254,6 @@ console.log(theUri)
 				'+text+'\
 				</option>\
 				';
-				console.log(text)
 			}
 		}
 		return selector;		
@@ -350,7 +344,6 @@ console.log(theUri)
 		else {
 			self.ajaxget('/v1/getmyapps',self.myappsCallback)
 			self.isLoggedIn=true
-			console.log(data)
 //			if (!self.activeButton)	self.menuHandler("account").menuActivate();
 //			else {
 //				var a=["login", "register"];
@@ -368,7 +361,6 @@ console.log(theUri)
 //					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
 //					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
 //				}
-				console.log(data)
 //				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
 //				else self.menuHandler("assurer").menuUnhide();
 				if (!(data.assurances.assurer)) self.isAssurer=false;
