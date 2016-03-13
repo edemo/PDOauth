@@ -86,79 +86,28 @@ console.log(theUri)
 	PageScript.prototype.processErrors = function(data) {
 			var msg = {};
 			if (data.message) {
-				msg.title="Szerverüzenet";
+				msg.title=_("Server message");
 				msg.message="<p>"+_(data.message)+"</p>";
 			}
 			if (data.assurances) {
-				msg.title="A felhasználó adatai";
+				msg.title=_("User informations");
 				msg.success=self.parseUserdata(data);
 			}
 			if (data.errors) {
-				msg.title = "Hibaüzenet"
+				msg.title = _("Error message")
 				msg.error = "<ul>";
-				errs = _(data.errors);
-				for ( err in errs ) msg.error += "<li>"+ errs[err] +"</li>" ;
+				errs = data.errors;
+				console.log(errs)
+				if (typeof(errs)!='string') {
+					[].forEach.call(errs, function(e) {
+						msg.error += "<li>"+ _(e) +"</li>" ;})
+				}
+				else {
+					msg.error += "<li>"+ _(errs) +"</li>";
+				}
 				msg.error += "</ul>";
 			}
 			return msg;
-	}
-	
-	PageScript.prototype.parseSettings = function(data) {
-		var result = '\
-		<table>\
-			<tr>\
-				<td nowrap><b>E-mail cím:</b></td>\
-				<td id="email-change">\
-					<input type="text" value="'+data.email+'" id="userdata_editform_email_input">\
-					</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a></td>\
-			</tr>\
-			<tr>\
-				<td nowrap><b>Titkos kód</b></td>\
-				<td>\
-					<pre><code>'+((data.hash)?data.hash:"")+'</code></pre>\
-				</td>\
-				<td>\
-					<a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a>\
-				</td>\
-		</table>\
-		<h4><b>Hitelesítési módjaim:</b></h4>\
-		<table class="multiheader">';
-		var c={	pw:["Jelszavas","password","",true],
-				fb:["Facebook","facebook","facebook.add_fb_credential()",false],
-				ssl:["SSL kulcs","certificate","",true],
-				git:["Github","github","",false]
-				};
-		var credential_list = ""
-		for( var i in c) {
-			credential_list = ""
-			for(var j=0; j<data.credentials.length; j++) {
-				if (data.credentials[j].credentialType==c[i][1]) {
-					credential_list += '\
-			<tr>\
-				<td  ><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
-				<td>\
-					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\''+c[i][1]+'\')" class="btn btn_ fa fa-trash"></a>\
-				</td>\
-			</tr>'
-				}
-			}
-			credential_header='\
-			<tr id="'+i+'-credential-list">\
-				<th>'+c[i][0]+'</th>\
-				<th>'
-			if (c[i][3] || credential_list==''  ) {
-				credential_header +='\
-					<a onclick="javascript:'+c[i][2]+'" class="btn fa fa-plus"></a>';
-			}
-			credential_header +='\
-				</th>\
-			</tr>'
-			result+=credential_header+credential_list
-		}
-		result +='\
-		</table>'
-		return result;		
 	}
 	
 	PageScript.prototype.myappsCallback = function(status,text){
@@ -167,11 +116,11 @@ console.log(theUri)
 		var applist='\
 		<table>\
 			<tr>\
-				<th>app neve</th>\
-				<th>link</th>\
-				<th>azonosítóm</th>\
-				<th>can email</th>\
-				<th>allow</th>\
+				<th>'+_("Application")+'</th>\
+				<th>'+_("Domain")+'</th>\
+				<th>'+_("User identifier")+'</th>\
+				<th>'+_("Emailing")+'</th>\
+				<th>'+_("Allow emailing")+'</th>\
 			</tr>'
 		for(app in self.aps){ 
 		if (self.aps[app].username) { 
@@ -180,7 +129,7 @@ console.log(theUri)
 				<td>'+self.aps[app].name+'</td>\
 				<td><a href="//'+self.aps[app].hostname+'">'+self.aps[app].hostname+'</a></td>\
 				<td>'+self.aps[app].username+'</td>\
-				<td>'+self.aps[app].can_email+'</td>\
+				<td>'+_(self.aps[app].can_email.toString())+'</td>\
 				<td>\
 					<input type="checkbox" id="application-allow-email-me-'+app+'"\
 					'+((self.aps[app].email_enabled)?'checked':'')+'\
@@ -208,17 +157,18 @@ console.log(theUri)
 		var result ='\
 		<table>\
 			<tr>\
-				<td><b>Felhasználó azonosító:</b></td>\
+				<td><b>'+_("User identifier")+'</b></td>\
 				<td>'+data.userid+'</td>\
 			</tr>\
 		</table>\
-		<h4><b>Igazolásaim:</b></h4>\
+		<h4><b>'+_("Assurances")+'</b></h4>\
 		<table>\
 			<thead>\
 				<tr>\
-					<th>Megnevezés</th>\
-					<th>Kiállító</th>\
-					<th>Kiállítás dátuma</th>\
+					<th>'+_("Name")+'</th>\
+					<th>'+_("Assurer")+'</th>\
+					<th>'+_("Date of assurance")+'</th>\
+					<th>'+_("Valid until")+'</th>\
 				</tr>\
 			<tbody>'
 		for(assurance in data.assurances) {
@@ -228,6 +178,10 @@ console.log(theUri)
 					<td>'+_(data.assurances[assurance][i].name)+'</td>\
 					<td>'+data.assurances[assurance][i].assurer+'</td>\
 					<td>'+self.timestampToString(data.assurances[assurance][i].timestamp)+'</td>\
+					<td>'+
+//					self.timestampToString(data.assurances[assurance][i].valid)+
+					_("unlimited")+
+					'</td>\
 				</tr>'
 			}
 		}
@@ -251,7 +205,7 @@ console.log(theUri)
 				text=ass.slice(pos)
 				selector += '\
 				<option value="'+text+'">\
-				'+text+'\
+				'+_(text)+'\
 				</option>\
 				';
 			}
@@ -404,15 +358,15 @@ console.log(theUri)
 	    var onerror=false;
 		var errorMsg="";
 		if (username=="") {
-			errorMsg+="<p class='warning'>A felhasználónév nincs megadva</p>";
+			errorMsg+=_("User name is missing. ");
 			onerror=true;
 		}
 	    password = document.getElementById("LoginForm_password_input").value;
 	    if (password=="") {
-			errorMsg+="<p class='warning'>A jelszó nincs megadva</p>";
+			errorMsg+=_("Password is missing. ");
 			onerror=true; 
 		}
-		if (onerror==true) self.displayMsg({error:errorMsg, title:'Hibaüzenet'});
+		if (onerror==true) self.displayMsg({error:errorMsg, title:_("Missing data")});
 		else {
 			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.loginCallback)
 //			document.getElementById("DeRegisterForm_identifier_input").value=username;
@@ -488,22 +442,13 @@ console.log("logoutCallback")
 	
 
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
-		self.displayMsg({error:'<p class="warning">Ez a funkció sajnos még nem működik</p>'});	
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 		}
 
-	PageScript.prototype.changeHash = function() {
-	    digest = document.getElementById("ChangeHashForm_digest_input").value;
-	    csrf_token = this.getCookie('csrf');
-	    text= {
-	    	digest: digest,
-	    	csrf_token: csrf_token
-	    }
-	    self.ajaxpost("/v1/users/me/update_hash", text, this.hashCallback)
-	}	
 	
 	PageScript.prototype.hashCallback = function(status,text) {
 		if (status==200) { 
-			self.displayMsg({success: "<p class='success'>A titkos kód frissítése sikeresen megtörtént</p>",
+			self.displayMsg({title:_("Congratulation!"), success:_("The Secret Hash has been constructed successfully."),
 							callback: self.refreshMe });
 		}
 		else {
@@ -530,15 +475,16 @@ console.log("logoutCallback")
 	}
 	
 	PageScript.prototype.unittest = function() {
-		this.loadjs("tests.js")
+		this.loadjs("ts.js")
 	}
 	
 	PageScript.prototype.changeEmailAddress = function() {
 	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
 		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
-		else self.displayMsg({error:"<p class='warning'>Ez a funkció sajnos még nem elérhető</p>"});
+		else self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
+//obsolote	
 	PageScript.prototype.fill_RemoveCredentialContainer = function(data) {
 		var container = '';
 		var i=0;
@@ -576,18 +522,18 @@ console.log("logoutCallback")
 	}
 	
 	PageScript.prototype.GoogleLogin = function(){
-		self.displayMsg({error:"<p class='warning'>A google bejelentkezés funkció sajnos még nem működik</p>"});
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
 	PageScript.prototype.GoogleRegister = function(){
-		self.displayMsg({error:"<p class='warning'>A google bejelentkezés funkció sajnos még nem működik</p>"});
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
 	PageScript.prototype.TwitterLogin = function(){
-		self.displayMsg({error:"<p class='warning'>A twitter bejelentkezés funkció sajnos még nem működik</p>"});
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.addPassowrdCredential = function(){
+	PageScript.prototype.addPasswordCredential = function(){
 		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value;
 		var secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
 		self.addCredential("password", identifier, secret);
@@ -598,7 +544,15 @@ console.log("logoutCallback")
 	}
 	
 	PageScript.prototype.addGoogleCredential = function(){
-		self.displayMsg({error:"<p class='warning'>Ez a funkció sajnos még nem működik</p>"});
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+	}
+	
+	PageScript.prototype.addGithubCredential = function(){
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+	}
+	
+	PageScript.prototype.addTwitterCredential = function(){
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
 	PageScript.prototype.addCredential = function(credentialType, identifier, secret) {
@@ -612,8 +566,8 @@ console.log("logoutCallback")
 
 	PageScript.prototype.addCredentialCallback = function(status,text){
 		var data = JSON.parse(text);
-		if (status != 200) self.displayMsg({error:"<p class='warning'>"+data.errors+"</p>",title:"Hibaüzenet:"});
-		else self.displayMsg({success:"<p class='success'>Hitelesítési mód sikeresen hozzáadva</p>", title:"", callback:self.get_me});
+		if (status != 200) self.displayMsg({error:_(data.errors),title:_("Error message")});
+		else self.get_me;
 	}
 
 
@@ -626,14 +580,14 @@ console.log("logoutCallback")
 				self.ajaxpost( "/v1/deregister_doit", text, self.deregisterCallback )
 			}
 			else {
-				var msg={ 	title:"Hibaüzenet",
-							error:"Hiányzik a hitelesítő token"}
+				var msg={ 	title:_("Error message"),
+							error:_("The secret is missing")}
 				self.displayMsg(msg);			
 			}
 		}
 		else {
-			var msg={ 	title:"Hibaüzenet",
-						error:"A fiók törlésével kapcsolatos figyelmeztetést tudomásul kell venni. (A checkbox-ot x-eld be!)"}
+			var msg={ 	title:_("Error message"),
+						error:_("Plase accept the consequences with checking the checkbox")}
 			self.displayMsg(msg);	
 		}			
 	}
@@ -687,9 +641,6 @@ console.log("logoutCallback")
 		}
 		return self;
 	}
-
-
-
 
 	PageScript.prototype.display = function(toHide, toDisplay){
 		if (toHide) document.getElementById(toHide).style.display="none";
