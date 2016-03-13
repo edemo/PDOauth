@@ -222,27 +222,29 @@ th, td {
 }
 
 .main-tab-content .c-tab a.btn {
-background-color: #EE3B24;
+	background-color: #EE3B24;
     border: 1px solid #EE3B24;
 	color: #fff;
 }
 
 .main-tab-content .c-tab a.btn:hover {
-background-color: #000;
-border: 1px solid #000;
+	background-color: #000;
+	border: 1px solid #000;
 	color: #fff;
 }
 
 .main-tab-content .c-tab a.btn_ {
-background-color: transparent;
+	background-color: transparent;
     border: 1px solid #EE3B24;
 	color: #EE3B24;
+	width:40px;
 }
 
 .main-tab-content .c-tab a.btn_:hover {
-background-color: #000;
-border: 1px solid #000;
+	background-color: #000;
+	border: 1px solid #000;
 	color: #fff;
+	width:40px;
 }
 
 table.multiheader th{
@@ -253,7 +255,7 @@ table.multiheader th{
 #registration-form-method-selector button.active{
 	background-color:black;
 }
-#code-generation-input{
+#code-generation-input, #change-hash-form_code-generation-input{
 	display: none;
 }
 .bordered {
@@ -294,6 +296,21 @@ pre.credential-item {
 ul.disced {
     list-style-type: disc;
 	margin-left: 50px;
+}
+#assurance-giving_message{
+	width:100%;
+	border-radius:5px;
+	margin-top:15px;
+	padding: 5px;
+	text-align: center;
+}
+#assurance-giving_message.missing{
+	color: red;
+	border: 1px solid red;
+}
+#assurance-giving_message.given{
+	color: darkgreen;
+	border: 1px solid darkgreen;
 }
 		</style>
 	</head>
@@ -611,6 +628,71 @@ ul.disced {
 											<li>a tanusításról kapsz egy pdf dokumentumot email-ben</li>
 										</ul>
                                          <h4><b>Tanusítók listája</b></h4>
+										 <table>
+											<tr>
+												<th>Név</th>
+												<th>Tanusítási körzet</th>
+												<th>kiadható igazolsáok</th>
+												<th></th>
+											</tr>
+											<tr>
+												<td>Magosányi Árpád</td>
+												<td>Borsod és Szabolcs megye</td>
+												<td>
+													<ul>
+														<li>teszt</li>
+														<li>magyar</li>
+														<li>teszt tanusító</li>
+														<li>magyar tanusító</li>
+													</ul>
+												</td>
+												<td>
+													<a href="mailto:mag@magwas.rulez.org">
+														<button class="social">
+															<i class="fa fa-envelope"></i>
+														</button>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>Peng György</td>
+												<td>Páty</td>
+												<td>
+													<ul>
+														<li>teszt</li>
+														<li>magyar</li>
+														<li>teszt tanusító</li>
+														<li>magyar tanusító</li>
+													</ul>
+												</td>
+												<td>
+													<a href="mailto:gypeng@adatom.hu">
+														<button class="social">
+															<i class="fa fa-envelope"></i>
+														</button>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>Peng György</td>
+												<td>Budapest, József város</td>
+												<td>
+													<ul>
+														<li>teszt</li>
+														<li>magyar</li>
+														<li>teszt tanusító</li>
+														<li>magyar tanusító</li>
+													</ul>
+												</td>
+												<td>
+													<a href="mailto:krosza@gmail.com">
+														<button class="social">
+															<i class="fa fa-envelope"></i>
+														</button>
+													</a>
+												</td>
+											</tr>
+										 </table>
 										 <div id="assurers"></div>
                                     </div>
                                 </div>
@@ -621,25 +703,24 @@ ul.disced {
                                     <div class="c-tab">
 										<h4><b>Felhasználó adatainak lekérdezése</b></h4>
 										<div id="check-the-user" class="form">
-											<label for="email">A felhasználó email címe</label>
+											<label for="email">A Felhasználó email címe</label>
 											<input name="email" type="text" id="ByEmailForm_email_input">
 											<button onclick="javascript:pageScript.byEmail()" type="button">Lekérdezés</button>
 										</div>
 										<h4><b>Igazolás kiadása</b></h4>
-										<div id="assurance-giving" class="form" >
+										<div id="assurance-giving" class="form">
 											<label for="input">Személyi azonosító:</label>
 											<input type="text" placeholder="" id="assurancing_predigest_input" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
 											<label for="mothername">Anyja neve:</label>
 											<input type="text" placeholder="" id="assurancing_predigest_mothername" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
 											<button type="button" onclick="pageScript.digestGetter('assurancing').getDigest()">A kód előállítása</button>
 											<div class="monitor" id="assurancing_predigest_monitor"></div>
-											<label for="digest">Titkos Kód:</label>
-											<textarea data-autoresize class="digest" name="digest" type="text" id="assurancing_digest_input"></textarea>
-											<label for="digest">Kiadható assurancok:</label>
+											<textarea class="digest" name="digest" type="text" id="assurancing_digest_input" style="display: none"></textarea>
+											<div id="assurance-giving_message" class="missing" >A Titkos Kód még nem áll rendelkezésre</div>
+											<label for="digest" style="margin-top:15px;">Kiadható igazolások:</label>
 											<select id="assurance-giving_assurance_selector">
-											
 											</select>
-											<button type="button" onclick="javascript:pageScript.addAssurance()">Igazolás kiadása</button>
+											<button id="assurance-giving_submit-button" type="button" onclick="javascript:pageScript.addAssurance()" class="inactive">Igazolás kiadása</button>
 										</div>
                                     </div>
                                 </div>
