@@ -10,7 +10,12 @@
  *   Gettext.gettext('hello %s','world');
  *   _('hello %s','world');
  *
+ * hacked by claymanus for ada project 2016.
+ * prototype.js dependencies are removed or integrated
+ * new dependencies: jquery.js
+ * 
  */
+ 
 var Prototype = {
   Version: '1.5.0',
   BrowserFeatures: {
@@ -21,6 +26,7 @@ var Prototype = {
   emptyFunction: function() {},
   K: function(x) { return x }
 }
+
 var Class = {
   create: function() {
     return function() {
@@ -351,7 +357,9 @@ PeriodicalExecuter.prototype = {
     }
   }
 }
+
 var jsGettext = Class.create();
+
 jsGettext.prototype = {
 	
 	initialize: function(lang) {
@@ -588,4 +596,4 @@ jsGettext.prototype = {
 	}
 }
 Gettext = new jsGettext();
-function _() { return Gettext.gettext.apply(this,arguments); }
+function _() { var a=Gettext.gettext.apply(this,arguments); console.log(a); return a }

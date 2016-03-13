@@ -248,13 +248,13 @@ msgid "Nem sikerült elküldeni a levelet: {0}"
 msgstr ""
 
 msgid "magyar"
-msgstr "magyar assurance"
+msgstr "magyar igazolvány"
 
 msgid "emailverification"
-msgstr "az emailcíme ellenőrzött"
+msgstr "ellenőrzött email-cím"
 
 msgid "assurer"
-msgstr "aki nézheti más adatát"
+msgstr "tanusító"
 
 msgid "assurer.magyar"
 msgstr "magyar tanusító"
@@ -267,3 +267,150 @@ msgstr "vizsgabiztos"
 
 msgid "assurer.{0}"
 msgstr "ilyen igazolást tud kiadni: {0}"
+
+msgid "email address and/or username / password"
+msgstr "email cím és/vagy felhasználónév és jelszó"
+
+msgid "my facebook account"
+msgstr "facebook fiókom"
+
+msgid "SSL certificate"
+msgstr "SSL hitelesítéssel"
+
+msgid "Registration with {0}"
+msgstr "Regisztráció {0} használatával"
+
+msgid "Server error occured"
+msgstr "Szerverhiba"
+
+msgid "Error message"
+msgstr "Hibaüzenet"
+
+msgid "Missing data"
+msgstr "Hiányzó adat"
+
+msgid "Server message"
+msgstr "Szerverüzenet"
+
+msgid "Personal identifier"
+msgstr "Személyi azonosító"
+
+msgid "Personal identifier is missing"
+msgstr "A személyi azonosító nincs megadva"
+
+msgid "Mother's name"
+msgstr "Anyja neve"
+
+msgid "I make it myself"
+msgstr "Elkészítem magam"
+
+msgid "Let's make it here"
+msgstr "Készítsük el itt"
+
+msgid "Generate"
+msgstr "A kód előállítása"
+
+msgid "Mother's name is missing"
+msgstr "Anyja neve nincs megadva"
+
+msgid "Acceptance is missing"
+msgstr "Hiányzik a beleegyezésed"
+
+msgid "Text for missing accaptance of term of use"
+msgstr "A regisztrácó feltétele a felhasználási feltételek elfogadása. Ha megértetted és elfogadod, kattints a regisztrálok gomb felett található a checkboxra"
+
+msgid "User informations"
+msgstr "A felhasználó adatai"
+
+msgid "Email address:"
+msgstr "E-mail cím:"
+
+msgid "The Secret Hash:"
+msgstr "Titkos Kód:"
+
+msgid "My credentials"
+msgstr "Hitelesítési módjaim"
+
+msgid "Password"
+msgstr "Jelszavas"
+
+msgid "SSL certificate"
+msgstr "SSL kulcs"
+
+msgid "Application"
+msgstr "Alkalmazás"
+
+msgid "Domain"
+msgstr "Hivatkozás"
+
+msgid "User identifier"
+msgstr "Felhasználó azonosító"
+
+msgid "Emailing"
+msgstr "Levelezés"
+
+msgid "Allow emailing"
+msgstr "Kaphatok levelet"
+
+msgid "Assurances"
+msgstr "Igazolások"
+
+msgid "Name"
+msgstr "Megnevezés"
+
+msgid "Assurer"
+msgstr "Kiállító"
+
+msgid "Date of assurance"
+msgstr "Kiállítás dátuma"
+
+msgid "Valid until"
+msgstr "Érvényesség"
+
+msgid "unlimited"
+msgstr "korlátlan"
+
+msgid "false"
+msgstr "nincs"
+
+msgid "true"
+msgstr "igen"
+
+msgid "User name is missing. "
+msgstr "Hiányzik a felhasználónév. "
+
+msgid "Password is missing. "
+msgstr "Nem adtál meg jelszót. "
+
+msgid "This function is not working yet."
+msgstr "de ez a funkció sajnos még nem működik."
+
+msgid "Under construction"
+msgstr "Keményen dolgozunk,"
+
+msgid "The Secret Hash has been constructed successfully."
+msgstr "A Titkos Kód legyártása sikerült."
+
+msgid "Congratulation!"
+msgstr "Gratulálunk!"
+
+msgid "The Secret Hash isn't given yet"
+msgstr "A Titkos Kód még nem áll rendelkezésre"
+
+msgid "The Secret Hash is given for assuring"
+msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
+
+msgid "The secret is missing"
+msgstr "Hiányzik a hitelesítő token"
+
+msgid "Plase accept the consequences with checking the checkbox"
+msgstr "A fiók törlésével kapcsolatos figyelmeztetést tudomásul kell venni. (A checkbox-ot x-eld be!)"
+
+msgid "If you change your Secret Hash, all your assurences will be lost!"
+msgstr "Ha megváltoztatod a Titkos Kódodat, az összes eddigi igazolásod elvész!"
+
+msgid "cancel"
+msgstr "mégse"
+
+msgid "save"
+msgstr "mentés"
