@@ -373,8 +373,9 @@ jsGettext.prototype = {
 		this.links        = [$('link').map(function(link){
 			if ($('link')[link].rel == 'gettext' && $('link')[link].href && $('link')[link].lang) return [$('link')[link].lang, $('link')[link].href];
 		})];
+		this.linksPointer_ = this.links.length
 		this.outerStuff = [function(){return}];
-		this.allPoIsLoaded = false;
+		this.isAllPoLoaded = (this.linksPointer_==0)?true:false;
 		
 		new PeriodicalExecuter(function(pe) {
   			if (Gettext.linksPointer == Gettext.links.length) pe.stop();
@@ -421,9 +422,11 @@ jsGettext.prototype = {
 				this.LCmessages[this.currentFetch].previousUntranslateds.length,
 				this.LCmessages[this.currentFetch].previousUntranslatedsPlurals.length]));
 			this.currentFetch = false;
-			if (this.linksPointer==this.links.height) {
-				this.allPoIsLoaded = true
-				[].forEach.call(this.outerStuff, function(i){i()}
+			this.linksPointer_--
+			if (this.linksPointer_==0) {
+				this.isAllPoLoaded = true;
+				console.log("po is loaded");
+				[].forEach.call(this.outerStuff, function(i){i()})
 			}
 	},
 	
@@ -602,4 +605,4 @@ jsGettext.prototype = {
 	}
 }
 Gettext = new jsGettext();
-function _() { var a=Gettext.gettext.apply(this,arguments); console.log(a); return a }
+function _() { var a=Gettext.gettext.apply(this,arguments); if (a) {console.log(a); return a} }

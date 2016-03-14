@@ -255,6 +255,9 @@ msgstr "ellenőrzött email-cím igazolás"
 msgid "assurer"
 msgstr "tanusító"
 
+msgid "hashgiven"
+msgstr "Titkos Kód megadva"
+
 msgid "assurer.magyar"
 msgstr "magyar tanusító"
 
