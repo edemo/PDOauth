@@ -395,7 +395,7 @@ msgid "Congratulation!"
 msgstr "Gratulálunk!"
 
 msgid "The Secret Hash hasn't been prepared yet"
-msgstr " még nincs Titkos Kód "
+msgstr "Még nincs Titkos Kód "
 
 msgid "There is a Secret Hash  for the assurance"
 msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
