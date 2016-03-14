@@ -256,7 +256,7 @@ msgid "assurer"
 msgstr "tanusító"
 
 msgid "hashgiven"
-msgstr "Titkos Kód megadva"
+msgstr "van Titkos Kód"
 
 msgid "assurer.magyar"
 msgstr "magyar tanusító"
