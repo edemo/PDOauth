@@ -87,13 +87,18 @@
 			var keygenform = document.getElementById("registration-keygenform")
 			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
 			loc = '' + win.location
-			if (self.QueryString.section && self.QueryString.section=="email_verification"){
-				if (self.QueryString.secret) self.verifyEmail()
-			}
-			self.ajaxget("/v1/users/me", self.initCallback)
-			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
+			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL ()
+			if (!Gettext.allPoIsLoaded) Gettext.outerStuff.push(self.init_);
+			else self.init()
 		}
 		else self.displayMsg(self.processErrors(data));
+	}
+	
+	PageScript.prototype.init_=function(){
+		if (self.QueryString.section && self.QueryString.section=="email_verification"){
+			if (self.QueryString.secret) self.verifyEmail()
+		}
+		self.ajaxget("/v1/users/me", self.initCallback)		
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
@@ -103,10 +108,11 @@
 	PageScript.prototype.emailVerificationCallback=function(status, text) {
 		var message
 		if (status==200) {
-			message="Az email címed ellenőrzése sikerült."
+			message=_("Your email validation was succesfull.")
 		}
 		else {
-			message="Az email címed ellenőrzése <b>nem</b> sikerült."+text
+			
+			message=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(JSON.parse(text).errors)
 		}
 		document.getElementById("email_verification_message").innerHTML=message
 	}
