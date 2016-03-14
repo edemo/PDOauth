@@ -363,7 +363,6 @@ var jsGettext = Class.create();
 jsGettext.prototype = {
 	
 	initialize: function(lang) {
-		console.log('initialise gettext')
 		this.lang         = lang || 'hu';
 		this.debug        = true;
 		this.LCmessages   = {};
@@ -380,7 +379,6 @@ jsGettext.prototype = {
 		new PeriodicalExecuter(function(pe) {
   			if (Gettext.linksPointer == Gettext.links.length) pe.stop();
   			else {
-				console.log(Gettext.links[Gettext.linksPointer])
   				Gettext.include.apply(Gettext, Gettext.links[Gettext.linksPointer])
   				Gettext.linksPointer++;
   			}
@@ -394,7 +392,6 @@ jsGettext.prototype = {
 	},
 	
 	include: function(lang, href) {
-		console.log(arguments)
 		if (arguments[1].substring(0,4) == 'http') {
 			this.currentFetch  = lang;
 		var callback = Gettext.include_complete.bind(Gettext)
@@ -408,7 +405,6 @@ jsGettext.prototype = {
 	},
 	
 	include_complete: function (t) {
-			console.log(t)
 			this.log('Fetched language: ', this.currentFetch.toUpperCase(), ' ('+ t.responseText.length +' bytes)');
 			this.LCmessages[this.currentFetch] = this.parse(t.responseText);
 			this.log(_('Parsed: %d msgids, %d msgids-plurals, %d msgstrs, %d obsoletes, %d contexts, %d references, %d flags, %d previous untranslateds, %d previous untranslated-plurals',[
@@ -440,7 +436,6 @@ jsGettext.prototype = {
 	// Reference: http://www.gnu.org/software/gettext/manual/gettext.html#PO-Files
 	
 	gettext: function() {
-		console.log(arguments)
 		if (!arguments || arguments.length < 1 || !RegExp) return;
 		var str      = arguments[0];
 		arguments[0] = null;
