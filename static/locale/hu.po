@@ -414,3 +414,9 @@ msgstr "mégse"
 
 msgid "save"
 msgstr "mentés"
+
+msgid "Your email validation was succesfull."
+msgstr "Az email címed ellenőrzése sikerült."
+
+msgid "Your email validation <b>failed</b>.<br/>The servers response: "
+msgstr "Az email címed ellenőrzése <b>nem</b> sikerült.<br/>A szerver üzenete: "

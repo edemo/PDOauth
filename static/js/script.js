@@ -218,12 +218,11 @@ console.log(theUri)
 		if (status == 200 ) {
 			self.isLoggedIn=true
 			self.get_me()
-			self.refreshTheNavbar()
-			self.displayTheSection()
+			document.getElementById("LoginForm_password_input").value=""
+			document.getElementById("LoginForm_email_input").value=""
 		}
 		else {
 			this.msg = self.processErrors(data)
-			this.msg.callback = self.get_me;
 			self.displayMsg(this.msg);			
 		}
 	}

@@ -373,7 +373,9 @@ jsGettext.prototype = {
 		this.links        = [$('link').map(function(link){
 			if ($('link')[link].rel == 'gettext' && $('link')[link].href && $('link')[link].lang) return [$('link')[link].lang, $('link')[link].href];
 		})];
-				
+		this.outerStuff = [function(){return}];
+		this.allPoIsLoaded = false;
+		
 		new PeriodicalExecuter(function(pe) {
   			if (Gettext.linksPointer == Gettext.links.length) pe.stop();
   			else {
@@ -419,6 +421,10 @@ jsGettext.prototype = {
 				this.LCmessages[this.currentFetch].previousUntranslateds.length,
 				this.LCmessages[this.currentFetch].previousUntranslatedsPlurals.length]));
 			this.currentFetch = false;
+			if (this.linksPointer==this.links.height) {
+				this.allPoIsLoaded = true
+				[].forEach.call(this.outerStuff, function(i){i()}
+			}
 	},
 	
 	// This function based on public domain code. Feel free to take a look the original function at http://jan.moesen.nu/
