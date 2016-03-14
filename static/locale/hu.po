@@ -44,7 +44,7 @@ msgstr "A jelszónak tartalmaznia kell számokat"
 
 #: src/pdoauth/Messages.py:11 src/pdoauth/Messages.py:12
 msgid "credentialType: Invalid value, must be one of:"
-msgstr "hibás credential típus"
+msgstr "érvénytelen hitelesítés típus"
 
 #: src/pdoauth/Messages.py:12 src/pdoauth/Messages.py:13
 msgid "Missing parameter redirect_uri in URL query"
@@ -64,7 +64,7 @@ msgstr "nem támogatott grant típus"
 
 #: src/pdoauth/Messages.py:16 src/pdoauth/Messages.py:17
 msgid "invalid_client"
-msgstr "hibás kliens"
+msgstr "érvénytelen  kliens"
 
 #: src/pdoauth/Messages.py:17 src/pdoauth/Messages.py:18
 msgid "unsupported_response_type"
@@ -80,7 +80,7 @@ msgstr "hibás kód"
 
 #: src/pdoauth/Messages.py:20 src/pdoauth/Messages.py:21
 msgid "Invalid request"
-msgstr "hibás kérés"
+msgstr "Érvénytelen kérés"
 
 #: src/pdoauth/Messages.py:21 src/pdoauth/Messages.py:22
 msgid "access_denied"
@@ -108,14 +108,13 @@ msgstr ""
 "megakadályozod, hogy  visszaéljenek az adataiddal."
 
 #: src/pdoauth/Messages.py:27 src/pdoauth/Messages.py:28
-msgid "More users with the same hash; specify both hash and email"
-msgstr ""
-"Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhasználó "
+msgid "There are more users with the same hash; specify both hash and email"
+msgstr "Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhasználó "
 "email címét is"
 
 #: src/pdoauth/Messages.py:28 src/pdoauth/Messages.py:29
 msgid "no authorization to show other users"
-msgstr "Nincs jogod más felhasználók adatait nézni"
+msgstr "Nincs jogod más felhasználók adatait megnézni"
 
 #: src/pdoauth/Messages.py:29 src/pdoauth/Messages.py:30
 msgid "Password reset email has been successfully sent."
@@ -131,7 +130,7 @@ msgstr "Nincs ilyen Felhasználó"
 
 #: src/pdoauth/Messages.py:32 src/pdoauth/Messages.py:33
 msgid "bad Authorization header"
-msgstr ""
+msgstr "Hibás hitelesítő fejléc"
 
 #: src/pdoauth/Messages.py:33 src/pdoauth/Messages.py:34
 msgid "no authorization"
@@ -191,11 +190,11 @@ msgstr "ismeretlen token"
 
 #: src/pdoauth/Messages.py:47 src/pdoauth/Messages.py:48
 msgid "email verified OK"
-msgstr "Az emailcím rendben"
+msgstr "Az email-cím rendben"
 
 #: src/pdoauth/Messages.py:48 src/pdoauth/Messages.py:49
 msgid "Invalid email address"
-msgstr "Nem jó emailcím"
+msgstr "Nem jó az email-cím"
 
 #: src/pdoauth/Messages.py:49 src/pdoauth/Messages.py:50
 msgid "expired token"
@@ -203,7 +202,7 @@ msgstr "lejárt token"
 
 #: src/pdoauth/Messages.py:50 src/pdoauth/Messages.py:51
 msgid "Password successfully changed"
-msgstr "A jelszavada tsikeresen megváltoztattad"
+msgstr "A jelszavadat sikeresen megváltoztattad"
 
 #: src/pdoauth/Messages.py:51 src/pdoauth/Messages.py:52
 msgid "The secret has expired"
@@ -245,13 +244,13 @@ msgstr "Nincs megadva Titkos Kód"
 #: src/pdoauth/Messages.py:63
 #, python-brace-format
 msgid "Nem sikerült elküldeni a levelet: {0}"
-msgstr ""
+msgstr "Nem sikerült ide {0} elküldeni a levelet "
 
 msgid "magyar"
-msgstr "magyar igazolvány"
+msgstr "magyar igazolás"
 
 msgid "emailverification"
-msgstr "ellenőrzött email-cím"
+msgstr "ellenőrzött email-cím igazolás"
 
 msgid "assurer"
 msgstr "tanusító"
@@ -260,16 +259,16 @@ msgid "assurer.magyar"
 msgstr "magyar tanusító"
 
 msgid "assurer.assurer"
-msgstr "assurer-t tud kiadni"
+msgstr "tanúsító kinevező"
 
 msgid "assurer.vizsgazott"
 msgstr "vizsgabiztos"
 
 msgid "assurer.{0}"
-msgstr "ilyen igazolást tud kiadni: {0}"
+msgstr "{0} tanúsító"
 
 msgid "email address and/or username / password"
-msgstr "email cím és/vagy felhasználónév és jelszó"
+msgstr "email-cím és/vagy felhasználónév és jelszó"
 
 msgid "my facebook account"
 msgstr "facebook fiókom"
@@ -280,7 +279,7 @@ msgstr "SSL hitelesítéssel"
 msgid "Registration with {0}"
 msgstr "Regisztráció {0} használatával"
 
-msgid "Server error occured"
+msgid "Server failure"
 msgstr "Szerverhiba"
 
 msgid "Error message"
@@ -313,11 +312,12 @@ msgstr "A kód előállítása"
 msgid "Mother's name is missing"
 msgstr "Anyja neve nincs megadva"
 
-msgid "Acceptance is missing"
+msgid "Approval is missing"
 msgstr "Hiányzik a beleegyezésed"
 
-msgid "Text for missing accaptance of term of use"
-msgstr "A regisztrácó feltétele a felhasználási feltételek elfogadása. Ha megértetted és elfogadod, kattints a regisztrálok gomb felett található a checkboxra"
+msgid "For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!"
+msgstr "A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az elfogadáshoz "
+"kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
 
 msgid "User informations"
 msgstr "A felhasználó adatai"
@@ -383,30 +383,30 @@ msgid "Password is missing. "
 msgstr "Nem adtál meg jelszót. "
 
 msgid "This function is not working yet."
-msgstr "de ez a funkció sajnos még nem működik."
+msgstr "Ez a funkció sajnos még nem működik."
 
 msgid "Under construction"
 msgstr "Keményen dolgozunk,"
 
-msgid "The Secret Hash has been constructed successfully."
-msgstr "A Titkos Kód legyártása sikerült."
+msgid "The Secret Hash has been prepared successfully."
+msgstr "A Titkos Kód elkészült."
 
 msgid "Congratulation!"
 msgstr "Gratulálunk!"
 
-msgid "The Secret Hash isn't given yet"
-msgstr "A Titkos Kód még nem áll rendelkezésre"
+msgid "The Secret Hash hasn't been prepared yet"
+msgstr "Még nincs Titkos Kód "
 
-msgid "The Secret Hash is given for assuring"
+msgid "There is a Secret Hash  for the assurance"
 msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
 
 msgid "The secret is missing"
-msgstr "Hiányzik a hitelesítő token"
+msgstr "Hiányzik a hitelesítő eszköz"
 
-msgid "Plase accept the consequences with checking the checkbox"
-msgstr "A fiók törlésével kapcsolatos figyelmeztetést tudomásul kell venni. (A checkbox-ot x-eld be!)"
+msgid "To accept the terms please mark the checkbox!"
+msgstr "A fiók törlésével kapcsolatos figyelmeztetés tudomásul vételéhez kattints a jelölőnégyzetbe!"
 
-msgid "If you change your Secret Hash, all your assurences will be lost!"
+msgid "If you change your Secret Hash, all of your assurences will be deleted!"
 msgstr "Ha megváltoztatod a Titkos Kódodat, az összes eddigi igazolásod elvész!"
 
 msgid "cancel"
