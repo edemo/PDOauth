@@ -274,7 +274,6 @@ Object.extend(Array.prototype, {
   },
 
   compact: function() {
-	  console.log(this)
     return this.select(function(value) {
       return value != null;
     });

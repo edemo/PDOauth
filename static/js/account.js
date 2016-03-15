@@ -88,14 +88,17 @@
 			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
 			loc = '' + win.location
 			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
-			if (!Gettext.allPoIsLoaded) Gettext.outerStuff.push(self.init_);
-			else self.init()
+			if (!Gettext.isAllPoLoaded) {
+				console.log('várunk a gettextre');
+				Gettext.outerStuff.push(self.init_);
+			}
+			else self.init_()
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
 	
 	PageScript.prototype.init_=function(){
-		console.log("init_ called by gettext")
+		console.log("init_")
 		if (self.QueryString.section && self.QueryString.section=="email_verification"){
 			if (self.QueryString.secret) self.verifyEmail()
 		}

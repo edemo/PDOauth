@@ -234,7 +234,7 @@ console.log(theUri)
 			var data = JSON.parse(text);
 			var msg = self.processErrors(data)
 			if (status == 200 ) {
-				if( self.page=="account"){
+				if( self.page=="login"){
 					if( self.QueryString.next) {
 						self.doRedirect(decodeURIComponent(self.QueryString.next))
 					}
@@ -695,4 +695,4 @@ Back To Top Button
           return false;
       });
       
-      $('#back-top').tooltip('hide');
+      if ($('#back-top').length!=0) $('#back-top').tooltip('hide');
