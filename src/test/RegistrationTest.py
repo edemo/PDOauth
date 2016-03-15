@@ -1,7 +1,6 @@
 # pylint: disable=line-too-long
 from test.helpers.PDUnitTest import PDUnitTest, test
 from test.helpers.FakeInterFace import FakeForm
-from test.helpers.UserUtil import UserUtil
 from pdoauth.models.Credential import Credential
 from Crypto.Hash.SHA256 import SHA256Hash
 from test.helpers.CryptoTestUtil import CryptoTestUtil, SPKAC
@@ -9,8 +8,9 @@ from pdoauth.models.Assurance import Assurance
 from pdoauth.models.User import User
 import time
 from uuid import uuid4
+from test.helpers.EmailUtil import EmailUtil
 
-class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
+class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
 
     def prepareLoginForm(self, digest =None, email=None):
         self.setupUserCreationData()

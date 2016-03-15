@@ -1,8 +1,14 @@
 from Crypto.Hash.SHA256 import SHA256Hash
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
+from uuid import uuid4
+import time
+
 
 class CredentialManager(object):
+    fourDaysInSeconds = 60 * 60 * 24 * 4
+    fourHoursInSeconds = 14400
+
     @classmethod
     def protect_secret(cls, secret):
         protected = SHA256Hash(secret).hexdigest()
@@ -20,6 +26,14 @@ class CredentialManager(object):
         user = User.new(email, digest)
         cred = cls.addCredToUser(user, credtype, identifier, secret)
         return cred
+
+    @staticmethod
+    def createTemporaryCredential(user, credentialType, expiry=fourDaysInSeconds):
+        secret = unicode(uuid4())
+        expiry = time.time() + expiry
+        Credential.new(user, credentialType, unicode(expiry), secret)
+        return secret, expiry
+
 
     
     @classmethod

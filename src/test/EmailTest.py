@@ -1,47 +1,13 @@
 # pylint: disable=line-too-long
 from test.helpers.PDUnitTest import PDUnitTest, test
-from test.helpers.UserUtil import UserUtil
-from test.helpers.FakeInterFace import FakeInterface, FakeMail, FakeApp
-from pdoauth.EmailHandling import EmailHandling
 from pdoauth.models.Credential import Credential
 from pdoauth.models import User
-from smtplib import SMTPException
 from pdoauth.ReportedError import ReportedError
 from pdoauth.Messages import exceptionSendingEmail
+from test.helpers.EmailUtil import TestMailer, FailingMailer, exampleBody,\
+    exampleHtml, EmailUtil
 
-exampleBody = """Dear abc@xyz.uw,
-This is a reset email.
-Go to https://local.sso.edemokraciagep.org:8888/static/login.html?secret=th1s1sth4s3cret
-you have to do it until 11 Dec 2098 12:34:56.
-
-Sincerely,
-The Test machine
-"""
-
-exampleHtml = """<html><head></head><body>
-Dear abc@xyz.uw,<br>
-This is a reset email.<br/>
-Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?secret=th1s1sth4s3cret">Click</a><br/>
-you have to do it until 11 Dec 2098 12:34:56.<br/>
-<br/>
-Sincerely,<br/>
-The Test machine
-</body></html>
-"""
-
-class TestMailer(EmailHandling, FakeInterface):
-    app = FakeApp()
-    mail = FakeMail()
-
-class FailingMail(FakeMail):
-    def send(self,msg):
-        raise SMTPException('some smtp error')
-
-class FailingMailer(EmailHandling, FakeInterface):
-    app = FakeApp()
-    mail = FailingMail()
-
-class EmailTest(PDUnitTest, UserUtil):
+class EmailTest(PDUnitTest, EmailUtil):
 
     def setUp(self):
         self.mailer = TestMailer()

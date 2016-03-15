@@ -1,11 +1,10 @@
 #pylint: disable=no-member
-from uuid import uuid4
 import time
-from pdoauth.models.Credential import Credential
 from flask_mail import Message
 from smtplib import SMTPException
 from pdoauth.ReportedError import ReportedError
 from pdoauth.Messages import exceptionSendingEmail
+from pdoauth.CredentialManager import CredentialManager
 
 class EmailData(object):
     def __init__(self, name, secret, expiry):
@@ -35,24 +34,20 @@ class EmailHandling(object):
         except SMTPException as e:
             if rmuser:
                 user.rm()
-            raise ReportedError(exceptionSendingEmail.format(e))
+            raise ReportedError(exceptionSendingEmail.format(e))  # @UndefinedVariable
 
     def sendPasswordVerificationEmail(self, user):
-        secret=unicode(uuid4())
-        expiry = time.time() + 60*60*24*4
-        Credential.new(user, 'emailcheck', unicode(expiry), secret )
+        credentialType = 'emailcheck'
+        secret, expiry = CredentialManager.createTemporaryCredential(user, credentialType)
         self.sendEmail(user, secret, expiry, "PASSWORD_VERIFICATION", rmuser = True)
 
     def sendPasswordResetMail(self, user):
-        passwordResetEmailExpiration = 14400
-        secret = unicode(uuid4())
-        expirationTime = time.time() + passwordResetEmailExpiration
-        expirationString = unicode(expirationTime)+":"+user.email
-        Credential.new(user, self.passwordResetCredentialType, expirationString,secret)
-        self.sendEmail(user, secret, expirationTime, "PASSWORD_RESET")
+        secret, expiry = CredentialManager.createTemporaryCredential(
+                            user,
+                            self.passwordResetCredentialType,
+                            expiry=CredentialManager.fourHoursInSeconds)
+        self.sendEmail(user, secret, expiry, "PASSWORD_RESET")
 
     def sendDeregisterMail(self, user):
-        secret=unicode(uuid4())
-        expiry = time.time() + 60*60*24*4
-        Credential.new(user, 'deregister', unicode(expiry), secret )
+        secret, expiry = CredentialManager.createTemporaryCredential(user, 'deregister')
         self.sendEmail(user, secret, expiry, "DEREGISTRATION")

@@ -2,12 +2,12 @@ from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance
 from test.helpers.PDUnitTest import PDUnitTest, test
-from test.helpers.UserUtil import UserUtil
 from test.helpers.FakeInterFace import FakeForm
 import time
 from uuid import uuid4
+from test.helpers.EmailUtil import EmailUtil
 
-class DeregisterTest(PDUnitTest, UserUtil):
+class DeregisterTest(PDUnitTest, EmailUtil):
 
     def _doDeregister(self):
         data = dict(csrf_token=self.controller.getCSRF())

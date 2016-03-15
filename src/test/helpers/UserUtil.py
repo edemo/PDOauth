@@ -4,8 +4,6 @@ from pdoauth.models.Credential import Credential
 from test.helpers.ResponseInfo import ResponseInfo
 from test.helpers.RandomUtil import RandomUtil
 from test.helpers.FakeInterFace import FakeForm
-from bs4 import BeautifulSoup
-import re
 import time
 
 class UserUtil(ResponseInfo, RandomUtil):
@@ -75,38 +73,6 @@ class UserUtil(ResponseInfo, RandomUtil):
         self.addDataBasedOnOptionValue('secret', secret, self.usercreationPassword)
         form = FakeForm(self.data)
         return form
-
-    def _sendPasswordResetEmail(self, email=None):
-        self.createUserWithCredentials()
-        if email is None:
-            email = self.userCreationEmail
-        resp = self.controller.doSendPasswordResetEmail(email)
-        self.data = self.fromJson(resp)
-        self.outbox = self.controller.mail.outbox
-        return resp.status_code
-
-    def the_reset_link_is_in_the_reset_email(self):
-        self._sendPasswordResetEmail()
-        text = unicode(self.outbox[0].html)
-        soup = BeautifulSoup(text)
-        passwordResetLink = soup.find("a")['href']
-        self.secret = passwordResetLink.split('?secret=')[1]
-        self.tempcred = Credential.getBySecret('email_for_password_reset',self.secret)
-        return passwordResetLink
-
-    def getValidateUri(self):
-        return re.search('href="([^"]*)', self.outbox[0].html).group(1)
-
-    def assertEmailContains(self, thingToFind, message):
-        self.assertTrue(thingToFind in unicode(message.body))
-        self.assertTrue(thingToFind in unicode(message.html))
-
-    def assertGotAnEmailContaining(self, thingToFind):
-        message = self.mailer.mail.outbox[0]
-        self.assertEmailContains(thingToFind, message)
-
-    def assertSubjectIs(self, subject):
-        return self.assertEqual(self.mailer.mail.outbox[0].subject, subject)
 
     def countExpiredCreds(self, credentialType = 'email_for_password_reset'):
         expiredcreds = []
