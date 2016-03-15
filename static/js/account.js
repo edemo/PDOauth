@@ -87,13 +87,18 @@
 			var keygenform = document.getElementById("registration-keygenform")
 			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
 			loc = '' + win.location
-			if (self.QueryString.section && self.QueryString.section=="email_verification"){
-				if (self.QueryString.secret) self.verifyEmail()
-			}
-			self.ajaxget("/v1/users/me", self.initCallback)
-			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
+			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL ()
+			if (!Gettext.allPoIsLoaded) Gettext.outerStuff.push(self.init_);
+			else self.init()
 		}
 		else self.displayMsg(self.processErrors(data));
+	}
+	
+	PageScript.prototype.init_=function(){
+		if (self.QueryString.section && self.QueryString.section=="email_verification"){
+			if (self.QueryString.secret) self.verifyEmail()
+		}
+		self.ajaxget("/v1/users/me", self.initCallback)		
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
@@ -103,10 +108,11 @@
 	PageScript.prototype.emailVerificationCallback=function(status, text) {
 		var message
 		if (status==200) {
-			message="Az email címed ellenőrzése sikerült."
+			message=_("Your email validation was succesfull.")
 		}
 		else {
-			message="Az email címed ellenőrzése <b>nem</b> sikerült.<p></p>"+text
+			
+			message=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(JSON.parse(text).errors)
 		}
 		document.getElementById("email_verification_message").innerHTML=message
 	}
@@ -146,23 +152,23 @@
 		var heading
 		switch (methode) {
 			case "pw":
-				heading="felhasználónév / jelszó"
+				heading=_("email address and/or username / password")
 				document.getElementById("registration-form-password-container").style.display="block";
 				document.getElementById("registration-form-username-container").style.display="block";
 			break;
 			case "fb":
-				heading="facebook fiókom"
+				heading=_("my facebook account")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
 				facebook.fbregister()
 			break;
 			case "ssl":
-				heading="SSL kulcs"
+				heading=_("SSL certificate")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
 			break;
 		}
-		document.getElementById("registration-form-method-heading").innerHTML="Regisztráció "+heading+" használatával";
+		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with {0}",heading);
 	}
 
 	PageScript.prototype.register = function(credentialType) {
@@ -181,21 +187,30 @@
 	    this.ajaxpost("/v1/register", text, this.myCallback)
 	}
 	
+	PageScript.prototype.sslRegisterCallback= function(){
+		if (self.sslCallback()) self.sslLogin();
+	}
+
+	PageScript.prototype.addSslCredentialCallback= function(){
+		if (self.sslCallback()) self.getMe();
+	}
+
 	PageScript.prototype.sslCallback=function() {
 		console.log("sslCallback")
 		response=document.getElementById("SSL").contentDocument.body.innerHTML
-		if (response=="") self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
-		else {
+		if (response!="")  {
 			var msg
 			if (data=JSON.parse(response)) {
 				msg=self.processErrors(data)
 			}
 			else {
-				msg.title="Szerverhiba"
-				msg.error="response"
+				msg.title=_("Server error occured")
+				msg.error=response
 			}
 			self.displayMsg(msg)
+			return false
 		}
+		else return true
 	}	
 	
 	PageScript.prototype.doRegister=function() {
@@ -208,14 +223,14 @@
 					self.register("facebook")
 					break;
 				case "ssl":
-					document.getElementById("SSL").onload=self.sslCallback;
+					document.getElementById("SSL").onload=self.sslRegisterCallback;
 					document.getElementById('registration-keygenform').submit();
 					console.log("after submit")
 //					self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
 					break;
 			}
 		}
-		else self.displayMsg({title:"Felhasználási feltételek",error:"A regisztrácó feltétele a felhasználási feltételek elfogadása. Ha megértetted és elfogadod, kattints a regisztrálok gomb felett található a checkboxra "})
+		else self.displayMsg({title:_("Acceptance is missing"),error:_("Text for missing accaptance of term of use")})
 	}
 
 	PageScript.prototype.sslLogin = function() {
@@ -251,15 +266,26 @@
 		var digestCallback
 		
 		digestCallback = function(status,text,xml) {
-					console.log("cllaback "+formName)
-					console.log("cllaback "+text)
+			var diegestInput=document.getElementById(formName + "_digest_input")
 			if (status==200) {
-				var diegestInput=document.getElementById(formName + "_digest_input")
 				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
 				$("#"+formName + "_digest_input").trigger('keyup');
 				document.getElementById(formName + "_predigest_input").value = "";
+				if (formName=="assurancing") {
+					var messageBox=document.getElementById("assurance-giving_message")
+					messageBox.innerHTML=_("The Secret Hash is given for assuring")
+					messageBox.className="given"
+					document.getElementById("assurance-giving_submit-button").className=""
+				}
 			} else {
-				self.displayMsg({title:'Hibaüzenet',error:"<p class='warning'>" + text + "</p>"});
+				self.displayMsg({title:_("Error message"),error: text});
+				diegestInput.value =""
+				if (formName=="assurancing") {
+					var messageBox=document.getElementById("assurance-giving_message")
+					messageBox.innerHTML=_("The Secret Hash isn't given yet")
+					messageBox.className="missing"
+					document.getElementById("assurance-giving_submit-button").className="inactive"
+				}
 			}
 		}
 	
@@ -283,11 +309,11 @@
 			motherValue = document.getElementById(formName+"_predigest_mothername").value;
 			mothername = self.normalizeString(motherValue);
 			if ( personalId == "") {
-				self.displayMsg({error:"<p class='warning'>A személyi szám nincs megadva</p>"})
+				self.displayMsg({title:_('Missing data'), error:_("Personal identifier is missing")})
 				return;
 			}
 			if ( mothername == "") {
-				self.displayMsg({error:"<p class='warning'>Anyja neve nincs megadva</p>"})
+				self.displayMsg({title:_('Missing data'), error:_("Mother's name is missing")})
 				return;
 			}
 			return ("<request><id>"+personalId+"</id><mothername>"+mothername+"</mothername></request>");
@@ -334,5 +360,140 @@
 	    }
 	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
 	}
+
+/*
+********************************
+**    Adding credencials      **
+********************************
+*/	
+	PageScript.prototype.addSslCredential = function(data) {
+		document.getElementById("SSL").onload=self.addSslCredentialCallback;
+		document.getElementById('add-ssl-credential-keygenform').submit();
+	}
+	
+/*
+********************************
+**      Change settings       **
+********************************
+*/
+
+	PageScript.prototype.changeHash = function() {
+	    digest = document.getElementById("change-hash-form_digest_input").value;
+	    csrf_token = this.getCookie('csrf');
+	    text= {
+	    	digest: digest,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost("/v1/users/me/update_hash", text, this.hashCallback)
+	}	
+	PageScript.prototype.viewChangeHashForm = function() {
+		document.getElementById("change-hash-form_hash-changer").style.display="table-row";
+		document.getElementById("change-hash-form_hash-container").style.display="none";
+	}
+	
+	PageScript.prototype.viewChangeHashContainer = function() {
+		document.getElementById("change-hash-form_hash-changer").style.display="none";
+		document.getElementById("change-hash-form_hash-container").style.display="table-row";
+	}
+	
+/*
+********************************
+** My account section content **
+********************************
+
+/***** Settings tab *****/
+	PageScript.prototype.parseSettings = function(data) {
+
+		var sslForm='\
+		<form target="ssl" id="add-ssl-credential-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">\
+			<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>\
+			<input id="add-ssl-credential_createuser_input" type="checkbox" name="createUser" value="true" style="display: none">\
+			<input type="text" id="add-ssl-credential_email_input"  name="email" value="'+data.email+'" style="display: none">\
+		</form>'
+				
+		var result = '\
+		<table>\
+			<tr>\
+				<td nowrap><b>'+_('Email address:')+'</b></td>\
+				<td id="email-change">\
+					<input type="text" value="'+data.email+'" id="userdata_editform_email_input">\
+				</td>\
+				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a></td>\
+			</tr>\
+			<tr id="change-hash-form_hash-container">\
+				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
+				<td>\
+					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
+				</td>\
+				<td>\
+					<a onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
+				</td>\
+			</tr>\
+			<tr id="change-hash-form_hash-changer" style="display: none;">\
+				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
+				<td>\
+					<p><b>'+_("If you change your Secret Hash, all your assurences will be lost!")+'</b></p>\
+					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
+					<button class="button" type="button" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
+					<a id="digest_self_made_button" href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
+						<button class="button" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
+					</a>\
+					<div id="change-hash-form_code-generation-input" class="form">\
+						<div class="bordered">\
+							<label for="input">'+_("Personal identifier")+':</label>\
+							<input type="text" placeholder="" id="change-hash-form_predigest_input" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
+							<label for="mothername">'+_("Mother's name")+':</label>\
+							<input type="text" placeholder="" id="change-hash-form_predigest_mothername" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
+							<button type="button" onclick="pageScript.digestGetter(\'change-hash-form\').getDigest()">'+_("Generate")+'</button>\
+							<div class="monitor" id="change-hash-form_predigest_monitor"></div>\
+						</div>\
+					</div>\
+				</td>\
+				<td>\
+					<a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
+				</td>\
+			</tr>\
+		</table>\
+		<h4><b>'+_("My credentials")+'</b></h4>\
+		<table class="multiheader">';
+		var c={	pw:[_("Password"),"password","pageScript.addPasswordCredential()",true],
+				ssl:[_("SSL certificate"),"certificate","pageScript.addSslCredential()",true],
+				fb:["Facebook","facebook","facebook.add_fb_credential()",false],
+				git:["Github","github","pageScript.addGithubCredential()",false],
+				tw:["Twitter","twitter","pageScript.addTwitterCredential()",false],
+				go:["Google+","google","pageScript.addGoogleCredential()",false]
+				};
+		var credential_list = ""
+		for( var i in c) {
+			credential_list = ""
+			for(var j=0; j<data.credentials.length; j++) {
+				if (data.credentials[j].credentialType==c[i][1]) {
+					credential_list += '\
+			<tr>\
+				<td  ><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
+				<td>\
+					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\''+c[i][1]+'\')" class="btn btn_ fa fa-trash"></a>\
+				</td>\
+			</tr>'
+				}
+			}
+			credential_header='\
+			<tr id="'+i+'-credential-list">\
+				<th>'+c[i][0]+'</th>\
+				<th>'
+			if (c[i][3] || credential_list==''  ) {
+				credential_header +='\
+					<a onclick="javascript:'+c[i][2]+'" class="btn fa fa-plus"></a>';
+			}
+			credential_header +='\
+				</th>\
+			</tr>'
+			result+=credential_header+credential_list
+		}
+		result +='\
+		</table>'+sslForm
+		return result;		
+	}	
 }()
 )
