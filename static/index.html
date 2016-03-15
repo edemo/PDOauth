@@ -37,314 +37,296 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
         <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
+		<style>
+*, *:after, *:before {
+    box-sizing: inherit;
+}
+html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+}
+body {
+    color: #606c76;
+    font-family: "Roboto","Helvetica Neue","Helvetica","Arial",sans-serif;
+    font-size: 1.6em;
+    font-weight: 300;
+    letter-spacing: .01em;
+    line-height: 1.6;
+}
+pre, xmp, plaintext, listing {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0px 1em;
+}
+pre {
+    background: #f4f5f6;
+    border-left: .3rem solid #4D7ACA;
+    font-family: "Menlo","Consolas","Bitstream Vera Sans Mono","DejaVu Sans Mono","Monaco",monospace;
+}
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 2.5rem;
+}
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 2.5rem;
+}
+input, textarea, select, fieldset {
+    margin-bottom: 1.5rem;
+}
+fieldset {
+    border-width: 0;
+    padding: 0;
+}
+label, legend {
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: .5rem;
+}
+input[type='email'], input[type='number'], input[type='password'], input[type='search'], input[type='tel'], input[type='text'], input[type='url'], textarea, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: .1rem solid #d1d1d1;
+    border-radius: .4rem;
+    box-shadow: none;
+    height: 3.8rem;
+    padding: .6rem 1rem;
+    width: 100%;
+}
+.button, button, input[type='button'], input[type='reset'], input[type='submit'] {
+    background-color: #4D7ACA;
+    border: .1rem solid #4D7ACA;
+    border-radius: .4rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    height: 3.8rem;
+    letter-spacing: .1rem;
+    line-height: 3.8rem;
+    padding: 0 3rem;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.button:hover, button:hover, input[type='button']:hover, input[type='reset']:hover, input[type='submit']:hover {
+    background-color: #606c76;
+    border-color: #606c76;
+    color: #fff;
+    outline: 0;
+}
+.button:active, button:active, input[type='button']:active, input[type='reset']:active, input[type='submit']:active {
+    background-color: #707c76;
+    border-color: #606c76;
+    color: #fff;
+    outline: 0;
+	padding-top:1px
+}
+.wrapper {
+	position: relative;
+	display: block;
+	width: 100%;
+	overflow: hidden;
+}
+.container {
+    margin: 0 auto;
+    max-width: 112rem;
+    padding: 0 2rem;
+    position: relative;
+    width: 100%;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	margin-bottom: 0;
+	max-width: 80.0rem;
+}
+.form {
+	max-width: 50.0rem;
+}		
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    margin-bottom: 2rem;
+    margin-top: 0;
+}
+h1 {
+    font-size: 4rem;
+    letter-spacing: -0.1rem;
+    line-height: 1.2;
+}
+h3 {
+    font-size: 3rem;
+    letter-spacing: -0.1rem;
+    line-height: 1.3;
+}
+p {
+    margin-top: 0;
+}
+.label-inline {
+    font-weight: normal;
+    display: inline-block;
+    margin-left: .5rem;
+}
+pre {
+ min-height:5rem;
+     line-height: 100%;
+    word-wrap: break-word;
+    white-space: pre-line;
+ }
+.waiting {
+    background-image: url("waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
+.monitor {
+    min-width: 100px;
+    background-color: #F9F6E9;
+    border-radius: 5px;
+    display: inline-block;
+    float: right;
+    padding: 10px 15px;
+    font-size: small;
+}
+#message{
+display:none;
+width: 100%;
+height: 5rem;
+border-radius:5px;
+border: 1px solid red;
+padding:1rem;
+color: red;
+font-weight:700;
+margin-top:2rem;
+text-align: center;
+}
+@media (min-width: 40rem){
+h1 {
+    font-size: 5rem;
+}
+h3 {
+    font-size: 3.6rem;
+}}
+#heading {
+margin-top: 100px;
+}
+ul.disced {
+    list-style-type: disc;
+	margin-left: 50px;
+}
+
+.feature_title {
+	width: 55%;
+}
+
+@media (max-width: 767px){
+.feature_title {
+    width: 75%;
+    font-size: 30px;
+}
+}
+		</style>
     </head>
 
- <body data-spy="scroll" data-target=".navbar-fixed-top" onload="pageScript.main()">
+	<body data-spy="scroll" data-target=".navbar-fixed-top" onload="pageScript.main()">
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-    <header id="section_header" class="navbar-fixed-top main-nav" role="banner">
-    	<div class="container">
+		<header id="section_header" class="navbar-fixed-top main-nav" role="banner">
+			<div class="container">
     		<!-- <div class="row"> -->
-                 <div class="navbar-header ">
-                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                       </button>
-                        <a class="navbar-brand" href="#">
-                            <img src="images/logo/adalogo_379x143.png" alt="">
-                        </a>
-                 </div><!--Navbar header End-->
-                 	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
-                        <ul class="nav navbar-nav navbar-right ">
-                           	<li><a href="./index.html" class="active">Home </a></li>
-                            <li><a href="./user_howto.html"  class="">Hogyan működik?</a> </li>
-                            <li><a href="./about_us.html" class="">Rólunk</a> </li>
-<!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
-							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
-							<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
-							<li id="nav-bar-my_account"><a href="./fiokom.html">Fiókom</a></li>
-							<li id="nav-bar-logout"><a href="javascript:void (0)" onclick="javascipt:pageScript.logout()">Kijelentkezés</a></li>
-                        </ul>
-                     </nav>
-                </div><!-- /.container-fluid -->
-</header>
- <!-- Slider start -->
-    <section id="slider_part">
-         <div class="carousel slide" id="carousel-example-generic" data-ride="carousel">
-            <!-- Indicators -->
-         	 <ol class="carousel-indicators text-center">
-                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-             </ol>
-
-           	<div class="carousel-inner">
-           	 	<div class="item active">
-           	 		<div class="overlay-slide">
-           	 			<!-- img src="images/banner/p10.jpg" alt="" class="img-responsive" -->
-           	 		</div>
-           	 		<div class="carousel-caption">
-               	 		<div class="col-md-12 col-xs-12 text-center">
-							<p><img src="images/logo/adalogo_379x143.png" alt=""></p>
-							<p class="logotext">anonim digitális azonosító</p>
-               	 			<h3 class="animated2"> Anonim Digitális Azonosító szolgáltatás </h3>
-               	 			<div class="line"></div>
-               	 			<p class="animated3"> személyes adatok tárolása nélkül </p>
-               	 		</div>
-           	 		</div>
-           	 	</div>
-                <div class="item">
-                    <div class="overlay-slide">
-                        <!-- img src="images/banner/p10.jpg" alt="" class="img-responsive" -->
-           	 		</div>
-           	 		<div class="carousel-caption">
-               	 		<div class="col-md-12 col-xs-12 text-center">
-							<p><img src="images/logo/adalogo_379x143.png" alt=""></p>
-							<p class="logotext">anonim digitális azonosító</p>
-               	 			<h3 class="animated3"> elektronikus igazolványokat szolgáltatunk </h3>
-               	 			<div class="line"></div>
-               	 			<p class="animated2">amiket online alkalmazásokban használhatsz</p>
-               	 		</div>
-           	 		</div>
-           	 	</div>
-           	 	<div class="item">
-                    <div class="overlay-slide">
-                        <!-- img src="images/banner/p10.jpg" alt="" class="img-responsive" -->
-           	 		</div>
-           	 		<div class="carousel-caption">
-               	 		<div class="col-md-12 col-xs-12 text-center">
-							<p><img src="images/logo/adalogo_379x143.png" alt=""></p>
-							<p class="logotext">anonim digitális azonosító</p>
-               	 			<h3 class="animated3"> Mi igazoljuk, hogy egy valós személy vagy </h3>
-               	 			<div class="line"></div>
-               	 			<p class="animated2"> de azt senki sem tudja, hogy ki </p>
-               	 		</div>
-           	 		</div>
-           	 	</div>
-           	 </div> 	 <!-- End Carousel Inner -->
-
-            <!-- Controls -->
-            <div class="slides-control ">
-                <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                	<span><i class="fa fa-angle-left"></i></span>
-                </a>
-                <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                	<span><i class="fa fa-angle-right"></i></span>
-                </a>
-            </div>
-        </div>
-  	</section>
-    <!--/ Slider end -->
-
-<!-- Service Area start -->
-
-    <section id="service">
-        <div class="container">
-                <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="feature_header text-center">
-                            <h3 class="feature_title">Tulajdonképpen </br><b>mi is ez</b>?</h3>
-                            <h4 class="feature_sub">Szolgáltatásunk lényege: anonim, de offline módon ellenőrzött felhasználók azonosítása online rendszerekben
-                            Felhasználóink az ADA fiókjuk segítségével be tudnak jelentkezni az ADA szolgáltatást támogató alkalmazásokba.</h4>
-							<ul>
-								<li><b>Biztonságos</b> és <b>anonim</b> azonosítás bárhol.</li>
-								<li><b>Egy regisztráció</b> mindenhova</li>
-								<li><b>Online</b> szolgáltatás <b>offline</b> hitelesítés</li>
-								<li>Anonimitás messzemenőkig biztosított:
-									<li>Nem ad ki személyes adatot, mert nem is tárol ilyet</li>
-									<li>Nem rögzíti a felhasználók aktivitását</li>
-								</li>
-								<li><b>Kényelmes</b>, többféle bejelentkezési módot támogat</li>
-								<li></li>
-								<li></li>
-							</ul>
-							<div class="divider"></div>
-                        </div>
-                    </div>  <!-- Col-md-12 End -->
-                </div>
-                <div class="row">
-                    <div class="main_feature text-center">
-                        <div class="col-md-3 col-xs-12 col-sm-6">
-                                <div class="feature_content">
-                                    <i class="fa fa-shield"></i>
-                                    <h5>Biztonságos</h5>
-                                    <p>Modern szoftvertechnológiák alkalmazásával garantáljuk, hogy adataidhoz csak te férhess hozzá.</p>
-                                    <button class="btn btn-main"> Részletek</button>
-                                </div>
-                            </div>
-                        <div class="col-md-3 col-xs-12 col-sm-6">
-                                <div class="feature_content">
-                                    <i class="fa fa-check-square-o"></i>
-                                    <h5>Hiteles</h5>
-                                    <p>A szolgáltatás része egy személyes találkozás. Így tudjuk tanusítani, hogy a nálunk regiszgtrált felhasználó mögött valódi magyar állampolgár áll. </p>
-                                    <button class="btn btn-main"> Részletek</button>
-                                </div>
-                        </div> <!-- Col-md-4 Single_feature End -->
-                        <div class="col-md-3 col-xs-12 col-sm-6">
-                                <div class="feature_content">
-                                    <i class="fa fa-arrows"></i>
-                                    <h5>Sokoldalú</h5>
-                                    <p>A tanusítványainkra alapozva üzleti vállalkozások, civil szervezetek és közösségek hasznos szolgáltatásokat indíthatnak.</p>
-                                    <button class="btn btn-main"> Részletek</button>
-                                </div>
-                        </div> <!-- Col-md-4 Single_feature End -->
-                        <div class="col-md-3 col-xs-12 col-sm-6">
-                                <div class="feature_content">
-                                    <i class="fa fa-user-secret"></i>
-                                    <h5>Anonim</h5>
-                                    <p>Segítünk megőrizni anonimitásod. Nem tárolunk személyes adatot, nem naplózzuk a tevékenységedet.</p>
-                                    <button class="btn btn-main"> Részletek</button>
-                                </div>
-                        </div> <!-- Col-md-4 Single_feature End -->
-                        <!-- <button class="btn btn-main"> Read More</button> -->
-                    </div>
-            </div>  <!-- Row End -->
-        </div>  <!-- Container End -->
-    </section>
-<!-- Service Area End -->
-
-
-<div class="clearfix"></div>
-
-<!-- About us start -->
-<section id="usecases" style="margin-bottom: 100px;">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="feature_header text-center">
-                    <h3 class="feature_title"><b>Így működik</b> lépésről lépésre </h3>
-                    <h4 class="feature_sub">Ide kellene valami jó duma plíz. Miért és kinek van erre szüksége? Az alábbiakban néhány példával válaszolnánk erre a kérdésre: </h4>
-                    <div class="divider"></div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="feature-tab">
-               <div class="col-md-2 col-sm-3 col-xs-12">
-                    <ul class="nav nav-tabs main-tab-list text-center" role="tablist">
-                          <li role="presentation" class="active">
-                            <a href="#home" role="tab" data-toggle="tab" >
-                              <div class="single-tab">
-                                    <div class="f-icon">
-                                        <i class="fa fa-sign-in"></i>
-                                    </div>
-                                </div>
-                                 <h4>Regisztráció</h4>
-                            </a>
-                          </li>
-                          <li role="presentation" >
-                            <a href="#profile" role="tab" data-toggle="tab">
-                                <div class="single-tab">
-                                    <div class="f-icon">
-                                        <i class="fa fa-user-secret"></i>
-                                    </div>
-                                </div>
-                                <h4>Titkos kód</h4>
-                            </a>
-                          </li>
-                          <li role="presentation" >
-                            <a href="#messages" role="tab" data-toggle="tab">
-                                <div class="single-tab">
-                                    <div class="f-icon">
-                                        <i class="fa fa-certificate"></i>
-                                    </div>
-                                </div>
-                                <h4>Az igazolás</h4>
-                            </a>
-                          </li>
-                          <li role="presentation" >
-                            <a href="#photo" role="tab" data-toggle="tab">
-                                <div class="single-tab">
-                                    <div class="f-icon">
-                                        <i class="fa fa-star-o"></i>
-                                    </div>
-                                </div>
-                                <h4>A szabadság</h4>
-                            </a>
-                          </li>
+				<div class="navbar-header ">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+					</button>
+                    <a class="navbar-brand" href="#">
+						<img src="images/logo/adalogo_379x143.png" alt="">
+                    </a>
+				</div><!--Navbar header End-->
+				<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
+                    <ul class="nav navbar-nav navbar-right ">
+                       	<li><a href="./index.html" class="active">Home </a></li>
+                        <li><a href="./user_howto.html"  class="">Hogyan működik?</a> </li>
+                        <li><a href="./about_us.html" class="">Rólunk</a> </li>
+						<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
+						<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
+						<li id="nav-bar-my_account"><a href="./fiokom.html">Fiókom</a></li>
+						<li id="nav-bar-logout"><a href="javascript:void (0)" onclick="javascipt:pageScript.logout()">Kijelentkezés</a></li>
                     </ul>
-                </div>  <!-- col-md-12 end -->
-                <div class="col-md-10 col-sm-9 col-xs-12">
-                    <div class="tab-content main-tab-content">
-                          <div role="tabpanel" class="tab-pane active " id="home">
-                                <div class="col-md-12 col-sm-9">
-                                     <img src="images/about/web1.png" alt="" class="img-responsive">
-                                </div>
-                                <div class="col-md-12 col-sm-9">
-                                    <div class="c-tab">
-                                         <h4>Regisztráció</h4>
-                                         <p>Regisztrálj szolgáltatásunkba meglévő Google, Facebook Github vagy Twitter azonosítóddal! SSL (link az url-re). Kattints a visszaigazoló email linkjére és jöhet a következő lépés! 
-                                         </p>
-                                         <br>
-                                         <a href="user_howto.html#registration">Tudj meg többet</a>
-                                    </div>
-                                </div>
-                                
-                          </div>
-                          <div role="tabpanel" class="tab-pane" id="profile">
-                                <div class="col-md-12 col-sm-9">
-                                     <img src="images/about/browse.png" alt="" class="img-responsive">
-                                </div>
-                                <div class="col-md-12 col-sm-9">
-                                    <div class="c-tab">
-                                         <h4>A titkos kód</h4>
-                                         <p>
-Néhány személyes adatod megadásával készítsd el a titkos kódodat. 
-Ez a kód ellenőrzésre szolgál és csak a Tiéd. 
-                                         </p>
-                                         <br>
-                                         <a href="user_howto.html#hash"> Tudj meg többet</a>
-                                    </div>
-                                </div>
-                          </div>
-                          <div role="tabpanel" class="tab-pane" id="messages">
-                               <div class="col-md-12 col-sm-9">
-                                     <img src="images/about/web1.png" alt="" class="img-responsive">
-                                </div>
-                               <div class="col-md-12 col-sm-9">
-                                    <div class="c-tab">
-                                         <h4>Az igazolás</h4>
-                                         <p>
-Igényelj magyar igazolást a webes felületen! 
-A magyar igazolás tanusítja, hogy magyarországi lakhellyel rendelkező magyar állampolgár vagy. 
-Az igénylést az online felületen indítod, a tanusítás pedig személyesen történik.
-										</p>
-                                         <br>
-                                        <a href="user_howto.html#assurances">Tudj meg többet</a>
-                                    </div>
-                                </div>
-                          </div>
-                          <div role="tabpanel" class="tab-pane" id="photo">
-                               <div class="col-md-12 col-sm-9">
-                                     <img src="images/about/graphics.png" alt="" class="img-responsive">
-                                </div>
-                               <div class="col-md-12 col-sm-9">
-                                    <div class="c-tab">
-                                        <h4>A szabadság</h4>
-                                         <p>
-A hitelesített digitális igazolványod segítségével  különféle web- és mobil applikációkba léphetsz be. 
-Így személyes adataid nálad maradnak, ugyanakkor néhány fejlett  szolgáltatást/funkciót csak ADA 
-azonosítóval érhetsz el. 
-										 </p>
-                                         <br>
-                                        <a href="#">Tudj meg többet</a>
-                                    </div>
-                                </div>
-                          </div>
-                     </div>
-                </div>
+                </nav>
+            </div><!-- /.container-fluid -->
+		</header>
+		<div class="wrapper">
+<!-- Heading -->
+		<section id="heading" class="container">
+			<h1>Anonim Digitális Azonosító</h1>
+		</section>
+<!-- Heading end -->
 
-                 
-            </div>
-        </div>
-    </div>
-</section>
-<!-- About us End -->
+<!-- What is it start -->
+		<section class="container">
+			<h3 class="feature_title">Mi ez?</h3>
+			<p>
+Anonim, de offline módon is ellenőrzött, felhasználók azonosítását nyújtó szolgáltatás.
+A felhasználók ADA fiókjuk segítségével be tudnak jelentkezni az ADA szolgáltatást támogató alkalmazásokba.
+			</p>
+		</section>
+<!-- What is it End -->
 
+<!-- How it works start -->
+		<section class="container">
+			<h3 class="feature_title">Hogyan működik? </h3>
+			<p>
+Személyes adatok tárolása nélkül.
+Mindenki tudja hogy egy valós személy vagy, de senki nem tudja, hogy ki vagy.
+A felhasználók egyszerű regisztrációt követően digitális igazolványokat kaphatnak.
+			</p>
+			<p>
+				<a href="user_howto.html">többet szeretnék megtudni <i class="fa fa-arrow-right"></i></a>
+			</p>
+		</section>
+<!-- How it works End -->
+
+<!-- Why it is good for me start -->
+		<section class="container">
+			<h3 class="feature_title">Miért jó ez?</h3>
+			<h4>A felhasználók számára azért, mert:</h4>
+			<ul class="disced">
+				<li>anonim módon, de mégis valódi személyként jelenhessenek meg különféle webes applikációkban</li>
+				<li>a felhasználó kifejezett engedélye nélkül senki sem kapja meg a felhasználói  adatokat</li>
+				<li>egy regisztrációval  több applikáció lesz elérhető</li>
+			</ul>
+			<h4>Az alkalmazások számára azért, mert:</h4>
+			<ul class="disced">
+				<li>nem kell a felhasználó azonosítással bajlódniuk,</li>
+				<li>felhasználók hitelesített magyarországi lakcímmel rendelkező magyar állampolgárok,</li>
+				<li>speciális digitális igazolásokat adhassanak tagjaidnak</li>
+			</ul>
+		</section>
+<!-- Why it is good for me End -->
+
+<!-- Why it is especial start -->
+		<section class="container">
+			<h3 class="feature_title">Miért különleges?</h3>
+			<h4>Mert:</h4>
+			<ul class="disced">
+				<li>soha nem ad ki személyes adatot és nem is tárol ilyeneket,</li>
+				<li>online szolgáltatás, de kapcsolódik hozzá  offline azonosítás  (Tanúsítás),</li>
+				<li>kényelmes,  sokféle bejelentkezési módot támogat,</li>
+
+				<li>nem naplózzuk a Felhasználók tevékenységét,</li>
+				<li>bárki által ellenőrizhető nyílt forráskódú szoftverekből épül fel,</li>
+				<li>a Felhasználók anonimitása a legfőbb érték számunkra</li>
+			</ul>
+		</section>
+<!-- Why it is especial End -->
 
 <!-- Counter Strat -->
 <section id="counter_area">
@@ -435,229 +417,23 @@ azonosítóval érhetsz el.
 
 <div class="clearfix"></div>
 
-<!-- Video section -->
-<section id="video-fact">
-    <div class="container">
-	    <h3 class="feature_title"><b>KINEK MIÉRT JÓ AZ ADA?</b> Nézd meg a videónkat!</h3>
-		<h3></h3>
-        <div class="row">
-                 <div class="col-md-6 ">
-                    <div class="landing-video">
-                        <div class="video-embed wow fadeIn" data-wow-duration="1s">
-                                <!-- Change the url -->
-                            <iframe src="https://player.vimeo.com/video/95864492?title=0&amp;byline=0&amp;portrait=0&amp;color=8aba56" width="350" height="281" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 ">
-                    <div class="video-text">
-                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                          <div class="panel panel-default">
-                            <div class="panel-heading active" role="tab" id="headingOne">
-                              <h4 class="panel-title">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                  Neked azért jó, mert:
-                                </a>
-                              </h4>
-                            </div>
-                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-								<div class="panel-body p1">
-Hasonlatosan a Google, facebook, vagy twitter azonosítóidhoz használhatod belépésre weboldalak és applikációk 
-olyan növekvő közösségében, ahol tiszteletben tartják személyes adataidat. 
-Ezen felül értékelik, hogy Te egy valódi, magyar lakcímmel rendelkező állampolgár vagy.  
-								</div>
-                            </div>
-                          </div>
-                      <div class="panel panel-default">
-                        <div class="panel-heading " role="tab" id="headingTwo">
-                          <h4 class="panel-title">
-                            <a class="accordion-toggle collapsed"  data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                              A szervezetednek azért jó, mert:
-                            </a>
-                          </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                          <div class="panel-body p1">
-Az ADA szolgáltatására építve hiteles digitális igazolványokat adhatsz tagjaidnak és javíthatod a kommunikációt 
-a tagok/felhasználók és a szervezeted között. Sokféle rendszerhez kapcsolható az ADA és az igazolványok sokfélék 
-lehetnek - a szervezeteden belül akár az anonimitást is feloldhatod,  
-de tagjaid azonosítóikkal más szolgátlatásoknál megőrzik anonimitásukat.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="panel panel-default">
-                        <div class="panel-heading " role="tab" id="headingThree">
-                          <h4 class="panel-title">
-                            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                              Az alkalmazás szolgáltatóknak meg ezért:
-                            </a>
-                          </h4>
-                        </div>
-                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                          <div class="panel-body p1">
-Az Adával belépő felhasználók hitelesített magyarországi lakcímmel rendelkező magyar állampolgárok, 
-akiknek érték a személyes adataik védelme és az anonimitás. 
-A felhasználóink bázisa növekszik. Ök a tudatos netpolgárok új generációját jelentik 
-- mi pedig nyitott forráskódunkkal biztosítjuk a lehetőséget a szolgáltatóknak, 
-hogy az ADA-val történő bejelentkezés funkciót beépítsék a rendszerükbe.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-            </div> 
-        </div><!-- row End -->
-    </div>
-</section>
-
-
-<!-- About details start -->
-<section id="about-details">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="feature_header text-center">
-                    <h3 class="feature_title">Kik vagyunk</h3>
-                    <h4 class="feature_sub">
-Az Anonim Digitális Azonosító szolgáltatás a Közösségi Digitális Eszközök Alapítvány támogatott projektje. 
-A projektet közösségi munkában és finanszírozással hozták létre informatikusok, közgazdászok, szociológusok, média szakemberek és még sokan mások.
-					</h4>
-                    <div class="divider"></div>
-					<h4 class="feature_sub">
-Küldetésünk, hogy nyílt forráskódú megoldásokra alapozva érdemi párbeszédet elősegítő szolgáltatásokat, folyamatokat kitalálni, adaptálni és megvalósítani.
-					</h4>
-					<div class="divider"></div>
-					<h4 class="feature_sub">
-Csatlakozz közösségünkhöz, ahol nyilt forráskódú szoftvereket és közösségi folyamatokat honosítunk/fejlesztünk.
-						<a class="white" href="https://www.facebook.com/groups/edemomakers/" target="blank" title="eDEmo facebook csoport">
-							<i class="fa fa-facebook"></i>
-						</a>
-						<a class="white" href="https://github.com/edemo" target="blank" title="eDemo github repók">
-							<i class="fa fa-github"></i>
-						</a>
-					</h4>
-					<h3 class="feature_title"><a class="white" href="about_us.html">Ismerd meg jövőképünket és céljainkat!</a></h3>
-					<div class="divider"></div>
-					<p class="socialbuttons">
-						<a class="white" href="https://github.com/edemo" target="blank" title="eDemo github repók">
-							<i class="fa fa-github"></i>
-						</a>
-						<a class="white" href="https://www.facebook.com/groups/edemomakers/" target="blank"  title="eDEmo facebook csoport">
-							<i class="fa fa-facebook"></i>
-						</a>
-					</p>
-                </div>
-            </div>  <!-- Col-md-12 End -->
-        </div>
-        <div class="about-desc">
-  
-        </div> <!-- about desc end -->
-    </div>
-</section>
-<!-- About details end -->
-
-<!-- Team MEmber Start -->
-<section id="team">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="feature_header text-center">
-                    <h3 class="feature_title">Munkatársak</h3>
-                    <h4 class="feature_sub">Lorem ipsum dolor sit amet, consectetur adipisicing elit. </h4>
-                    <div class="divider"></div>
-                </div>
-            </div>  <!-- Col-md-12 End -->
-
-            <div id="owl-demo" class="owl-carousel owl-theme team-items">
-                <div class="item text-center">
-                    <div class="single-member">
-                        <div class="overlay-hover">
-                            <img src="images/team/PengGyorgy.jpg" alt="" class="img-responsive">
-                            <div class="overlay-effect">
-                                <ul class="social list-inline">
-                                    <li><a href="https://www.facebook.com/claymanus"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="https://plus.google.com/103027190788103881287"><i class="fa fa-google-plus"></i></a></li>
-                                    <li><a href="https://www.linkedin.com/in/gy%C3%B6rgy-peng-1b150530"><i class="fa fa-linkedin-square"></i></a></li>
-                                    <li><a href="https://github.com/Claymanus"><i class="fa fa-github"></i></a></li>
-                                    <li><a href="mailto:gypeng@adatom.hu"><i class="fa fa-envelope"></i></a></li>
-                                </ul>
-                                <p>Azonnal visszatérünk a normális állapotokhoz, mihelyst bizonyosak leszünk abban, hogy mi is a normális</p>
-                            </div>
-                        </div>
-                        <h3>Peng György</h3>
-                        <h5>Frontend fejlesztő,<br>az irányító testület tagja</h5>
-                    </div>
-                </div>  <!-- item wrapper end -->
-                <div class="item text-center">
-                    <div class="single-member">
-                        <div class="overlay-hover">
-                            <img src="images/team/Karoly.jpg" alt="" class="img-responsive">
-                            <div class="overlay-effect">
-                                <ul class="social list-inline">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-github"></i></a></li>
-                                    <li><a href=""><i class="fa fa-skype"></i></a></li>
-                                </ul>
-                                <p>"Foied vinom pipafo, cra carefo" Ma bort iszom és holnap nem lesz </p>
-                            </div>
-                        </div>
-                        <h3>Szabó Károly</h3>
-                        <h5>Szociológus<br>az irányító testület tagja</h5> 
-                    </div>
-                </div>  <!-- item wrapper end -->
-                <div class="item text-center">
-                    <div class="single-member">
-                        <div class="overlay-hover">
-                            <img src="images/team/magkicsi.jpg" alt="" class="img-responsive">
-                            <div class="overlay-effect">
-                                <ul class="social list-inline">
-                                    <li><a href="https://www.facebook.com/arpad.magosanyi"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="https://github.com/magwas"><i class="fa fa-github"></i></a></li>
-                                    <li><a href="mailto:mag@magwas.rulez.org"><i class="fa fa-envelope"></i></a></li>
-                                </ul>
-                                <p>Egyszer gyíkká változtattak, de már elmúlt.</p>
-                            </div>
-                        </div>
-                        <h3>Magosányi Árpád</h3>
-                        <h5>Szoftver szekuricsi<br>az irányító testület tagja</h5>
-                    </div>
-                </div>  <!-- item wrapper end -->
-                <div class="item text-center">
-                    <div class="single-member">
-                        <div class="overlay-hover">
-                            <img src="images/team/madarasz.jpg" alt="" class="img-responsive">
-                            <div class="overlay-effect">
-                                <ul class="social list-inline">
-                                    <li><a href="https://www.facebook.com/csabam"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
-                                    <li><a href="www.twitter.com/nyiltkormanyzas"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="https://hu.linkedin.com/in/madaraszcsaba"><i class="fa fa-linkedin-square"></i></a></li>
-                                    <li><a href="mailto: csaba@opengovernment.hu"><i class="fa fa-envelope"></i></a></li>
-                                </ul>
-                                <p>Madár lakozik a földigilisztában és a nagy szellem pihen mindegyik fűszálban!</p>
-                            </div>
-                        </div>
-                        <h3>Madarász Csaba</h3>
-                        <h5>Kommunikáció<br>Marketing</h5>
-                    </div>
-                </div>  <!-- item wrapper end -->
-            </div>
-        </div>
-    </div> <!-- Conatiner Team end -->
-    <!-- </div> -->
-
-</section>  <!-- Section TEam End -->
-
-<!-- Our Team Members End -->
-<div class="clearfix"></div>
-
+<!-- Who we are start -->
+		<section class="container">
+			<p></p>
+			<h3 class="feature_title">Kik vagyunk?</h3>
+			<p>
+Az Anonim Digitális Azonosító szolgáltatás a  Közösségi  Digitális Eszközök  Alapítvány támogatott projektje. 
+A projektet közösségi munkában és finanszírozással hozták  létre  informatikusok, közgazdászok, 
+szociológusok, média szakemberek és még sokan mások.
+			</p>
+			<p>
+				<a href="about_us.html">többet szeretnék megtudni <i class="fa fa-arrow-right"></i></a>
+			</p>
+		</section>
+<!-- Who we are End -->
 
 <!-- Footer Area Start -->
-
+</div>
 <section id="footer">
     <div class="footer_top">
         <div class="container">
@@ -778,22 +554,10 @@ Csatlakozz közösségünkhöz, ahol nyilt forráskódú szoftvereket és közö
 		    <script type="text/javascript" src="js/jquery.js"></script>
         <!-- Bootstrap jQuery -->
          <script src="js/bootstrap.min.js"></script>
-        <!-- Owl Carousel -->
-        <script src="js/owl.carousel.min.js"></script>
-        <!-- Isotope -->
-        <script src="js/jquery.isotope.js"></script>
-        <!-- Pretty Photo -->
-		    <script type="text/javascript" src="js/jquery.prettyPhoto.js"></script>
-        <!-- SmoothScroll -->
-        <script type="text/javascript" src="js/smooth-scroll.js"></script>
-        <!-- Image Fancybox -->
-        <script type="text/javascript" src="js/jquery.fancybox.pack.js?v=2.1.5"></script>
         <!-- Counter  -->
         <script type="text/javascript" src="js/jquery.counterup.min.js"></script>
         <!-- waypoints -->
         <script type="text/javascript" src="js/waypoints.min.js"></script>
-        <!-- Bx slider -->
-        <script type="text/javascript" src="js/jquery.bxslider.min.js"></script>
         <!-- Scroll to top -->
         <script type="text/javascript" src="js/jquery.scrollTo.js"></script>
         <!-- Easing js -->
@@ -802,8 +566,6 @@ Csatlakozz közösségünkhöz, ahol nyilt forráskódú szoftvereket és közö
         <script src="js/jquery.singlePageNav.js"></script>
       	<!-- Wow Animation -->
         <script type="js/javascript" src="js/wow.min.js"></script>
-        <!-- Custom js -->
-        <script src="js/custom.js"></script>
 		<!-- pagescript -->
 		<script src="js/script.js"></script>
 		<!-- pagescript extension -->
