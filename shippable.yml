@@ -15,7 +15,7 @@ before_install:
 - cp /tmp/hosts /etc/hosts
 - export DISPLAY=:99.0
 - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/cucumber_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1024x768x24
-- apt-get -y python-coverage
+- apt-get -y install python-coverage
 script:
 - make checkall
 - python-coverage xml -o shippable/codecoverage/coverage.xml src/pdoauth/*.py src/pdoauth/*/*.py
