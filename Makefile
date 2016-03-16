@@ -62,10 +62,10 @@ killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
 
 integrationtests: testsetup
-	PYTHONPATH=src python -m unittest discover -v -f -s src/integrationtest -p "*.py"
+	PYTHONPATH=src python-coverage run -m unittest discover -v -f -s src/integrationtest -p "*.py"
 
 tests: testsetup
-	PYTHONPATH=src python -m unittest discover -v -f -s src/test -p "*.py"
+	PYTHONPATH=src python-coverage run -m unittest discover -v -f -s src/test -p "*.py"
 
 testsetup:
 	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade ; mkdir -p doc/screenshots
