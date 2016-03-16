@@ -87,14 +87,18 @@
 			var keygenform = document.getElementById("registration-keygenform")
 			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
 			loc = '' + win.location
-			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL ()
-			if (!Gettext.allPoIsLoaded) Gettext.outerStuff.push(self.init_);
-			else self.init()
+			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
+			if (!Gettext.isAllPoLoaded) {
+				console.log('várunk a gettextre');
+				Gettext.outerStuff.push(self.init_);
+			}
+			else self.init_()
 		}
 		else self.displayMsg(self.processErrors(data));
 	}
 	
 	PageScript.prototype.init_=function(){
+		console.log("init_")
 		if (self.QueryString.section && self.QueryString.section=="email_verification"){
 			if (self.QueryString.secret) self.verifyEmail()
 		}
@@ -111,8 +115,8 @@
 			message=_("Your email validation was succesfull.")
 		}
 		else {
-			
-			message=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(JSON.parse(text).errors)
+			data=JSON.parse(text);
+			message=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
 		}
 		document.getElementById("email_verification_message").innerHTML=message
 	}
@@ -432,7 +436,7 @@
 			<tr id="change-hash-form_hash-changer" style="display: none;">\
 				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
 				<td>\
-					<p><b>'+_("If you change your Secret Hash, all your assurences will be lost!")+'</b></p>\
+					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
 					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
 					<button class="button" type="button" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
 					<a id="digest_self_made_button" href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\

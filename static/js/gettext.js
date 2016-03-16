@@ -274,7 +274,6 @@ Object.extend(Array.prototype, {
   },
 
   compact: function() {
-	  console.log(this)
     return this.select(function(value) {
       return value != null;
     });
@@ -363,7 +362,6 @@ var jsGettext = Class.create();
 jsGettext.prototype = {
 	
 	initialize: function(lang) {
-		console.log('initialise gettext')
 		this.lang         = lang || 'hu';
 		this.debug        = true;
 		this.LCmessages   = {};
@@ -373,13 +371,13 @@ jsGettext.prototype = {
 		this.links        = [$('link').map(function(link){
 			if ($('link')[link].rel == 'gettext' && $('link')[link].href && $('link')[link].lang) return [$('link')[link].lang, $('link')[link].href];
 		})];
+		this.linksPointer_ = this.links.length
 		this.outerStuff = [function(){return}];
-		this.allPoIsLoaded = false;
+		this.isAllPoLoaded = (this.linksPointer_==0)?true:false;
 		
 		new PeriodicalExecuter(function(pe) {
   			if (Gettext.linksPointer == Gettext.links.length) pe.stop();
   			else {
-				console.log(Gettext.links[Gettext.linksPointer])
   				Gettext.include.apply(Gettext, Gettext.links[Gettext.linksPointer])
   				Gettext.linksPointer++;
   			}
@@ -393,7 +391,6 @@ jsGettext.prototype = {
 	},
 	
 	include: function(lang, href) {
-		console.log(arguments)
 		if (arguments[1].substring(0,4) == 'http') {
 			this.currentFetch  = lang;
 		var callback = Gettext.include_complete.bind(Gettext)
@@ -407,7 +404,6 @@ jsGettext.prototype = {
 	},
 	
 	include_complete: function (t) {
-			console.log(t)
 			this.log('Fetched language: ', this.currentFetch.toUpperCase(), ' ('+ t.responseText.length +' bytes)');
 			this.LCmessages[this.currentFetch] = this.parse(t.responseText);
 			this.log(_('Parsed: %d msgids, %d msgids-plurals, %d msgstrs, %d obsoletes, %d contexts, %d references, %d flags, %d previous untranslateds, %d previous untranslated-plurals',[
@@ -421,9 +417,11 @@ jsGettext.prototype = {
 				this.LCmessages[this.currentFetch].previousUntranslateds.length,
 				this.LCmessages[this.currentFetch].previousUntranslatedsPlurals.length]));
 			this.currentFetch = false;
-			if (this.linksPointer==this.links.height) {
-				this.allPoIsLoaded = true
-				[].forEach.call(this.outerStuff, function(i){i()}
+			this.linksPointer_--
+			if (this.linksPointer_==0) {
+				this.isAllPoLoaded = true;
+				console.log("po is loaded");
+				[].forEach.call(this.outerStuff, function(i){i()})
 			}
 	},
 	
@@ -437,7 +435,6 @@ jsGettext.prototype = {
 	// Reference: http://www.gnu.org/software/gettext/manual/gettext.html#PO-Files
 	
 	gettext: function() {
-		console.log(arguments)
 		if (!arguments || arguments.length < 1 || !RegExp) return;
 		var str      = arguments[0];
 		arguments[0] = null;
@@ -602,4 +599,4 @@ jsGettext.prototype = {
 	}
 }
 Gettext = new jsGettext();
-function _() { var a=Gettext.gettext.apply(this,arguments); console.log(a); return a }
+function _() { var a=Gettext.gettext.apply(this,arguments); if (a) {console.log(a); return a} }
