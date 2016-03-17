@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-12 10:01+0100\n"
+"POT-Creation-Date: 2016-03-17 09:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -263,3 +263,208 @@ msgstr "vizsgabiztos"
 
 msgid "assurer.{0}"
 msgstr "ilyen igazolást tud kiadni: {0}"
+
+#: static/js/account.js:115
+msgid "Your email validation was succesfull."
+msgstr ""
+
+#: static/js/account.js:119
+msgid "Your email validation <b>failed</b>.<br/>The servers response: "
+msgstr ""
+
+#: static/js/account.js:159
+msgid "email address and/or username / password"
+msgstr ""
+
+#: static/js/account.js:164
+msgid "my facebook account"
+msgstr ""
+
+#: static/js/account.js:175
+msgid "Registration with {0}"
+msgstr ""
+
+#: static/js/account.js:211
+msgid "Server error occured"
+msgstr ""
+
+#: static/js/account.js:237
+msgid "Acceptance is missing"
+msgstr ""
+
+#: static/js/account.js:237
+msgid "Text for missing accaptance of term of use"
+msgstr ""
+
+#: static/js/account.js:280
+msgid "The Secret Hash is given for assuring"
+msgstr ""
+
+#: static/js/account.js:285 static/js/script.js:97 static/js/script.js:568
+#: static/js/script.js:582 static/js/script.js:588
+msgid "Error message"
+msgstr ""
+
+#: static/js/account.js:289
+msgid "The Secret Hash isn't given yet"
+msgstr ""
+
+#: static/js/account.js:316 static/js/account.js:320 static/js/script.js:368
+msgid "Missing data"
+msgstr ""
+
+#: static/js/account.js:316
+msgid "Personal identifier is missing"
+msgstr ""
+
+#: static/js/account.js:320
+msgid "Mother's name is missing"
+msgstr ""
+
+#: static/js/account.js:421
+msgid "Email address:"
+msgstr ""
+
+#: static/js/account.js:428 static/js/account.js:437
+msgid "The Secret Hash:"
+msgstr ""
+
+#: static/js/account.js:439
+msgid "If you change your Secret Hash, all of your assurences will be deleted!"
+msgstr ""
+
+#: static/js/account.js:441
+msgid "Let's make it here"
+msgstr ""
+
+#: static/js/account.js:443
+msgid "I make it myself"
+msgstr ""
+
+#: static/js/account.js:447
+msgid "Personal identifier"
+msgstr ""
+
+#: static/js/account.js:449
+msgid "Mother's name"
+msgstr ""
+
+#: static/js/account.js:451
+msgid "Generate"
+msgstr ""
+
+#: static/js/account.js:457
+msgid "save"
+msgstr ""
+
+#: static/js/account.js:458
+msgid "cancel"
+msgstr ""
+
+#: static/js/account.js:462
+msgid "My credentials"
+msgstr ""
+
+#: static/js/account.js:464
+msgid "Password"
+msgstr ""
+
+#: static/js/gettext.js:409
+#, javascript-format
+msgid ""
+"Parsed: %d msgids, %d msgids-plurals, %d msgstrs, %d obsoletes, %d contexts, "
+"%d references, %d flags, %d previous untranslateds, %d previous untranslated-"
+"plurals"
+msgstr ""
+
+#: static/js/script.js:89
+msgid "Server message"
+msgstr ""
+
+#: static/js/script.js:93
+msgid "User informations"
+msgstr ""
+
+#: static/js/script.js:119
+msgid "Application"
+msgstr ""
+
+#: static/js/script.js:120
+msgid "Domain"
+msgstr ""
+
+#: static/js/script.js:121 static/js/script.js:160
+msgid "User identifier"
+msgstr ""
+
+#: static/js/script.js:122
+msgid "Emailing"
+msgstr ""
+
+#: static/js/script.js:123
+msgid "Allow emailing"
+msgstr ""
+
+#: static/js/script.js:164
+msgid "Assurances"
+msgstr ""
+
+#: static/js/script.js:168
+msgid "Name"
+msgstr ""
+
+#: static/js/script.js:169
+msgid "Assurer"
+msgstr ""
+
+#: static/js/script.js:170
+msgid "Date of assurance"
+msgstr ""
+
+#: static/js/script.js:171
+msgid "Valid until"
+msgstr ""
+
+#: static/js/script.js:183
+msgid "unlimited"
+msgstr ""
+
+#: static/js/script.js:360
+msgid "User name is missing. "
+msgstr ""
+
+#: static/js/script.js:365
+msgid "Password is missing. "
+msgstr ""
+
+#: static/js/script.js:444 static/js/script.js:483 static/js/script.js:524
+#: static/js/script.js:528 static/js/script.js:532 static/js/script.js:546
+#: static/js/script.js:550 static/js/script.js:554
+msgid "Under construction"
+msgstr ""
+
+#: static/js/script.js:444 static/js/script.js:483 static/js/script.js:524
+#: static/js/script.js:528 static/js/script.js:532 static/js/script.js:546
+#: static/js/script.js:550 static/js/script.js:554
+msgid "This function is not working yet."
+msgstr ""
+
+#: static/js/script.js:450
+msgid "Congratulation!"
+msgstr ""
+
+#: static/js/script.js:450
+msgid "The Secret Hash has been constructed successfully."
+msgstr ""
+
+#: static/js/script.js:583
+msgid "The secret is missing"
+msgstr ""
+
+#: static/js/script.js:589
+msgid "Plase accept the consequences with checking the checkbox"
+msgstr ""
+
+#: static/js/account.js:170 static/js/account.js:465
+msgid "SSL certificate"
+msgstr ""
