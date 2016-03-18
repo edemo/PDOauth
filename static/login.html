@@ -8,13 +8,14 @@
 <!--			<link rel="stylesheet" href="main.css"> -->
 			<link rel="gettext" lang="hu" href="locale/hu.po" />
 		<style>
+
 #register_section, #popup {
 display:none;
 }
 .wrapper {
 max-width: 22rem;
 }
-input {
+input[type="password"], input[type="text"]  {
 width:98%;
 margin{0.5rem auto}
 }
@@ -66,7 +67,7 @@ width:2.5rem
 <!-- Tb container -->
 				
 		<div class="wrapper">
-
+		<div id="greatings"><p></p></div>
 <!-- Tab for login -->
 		<div id="message-container">
 		</div>
@@ -118,6 +119,31 @@ width:2.5rem
 			<a name="feltetelek"></a>
 		</div>
 <!-- End login section -->
+
+		<div class="func" id="accept_section">
+			<section class="container_">
+				<h3 class="title">Hozzájárulás</h3>
+
+			
+			<p>Az elfogadom gombra kattintva hozzájárulok ahhoz, hogy a 
+				<span class="app" id="accept-section_app"></span> 
+				alkalmazás megkapja az alábbi adataimat:
+			</p>
+			<ul>
+				<li>alkalmazás specifikus felhasznállóazonosító</li>
+				<li>alkalmazás specifikus email cím</li>
+				<li>nyilvános igazolásaim</li>
+				<li>
+					<input type="checkbox" id="registration-keygenform_confirmField" name="accept" value="accept">
+					<label class="label-inline" for="confirmField">Az alkalmazás felveheti velem a kapcsolatot</li>
+			</ul>
+			<button>igen</button>
+			<button>nem</button>
+			</section>
+		</div>
+		
+		<div class="func" id="getdigest_section">
+		</div>
 
 <!-- Regisztration -->
 		<div class="func" id="register_section">
