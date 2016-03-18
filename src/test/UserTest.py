@@ -99,7 +99,7 @@ class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
     @test
     def cannot_create_user_with_already_existing_email(self):
         self.createUserWithCredentials()
-        self.assertReportedError(User.new, [self.userCreationEmail], 400, ['there is already a user with this email'])
+        self.assertReportedError(User.new, [self.userCreationEmail], 400, ['there is already a user with that email'])
 
     @test
     def getByDigest_does_not_allow_empty_digest(self):
