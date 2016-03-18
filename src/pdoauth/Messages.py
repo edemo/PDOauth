@@ -25,6 +25,7 @@ missingRequiredParam = "Missing required OAuth 2.0 POST param"
 youHaveToRegisterFirst = _("You have to register first")
 noCertificateGiven = _("No certificate given")
 anotherUserUsingYourHash = _("another user is using your hash")
+sameHash = _("you already have this hash: nothing is done")
 moreUsersWarning = _("More users with the same hash; specify both hash and email")
 noShowAuthorization = _("no authorization to show other users")
 passwordResetSent = _("Password reset email has been successfully sent.")
