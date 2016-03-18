@@ -62,10 +62,10 @@ killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
 
 integrationtests: testsetup
-	PYTHONPATH=src python -m unittest discover -v -f -s src/integrationtest -p "*.py"
+	PYTHONPATH=src python-coverage run -m unittest discover -v -f -s src/integrationtest -p "*.py"
 
 tests: testsetup
-	PYTHONPATH=src python -m unittest discover -v -f -s src/test -p "*.py"
+	PYTHONPATH=src python-coverage run -m unittest discover -v -f -s src/test -p "*.py"
 
 testsetup:
 	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade ; mkdir -p doc/screenshots
@@ -86,7 +86,7 @@ killall: killserver killemail killanchor
 killanchor:
 	 make -C PDAnchor killserver
 
-xmldoc: doc/html/commitlog.html doc/xml/doc.xml doc/html/documentation.html
+xmldoc: doc/html/commitlog.html doc/xml/doc.xml doc/html/documentation.html doc/html/coverage
 
 doc/xml/doc.xml: doc/xml/commitlog.xml doc/xml/buildinfo.xml doc/xml
 	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
@@ -120,6 +120,9 @@ doc/html/commitlog.html: lib/saxon9he.jar doc/html/commitlog.docbook doc/static/
 
 doc/html/documentation.docbook: lib/saxon9he.jar doc/xml/intermediate.xml doc/html
 	java -jar lib/saxon9he.jar -xsl:src/doc/todocbook.xsl -s:doc/xml/intermediate.xml >doc/html/documentation.docbook
+
+doc/html/coverage:
+	python-coverage html -d doc/html/coverage src/pdoauth/*.py src/pdoauth/*/*.py
 
 doc/static/docbook.css: static/docbook.css
 	mkdir -p doc/static; cp static/docbook.css doc/static/docbook.css

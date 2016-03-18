@@ -457,7 +457,7 @@ msgstr "Keményen dolgozunk,"
 #: static/js/script.js:528 static/js/script.js:532 static/js/script.js:546
 #: static/js/script.js:550 static/js/script.js:554
 msgid "This function is not working yet."
-msgstr "Ez a funkció sajnos még nem működik."
+msgstr "de ez a funkció sajnos még nem működik."
 
 #: static/js/script.js:450
 msgid "Congratulation!"
@@ -480,27 +480,30 @@ msgstr ""
 msgid "SSL certificate"
 msgstr "SSL hitelesítéssel"
 
-#~ msgid "hashgiven"
-#~ msgstr "van Titkos Kód"
+msgid "hashgiven"
+msgstr "van Titkos Kód"
 
-#~ msgid "Server failure"
-#~ msgstr "Szerverhiba"
+msgid "Server failure"
+msgstr "Szerverhiba"
 
-#~ msgid ""
-#~ "For the registration you have to accept the terms of use. To accept the "
-#~ "terms of use please mark the checkbox!"
-#~ msgstr ""
-#~ "A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az "
-#~ "elfogadáshoz kattints a Regisztrálok gomb felett található a "
-#~ "jelölőnégyzetbe"
+msgid ""
+"For the registration you have to accept the terms of use. To accept the "
+"terms of use please mark the checkbox!"
+msgstr ""
+"A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az "
+"elfogadáshoz kattints a Regisztrálok gomb felett található a "
+"jelölőnégyzetbe"
 
-#~ msgid "false"
-#~ msgstr "nincs"
+msgid "false"
+msgstr "nincs"
 
-#~ msgid "true"
-#~ msgstr "igen"
+msgid "true"
+msgstr "igen"
 
-#~ msgid "To accept the terms please mark the checkbox!"
-#~ msgstr ""
-#~ "A fiók törlésével kapcsolatos figyelmeztetés tudomásul vételéhez kattints "
-#~ "a jelölőnégyzetbe!"
+msgid "To accept the terms please mark the checkbox!"
+msgstr ""
+"A fiók törlésével kapcsolatos figyelmeztetés tudomásul vételéhez kattints "
+"a jelölőnégyzetbe!"
+
+msgid "application needs to sign in with your ADA account"
+msgstr "alkalmazás használatához jelentkezz be ADA fiókoddal!"

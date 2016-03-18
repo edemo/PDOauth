@@ -26,7 +26,7 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     addedAssurance, noShowAuthorization, unknownToken, expiredToken,\
     emailVerifiedOK, invalidEmailAdress, passwordResetSent, theSecretHasExpired,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
-    credentialRemoved
+    credentialRemoved, sameHash
 
 class Controller(
         WebInterface, Responses, EmailHandling,
@@ -117,24 +117,36 @@ class Controller(
         return False
 
 
-    def checkAndUpdateHash(self, form, user):
-        additionalInfo = {}
-        digest = form.digest.data
-        if digest == '':
-            digest = None
-        if digest is not None:
-            anotherUsers = User.getByDigest(form.digest.data)
-            if anotherUsers:
-                if self.isAnyoneHandAssurredOf(anotherUsers):
-                    user.rm()
-                    raise ReportedError([anotherUserUsingYourHash], 400)
-                additionalInfo["message"] = anotherUserUsingYourHash
+
+    def updateHashAndAssurances(self, user, digest):
         user.hash = digest
-        user.save()
         assurances = Assurance.listByUser(user)
         self.deleteHandAssuredAssurances(assurances)
         if digest is not None:
             Assurance.new(user, "hashgiven", user)
+        user.save()
+
+
+    def checkHashInOtherUsers(self, user, additionalInfo, digest):
+        if digest is None:
+            return
+        anotherUsers = User.getByDigest(digest)
+        if anotherUsers:
+            if self.isAnyoneHandAssurredOf(anotherUsers):
+                user.rm()
+                raise ReportedError([anotherUserUsingYourHash], 400)
+            additionalInfo["message"] = anotherUserUsingYourHash
+
+    def checkAndUpdateHash(self, form, user):
+        additionalInfo = dict()
+        digest = form.digest.data
+        if digest == '':
+            digest = None
+        if user.hash == digest:
+            additionalInfo["message"] = sameHash
+        else:
+            self.checkHashInOtherUsers(user, additionalInfo, digest)
+            self.updateHashAndAssurances(user, digest)
         return additionalInfo
 
     def doUpdateHash(self,form):

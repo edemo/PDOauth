@@ -215,18 +215,42 @@
 			return false
 		}
 		else return true
-	}	
+	}
+
+	PageScript.prototype.sslLoginCallback=function(status, response) {
+		console.log("sslCallback")
+		if (status!=200)  {
+			var msg
+			if (data=JSON.parse(response)) {
+				msg=self.processErrors(data)
+			}
+			else {
+				msg.title=_("Server error occured")
+				msg.error=response
+			}
+			self.displayMsg(msg)
+			return false
+		}
+		else { 
+			self.get_me; 
+			return true
+		}
+	}		
 	
 	PageScript.prototype.doRegister=function() {
 		if ( document.getElementById("registration-keygenform_confirmField").checked ) {
+			console.log(self.registrationMethode)
 			switch (self.registrationMethode) {
 				case "pw":
+					console.log('pw')
 					self.register("password")
 					break;
 				case "fb":
+					console.log('fb')
 					self.register("facebook")
 					break;
 				case "ssl":
+					console.log('ssl')
 					document.getElementById("SSL").onload=self.sslRegisterCallback;
 					document.getElementById('registration-keygenform').submit();
 					console.log("after submit")
@@ -238,8 +262,11 @@
 	}
 
 	PageScript.prototype.sslLogin = function() {
-		document.getElementById("SSL").onload=function(){win.location.reload()}
-		document.getElementById("SSL").src=self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login'
+//		document.getElementById("SSL").onload=function(){if (self.sslCallback()) win.location.reload()}
+	//	document.getElementById("SSL").src=
+		var xmlhttp = this.ajaxBase( self.initCallback )
+		xmlhttp.open( "GET", self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login' , true);
+		xmlhttp.send();
 	}
 	
 //Getdigest functions	
@@ -281,6 +308,10 @@
 					messageBox.className="given"
 					document.getElementById("assurance-giving_submit-button").className=""
 				}
+				else {
+					document.getElementById(formName+"_code-generation-input").style.display="none"
+				}
+				
 			} else {
 				self.displayMsg({title:_("Error message"),error: text});
 				diegestInput.value =""
@@ -370,6 +401,22 @@
 **    Adding credencials      **
 ********************************
 */	
+
+	PageScript.prototype.addCredential = function(credentialType, identifier, secret) {
+		var data = {
+			credentialType: credentialType,
+			identifier: identifier,
+			secret: secret
+		}
+		self.ajaxpost("/v1/add_credential", data, self.addCredentialCallback)
+	}
+
+	PageScript.prototype.addCredentialCallback = function(status,text){
+		var data = JSON.parse(text);
+		if (status != 200) self.displayMsg(self.processErrors(data));
+		else self.get_me;
+	}
+	
 	PageScript.prototype.addSslCredential = function(data) {
 		document.getElementById("SSL").onload=self.addSslCredentialCallback;
 		document.getElementById('add-ssl-credential-keygenform').submit();
@@ -388,8 +435,23 @@
 	    	digest: digest,
 	    	csrf_token: csrf_token
 	    }
-	    self.ajaxpost("/v1/users/me/update_hash", text, this.hashCallback)
+	    self.ajaxpost("/v1/users/me/update_hash", text, self.changeHashCallback)
 	}	
+	
+	PageScript.prototype.changeHashCallback = function(status,text) {
+		switch (status) {
+			case 500:
+				self.displayMsg({title:_("Server failure"),error:text})
+				break;
+			case 200:
+				self.get_me()
+				self.viewChangeHashContainer()
+			default:
+				var data = JSON.parse(text);
+				self.displayMsg(self.processErrors(data));	
+		}
+	}
+	
 	PageScript.prototype.viewChangeHashForm = function() {
 		document.getElementById("change-hash-form_hash-changer").style.display="table-row";
 		document.getElementById("change-hash-form_hash-container").style.display="none";
@@ -454,7 +516,7 @@
 					</div>\
 				</td>\
 				<td>\
-					<a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
 					<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
 				</td>\
 			</tr>\
@@ -499,5 +561,28 @@
 		</table>'+sslForm
 		return result;		
 	}	
+/*
+******************************************
+** Cryptographic for ssl authentication **
+******************************************
+
+/***** Settings tab *****/	
+	PageScript.prototype.createAndSaveAKeyPair=function() {
+		return window.crypto.subtle.generateKey(
+			{
+				name: "RSASSA-PKCS1-v1_5",
+				modulusLength: 2048,
+				publicExponent: new Uint8Array([1, 0, 1]), // 24 bit representation of 65537
+				hash: {name: "SHA-256"}
+			},
+			false, // can extract it later if we want
+			["sign", "verify"]).then(
+				function(key) {
+					keyPair = key;
+					console.log(key);
+					return key;
+				}).catch(function(a){console.log(a)});
+	}
+
 }()
 )
