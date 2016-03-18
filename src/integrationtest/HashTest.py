@@ -85,14 +85,16 @@ class HashTest(IntegrationTest, UserTesting, CSRFMixin):
         Assurance.new(user, assurance, user, time.time())
         oldHash = self.createHash()
         user.hash = oldHash
+        user.save()
         userToCheck = User.getByEmail(self.userCreationEmail)
-        self.assertEqual(len(Assurance.getByUser(userToCheck)), 1)
+        assurancesBefore = Assurance.getByUser(userToCheck)
+        self.assertEqual(len(assurancesBefore), 1)
         self.setupRandom()
         csrf = self.getCSRF(client)
         data = dict(
             csrf_token=csrf)
         if addDigest:
-            data['digest'] = oldHash
+            data['digest'] = self.createHash()
         resp = client.post(config.BASE_URL + '/v1/users/me/update_hash', data=data)
         self.assertEqual(200, resp.status_code)
         self.userAfter = User.getByEmail(self.userCreationEmail)
