@@ -31,7 +31,7 @@ class AppInfoUtil(PDUnitTest, UserUtil, AuthProviderUtil):
     def createTestAppMaps(self):
         self.boundApps = set()
         self.emailerApps = list()
-        for i in range(10): # @UnusedVariable
+        for i in range(20): # @UnusedVariable
             name = self.createRandomUserId()
             newApp = Application.new(name, name, "https://{0}.com/".format(name))
             if (random.randint(1, 2) == 1):

@@ -7,7 +7,7 @@
     <!-- Basic Page Needs
     ================================================== -->
         <meta charset="utf-8">
-        <title>ADA - rólunk</title>
+        <title>ADA - user howto</title>
         <meta name="description" content="">
         <!-- Mobile Specific Metas
     ================================================== -->
@@ -41,6 +41,213 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
         <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
+			<style>
+*, *:after, *:before {
+    box-sizing: inherit;
+}
+html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+}
+body {
+    color: #606c76;
+    font-family: "Roboto","Helvetica Neue","Helvetica","Arial",sans-serif;
+    font-size: 1.6em;
+    font-weight: 300;
+    letter-spacing: .01em;
+    line-height: 1.6;
+}
+pre, xmp, plaintext, listing {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0px 1em;
+}
+pre {
+    background: #f4f5f6;
+    border-left: .3rem solid #4D7ACA;
+    font-family: "Menlo","Consolas","Bitstream Vera Sans Mono","DejaVu Sans Mono","Monaco",monospace;
+}
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 2.5rem;
+}
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 2.5rem;
+}
+input, textarea, select, fieldset {
+    margin-bottom: 1.5rem;
+}
+fieldset {
+    border-width: 0;
+    padding: 0;
+}
+label, legend {
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: .5rem;
+}
+input[type='email'], input[type='number'], input[type='password'], input[type='search'], input[type='tel'], input[type='text'], input[type='url'], textarea, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: .1rem solid #d1d1d1;
+    border-radius: .4rem;
+    box-shadow: none;
+    height: 3.8rem;
+    padding: .6rem 1rem;
+    width: 100%;
+}
+.button, button, input[type='button'], input[type='reset'], input[type='submit'] {
+    background-color: #4D7ACA;
+    border: .1rem solid #4D7ACA;
+    border-radius: .4rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    height: 3.8rem;
+    letter-spacing: .1rem;
+    line-height: 3.8rem;
+    padding: 0 3rem;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.button:hover, button:hover, input[type='button']:hover, input[type='reset']:hover, input[type='submit']:hover {
+    background-color: #606c76;
+    border-color: #606c76;
+    color: #fff;
+    outline: 0;
+}
+.button:active, button:active, input[type='button']:active, input[type='reset']:active, input[type='submit']:active {
+    background-color: #707c76;
+    border-color: #606c76;
+    color: #fff;
+    outline: 0;
+	padding-top:1px
+}
+.wrapper {
+	position: relative;
+	display: block;
+	width: 100%;
+	overflow: hidden;
+}
+.container {
+    margin: 0 auto;
+    max-width: 112rem;
+    padding: 0 2rem;
+    position: relative;
+    width: 100%;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	margin-bottom: 0;
+}
+.form {
+	max-width: 50.0rem;
+}		
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    margin-bottom: 2rem;
+    margin-top: 0;
+}
+h1 {
+    font-size: 4rem;
+    letter-spacing: -0.1rem;
+    line-height: 1.2;
+}
+h3 {
+    font-size: 3rem;
+    letter-spacing: -0.1rem;
+    line-height: 1.3;
+}
+p {
+    margin-top: 0;
+}
+.blog-desc p {
+    font-size: 16px;
+}
+
+.label-inline {
+    font-weight: normal;
+    display: inline-block;
+    margin-left: .5rem;
+}
+pre {
+ min-height:5rem;
+     line-height: 100%;
+    word-wrap: break-word;
+    white-space: pre-line;
+ }
+.waiting {
+    background-image: url("waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
+.monitor {
+    min-width: 100px;
+    background-color: #F9F6E9;
+    border-radius: 5px;
+    display: inline-block;
+    float: right;
+    padding: 10px 15px;
+    font-size: small;
+}
+#message{
+display:none;
+width: 100%;
+height: 5rem;
+border-radius:5px;
+border: 1px solid red;
+padding:1rem;
+color: red;
+font-weight:700;
+margin-top:2rem;
+text-align: center;
+}
+@media (min-width: 40rem){
+h1 {
+    font-size: 5rem;
+}
+h3 {
+    font-size: 3.6rem;
+}}
+#heading {
+margin-top: 100px;
+}
+ul.disced {
+    list-style-type: disc;
+	margin-left: 50px;
+}
+
+.feature_title {
+    font-size: 30px;
+	width: 63%;
+}
+
+@media (max-width: 767px){
+.feature_title {
+    width: 75%;
+    font-size: 22px;
+}
+.blog-desc {
+    margin-top: 0px;
+}
+}
+section#team div.us{
+width:90%;
+max-width:112rem;
+}
+#team{
+    padding-bottom: 20px;
+    padding-top: 0;
+}
+		</style>
     </head>
 
  <body data-spy="scroll" data-target=".navbar-fixed-top" onload="pageScript.main()">
@@ -65,8 +272,8 @@
                  	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
                         <ul class="nav navbar-nav navbar-right ">
                            	<li><a href="./index.html" class="">Home </a></li>
-                            <li><a href="./user_howto.html"  class="">Hogyan működik?</a> </li>
-                            <li><a href="./about_us.html" class="active">Rólunk</a></li>
+                            <li><a href="./user_howto.html" class="">Hogyan működik?</a> </li>
+                            <li><a href="./about_us.html" class="active">Rólunk</a> </li>
 <!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
 							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
 							<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
@@ -78,79 +285,46 @@
 </header>
  
 <!-- Portfolio works Start -->
-    <section id="banner" style="background: url('../images/about/birds.jpg')no-repeat center;">
-        <div class="container">
-            <div class="row">
-                <div class="blog-header text-center">
-                    <h2>Rólunk</h2>
-                     <ul class="breadcrumb">
-                        <li>KDE alapítvány</li>
-                        <li>ADA</li>
-                        <li>eDemo közösség</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+
+<!-- Heading -->
+		<section id="heading" class="container">
+			<h1>Rólunk</h1>
+		</section>
+<!-- Heading end -->
 	
-    <section id="blog-single">
+    <section id="blog-single wrapper">
         <div class="container">
                 <!-- Portfolio item slider start -->
             <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                  <div class="blog-desc">
-					<div id="registration">
-						<h3>Az ADA projekt</h3> 
+					<div id="sort">
 						<p>
-Az Anonim Digitális Azonosító szolgáltatás a Közösségi Digitális Eszközök Alapítvány támogatott projektje. 
-A projektet közösségi munkában és finanszírozással hozták létre informatikusok, közgazdászok, 
-szociológusok, média szakemberek és még sokan mások. 
+ Az Anonim Digitális Azonosító szolgáltatás (ADA) a Közösségi Digitális Eszközök Alapítvány 
+ támogatott projektje. A projektet közösségi munkában és finanszírozással hozták létre 
+ informatikusok, közgazdászok,  szociológusok, média szakemberek és még sokan mások.
 						</p>
-					<h3>Történetünk</h3> 
-						<p>
-Nyilvánvaló számunkra, hogy a közösségi digitális eszközök használati kultúrája terén Magyarországon jelentő 
-lemaradásban vagyunk. Nemcsak Európához, vagy az amerikai kontinenshez, de már a szomszédos 
-országokhoz képest is érzékelhető a hátrányunk. Van honnan feljönni!
-						</p>
-						<p>
-Kezdetben egy facebook csoportba kezdtük el gyűjteni az e-demokrácia, az internetes részvételi 
-technikák iránt érdeklődő informatikusokat, szakembereket, megosztva egymással tapasztalatainkat, 
-figyelemre érdemes nemzetközi projekteket, alkalmazásokat.
-						</p>
-						<p>
-Ebből nőtt ki az első szoftverhonosítási projektünk is (az Airesis, majd a LocalWiki). Néhány alkalommal 
-személyesen is találkoztunk és kiderült milyen sokszínűek vagyunk - néhányan hobbiból foglalkozunk 
-társadalmi ügyek technológiai támogatásával, és vannak akinek ez a fő szakterülete. A hozzánk érkező 
-kérdések nyomán organikusan vetődött fel az ötlet, hogy adjunk szervezeti hátteret a ADA-t támogató 
-munkánknak - ez a KDE alapítvány. 
-						</p>
-					<h3>Küldetésünk</h3> 
-						<p>
-Célunk, hogy korszerű nyílt forráskódú technológiákra és nemzetközileg bevett módszertanokra alapuló 
-informatikai szolgáltatások segítségével megteremtsünk új párbeszéd folyamatokat, tereket és ezzel 
-javítsuk közösségekben, szervezetekben a hatékony, érdemi kommunikációt. 
-						</p>
-						<p>
-A közvetlen részvételi technikák, döntéstámogató rendszerek és párbeszéd módszertanok, informatikai és 
-folyamatszervezési támogatásával lehetőséget biztosítani a szervezetek működési hatékonyságának javítására.
-						</p>
-						<p>
-A hatékony működés fejlesztéséhez (legyen szó civil, üzleti vagy önkormányzati szektorról) a követők, 
-tagok, ügyfelek,  polgárok visszajelzései értékkel bírnak. Lényegi küldetésünk, hogy informatikai és 
-kommunikációs módszertani eszközökkel segítsük felszínre hozni, a szervezet, közösség működésébe 
-beágyazni a látens, vagy strukturálatlanul hullámzó információs üzeneteket, folyamatokat.
-						</p>
-						<p>
-Az ADA szolgáltatásunk jól mutatja, hogy a hatékony digitális kommunikációs technikáknak része a 
-hitelesség és az anonimitás párhuzamosan létező kettőssége. Sok szervezetben ennek hiányában az 
-emberek nem mernek érdemi problémákat elmondani, mert félnek, vagy szeretnék, hogy a személyes 
-adataik feletti rendelkezést megtarthassák - az Adával elsősorban számukra építünk bizalmi csatornákat.
-						</p>
+						<h4>Az ADA projekt alapelvei:</h3>
+						<ul class="disced">
+							<li>átláthatóság a fejlesztésben, működésben és döntés hozatalban,</li>
+							<li>közösségi gondolkodás és cselekvés a működtetésben,</li>
+							<li>non profit  projekt, de gazdálkodása fenntartható legyen,</li>
+							<li>mindenki számára hozzáférhető legyen,</li>
+							<li>a Felhasználók ingyen használhatják. </li>
+						</ul>
+						<h4>Az ADA küldetése és célja:</h3>
+						<ul class="disced">
+							<li>egy közösségi, hiteles kommunikációs  infrastruktúra megteremtése;</li>
+							<li>a hitelesség és az anonimitás egyidejű biztosítása a felhasználók és alkalmazások számára;</li>
+							<li>hogy valamennyi állampolgár használja.</li>
+						</ul>
 					</div>
-                </div>
-                <hr>
                 <div class="clearfix"></div>
 
 			</div>  <!-- blog footer end -->
+ <!-- Section TEam End -->					
+
+                </div>
+
            
     <!-- left blog part end -->
 
@@ -160,50 +334,35 @@ adataik feletti rendelkezést megtarthassák - az Adával elsősorban számukra 
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="blog-sidebar">
 						<div id="side-bar-nav">
-							<h4>Tudnivalók</h4>
-							<ul>
-								<li">
-									<a href="user_howto.html">Felhasználóknak</a>
-								</li>
-								<li >
-									<a href="">Szervezeteknek</a>
-								</li>
-								<li>
-									<a href="">Tanusítóknak</a>
-								</li>
-								<li >
-									<a href="">Geek szekció</a>
-								</li>
-								<li >
-									<a href="">Alkalmazásom</a>
-								</li>
-							</ul>
 							<h4>Szabályzatok</h4>
 							<ul>
-								<li >
-									<a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási feltétel</a>
+								<li class="active">
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételek</a>
 								</li>
 								<li >
-									<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelés</a>
+									<a target="_blank" href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztató</a>
+								</li>
+								<li>
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanúsítási Szabályzat</a>
 								</li>
 								<li >
-									<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanusítási szabályzat</a>
+									<a target="_blank" href="https://edemo.gitbooks.io/utmutato-alkalmazasok-szamara/content/">Útmutató Alkalmazások számára</a>
 								</li>
 								<li >
-									<a href="https://edemo.gitbooks.io/ada-iranyito-testulet-ugyrendje/content/">Irányító testület működési szabályzat</a>
+									<a target="_blank" href="https://edemo.gitbooks.io/felhasznalasi-feltetelek-applikaciok-szamara/content/">Felhasználási Feltételek Applikációk számára</a>
 								</li>
 								<li >
-									<a href="">Szabályzat n+1</a>
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-iranyito-testulet-ugyrendje/content/">Irányító Testület ügyrendje</a>
 								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/adamintadokumentumok/content/">ADA mintadokumentumok</a>
+								</li>									
+							</ul>
 							<h4>Kirakat</h4>
 							<ul>
-								<li class="active">
-									<a href="">Rólunk</a>
-								</li>
 								<li >
-									<a href="">Statisztikák</a>
+									<a href="index.html#counter_area">Statisztikák</a>
 								</li>
-							</ul>
 							</ul>
 						</div>
                         
@@ -215,66 +374,148 @@ adataik feletti rendelkezést megtarthassák - az Adával elsősorban számukra 
             </div><!-- Portfolio item row end -->
         </div><!-- Portfolio item container end -->
 </section>  <!-- Portfolio Section End -->
+<section id="team">
+    <div class="us container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="feature_header text-center">
+                    <h3 class="feature_title">Munkatársak</h3>
+                    <div class="divider"></div>
+                </div>
+            </div>  <!-- Col-md-12 End -->
 
+            <div id="owl-demo" class="owl-carousel owl-theme team-items">
+                <div class="item text-center">
+                    <div class="single-member">
+                        <div class="overlay-hover">
+                            <img src="images/team/PengGyorgy.jpg" alt="" class="img-responsive">
+                            <div class="overlay-effect">
+                                <ul class="social list-inline">
+                                    <li><a href="https://www.facebook.com/claymanus"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="https://plus.google.com/103027190788103881287"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/in/gy%C3%B6rgy-peng-1b150530"><i class="fa fa-linkedin-square"></i></a></li>
+                                    <li><a href="https://github.com/Claymanus"><i class="fa fa-github"></i></a></li>
+                                    <li><a href="mailto:gypeng@adatom.hu"><i class="fa fa-envelope"></i></a></li>
+                                </ul>
+                                <p>Azonnal visszatérünk a normális állapotokhoz, mihelyst bizonyosak leszünk abban, hogy mi is a normális</p>
+                            </div>
+                        </div>
+                        <h3>Peng György</h3>
+                        <h5>Frontend fejlesztő,<br>az irányító testület tagja</h5>
+                    </div>
+                </div>  <!-- item wrapper end -->
+                <div class="item text-center">
+                    <div class="single-member">
+                        <div class="overlay-hover">
+                            <img src="images/team/Karoly.jpg" alt="" class="img-responsive">
+                            <div class="overlay-effect">
+                                <ul class="social list-inline">
+                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href=""><i class="fa fa-github"></i></a></li>
+                                    <li><a href=""><i class="fa fa-skype"></i></a></li>
+                                </ul>
+                                <p>"Foied vinom pipafo, cra carefo" Ma bort iszom és holnap nem lesz </p>
+                            </div>
+                        </div>
+                        <h3>Szabó Károly</h3>
+                        <h5>Szociológus<br>az irányító testület tagja</h5> 
+                    </div>
+                </div>  <!-- item wrapper end -->
+                <div class="item text-center">
+                    <div class="single-member">
+                        <div class="overlay-hover">
+                            <img src="images/team/magkicsi.jpg" alt="" class="img-responsive">
+                            <div class="overlay-effect">
+                                <ul class="social list-inline">
+                                    <li><a href="https://www.facebook.com/arpad.magosanyi"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="https://github.com/magwas"><i class="fa fa-github"></i></a></li>
+                                    <li><a href="mailto:mag@magwas.rulez.org"><i class="fa fa-envelope"></i></a></li>
+                                </ul>
+                                <p>Egyszer gyíkká változtattak, de már elmúlt.</p>
+                            </div>
+                        </div>
+                        <h3>Magosányi Árpád</h3>
+                        <h5>Szoftver szekuricsi<br>az irányító testület tagja</h5>
+                    </div>
+                </div>  <!-- item wrapper end -->
+                <div class="item text-center">
+                    <div class="single-member">
+                        <div class="overlay-hover">
+                            <img src="images/team/madarasz.jpg" alt="" class="img-responsive">
+                            <div class="overlay-effect">
+                                <ul class="social list-inline">
+                                    <li><a href="https://www.facebook.com/csabam"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="www.twitter.com/nyiltkormanyzas"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="https://hu.linkedin.com/in/madaraszcsaba"><i class="fa fa-linkedin-square"></i></a></li>
+                                    <li><a href="mailto: csaba@opengovernment.hu"><i class="fa fa-envelope"></i></a></li>
+                                </ul>
+                                <p>Madár lakozik a földigilisztában és a nagy szellem pihen mindegyik fűszálban!</p>
+                            </div>
+                        </div>
+                        <h3>Madarász Csaba</h3>
+                        <h5>Kommunikáció<br>Marketing</h5>
+                    </div>
+                </div>  <!-- item wrapper end -->
+            </div>
+        </div>
+    </div> <!-- Conatiner Team end -->
+    <!-- </div> -->
+
+</section> 
+<!-- Footer Area Start -->
+<section class="container">
+					<div id="registration">
+						<h3 class="feature_title">Hogy működünk?</h3>
+						<ul class="disced">
+							<li>Fejlesztés:  nyílt forrás kódú szoftverek és megoldások alkalmazása</li>
+							<li>Működés: közösségi feladat vállalás, önkéntes munka és közösségi finanszírozás. </li>
+							<li>
+Döntéshozatal: Az  ADA projekt felelőse és irányítója az ADA 
+<a href="https://edemo.gitbooks.io/ada-iranyito-testulet-ugyrendje/content/">Irányító Testülete</a> 
+A testület nyitott ( az ADA létrehozásában és működtetésében szerepet vállalók meghatározott 
+feltételek mellett a tagjai lehetnek), ülései nyilvánosak, független és önszabályozó. 
+							</li>
+						</ul>
+					</div>
+</section>
 <!-- Footer Area Start -->
 
 <section id="footer">
     <div class="footer_top">
         <div class="container">
             <div class="row">
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <h3 class="menu_head">Main Menu</h3>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Szabályzatok</h3>
                     <div class="footer_menu">
                         <ul>
-                            <li><a href="#about">Home</a></li>
-                            <li><a href="#service">Service</a></li>
-                            <li><a href="#portfolio">Portfolio</a></li>
-                            <li><a href="#blog">Blog</a></li>
-                            <li><a href="#contact">Contact</a></li>
-                        </ul>
+                            <li><a target="_blank" href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételek</a></li>
+                            <li><a target="_blank" href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Irányelvek</a></li>
+                         </ul>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <h3 class="menu_head">Useful Links</h3>
-                    <div class="footer_menu">
-                        <ul>
-                            <li><a href="#">Terms of use</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#"> inventore natus ullam eum</a></li>
-                            <li><a href="#">consectetur adipisicing elit.</a></li>
-                            <li><a href="#">Frequently Asked Questions</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <h3 class="menu_head">Contact us</h3>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Kapcsolat</h3>
                     <div class="footer_menu_contact">
                         <ul>
-                            <li> <i class="fa fa-home"></i>
-                                <span> 12 Segun Bagicha, 10th Floor </span></li>
-                            <li><i class="fa fa-globe"></i>
-                                <span> +880-12345678</span></li>
-                            <li><i class="fa fa-phone"></i>
-                                <span> info@mail.com</span></li>
-                            <li><i class="fa fa-map-marker"></i>
-                            <span> www.web.com</span></li>
+                            <li><i class="fa fa-envelope"></i> Email: <a href="mailto:info@adatom.hu">info@adatom.hu</a></li>
+                            <li><i class="fa fa-phone"></i> Telefon: </li>
+                            <li><i class="fa fa-home"></i> KDE Alapítvány levelezési cím:</li>
+                            <li>2071 Páty, Burgondia u. 5.</li>
                         </ul>
                     </div>
                 </div>
-
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <h3 class="menu_head">Tags</h3>
-                    <div class="footer_menu tags">
-                        <a href="#"> Design</a>
-                        <a href="#"> User Interface</a>
-                        <a href="#"> Graphics</a>
-                        <a href="#"> Web Design</a>
-                        <a href="#"> Development</a>
-                        <a href="#"> Asp.net</a>
-                        <a href="#"> Bootstrap</a>
-                        <a href="#"> Joomla</a>
-                        <a href="#"> SEO</a>
-                        <a href="#"> Wordepress</a>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Hasznos linkek</h3>
+                    <div class="footer_menu">
+                        <ul>
+                            <li><i class="fa fa-anchor"></i> <a target="_blank" anchor-link href="https://testanchor.edemokraciagep.org/ ">Titkos Kód Gép</a></li>
+                            <li><i class="fa fa-github"></i> <a target="_blank" href="https://www.gitbook.com/@edemo">Gitbook</a></li>
+                        </ul>
                     </div>
                 </div>
 
@@ -300,16 +541,19 @@ adataik feletti rendelkezést megtarthassák - az Adával elsősorban számukra 
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="footer_mid pull-right">
-<!-- temporaly hidden
+
                         <ul class="social-contact list-inline">
-                            <li> <a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li> <a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li> <a target="_blank" href="https://www.facebook.com/Adatom-1688616028083495/"><i class="fa fa-facebook"></i></a></li>
+                            <li> <a target="_blank" href="https://github.com/edemo/"><i class="fa fa-github"></i></a></li>
+<!-- temporaly hidden
+
                             <li> <a href="#"><i class="fa fa-rss"></i></a></li>
                             <li> <a href="#"><i class="fa fa-google-plus"></i> </a></li>
                             <li><a href="#"> <i class="fa fa-linkedin"></i></a></li>
                             <li><a href="#"> <i class="fa fa-pinterest"></i></a></li>
-                        </ul>
 -->
+						</ul>
+
                     </div>
                 </div>
 
@@ -328,14 +572,65 @@ adataik feletti rendelkezést megtarthassák - az Adával elsősorban számukra 
     <!-- End Back To Top Button -->
 		<!-- initialize jQuery Library -->
         <!-- Main jquery -->
-		<script type="text/javascript" src="js/jquery.js"></script>
+		    <script type="text/javascript" src="js/jquery.js"></script>
         <!-- Bootstrap jQuery -->
-		<script src="js/bootstrap.min.js"></script>
-		<!-- pagescript -->
+         <script src="js/bootstrap.min.js"></script>
+        <!-- Owl Carousel -->
+        <script src="js/owl.carousel.min.js"></script>
+        <!-- Isotope -->
+        <script src="js/jquery.isotope.js"></script>
+        <!-- Pretty Photo -->
+		    <script type="text/javascript" src="js/jquery.prettyPhoto.js"></script>
+        <!-- SmoothScroll -->
+        <script type="text/javascript" src="js/smooth-scroll.js"></script>
+        <!-- Image Fancybox -->
+        <script type="text/javascript" src="js/jquery.fancybox.pack.js?v=2.1.5"></script>
+        <!-- Counter  -->
+        <script type="text/javascript" src="js/jquery.counterup.min.js"></script>
+        <!-- waypoints -->
+        <script type="text/javascript" src="js/waypoints.min.js"></script>
+        <!-- Bx slider -->
+        <script type="text/javascript" src="js/jquery.bxslider.min.js"></script>
+        <!-- Scroll to top -->
+        <script type="text/javascript" src="js/jquery.scrollTo.js"></script>
+        <!-- Easing js -->
+        <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+   		 <!-- PrettyPhoto -->
+        <script src="js/jquery.singlePageNav.js"></script>
+      	<!-- Wow Animation -->
+        <script type="js/javascript" src="js/wow.min.js"></script>
+
 		<script src="js/script.js"></script>
 		<!-- pagescript extension-->
 		<script src="js/base.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="fb.js"></script>
+		<script>
+	/* ----------------------------------------------------------- */
+  /* Team Carousel
+  /* ----------------------------------------------------------- */
+
+  $("#owl-demo").owlCarousel({
+  
+  navigation : true, // Show next and prev buttons
+  // navigationText: ["prev","next"], 
+   navigationText: [
+      "<i class='fa fa-angle-left'></i>",
+      "<i class='fa fa-angle-right'></i>"
+      ],
+  slideSpeed : 300,
+  paginationSpeed : 400,
+  autoPlay: true,  
+  items : 4,
+  itemsDesktop:[1199,4],  
+  itemsDesktopSmall:[979,3],  //As above.
+  itemsTablet:[768,3],    //As above.
+  // itemsTablet:[640,2],   
+  itemsMobile:[479,1],    //As above
+  goToFirst: true,    //Slide to first item if autoPlay reach end
+  goToFirstSpeed:1000 
+  });
+
+		</script>
 	</body>
 </html>

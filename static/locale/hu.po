@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-12 10:01+0100\n"
+"POT-Creation-Date: 2016-03-17 09:36+0100\n"
 "PO-Revision-Date: 2016-03-10 23:30+0100\n"
 "Last-Translator: mag <mag@magwas.rulez.org>\n"
 "Language-Team: Hungarian\n"
@@ -108,8 +108,10 @@ msgstr ""
 "megakadályozod, hogy  visszaéljenek az adataiddal."
 
 #: src/pdoauth/Messages.py:27 src/pdoauth/Messages.py:28
-msgid "There are more users with the same hash; specify both hash and email"
-msgstr "Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhasználó "
+#, fuzzy
+msgid "More users with the same hash; specify both hash and email"
+msgstr ""
+"Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhasználó "
 "email címét is"
 
 #: src/pdoauth/Messages.py:28 src/pdoauth/Messages.py:29
@@ -267,108 +269,230 @@ msgstr "vizsgabiztos"
 msgid "assurer.{0}"
 msgstr "{0} tanúsító"
 
+#: static/js/account.js:115
+msgid "Your email validation was succesfull."
+msgstr "Az email címed ellenőrzése sikerült."
+
+#: static/js/account.js:119
+msgid "Your email validation <b>failed</b>.<br/>The servers response: "
+msgstr ""
+"Az email címed ellenőrzése <b>nem</b> sikerült.<br/>A szerver üzenete: "
+
+#: static/js/account.js:159
 msgid "email address and/or username / password"
 msgstr "email-cím és/vagy felhasználónév és jelszó"
 
+#: static/js/account.js:164
 msgid "my facebook account"
 msgstr "facebook fiókom"
 
+#: static/js/account.js:175
+msgid "Registration with {0}"
+msgstr "Regisztráció {0} használatával"
+
+#: static/js/account.js:211
+msgid "Server error occured"
+msgstr ""
+
+#: static/js/account.js:237
+#, fuzzy
+msgid "Acceptance is missing"
+msgstr "Hiányzik a beleegyezésed"
+
+#: static/js/account.js:237
+msgid "Text for missing accaptance of term of use"
+msgstr ""
+
+#: static/js/account.js:280
+#, fuzzy
+msgid "The Secret Hash is given for assuring"
+msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
+
+#: static/js/account.js:285 static/js/script.js:97 static/js/script.js:568
+#: static/js/script.js:582 static/js/script.js:588
+msgid "Error message"
+msgstr "Hibaüzenet"
+
+#: static/js/account.js:289
+#, fuzzy
+msgid "The Secret Hash isn't given yet"
+msgstr "Még nincs Titkos Kód "
+
+#: static/js/account.js:316 static/js/account.js:320 static/js/script.js:368
+msgid "Missing data"
+msgstr "Hiányzó adat"
+
+#: static/js/account.js:316
+msgid "Personal identifier is missing"
+msgstr "A személyi azonosító nincs megadva"
+
+#: static/js/account.js:320
+msgid "Mother's name is missing"
+msgstr "Anyja neve nincs megadva"
+
+#: static/js/account.js:421
+msgid "Email address:"
+msgstr "E-mail cím:"
+
+#: static/js/account.js:428 static/js/account.js:437
+msgid "The Secret Hash:"
+msgstr "Titkos Kód:"
+
+#: static/js/account.js:439
+msgid "If you change your Secret Hash, all of your assurences will be deleted!"
+msgstr ""
+"Ha megváltoztatod a Titkos Kódodat, az összes eddigi igazolásod elvész!"
+
+#: static/js/account.js:441
+msgid "Let's make it here"
+msgstr "Készítsük el itt"
+
+#: static/js/account.js:443
+msgid "I make it myself"
+msgstr "Elkészítem magam"
+
+#: static/js/account.js:447
+msgid "Personal identifier"
+msgstr "Személyi azonosító"
+
+#: static/js/account.js:449
+msgid "Mother's name"
+msgstr "Anyja neve"
+
+#: static/js/account.js:451
+msgid "Generate"
+msgstr "A kód előállítása"
+
+#: static/js/account.js:457
+msgid "save"
+msgstr "mentés"
+
+#: static/js/account.js:458
+msgid "cancel"
+msgstr "mégse"
+
+#: static/js/account.js:462
+msgid "My credentials"
+msgstr "Hitelesítési módjaim"
+
+#: static/js/account.js:464
+msgid "Password"
+msgstr "Jelszavas"
+
+#: static/js/gettext.js:409
+#, javascript-format
+msgid ""
+"Parsed: %d msgids, %d msgids-plurals, %d msgstrs, %d obsoletes, %d contexts, "
+"%d references, %d flags, %d previous untranslateds, %d previous untranslated-"
+"plurals"
+msgstr ""
+
+#: static/js/script.js:89
+msgid "Server message"
+msgstr "Szerverüzenet"
+
+#: static/js/script.js:93
+msgid "User informations"
+msgstr "A felhasználó adatai"
+
+#: static/js/script.js:119
+msgid "Application"
+msgstr "Alkalmazás"
+
+#: static/js/script.js:120
+msgid "Domain"
+msgstr "Hivatkozás"
+
+#: static/js/script.js:121 static/js/script.js:160
+msgid "User identifier"
+msgstr "Felhasználó azonosító"
+
+#: static/js/script.js:122
+msgid "Emailing"
+msgstr "Levelezés"
+
+#: static/js/script.js:123
+msgid "Allow emailing"
+msgstr "Kaphatok levelet"
+
+#: static/js/script.js:164
+msgid "Assurances"
+msgstr "Igazolások"
+
+#: static/js/script.js:168
+msgid "Name"
+msgstr "Megnevezés"
+
+#: static/js/script.js:169
+msgid "Assurer"
+msgstr "Kiállító"
+
+#: static/js/script.js:170
+msgid "Date of assurance"
+msgstr "Kiállítás dátuma"
+
+#: static/js/script.js:171
+msgid "Valid until"
+msgstr "Érvényesség"
+
+#: static/js/script.js:183
+msgid "unlimited"
+msgstr "korlátlan"
+
+#: static/js/script.js:360
+msgid "User name is missing. "
+msgstr "Hiányzik a felhasználónév. "
+
+#: static/js/script.js:365
+msgid "Password is missing. "
+msgstr "Nem adtál meg jelszót. "
+
+#: static/js/script.js:444 static/js/script.js:483 static/js/script.js:524
+#: static/js/script.js:528 static/js/script.js:532 static/js/script.js:546
+#: static/js/script.js:550 static/js/script.js:554
+msgid "Under construction"
+msgstr "Keményen dolgozunk,"
+
+#: static/js/script.js:444 static/js/script.js:483 static/js/script.js:524
+#: static/js/script.js:528 static/js/script.js:532 static/js/script.js:546
+#: static/js/script.js:550 static/js/script.js:554
+msgid "This function is not working yet."
+msgstr "de ez a funkció sajnos még nem működik."
+
+#: static/js/script.js:450
+msgid "Congratulation!"
+msgstr "Gratulálunk!"
+
+#: static/js/script.js:450
+#, fuzzy
+msgid "The Secret Hash has been constructed successfully."
+msgstr "A Titkos Kód elkészült."
+
+#: static/js/script.js:583
+msgid "The secret is missing"
+msgstr "Hiányzik a hitelesítő eszköz"
+
+#: static/js/script.js:589
+msgid "Plase accept the consequences with checking the checkbox"
+msgstr ""
+
+#: static/js/account.js:170 static/js/account.js:465
 msgid "SSL certificate"
 msgstr "SSL hitelesítéssel"
 
-msgid "Registration with {0}"
-msgstr "Regisztráció {0} használatával"
+msgid "hashgiven"
+msgstr "van Titkos Kód"
 
 msgid "Server failure"
 msgstr "Szerverhiba"
 
-msgid "Error message"
-msgstr "Hibaüzenet"
-
-msgid "Missing data"
-msgstr "Hiányzó adat"
-
-msgid "Server message"
-msgstr "Szerverüzenet"
-
-msgid "Personal identifier"
-msgstr "Személyi azonosító"
-
-msgid "Personal identifier is missing"
-msgstr "A személyi azonosító nincs megadva"
-
-msgid "Mother's name"
-msgstr "Anyja neve"
-
-msgid "I make it myself"
-msgstr "Elkészítem magam"
-
-msgid "Let's make it here"
-msgstr "Készítsük el itt"
-
-msgid "Generate"
-msgstr "A kód előállítása"
-
-msgid "Mother's name is missing"
-msgstr "Anyja neve nincs megadva"
-
-msgid "Approval is missing"
-msgstr "Hiányzik a beleegyezésed"
-
-msgid "For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!"
-msgstr "A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az elfogadáshoz "
-"kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
-
-msgid "User informations"
-msgstr "A felhasználó adatai"
-
-msgid "Email address:"
-msgstr "E-mail cím:"
-
-msgid "The Secret Hash:"
-msgstr "Titkos Kód:"
-
-msgid "My credentials"
-msgstr "Hitelesítési módjaim"
-
-msgid "Password"
-msgstr "Jelszavas"
-
-msgid "SSL certificate"
-msgstr "SSL kulcs"
-
-msgid "Application"
-msgstr "Alkalmazás"
-
-msgid "Domain"
-msgstr "Hivatkozás"
-
-msgid "User identifier"
-msgstr "Felhasználó azonosító"
-
-msgid "Emailing"
-msgstr "Levelezés"
-
-msgid "Allow emailing"
-msgstr "Kaphatok levelet"
-
-msgid "Assurances"
-msgstr "Igazolások"
-
-msgid "Name"
-msgstr "Megnevezés"
-
-msgid "Assurer"
-msgstr "Kiállító"
-
-msgid "Date of assurance"
-msgstr "Kiállítás dátuma"
-
-msgid "Valid until"
-msgstr "Érvényesség"
-
-msgid "unlimited"
-msgstr "korlátlan"
+msgid ""
+"For the registration you have to accept the terms of use. To accept the "
+"terms of use please mark the checkbox!"
+msgstr ""
+"A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az "
+"elfogadáshoz kattints a Regisztrálok gomb felett található a "
+"jelölőnégyzetbe"
 
 msgid "false"
 msgstr "nincs"
@@ -376,41 +500,10 @@ msgstr "nincs"
 msgid "true"
 msgstr "igen"
 
-msgid "User name is missing. "
-msgstr "Hiányzik a felhasználónév. "
-
-msgid "Password is missing. "
-msgstr "Nem adtál meg jelszót. "
-
-msgid "This function is not working yet."
-msgstr "Ez a funkció sajnos még nem működik."
-
-msgid "Under construction"
-msgstr "Keményen dolgozunk,"
-
-msgid "The Secret Hash has been prepared successfully."
-msgstr "A Titkos Kód elkészült."
-
-msgid "Congratulation!"
-msgstr "Gratulálunk!"
-
-msgid "The Secret Hash hasn't been prepared yet"
-msgstr "Még nincs Titkos Kód "
-
-msgid "There is a Secret Hash  for the assurance"
-msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
-
-msgid "The secret is missing"
-msgstr "Hiányzik a hitelesítő eszköz"
-
 msgid "To accept the terms please mark the checkbox!"
-msgstr "A fiók törlésével kapcsolatos figyelmeztetés tudomásul vételéhez kattints a jelölőnégyzetbe!"
+msgstr ""
+"A fiók törlésével kapcsolatos figyelmeztetés tudomásul vételéhez kattints "
+"a jelölőnégyzetbe!"
 
-msgid "If you change your Secret Hash, all of your assurences will be deleted!"
-msgstr "Ha megváltoztatod a Titkos Kódodat, az összes eddigi igazolásod elvész!"
-
-msgid "cancel"
-msgstr "mégse"
-
-msgid "save"
-msgstr "mentés"
+msgid "application needs to sign in with your ADA account"
+msgstr "alkalmazás használatához jelentkezz be ADA fiókoddal!"
