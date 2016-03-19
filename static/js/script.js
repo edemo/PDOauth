@@ -247,7 +247,6 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.meCallback = function(status, text) {
-
 		if (status!=500) {
 			var data = JSON.parse(text);
 			var msg = self.processErrors(data)
@@ -287,6 +286,7 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.initCallback = function(status, text) {
+		console.log("initcallback "+status)
 		var data = JSON.parse(text);
 		if (status != 200) {
 //			self.menuHandler("login").menuActivate();
@@ -396,10 +396,9 @@ console.log("logoutCallback")
 			var loc = '' +win.location
 			var newloc = loc.replace(self.QueryString.uris.SSL_LOGIN_BASE_URL, self.QueryString.uris.BASE_URL)
 			if (newloc!=loc) self.doRedirect( newloc );
-			self.isLoggedIn=false
-			self.refreshTheNavbar();
-			if (self.page=="account") {
-				self.displayTheSection("login");
+			else {
+				self.isLoggedIn=false
+				self.doRedirect( self.QueryString.uris.START_URL+"?"+text )
 			}
 		}
 	}
@@ -543,9 +542,6 @@ console.log("logoutCallback")
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-
-
-
 	PageScript.prototype.doDeregister = function() {
 		if ( document.getElementById("accept_deregister").checked ) {
 			if ( self.QueryString.secret ) {
@@ -562,7 +558,7 @@ console.log("logoutCallback")
 		}
 		else {
 			var msg={ 	title:_("Error message"),
-						error:_("Plase accept the consequences with checking the checkbox")}
+						error:_("To accept the terms please mark the checkbox!")}
 			self.displayMsg(msg);	
 		}			
 	}

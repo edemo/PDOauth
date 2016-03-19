@@ -287,12 +287,12 @@ msgid "my facebook account"
 msgstr "facebook fiókom"
 
 #: static/js/account.js:175
-msgid "Registration with {0}"
-msgstr "Regisztráció {0} használatával"
+msgid "Registration with %s "
+msgstr "Regisztráció %s használatával"
 
 #: static/js/account.js:211
-msgid "Server error occured"
-msgstr ""
+msgid "Server failure"
+msgstr "Szerverhiba"
 
 #: static/js/account.js:237
 #, fuzzy
@@ -300,8 +300,8 @@ msgid "Acceptance is missing"
 msgstr "Hiányzik a beleegyezésed"
 
 #: static/js/account.js:237
-msgid "Text for missing accaptance of term of use"
-msgstr ""
+msgid "For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!"
+msgstr "A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az elfogadáshoz kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
 
 #: static/js/account.js:280
 #, fuzzy
@@ -386,6 +386,9 @@ msgid ""
 "%d references, %d flags, %d previous untranslateds, %d previous untranslated-"
 "plurals"
 msgstr ""
+"Parsed: %d msgids, %d msgids-plurals, %d msgstrs, %d obsoletes, %d contexts, "
+"%d references, %d flags, %d previous untranslateds, %d previous untranslated-"
+"plurals"
 
 #: static/js/script.js:89
 msgid "Server message"
@@ -473,8 +476,8 @@ msgid "The secret is missing"
 msgstr "Hiányzik a hitelesítő eszköz"
 
 #: static/js/script.js:589
-msgid "Plase accept the consequences with checking the checkbox"
-msgstr ""
+msgid "To accept the terms please mark the checkbox!"
+msgstr "Ha fiók törlésével kapcsolatos figyelmeztetést tudomásul vétted, kattints a jelölőnégyzetbe!"
 
 #: static/js/account.js:170 static/js/account.js:465
 msgid "SSL certificate"
@@ -483,27 +486,17 @@ msgstr "SSL hitelesítéssel"
 msgid "hashgiven"
 msgstr "van Titkos Kód"
 
-msgid "Server failure"
-msgstr "Szerverhiba"
-
-msgid ""
-"For the registration you have to accept the terms of use. To accept the "
-"terms of use please mark the checkbox!"
-msgstr ""
-"A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az "
-"elfogadáshoz kattints a Regisztrálok gomb felett található a "
-"jelölőnégyzetbe"
-
 msgid "false"
 msgstr "nincs"
 
 msgid "true"
 msgstr "igen"
 
-msgid "To accept the terms please mark the checkbox!"
-msgstr ""
-"A fiók törlésével kapcsolatos figyelmeztetés tudomásul vételéhez kattints "
-"a jelölőnégyzetbe!"
-
 msgid "application needs to sign in with your ADA account"
 msgstr "alkalmazás használatához jelentkezz be ADA fiókoddal!"
+
+msgid "Facebook error"
+msgstr "Facebook hiba"
+
+msgid "Can not login with your Facebook account"
+msgstr "Nem sikerült adatot kapni a Facebook-tól"
