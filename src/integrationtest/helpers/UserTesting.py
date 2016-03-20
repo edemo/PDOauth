@@ -4,6 +4,7 @@ from test.helpers.CryptoTestUtil import CryptoTestUtil
 from test.helpers.RandomUtil import RandomUtil
 from test.helpers.UserUtil import UserUtil
 from test import config
+from pdoauth.forms import credErr
 
 app.extensions["mail"].suppress = True
 
@@ -55,3 +56,7 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
         with app.test_client() as client:
             resp = client.post("/v1/oauth2/token", data=self.tokenParams)
         return resp
+
+    def assertCredentialErrorresponse(self, resp):
+        return self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+
