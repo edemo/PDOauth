@@ -103,7 +103,7 @@ class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
             self.controller.doRegistration,
             [form],
             400,
-            ["there is already a user with this email"])
+            ["There is already a user with that email"])
 
     @test
     def when_a_hash_is_registered_which_is_already_used_by_another_user___the_user_is_notified_about_the_fact(self):
