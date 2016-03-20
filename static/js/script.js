@@ -150,6 +150,7 @@ console.log(theUri)
 		</table>';
 		document.getElementById("me_Applications").innerHTML=applist;
 	}
+	
 	PageScript.prototype.setAppCanEmailMe=function(app){
 		var value=document.getElementById("application-allow-email-me-"+app).checked
 		var csrf_token = self.getCookie('csrf');
@@ -651,6 +652,12 @@ console.log("logoutCallback")
 		}
 	}
 
+	PageScript.prototype.sslLogin = function() {
+		var xmlhttp = this.ajaxBase( self.initCallback )
+		xmlhttp.open( "GET", self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login' , true);
+		xmlhttp.send();
+	}
+	
 }
 pageScript = new PageScript();
 

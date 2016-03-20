@@ -222,26 +222,6 @@
 		else return true
 	}
 
-	PageScript.prototype.sslLoginCallback=function(status, response) {
-		console.log("sslCallback")
-		if (status!=200)  {
-			var msg
-			if (data=JSON.parse(response)) {
-				msg=self.processErrors(data)
-			}
-			else {
-				msg.title=_("Server error occured")
-				msg.error=response
-			}
-			self.displayMsg(msg)
-			return false
-		}
-		else { 
-			self.get_me; 
-			return true
-		}
-	}		
-	
 	PageScript.prototype.doRegister=function() {
 		if ( document.getElementById("registration-keygenform_confirmField").checked ) {
 			console.log(self.registrationMethode)
@@ -266,15 +246,7 @@
 		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
 	}
 
-	PageScript.prototype.sslLogin = function() {
-//		document.getElementById("SSL").onload=function(){if (self.sslCallback()) win.location.reload()}
-	//	document.getElementById("SSL").src=
-		console.log('ssl_login')
-		var xmlhttp = this.ajaxBase( self.initCallback )
-		xmlhttp.open( "GET", self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login' , true);
-		xmlhttp.send();
-	}
-	
+
 //Getdigest functions	
 	PageScript.prototype.normalizeString = function(val) {
 		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";

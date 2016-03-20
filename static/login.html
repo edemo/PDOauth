@@ -9,7 +9,7 @@
 			<link rel="gettext" lang="hu" href="locale/hu.po" />
 		<style>
 
-#register_section, #popup {
+#register_section, #popup, #accept_section, #message-container {
 display:none;
 }
 .wrapper {
@@ -47,7 +47,7 @@ width:2.5rem
 	</head>
 
 	<body onload="pageScript.main()" >
-    <div id="msg"></div>
+
 <!-- Message container and popup -->
 			<div id="popup" class="popup-frame">
 				<div class="popup">
@@ -67,57 +67,53 @@ width:2.5rem
 <!-- Tb container -->
 				
 		<div class="wrapper">
-		<div id="greatings"><p></p></div>
+			<div id="greatings"><p></p></div>
 <!-- Tab for login -->
-		<div id="message-container">
-		</div>
-		<div class="func" id="login_section">
-			<section class="container_">
-				<h3 class="title">Bejelentkezés</h3>
-			</section>
-			<section class="container_ form ">
-				<button class="social" title="Facebook bejelentkezés" type="button" onclick="facebook.fblogin()">
-					<i class="fa fa-facebook"></i>
-				</button>
-				<button class="social inactive" title="Google+ bejlentkezés" type="button" onclick="">
-					<i class="fa fa-google-plus"></i>
-				</button>
-                <button class="social inactive" title="Twitter bejlentkezés" type="button" onclick="">
-					<i class="fa fa-twitter"></i>
-				</button>
-                <button class="social inactive" title="Pinterest bejlentkezés" type="button" onclick="">
-					<i class="fa fa-github"></i>
-				</button>
-                <button class="social ssl" title="Bejlentkezés SSL kulccsal" type="button" onclick="javascript:pageScript.sslLogin()">SSL</button>
-				<p></p>
-				<form id="loginform" action="" method="post" name="login">
-					<fieldset>
-						<!-- label for="LoginForm_username_input">Felhasználónév vagy email cím:</label -->
-						<div class="form-level">
-						<input class="input-block" name="username" type="text" placeholder="Felhasználónév vagy email cím" id="LoginForm_email_input">
-						<span class="form-icon_"><i class="fa fa-envelope-o"></i>/<i class="fa fa-user"></i></span>
-						</div>
-						<div class="form-level">
-						<!-- label for="LoginForm_password_input">Jelszó:</label -->
-						<input class="input-block" type="password" placeholder="*********" id="LoginForm_password_input">
-						<span class="form-icon_"><i class=" fa fa-lock"></i></span>
-						</div>
-						<button type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
-					</fieldset>
-				</form>
-			</section>
-			<section class="container_">
-				<h4>Elfelejtettem a jelszavam</h4>
-				<p>A gombra kattintva kezdeményezhető a jelszó cseréje.</br>
-				A <b>fent megadott</b> email címedre küldünk egy aktíváló kódot. A levélben található linkre kattintva visszajutsz ide, és megadhatsz egy új jelszót.</p>
-			</section>
-			<section class="container_ form">
-				<form>
-					<button type="button" onclick="javascript:pageScript.InitiatePasswordReset('LoginForm')">Új jelszót szeretnék</button>
-				</form>
-			</section>
-			<a name="feltetelek"></a>
-		</div>
+			<div class="func" id="message-container"></div>
+			<div class="func" id="login_section">
+				<section class="container_">
+					<h3 class="title">Bejelentkezés</h3>
+				</section>
+				<section class="container_ form ">
+					<button class="social" title="Facebook bejelentkezés" type="button" onclick="facebook.fblogin()">
+						<i class="fa fa-facebook"></i>
+					</button>
+					<button class="social inactive" title="Google+ bejlentkezés" type="button" onclick="">
+						<i class="fa fa-google-plus"></i>
+					</button>
+					<button class="social inactive" title="Twitter bejlentkezés" type="button" onclick="">
+						<i class="fa fa-twitter"></i>
+					</button>
+					<button class="social inactive" title="Pinterest bejlentkezés" type="button" onclick="">
+						<i class="fa fa-github"></i>
+					</button>
+					<button class="social ssl" title="Bejlentkezés SSL kulccsal" type="button" onclick="javascript:pageScript.sslLogin()">SSL</button>
+					<p></p>
+					<form id="loginform" action="" method="post" name="login">
+						<fieldset>
+							<div class="form-level">
+							<input class="input-block" name="username" type="text" placeholder="Felhasználónév vagy email cím" id="LoginForm_email_input">
+							<span class="form-icon_"><i class="fa fa-envelope-o"></i>/<i class="fa fa-user"></i></span>
+							</div>
+							<div class="form-level">
+							<input class="input-block" type="password" placeholder="*********" id="LoginForm_password_input">
+							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
+							</div>
+							<button type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
+						</fieldset>
+					</form>
+				</section>
+				<section class="container_">
+					<h4>Elfelejtettem a jelszavam</h4>
+					<p>A gombra kattintva kezdeményezhető a jelszó cseréje.</br>
+					A <b>fent megadott</b> email címedre küldünk egy aktíváló kódot. A levélben található linkre kattintva visszajutsz ide, és megadhatsz egy új jelszót.</p>
+				</section>
+				<section class="container_ form">
+					<form>
+						<button type="button" onclick="javascript:pageScript.InitiatePasswordReset('LoginForm')">Új jelszót szeretnék</button>
+					</form>
+				</section>
+			</div>
 <!-- End login section -->
 
 		<div class="func" id="accept_section">
@@ -134,11 +130,11 @@ width:2.5rem
 				<li>alkalmazás specifikus email cím</li>
 				<li>nyilvános igazolásaim</li>
 				<li>
-					<input type="checkbox" id="registration-keygenform_confirmField" name="accept" value="accept">
+					<input type="checkbox" id="confirmForm_allowEmailToMe" name="accept" value="accept" checked>
 					<label class="label-inline" for="confirmField">Az alkalmazás felveheti velem a kapcsolatot</li>
 			</ul>
-			<button>igen</button>
-			<button>nem</button>
+			<button type="button" onclick="javascript:pageScript.acceptGivingTheData(true)">igen</button>
+			<button type="button" onclick="javascript:pageScript.acceptGivingTheData(false)">nem</button>
 			</section>
 		</div>
 		

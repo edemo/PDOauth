@@ -756,3 +756,6 @@ msgstr "Jelszó"
 
 msgid "identifier"
 msgstr "Felhasználó azonosító"
+
+msgid "application will get the data below:"
+msgstr "alkalmazás az alábbi adatokat fogja megkapni:"

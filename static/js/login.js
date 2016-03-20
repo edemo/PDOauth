@@ -41,32 +41,28 @@
 	
 	PageScript.prototype.init_=function(){
 		console.log("init_ called")
-		if (self.QueryString.section && self.QueryString.section=="email_verification"){
-			if (self.QueryString.secret) self.verifyEmail()
-		}
 		self.ajaxget("/v1/users/me", self.initCallback)		
 	}
 	
 	PageScript.prototype.initCallback = function(status, text) {
 		var data = JSON.parse(text);
 		if (status != 200) {
-			if (self.appDomain) {
-			document.getElementById("greatings").innerHTML='\
-		<p>\
-			<b>'+self.appDomain+'</b> '+_("application needs to sign in with your ADA account")+'\
-		</p>'
-			}
 			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		}
 		else {
 			self.ajaxget('/v1/getmyapps',self.myappsCallback)
 			self.isLoggedIn=true
-		}	
-	}
-	
-	PageScript.prototype.displayMsg = function( msg ) {
-		var text=(msg.error)?msg.error:""+(msg.success)?msg.success:""
-		document.getElementById("message-container").innerHTML=text
+		}
+		if (self.appDomain) {
+			var greatingsMessage=(status==200)?
+				"application will get the data below:":
+				"application needs to sign in with your ADA account";
+			document.getElementById("greatings").innerHTML='\
+		<p>\
+			<b>'+self.appDomain+'</b> '+_(greatingsMessage)+'\
+		</p>'
+		}
+
 	}
 	
 	PageScript.prototype.myappsCallback= function (status,text) {
@@ -75,7 +71,10 @@
 			self.myApps=JSON.parse(text)
 			var a=false;
 			for (i=0; i<self.myApps.length; i++){
-				if (self.myApps[i].hostname==self.appDomain && !self.myApps[i].username) a=true
+				if (self.myApps[i].hostname==self.appDomain) {
+					self.currentAppId=[i]
+					if (!self.myApps[i].username) a=true
+				}
 			}
 			if ( self.page=="login" && a){
 				self.showSection("accept_section")
@@ -91,21 +90,45 @@
 			self.displayMsg(self.processErrors(text))
 		}
 	}
+	
+	PageScript.prototype.displayMsg = function( msg ) {
+		var text=(msg.error)?msg.error:""+(msg.success)?msg.success:""
+		document.getElementById("message-container").innerHTML=text
+		self.unhideSection("message-container")
+	}
+	
 	PageScript.prototype.showSection=function(section) {
 		self.hideAllSection()
-		self.showSection(section)
+		self.unhideSection(section)
 	}
 	PageScript.prototype.unhideSection=function(section) {
 		document.getElementById(section).style.display="block";
 	}
+	
 	PageScript.prototype.hideAllSection=function(){
-		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
+		var a=document.getElementsByClassName("func");
+		console.log(a);
+		[].forEach.call( a, function (e) { e.style.display="none"; } );
 	}
 	
-	PageScript.prototype.sslLogin = function() {
-		document.getElementById("SSL").onload=function(){win.location.reload()}
-		document.getElementById("SSL").src=self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login'
+	PageScript.prototype.acceptGivingTheData=function(flag){
+		if (flag){
+			self.setAppCanEmailMe(self.currentAppId)
+		}
+		else {
+			self.doRedirect(document.referrer)
+		}
 	}
-
+	
+	PageScript.prototype.setAppCanEmailMe=function(app){
+		var value=document.getElementById("confirmForm_allowEmailToMe").checked
+		var csrf_token = self.getCookie('csrf');
+	    text= {
+			canemail: value,
+	    	appname: self.myApps[self.currentAppId].name,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost("/v1/setappcanemail", text, self.myCallback)
+	}
 }()
 )
