@@ -19,14 +19,15 @@ class Config(object):
     COOKIE_DOMAIN = "local.sso.edemokraciagep.org"
     SSL_LOGIN_BASE_URL = "https://local.sso.edemokraciagep.org:8889"
     SSL_LOGOUT_URL = "https://local.sso.edemokraciagep.org:8889/ssl_logout/"
-    START_URL = "{0}/static/login.html".format(BASE_URL)
+    START_URL = "{0}/static/fiokom.html".format(BASE_URL)
+    LOGIN_URL = "{0}/static/login.html".format(BASE_URL)
     PASSWORD_RESET_FORM_URL = START_URL
     FACEBOOK_APP_ID = "1632759003625536"
     FACEBOOK_APP_SECRET = "2698fa37973500db2ae740f6c0005601"
     CA_CERTIFICATE_FILE = absolutePathForEnd2EndResource("server.crt")
     CA_KEY_FILE = absolutePathForEnd2EndResource("server.key")
     SERVICE_NAME = "eDemokrácia SSO"
-    DEREGISTRATION_URL = START_URL
+    DEREGISTRATION_URL = LOGIN_URL
     EMAIL_DOMAIN = "local.sso.edemokraciagep.org"
 #    ANCHOR_URL = "https://anchor.edemokraciagep.org/"
     ANCHOR_URL = "https://local.sso.edemokraciagep.org:8890/"

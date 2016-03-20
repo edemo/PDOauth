@@ -66,7 +66,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(400, resp.status_code)
             credAfter = Credential.get("password", username)
             self.assertTrue(credAfter is None)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def the_added_credential_should_contain_valid_credentialType(self):
@@ -87,7 +87,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(400, resp.status_code)
             credAfter = Credential.get("password", username)
             self.assertTrue(credAfter is None)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def the_added_credential_should_contain_identifier(self):
@@ -263,7 +263,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             }
             resp = client.post(config.BASE_URL + "/v1/remove_credential", data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def you_should_give_valid_credentialType_for_credential_deletion(self):
@@ -277,7 +277,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             }
             resp = client.post(config.BASE_URL + "/v1/remove_credential", data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def you_should_give_the_identifier_for_credential_deletion(self):

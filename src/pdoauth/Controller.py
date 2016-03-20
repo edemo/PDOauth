@@ -56,7 +56,7 @@ class Controller(
     def redirectIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
             resp = self.error_response([authenticationNeeded], 302)
-            startUrl = self.app.config.get("START_URL")
+            startUrl = self.app.config.get("LOGIN_URL")
             nextArg = {"next":self.getRequest().url}
             uri = "{1}?{0}".format(urlencode(nextArg), startUrl)
             resp.headers['Location'] = uri
@@ -386,6 +386,7 @@ class Controller(
             BASE_URL = self.getConfig('BASE_URL'),
             BACKEND_PATH = self.getConfig('BACKEND_PATH'),
             START_URL = self.getConfig('START_URL'),
+            LOGIN_URL = self.getConfig('LOGIN_URL'),
             PASSWORD_RESET_FORM_URL = self.getConfig('PASSWORD_RESET_FORM_URL'),
             SSL_LOGIN_BASE_URL = self.getConfig('SSL_LOGIN_BASE_URL'),
             SSL_LOGOUT_URL = self.getConfig('SSL_LOGOUT_URL'),

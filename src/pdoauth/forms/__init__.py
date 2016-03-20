@@ -4,11 +4,11 @@ from flask.globals import session
 from wtforms.validators import ValidationError
 from pdoauth.Messages import credErrString, passwordShouldContainLowercase, passwordShouldContainUppercase,\
     passwordShouldContainDigit, secretShouldContainLowercase,\
-    secretShouldContainDigit
+    secretShouldContainDigit, credentialTypeString
 
 credentialTypes = ['password', 'facebook', 'certificate']
 
-credErr = '"{0} {1}."'.format(credErrString, ", ".join(credentialTypes))
+credErr = '"{0}: {1}: {2}."'.format(credentialTypeString,credErrString, ", ".join(credentialTypes))
 
 def csrfCheck(self, field):
     if not session.has_key('csrf_token'):
