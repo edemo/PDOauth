@@ -35,7 +35,7 @@ class EmailHandling(object):
         except SMTPException as e:
             if rmuser:
                 user.rm()
-            raise ReportedError(exceptionSendingEmail.format(e))  # @UndefinedVariable
+            raise ReportedError("{0}: {1}".format(exceptionSendingEmail,e))  # @UndefinedVariable
 
     def sendPasswordVerificationEmail(self, user):
         secret=unicode(uuid4())
