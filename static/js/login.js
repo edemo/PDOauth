@@ -48,21 +48,38 @@
 		var data = JSON.parse(text);
 		if (status != 200) {
 			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+			self.greating("The %s application needs to sign in with your ADA account")
+			self.unhideSection("login_section")
 		}
 		else {
-			self.ajaxget('/v1/getmyapps',self.myappsCallback)
 			self.isLoggedIn=true
+			self.hideAllSection()
+			if (self.neededAssurances) {
+				var a=false;
+				[].forEach.call(self.neededAssurances, function(assurance){
+					if ( !data.assurances.hasOwnProperty(assurance)) {
+						console.log(assurance)
+						self.unhideSection(assurance+"_section")
+						a=true;
+					}
+				})
+				if (!a) {
+					self.greating("The %s application will get the data below:")
+					self.unhideSection("accept_section")
+					self.ajaxget('/v1/getmyapps',self.myappsCallback)
+				}
+				else {
+					self.greating("The %s application needs you have the assurances below")
+				}
+			}
+			else self.ajaxget('/v1/getmyapps',self.myappsCallback)
 		}
+	}
+				
+	PageScript.prototype.greating = function (message){
 		if (self.appDomain) {
-			var greatingsMessage=(status==200)?
-				"application will get the data below:":
-				"application needs to sign in with your ADA account";
-			document.getElementById("greatings").innerHTML='\
-		<p>\
-			<b>'+self.appDomain+'</b> '+_(greatingsMessage)+'\
-		</p>'
+			document.getElementById("greatings").innerHTML=_(message, '<b>'+self.appDomain+'</b>')
 		}
-
 	}
 	
 	PageScript.prototype.myappsCallback= function (status,text) {
@@ -107,7 +124,6 @@
 	
 	PageScript.prototype.hideAllSection=function(){
 		var a=document.getElementsByClassName("func");
-		console.log(a);
 		[].forEach.call( a, function (e) { e.style.display="none"; } );
 	}
 	
@@ -129,6 +145,37 @@
 	    	csrf_token: csrf_token
 	    }
 	    self.ajaxpost("/v1/setappcanemail", text, self.myCallback)
+	}
+	
+	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
+		b=document.getElementById(buttonId)
+		if (b) {
+			b.className="";
+			b.onclick=onclickFunc
+		}
+	}
+	
+	PageScript.prototype.changeHash = function() {
+	    digest = document.getElementById("login_digest_input").value;
+	    csrf_token = self.getCookie('csrf');
+	    text= {
+	    	digest: digest,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost("/v1/users/me/update_hash", text, self.changeHashCallback)
+	}	
+	
+	PageScript.prototype.changeHashCallback = function(status,text) {
+		switch (status) {
+			case 500:
+				self.displayMsg({title:_("Server failure"),error:text})
+				break;
+			case 200:
+				win.location.reload()
+			default:
+				var data = JSON.parse(text);
+				self.displayMsg(self.processErrors(data));	
+		}
 	}
 }()
 )

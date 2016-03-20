@@ -9,7 +9,7 @@
 			<link rel="gettext" lang="hu" href="locale/hu.po" />
 		<style>
 
-#register_section, #popup, #accept_section, #message-container {
+div.func, #popup, #login_code-generation-input, #SSL {
 display:none;
 }
 .wrapper {
@@ -26,7 +26,7 @@ margin-right: -0.3rem;
 .form-icon_ {
 margin-left: -2.5rem;
 }
-fieldset, #message-container {
+fieldset, #message-container, .bordered {
 border: 1px solid #444;
 border-radius: 4px;
 padding: 0.5rem;
@@ -37,13 +37,41 @@ color:red;
 border-color:red;
 width:100%;
 }
+#greatings{
+color:white;
+background-color:gray;
+border-radius:5px;
+width:100%;
+padding: 1rem;
+text-align: center;
+box-sizing: border-box;
+margin-bottom: 1rem;
+}
 button, input {
 height: 1.7rem;
 }
-button.social{
-width:2.5rem
+button {
+    cursor: pointer;
 }
-		</style>
+button.social{
+	width:2.5rem
+}
+button.inactive{
+	cursor: default;
+	background-color: #E8E4E3;
+    border: .1rem solid #D8CCCB;
+}
+.reg_a {
+display:inline-block;
+float:right;
+}
+h3.title, .digest, .center{
+width:100%;
+}
+.center {
+text-align:center;
+}
+	</style>
 	</head>
 
 	<body onload="pageScript.main()" >
@@ -72,7 +100,11 @@ width:2.5rem
 			<div class="func" id="message-container"></div>
 			<div class="func" id="login_section">
 				<section class="container_">
-					<h3 class="title">Bejelentkezés</h3>
+					<h3 class="title">Bejelentkezés
+						<span class="reg_a">
+							<a href="#" onclick="javascript:pageScript.showSection('register_section')">Regisztrálok</a>
+						</span>
+					</h3>
 				</section>
 				<section class="container_ form ">
 					<button class="social" title="Facebook bejelentkezés" type="button" onclick="facebook.fblogin()">
@@ -116,6 +148,45 @@ width:2.5rem
 			</div>
 <!-- End login section -->
 
+			<div class="func" id="hashgiven_section">
+				<section class="container_">
+					<h3>Elkészítem a Titkos Kódom</h3>
+				<div class="digest-input">
+					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
+							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
+							melyekből az eredeti adatok nem nyerhetők vissza. 
+							A Titkos Kódot magad is előállíthatod 
+							, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
+				</div>
+						<p class="center">
+							<button class="button" type="button" onclick="javascript:document.getElementById('login_code-generation-input').style.display='block'">Készítsük el itt</button>
+							<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
+								<button class="button" type="button" onclick="javascript:document.getElementById('login_code-generation-input').style.display='none'">Elkészítem magam</button>
+							</a>
+						</p>
+						<div id="login_code-generation-input" class="form">
+							<div class="bordered">
+								<label for="input">Személyi azonosító:</label>
+								<input type="text" placeholder="" id="login_predigest_input" onkeyup="pageScript.convert_mothername('login_predigest')">
+								<label for="mothername">Anyja neve:</label>
+								<input type="text" placeholder="" id="login_predigest_mothername" onkeyup="pageScript.convert_mothername('login_predigest')">
+								<p class="center">
+									<button type="button" onclick="pageScript.digestGetter('login').getDigest()">A kód előállítása</button>
+								</p>
+								<div class="monitor" id="login_predigest_monitor"></div>
+							</div>
+						</div>
+						<div >
+						<p><label for="digest">Titkos Kód:</label></p>
+						<textarea data-autoresize class="digest" name="digest" type="text" id="login_digest_input" onkeyup="pageScript.activateButton('code-generation-input_button',pageScript.changeHash)"></textarea>
+						</div>
+					</form>
+					<div class="center">
+						<p class="center"><button id="code-generation-input_button" type="button" class="inactive">Titkos Kód mentése</button><p>
+					</div>
+				</section>
+			</div>
+			
 		<div class="func" id="accept_section">
 			<section class="container_">
 				<h3 class="title">Hozzájárulás</h3>
@@ -137,15 +208,16 @@ width:2.5rem
 			<button type="button" onclick="javascript:pageScript.acceptGivingTheData(false)">nem</button>
 			</section>
 		</div>
-		
-		<div class="func" id="getdigest_section">
-		</div>
 
 <!-- Regisztration -->
-		<div class="func" id="register_section">
-			<section class="container_">
-				<h3 class="title">Regisztráció</h3>
-			</section>
+			<div class="func" id="register_section">
+				<section class="container_">
+					<h3 class="title">Regisztráció
+						<span class="reg_a">
+							<a href="#" onclick="javascript:pageScript.showSection('login_section')">Bejelentkezek</a>
+						</span>
+					</h3>
+				</section>
 			<section class="container_ ">
 			
 				<H4>Válaszd ki hogyan akarsz regisztrálni</h4>
@@ -187,38 +259,10 @@ width:2.5rem
 							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
 						</div>
 					</div>
-				<h4>Elkészítem a Titkos Kódom</h4>
-				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni.</p>
-				<div class="digest-input">
-					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
-							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
-							melyekből az eredeti adatok nem nyerhetők vissza. 
-							A Titkos Kódot magad is előállíthatod 
-							, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
-				</div>
-						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
-						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
-							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
-						</a>
-						<div id="code-generation-input" class="form">
-							<div class="bordered">
-								<label for="input">Személyi azonosító:</label>
-								<input type="text" placeholder="" id="registration-keygenform_predigest_input" onkeyup="pageScript.convert_mothername('registration-keygenform_predigest')">
-								<label for="mothername">Anyja neve:</label>
-								<input type="text" placeholder="" id="registration-keygenform_predigest_mothername" onkeyup="pageScript.convert_mothername('registration-keygenform_predigest')">
-								<button type="button" onclick="pageScript.digestGetter('registration-keygenform').getDigest()">A kód előállítása</button>
-								<div class="monitor" id="registration-keygenform_predigest_monitor"></div>
-							</div>
-						</div>
-						<div style="margin-top:40px">
-						<label for="digest">Titkos Kód:</label>
-						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
-						</div>
-					</form>
 					<input type="checkbox" id="registration-keygenform_confirmField" name="accept" value="accept">
 					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az 
 					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
-
+				
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
 			</section>
 		</div>
