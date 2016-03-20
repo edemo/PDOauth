@@ -733,11 +733,26 @@ msgstr ""
 "Ha fiók törlésével kapcsolatos figyelmeztetést tudomásul vétted, kattints a "
 "jelölőnégyzetbe!"
 
-#~ msgid "hashgiven"
-#~ msgstr "van Titkos Kód"
+msgid "hashgiven"
+msgstr "van Titkos Kód"
 
-#~ msgid "false"
-#~ msgstr "nincs"
+msgid "false"
+msgstr "nincs"
 
-#~ msgid "true"
-#~ msgstr "igen"
+msgid "true"
+msgstr "igen"
+
+msgid "pubkey"
+msgstr "Publikus kulcs"
+
+msgid "email"
+msgstr "E-mail cím"
+
+msgid "secret"
+msgstr "Aktíváló kód"
+
+msgid "password"
+msgstr "Jelszó"
+
+msgid "identifier"
+msgstr "Felhasználó azonosító"
