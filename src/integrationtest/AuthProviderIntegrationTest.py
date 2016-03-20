@@ -57,7 +57,7 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
                     uriBase, query_string=queryString, base_url=baseUrl)
             theUri = baseUrl + uriBase
             targetUri = "{0}?{1}".format(
-                app.config.get('START_URL'),
+                app.config.get('LOGIN_URL'),
                 urlencode({"next": "{0}?{1}".format(theUri, queryString)})
             )
         self.assertEquals(resp.status_code, 302)
