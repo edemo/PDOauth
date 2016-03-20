@@ -177,17 +177,20 @@
 
 	PageScript.prototype.register = function(credentialType) {
 		//
-	    var identifier = document.getElementById("registration-form_identifier_input").value;
+	    var identifier = (document.getElementById("registration-form_identifier_input").value=="")?
+			document.getElementById("registration-form_email_input").value:
+			document.getElementById("registration-form_identifier_input").value;
 	    var secret = document.getElementById("registration-form_secret_input").value;
 	    var email = document.getElementById("registration-form_email_input").value;
 	    var digest = document.getElementById("registration-keygenform_digest_input").value;
-	    text= {
+	    var text= {
 	    	credentialType: credentialType,
 	    	identifier: identifier,
 	    	secret: secret,
 	    	email: email,
 	    	digest: digest
 	    }
+		console.log(text)
 	    this.ajaxpost("/v1/register", text, this.meCallback)
 	}
 	

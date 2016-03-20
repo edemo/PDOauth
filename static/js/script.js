@@ -86,6 +86,13 @@ console.log(theUri)
 
 	PageScript.prototype.processErrors = function(data) {
 			var msg = {};
+			var translateError =function(e){
+				var a=e.split(': ');
+				for(var i=0; i<a.length; i++){
+					a[i]=_(a[i])
+				}
+				return a.join(': ')
+			}
 			if (data.message) {
 				msg.title=_("Server message");
 				msg.message="<p>"+_(data.message)+"</p>";
@@ -96,15 +103,15 @@ console.log(theUri)
 			}
 			if (data.errors) {
 				msg.title = _("Error message")
-				msg.error = "<ul>";
+				msg.error = '<ul class="disced">';
 				errs = data.errors;
 				console.log(errs)
 				if (typeof(errs)!='string') {
 					[].forEach.call(errs, function(e) {
-						msg.error += "<li>"+ _(e) +"</li>" ;})
+						msg.error += "<li>"+ translateError(e) +"</li>" ;})
 				}
 				else {
-					msg.error += "<li>"+ _(errs) +"</li>";
+					msg.error += "<li>"+ translateError(errs) +"</li>";
 				}
 				msg.error += "</ul>";
 			}
