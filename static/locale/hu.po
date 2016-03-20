@@ -160,7 +160,7 @@ msgstr "Nem vagy bejelentkezve"
 
 #: src/pdoauth/Messages.py:39 src/pdoauth/Messages.py:40
 msgid "bad deregistration secret"
-msgstr "Hibás jelszó"
+msgstr "A fiók törlésének lehetősége már nem érvényes. Ha törölni akarod a fiókod próbáld meg mégegyszer!"
 
 #: src/pdoauth/Messages.py:40 src/pdoauth/Messages.py:41
 msgid "you are deregistered"
