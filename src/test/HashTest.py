@@ -7,6 +7,7 @@ from pdoauth.ReportedError import ReportedError
 from pdoauth.models.User import User
 from pdoauth.models.AppMap import AppMap
 from pdoauth.models.Application import Application
+from pdoauth.Messages import sameHash
 
 class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
     @test
@@ -22,6 +23,28 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         assurances = Assurance.getByUser(user)
         self.assertTrue("test" in assurances.keys())
         self.assertTrue("hashgiven" in assurances.keys())
+
+    @test
+    def if_hash_is_same_a_message_is_sent(self):
+        digest = self.createHash()
+        user = self.createUserWithCredentials().user
+        data = dict(
+            digest=digest
+            )
+        self.controller.checkAndUpdateHash(FakeForm(data), user)
+        resp = self.controller.checkAndUpdateHash(FakeForm(data), user)
+        self.assertEqual(sameHash, resp['message'])
+
+    @test
+    def if_hash_is_same_but_empty__no_message(self):
+        digest = ""
+        user = self.createUserWithCredentials().user
+        data = dict(
+            digest=digest
+            )
+        self.controller.checkAndUpdateHash(FakeForm(data), user)
+        resp = self.controller.checkAndUpdateHash(FakeForm(data), user)
+        self.assertEqual(dict(), resp)
         
     @test
     def in_hash_collision_if_the_other_user_is_hand_assured_the_user_is_deleted(self):
