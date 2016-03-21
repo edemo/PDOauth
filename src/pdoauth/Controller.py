@@ -148,7 +148,7 @@ class Controller(
         digest = form.digest.data
         if digest == '':
             digest = None
-        if user.hash == digest:
+        if (digest is not None) and (user.hash == digest):
             additionalInfo["message"] = sameHash
         else:
             self.checkHashInOtherUsers(user, additionalInfo, digest)
