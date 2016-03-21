@@ -20,11 +20,11 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:4 src/pdoauth/Messages.py:5
 msgid "There is already a user with that email"
-msgstr ""
+msgstr "Ez az email cím foglalt "
 
 #: src/pdoauth/Messages.py:5 src/pdoauth/Messages.py:6
 msgid "There is already a user with that username"
-msgstr ""
+msgstr "Ez a felhasználó név már foglalt"
 
 #: src/pdoauth/Messages.py:6 src/pdoauth/Messages.py:7
 msgid "password should contain lowercase"
