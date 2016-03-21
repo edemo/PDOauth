@@ -91,9 +91,15 @@ class Controller(
         for assurance in assurances:
             assurance.rm()
 
+
+    def removeAppMaps(self, user):
+        for appmap in AppMap.getForUser(user):
+            appmap.rm()
+
     def removeUser(self, user):
         self.removeCredentials(user)
         self.removeAssurances(user)
+        self.removeAppMaps(user)
         user.rm()
 
     def doDeregistrationDoit(self, form):
