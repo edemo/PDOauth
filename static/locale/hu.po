@@ -708,12 +708,8 @@ msgid "Server failure"
 msgstr "Szerverhiba"
 
 #: static/js/account.js:263
-msgid ""
-"For the registration you have to accept the terms of use. To accept the "
-"terms of use please mark the checkbox!"
-msgstr ""
-"A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az "
-"elfogadáshoz kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
+msgid "For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!"
+msgstr "A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az elfogadáshoz kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
 
 #: static/js/fb.js:96 static/js/fb.js:132 static/js/fb.js:145
 msgid "Facebook error"
@@ -749,7 +745,7 @@ msgid "email"
 msgstr "E-mail cím"
 
 msgid "secret"
-msgstr "Aktíváló kód"
+msgstr "titokmező"
 
 msgid "password"
 msgstr "Jelszó"

@@ -58,10 +58,10 @@
 				var a=false;
 				[].forEach.call(self.neededAssurances, function(assurance){
 					if ( !data.assurances.hasOwnProperty(assurance)) {
-						console.log(assurance)
-						self.unhideSection(assurance+"_section")
+						self.unhideAssuranceSection(assurance,false)
 						a=true;
 					}
+					else self.unhideAssuranceSection(assurance,true)
 				})
 				if (!a) {
 					self.greating("The %s application will get the data below:")
@@ -74,6 +74,13 @@
 			}
 			else self.ajaxget('/v1/getmyapps',self.myappsCallback)
 		}
+	}
+	PageScript.prototype.unhideAssuranceSection= function(assurance,given) {
+		document.getElementById(assurance+"_ok").style.display=(given)?"block":"none"
+		document.getElementById(assurance+"_button").style.display=(given)?"none":"block"
+		document.getElementById(assurance+"_header").style.display="block"
+		document.getElementById(assurance+"_input").style.display="none"
+		self.unhideSection(assurance+"_section")
 	}
 				
 	PageScript.prototype.greating = function (message){
@@ -145,7 +152,7 @@
 	    	appname: self.myApps[self.currentAppId].name,
 	    	csrf_token: csrf_token
 	    }
-	    self.ajaxpost("/v1/setappcanemail", text, self.myCallback)
+	    self.ajaxpost("/v1/setappcanemail", text, self.init_)
 	}
 	
 	PageScript.prototype.textareaOnKeyup = function(textarea) {

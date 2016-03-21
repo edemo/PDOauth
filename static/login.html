@@ -79,11 +79,15 @@ margin: 0.5rem;
 .input_form{
 background-color:beige;
 }
-button.right{
+.right{
 float:right;
 }
 .justify {
 text-align:justify;
+}
+label.label-inline {
+	float: right;
+    width: 90%;
 }
 	</style>
 	</head>
@@ -115,9 +119,7 @@ text-align:justify;
 			<div class="func" id="login_section">
 				<section class="container_">
 					<h3 class="title">Bejelentkezés
-						<span class="reg_a">
-							<a href="#" onclick="javascript:pageScript.showSection('register_section')">Regisztrálok</a>
-						</span>
+						<button class="right" type="button" onclick="javascript:pageScript.showSection('register_section')">Regisztrálok</button>
 					</h3>
 				</section>
 				<section class="container_ form ">
@@ -165,7 +167,8 @@ text-align:justify;
 			<div class="func" id="emailverification_section">
 				<section class="container_ form_header" id="emailverification_header">
 					<b>"Ellenőrzőtt email" iagzolás</b>
-					<button class="right" type="button" onclick="pageScript.showForm('emailverification')">Szeretnék</button>
+					<span id="emailverification_ok" class="right"><i class="fa fa-check"></i></span>
+					<button id="emailverification_button" class="right" type="button" onclick="pageScript.showForm('emailverification')">Szeretnék</button>
 				</section>
 				<section class="container_ input_form" id="emailverification_input">
 					<h3>Email cím ellenőrzés</h3>
@@ -183,7 +186,8 @@ text-align:justify;
 			<div class="func" id="hashgiven_section">
 				<section class="container_ form_header" id="hashgiven_header">
 					<b>"Titkos Kód" igazolás</b>
-					<button class="right" type="button" onclick="pageScript.showForm('hashgiven')">A kód előállítása</button>
+					<span id="hashgiven_ok" class="right"><i class="fa fa-check"></i></span>
+					<button id="hashgiven_button" class="right" type="button" onclick="pageScript.showForm('hashgiven')">A kód előállítása</button>
 				</section>
 				<section class="container_ input_form" id="hashgiven_input">
 					<h3>Elkészítem a Titkos Kódom</h3>
@@ -246,15 +250,13 @@ text-align:justify;
 			<div class="func" id="register_section">
 				<section class="container_">
 					<h3 class="title">Regisztráció
-						<span class="reg_a">
-							<a href="#" onclick="javascript:pageScript.showSection('login_section')">Bejelentkezek</a>
-						</span>
+						<button class="right" type="button"  onclick="javascript:pageScript.showSection('login_section')">Bejelentkezek</button>
 					</h3>
 				</section>
 			<section class="container_ ">
 			
 				<H4>Válaszd ki hogyan akarsz regisztrálni</h4>
-				<div id="registration-form-method-selector" class="form">
+				<p id="registration-form-method-selector" class="center">
 					<button id="registration-form-method-selector-pw" class="social active" title="felhasználónév + jelszó" type="button" onclick="javascript:pageScript.setRegistrationMethode('pw')">
 						<i class="fa fa-tag"></i>
 					</button>
@@ -271,10 +273,10 @@ text-align:justify;
 						<i class="fa fa-github"></i>
 					</button>
 					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
-				</div>
-				<h4 id="registration-form-method-heading" >Regisztráció email cím és/vagy felhasználónév és jelszó segítségével</h4>
-				<form target="ssl" id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
-					<div class="form">
+				</p>
+				<form target="SSL" id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
+					<fieldset>
+						<p id="registration-form-method-heading" class="center"><b>Regisztráció felhasználónév és jelszó segítségével</b></p>
 						<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
 						<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked>
 						<div id="registration-form-email-container" class="form-level">
@@ -282,26 +284,33 @@ text-align:justify;
 							<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
 						</div>
 						<div id="registration-form-username-container" class="form-level">
-							<input class="input-block" name="username" type="text" placeholder="Felhasználónév (nem kötelező)" id="registration-form_identifier_input">
+							<input title="A felhasználónév minimum 4 max 255 karakter hosszú" class="input-block" name="username" type="text" placeholder="Felhasználónév (nem kötelező)" id="registration-form_identifier_input">
 							<span class="form-icon_"><i class=" fa fa-user"></i></span>
-							<p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
 						</div>
 						<div id="registration-form-password-container" class="form-level">
-							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
+							<input title="A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is." class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
-							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
 						</div>
-					</div>
-					<input type="checkbox" id="registration-keygenform_confirmField" name="accept" value="accept">
-					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az 
-					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
+					</fieldset>
+				</form>
+					<p>
+						<input type="checkbox" id="registration-keygenform_confirmField" name="accept" value="accept">
+						<label class="label-inline" for="confirmField">
+							A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az 
+							<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom
+						</label>
+					</p>
+				<div  class="center">
+					<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
+				</div>
 				
-				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
 			</section>
 		</div>
-		<iframe id="SSL"></iframe>
-	
 <!-- End registration section -->
+
+		<iframe id="SSL" name="SSL"></iframe>
+		
+		
 			<script type="text/javascript" src="js/jquery.js"></script>
 			<script type="text/javascript" src="js/gettext.js"></script>
 			<script type='text/javascript' src="js/script.js"></script>

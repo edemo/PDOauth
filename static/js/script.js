@@ -262,8 +262,11 @@ console.log(theUri)
 				if( self.page=="account"){
 					self.get_me()
 				}
+				if( self.page=="login"){
+					self.init_();
+				}
 			}
-			self.displayMsg(msg);
+			else self.displayMsg(msg);
 		}
 		else console.log(text);
 	}
@@ -653,6 +656,7 @@ console.log("logoutCallback")
 	}
 
 	PageScript.prototype.sslLogin = function() {
+		console.log("sslLogin")
 		var xmlhttp = this.ajaxBase( self.initCallback )
 		xmlhttp.open( "GET", self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login' , true);
 		xmlhttp.send();
@@ -753,6 +757,103 @@ console.log("logoutCallback")
 		var outputElement = document.getElementById( formName+"_monitor");
 		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
 	}	
+	PageScript.prototype.setRegistrationMethode=function(methode){
+		self.registrationMethode=methode;
+		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) { e.className=e.className.replace(" active",""); } );
+		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
+		var heading
+		switch (methode) {
+			case "pw":
+				heading=_("email address and/or username / password")
+				document.getElementById("registration-form-password-container").style.display="block";
+				document.getElementById("registration-form-username-container").style.display="block";
+			break;
+			case "fb":
+				heading=_("my facebook account")
+				document.getElementById("registration-form-password-container").style.display="none";
+				document.getElementById("registration-form-username-container").style.display="none";
+				facebook.fbregister()
+			break;
+			case "ssl":
+				heading=_("SSL certificate")
+				document.getElementById("registration-form-password-container").style.display="none";
+				document.getElementById("registration-form-username-container").style.display="none";
+			break;
+		}
+		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
+	}
+
+	PageScript.prototype.register = function(credentialType) {
+		//
+	    var identifier = (document.getElementById("registration-form_identifier_input").value=="")?
+			document.getElementById("registration-form_email_input").value:
+			document.getElementById("registration-form_identifier_input").value;
+	    var secret = document.getElementById("registration-form_secret_input").value;
+	    var email = document.getElementById("registration-form_email_input").value;
+		var d;
+		var digest =(d=document.getElementById("registration-keygenform_digest_input"))?d.value:"";
+	    var text= {
+	    	credentialType: credentialType,
+	    	identifier: identifier,
+	    	secret: secret,
+	    	email: email,
+	    	digest: digest
+	    }
+		console.log(text)
+	    this.ajaxpost("/v1/register", text, this.meCallback)
+	}
+	
+	PageScript.prototype.onSslRegister= function(){
+		console.log('ssl_onSslRegister')
+		if (self.sslCallback()) self.sslLogin();
+	}
+
+	PageScript.prototype.addSslCredentialCallback= function(){
+		if (self.sslCallback()) self.getMe();
+	}
+
+	PageScript.prototype.doRegister=function() {
+		if ( document.getElementById("registration-keygenform_confirmField").checked ) {
+			console.log(self.registrationMethode)
+			switch (self.registrationMethode) {
+				case "pw":
+					console.log('pw')
+					self.register("password")
+					break;
+				case "fb":
+					console.log('fb')
+					self.register("facebook")
+					break;
+				case "ssl":
+					console.log('ssl_register')
+					document.getElementById("SSL").onload=self.onSslRegister;
+					document.getElementById('registration-keygenform').submit();
+					console.log("after submit")
+//					self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
+					break;
+			}
+		}
+		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
+	}
+	
+	PageScript.prototype.sslCallback=function() {
+		console.log("sslCallback")
+		response=document.getElementById("SSL").contentDocument.body.innerHTML
+		console.log(response)
+		if (response!="")  {
+			var msg
+			if (data=JSON.parse(response)) {
+				msg=self.processErrors(data)
+			}
+			else {
+				msg.title=_("Server failure")
+				msg.error=response
+			}
+			self.displayMsg(msg)
+			return false
+		}
+		else return true
+	}
 
 }
 pageScript = new PageScript();
