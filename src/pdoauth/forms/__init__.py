@@ -18,7 +18,7 @@ def csrfCheck(self, field):
         raise ValidationError('csrf validation error')
 
 def optional(validator):
-    return [validators.Optional()] + validator
+    return [validators.Optional(strip_whitespace=False)] + validator
 
 
 credentialValidator = [validators.AnyOf(values=credentialTypes)]
