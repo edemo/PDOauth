@@ -757,5 +757,17 @@ msgstr "Jelszó"
 msgid "identifier"
 msgstr "Felhasználó azonosító"
 
+msgid "digest"
+msgstr "Titkos Kód"
+
 msgid "application will get the data below:"
 msgstr "alkalmazás az alábbi adatokat fogja megkapni:"
+
+msgid "The %s application needs to sign in with your ADA account"
+msgstr "A %s alkalmazás használatához ADA bejelentkezés szükséges"
+
+msgid "The %s application will get the data below:"
+msgstr "A %s alkalmazás az alábbi adatokat fogja megkapni:"
+
+msgid "The %s application needs you have the assurances below"
+msgstr "A %s alkalmazás használatának feltétele, hogy rendelkezz az alábbi igazolásokkal:"

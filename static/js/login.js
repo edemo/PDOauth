@@ -118,6 +118,7 @@
 		self.hideAllSection()
 		self.unhideSection(section)
 	}
+	
 	PageScript.prototype.unhideSection=function(section) {
 		document.getElementById(section).style.display="block";
 	}
@@ -147,6 +148,21 @@
 	    self.ajaxpost("/v1/setappcanemail", text, self.myCallback)
 	}
 	
+	PageScript.prototype.textareaOnKeyup = function(textarea) {
+		if (textarea) {
+			if (textarea.value.length==128) self.activateButton('code-generation-input_button',self.changeHash);
+			else self.deactivateButton('code-generation-input_button');
+		}
+	}
+
+	PageScript.prototype.deactivateButton = function(buttonId) {
+		b=document.getElementById(buttonId)
+		if (b) {
+			b.className+=" inactive";
+			b.onclick=function(){return}
+		}		
+	}
+	
 	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
 		b=document.getElementById(buttonId)
 		if (b) {
@@ -171,11 +187,23 @@
 				self.displayMsg({title:_("Server failure"),error:text})
 				break;
 			case 200:
-				win.location.reload()
+				self.hideAllSection()
+				self.init_()
 			default:
 				var data = JSON.parse(text);
 				self.displayMsg(self.processErrors(data));	
 		}
 	}
+	
+	PageScript.prototype.showForm = function(formName) {
+		document.getElementById(formName+"_header").style.display="none";
+		document.getElementById(formName+"_input").style.display="block";
+	}
+	
+	PageScript.prototype.hideForm = function(formName) {
+		document.getElementById(formName+"_header").style.display="block";
+		document.getElementById(formName+"_input").style.display="none";
+	}
+	
 }()
 )

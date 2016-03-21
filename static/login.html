@@ -9,7 +9,7 @@
 			<link rel="gettext" lang="hu" href="locale/hu.po" />
 		<style>
 
-div.func, #popup, #login_code-generation-input, #SSL {
+div.func, #popup, #login_code-generation-input, #SSL, section.input_form {
 display:none;
 }
 .wrapper {
@@ -26,7 +26,7 @@ margin-right: -0.3rem;
 .form-icon_ {
 margin-left: -2.5rem;
 }
-fieldset, #message-container, .bordered {
+fieldset, #message-container, .bordered, .input_form {
 border: 1px solid #444;
 border-radius: 4px;
 padding: 0.5rem;
@@ -70,6 +70,20 @@ width:100%;
 }
 .center {
 text-align:center;
+}
+section.form_header {
+border-bottom: 1px solid gray;
+height: 1.9rem;
+margin: 0.5rem;
+}
+.input_form{
+background-color:beige;
+}
+button.right{
+float:right;
+}
+.justify {
+text-align:justify;
 }
 	</style>
 	</head>
@@ -137,8 +151,9 @@ text-align:center;
 				</section>
 				<section class="container_">
 					<h4>Elfelejtettem a jelszavam</h4>
-					<p>A gombra kattintva kezdeményezhető a jelszó cseréje.</br>
-					A <b>fent megadott</b> email címedre küldünk egy aktíváló kódot. A levélben található linkre kattintva visszajutsz ide, és megadhatsz egy új jelszót.</p>
+					<p class="justify">A gombra kattintva kezdeményezhető a jelszó cseréje.</br>
+					A <b>fent megadott</b> email címedre küldünk egy aktíváló kódot. Kattints a levélben található linkre, ahol majd megadhatsz egy új jelszót.
+					</p>
 				</section>
 				<section class="container_ form">
 					<form>
@@ -147,23 +162,40 @@ text-align:center;
 				</section>
 			</div>
 <!-- End login section -->
-
+			<div class="func" id="emailverification_section">
+				<section class="container_ form_header" id="emailverification_header">
+					<b>"Ellenőrzőtt email" iagzolás</b>
+					<button class="right" type="button" onclick="pageScript.showForm('emailverification')">Szeretnék</button>
+				</section>
+				<section class="container_ input_form" id="emailverification_input">
+					<h3>Email cím ellenőrzés</h3>
+					<p>Ha ezt most látod, akkor:</p>
+						<ul class="disked">
+							<li>vagy nem kattintottál még a regisztrációkor neked küldött levelünkben lévő ellenőrző linkre</li>
+							<li>vagy felfüggesztettük az email címedet, mert visszapattannak onnan a levelek</li>
+						</ul>
+					<p class="center">
+						<button id="emailverification-input_button" type="button" onclick="pageScript.init_()">Frissít</button>
+						<button id="emailverification-cancel_button" type="button" onclick="pageScript.hideForm('emailverification')">Mégse</button>
+					<p>
+				</section>
+			</div>
 			<div class="func" id="hashgiven_section">
-				<section class="container_">
+				<section class="container_ form_header" id="hashgiven_header">
+					<b>"Titkos Kód" igazolás</b>
+					<button class="right" type="button" onclick="pageScript.showForm('hashgiven')">A kód előállítása</button>
+				</section>
+				<section class="container_ input_form" id="hashgiven_input">
 					<h3>Elkészítem a Titkos Kódom</h3>
-				<div class="digest-input">
-					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
-							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
-							melyekből az eredeti adatok nem nyerhetők vissza. 
-							A Titkos Kódot magad is előállíthatod 
-							, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
-				</div>
-						<p class="center">
-							<button class="button" type="button" onclick="javascript:document.getElementById('login_code-generation-input').style.display='block'">Készítsük el itt</button>
-							<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
-								<button class="button" type="button" onclick="javascript:document.getElementById('login_code-generation-input').style.display='none'">Elkészítem magam</button>
-							</a>
-						</p>
+					<p class="justify">
+						A Titkos Kódot magad is előállíthatod, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe, vagy elkészíthetjuk itt.
+					</p>
+					<p class="center">
+						<button class="button" type="button" onclick="javascript:document.getElementById('login_code-generation-input').style.display='block'">Készítsük el itt</button>
+						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
+							<button class="button" type="button" onclick="javascript:document.getElementById('login_code-generation-input').style.display='none'">Elkészítem magam</button>
+						</a>
+					</p>
 						<div id="login_code-generation-input" class="form">
 							<div class="bordered">
 								<label for="input">Személyi azonosító:</label>
@@ -178,31 +210,32 @@ text-align:center;
 						</div>
 						<div >
 						<p><label for="digest">Titkos Kód:</label></p>
-						<textarea data-autoresize class="digest" name="digest" type="text" id="login_digest_input" onkeyup="pageScript.activateButton('code-generation-input_button',pageScript.changeHash)"></textarea>
+						<textarea data-autoresize class="digest" name="digest" type="text" id="login_digest_input" onkeyup="pageScript.textareaOnKeyup(this)"></textarea>
 						</div>
-					</form>
 					<div class="center">
-						<p class="center"><button id="code-generation-input_button" type="button" class="inactive">Titkos Kód mentése</button><p>
+						<p class="center">
+							<button id="code-generation-input_button" type="button" class="inactive">Titkos Kód mentése</button>
+							<button id="code-generation-cancel_button" type="button" onclick="pageScript.hideForm('hashgiven')">Mégse</button>
+						<p>
 					</div>
 				</section>
 			</div>
 			
-		<div class="func" id="accept_section">
-			<section class="container_">
-				<h3 class="title">Hozzájárulás</h3>
-
-			
-			<p>Az elfogadom gombra kattintva hozzájárulok ahhoz, hogy a 
-				<span class="app" id="accept-section_app"></span> 
-				alkalmazás megkapja az alábbi adataimat:
-			</p>
+			<div class="func" id="accept_section">
+				<section class="container_">
+					<h3 class="title">Hozzájárulás</h3>
+						<p class="justify">Az elfogadom gombra kattintva hozzájárulok ahhoz, hogy a 
+							<span class="app" id="accept-section_app"></span> 
+							alkalmazás megkapja az alábbi adataimat:
+						</p>
 			<ul>
 				<li>alkalmazás specifikus felhasznállóazonosító</li>
 				<li>alkalmazás specifikus email cím</li>
 				<li>nyilvános igazolásaim</li>
 				<li>
 					<input type="checkbox" id="confirmForm_allowEmailToMe" name="accept" value="accept" checked>
-					<label class="label-inline" for="confirmField">Az alkalmazás felveheti velem a kapcsolatot</li>
+					<label class="label-inline" for="confirmField">Az alkalmazás felveheti velem a kapcsolatot</label>
+				</li>
 			</ul>
 			<button type="button" onclick="javascript:pageScript.acceptGivingTheData(true)">igen</button>
 			<button type="button" onclick="javascript:pageScript.acceptGivingTheData(false)">nem</button>

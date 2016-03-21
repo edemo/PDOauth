@@ -700,7 +700,7 @@ console.log("logoutCallback")
 					document.getElementById(formName+"_code-generation-input").style.display="none"
 				}
 				if (formName=="login"){
-					self.activateButton("login_digest_input", self.changeHash)
+					self.activateButton("code-generation-input_button", self.changeHash)
 				}
 			}
 			else {
