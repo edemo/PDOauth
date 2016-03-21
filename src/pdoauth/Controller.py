@@ -139,7 +139,7 @@ class Controller(
         anotherUsers = User.getByDigest(digest)
         if anotherUsers:
             if self.isAnyoneHandAssurredOf(anotherUsers):
-                user.rm()
+                self.removeUser(user)
                 raise ReportedError([anotherUserUsingYourHash], 400)
             additionalInfo["message"] = anotherUserUsingYourHash
 
