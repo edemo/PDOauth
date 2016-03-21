@@ -17,4 +17,4 @@ class RedirectionTest(IntegrationTest, RandomUtil):
         resp = app.test_client().get(uri)
         self.assertEquals(302,resp.status_code)
         self.assertTrue(resp.headers.has_key('Content-Length'))
-        self.assertTrue(resp.headers['Location'].startswith(config.BASE_URL + "/static/login.html"))
+        self.assertTrue(resp.headers['Location'].startswith(config.Config.LOGIN_URL))

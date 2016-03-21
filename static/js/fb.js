@@ -64,9 +64,26 @@ function FaceBook(pageScript) {
 	FaceBook.prototype.add_fb_credential = function() {
 		var self = this;
 		if (! self.loggedIn ) {
-			FB.login(function(response) {
-			    self.credentialCallBack(response);
-			  });
+//			FB.login(function(response) {
+//			    self.credentialCallBack(response);
+			self.getFbUser(self.credentialCallBack)
+		};
+	}
+	
+	FaceBook.prototype.getFbUser  =function(callback) {
+		var self=this
+		FB.getLoginStatus( function(resp){self.statusChangeCallback(resp,callback)})
+	}
+	
+	FaceBook.prototype.statusChangeCallback = function(response,callback) {
+		console.log(response)
+		if (response.status === 'connected') {
+			callback(response)
+		} else if (response.status === 'not_authorized') {
+			console.log('not_authorised')
+		} else {
+			console.log('login')
+			FB.login(function(resp){callback(resp)})
 		}
 	}
   
@@ -76,16 +93,19 @@ function FaceBook(pageScript) {
 	    	self.loggedIn = response;
 	    	self.pageScript.login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
 	    } else {
-	    	self.doc.getElementById('message').innerHTML = '<p class="warning">A facebook bejelentkezés sikertelen</p>';
+	    	self.pageScript.displayMsg({title:_("Facebook error"),error:_('Can not login with your Facebook account')});
 	    } 
 	  }
 
 	FaceBook.prototype.fblogin = function() {
 		var self = this;
+		console.log('fb_login')
 		if (! self.loggedIn ) {
-			FB.login(function(response) {
-			    self.loginCallBack(response);
-			  });
+			self.getFbUser(self.loginCallBack)
+//			FB.login(function(response) {
+//				console.log(response)
+//			    self.loginCallBack(response);
+//			});
 		}
 	}
 
@@ -109,13 +129,12 @@ function FaceBook(pageScript) {
 				self.pageScript.register_with_facebook(response.authResponse.userID, response.authResponse.accessToken, email)
 		    });
 		} else {
-		  self.pageScript.displayMsg({ title:"Facebook", error:'Facebook login is unsuccessful' })
+		  self.pageScript.displayMsg({ title:_("Facebook error"), error:'Facebook login is unsuccessful' })
 		} 
 	}
 	
 	FaceBook.prototype.registerCallBack = function(response) {
 		var self = this;
-	    self.loggedIn = response;
 		if (response.status === 'connected') {
 			FB.api('/me', function(response2) {
 				document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
@@ -123,19 +142,13 @@ function FaceBook(pageScript) {
 				document.getElementById("registration-form_email_input").value=response2.email;
 		    });
 		} else {
-		  self.pageScript.displayMsg({ title:"Facebook hiba", error:'Nem sikerült adatot kapni a Facebook-tól' })
+		  self.pageScript.displayMsg({ title:_("Facebook error"), error:_('Can not login with your Facebook account') })
 		} 
 	}
 	
 	FaceBook.prototype.fbregister = function() {
 		var self = this;
-		if (! self.loggedIn ) {
-			FB.login(function(response) {
-			    self.registerCallBack(response);
-			  }, {scope: 'email'});
-		} else {
-			self.registerCallBack(self.loggedIn);
-		}
+		self.getFbUser(self.registerCallBack);
 	}
 
 facebook = new FaceBook(pageScript)

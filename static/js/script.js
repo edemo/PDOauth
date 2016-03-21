@@ -1,9 +1,19 @@
-QueryStringFunc = function (win) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
+function PageScript(test) {
+	var self = this
+	test=test || { debug: false, uribase: "" }
+	this.debug=test.debug
+	win = test.win || window;
+    self.uribase=test.uribase;
+	this.isLoggedIn=false;
+	this.isAssurer=false;
+	this.registrationMethode="pw";
+
+PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   // This function is anonymous, is executed immediately and 
   // the return value is assigned to QueryString!
   win=win || window 			// to be testable
   var query_string = {};
-  var query = win.location.search.substring(1);
+  var query = search.substring(1);
   var vars = query.split("&");
   for (var i=0;i<vars.length;i++) {
     var pair = vars[i].split("=");
@@ -22,16 +32,7 @@ QueryStringFunc = function (win) { //http://stackoverflow.com/questions/979975/h
     return query_string;
 };
 
-function PageScript(test) {
-	var self = this
-	test=test || { debug: false, uribase: "" }
-	this.debug=test.debug
-	win = test.win || window;
-    this.QueryString = QueryStringFunc();
-    self.uribase=test.uribase;
-	this.isLoggedIn=false;
-	this.isAssurer=false;
-	this.registrationMethode="pw";
+    this.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.getThis=function() {
 		return this
@@ -246,7 +247,6 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.meCallback = function(status, text) {
-
 		if (status!=500) {
 			var data = JSON.parse(text);
 			var msg = self.processErrors(data)
@@ -286,6 +286,7 @@ console.log(theUri)
 	}
 	
 	PageScript.prototype.initCallback = function(status, text) {
+		console.log("initcallback "+status)
 		var data = JSON.parse(text);
 		if (status != 200) {
 //			self.menuHandler("login").menuActivate();
@@ -395,10 +396,9 @@ console.log("logoutCallback")
 			var loc = '' +win.location
 			var newloc = loc.replace(self.QueryString.uris.SSL_LOGIN_BASE_URL, self.QueryString.uris.BASE_URL)
 			if (newloc!=loc) self.doRedirect( newloc );
-			self.isLoggedIn=false
-			self.refreshTheNavbar();
-			if (self.page=="account") {
-				self.displayTheSection("login");
+			else {
+				self.isLoggedIn=false
+				self.doRedirect( self.QueryString.uris.START_URL+"?"+text )
 			}
 		}
 	}
@@ -438,24 +438,11 @@ console.log("logoutCallback")
 	    }
 	    return "";
 	} 
-	
 
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 		}
-
-	
-	PageScript.prototype.hashCallback = function(status,text) {
-		if (status==200) { 
-			self.displayMsg({title:_("Congratulation!"), success:_("The Secret Hash has been constructed successfully."),
-							callback: self.refreshMe });
-		}
-		else {
-			var data = JSON.parse(text);
-			self.displayMsg(self.processErrors(data));	
-		}
-	}
-	
+/*	
 	PageScript.prototype.refreshMe = function() {
 		self.ajaxget( '/v1/users/me', self.refreshCallback );
 	} 
@@ -465,6 +452,7 @@ console.log("logoutCallback")
 		if (status==200) document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);	
 		else self.displayMsg(self.processErrors(data));
 	}
+*/
 
 	PageScript.prototype.loadjs = function(src) {
 	    var fileref=document.createElement('script')
@@ -554,22 +542,6 @@ console.log("logoutCallback")
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.addCredential = function(credentialType, identifier, secret) {
-		var data = {
-			credentialType: credentialType,
-			identifier: identifier,
-			secret: secret
-		}
-		self.ajaxpost("/v1/add_credential", data, self.addCredentialCallback)
-	}
-
-	PageScript.prototype.addCredentialCallback = function(status,text){
-		var data = JSON.parse(text);
-		if (status != 200) self.displayMsg({error:_(data.errors),title:_("Error message")});
-		else self.get_me;
-	}
-
-
 	PageScript.prototype.doDeregister = function() {
 		if ( document.getElementById("accept_deregister").checked ) {
 			if ( self.QueryString.secret ) {
@@ -586,7 +558,7 @@ console.log("logoutCallback")
 		}
 		else {
 			var msg={ 	title:_("Error message"),
-						error:_("Plase accept the consequences with checking the checkbox")}
+						error:_("To accept the terms please mark the checkbox!")}
 			self.displayMsg(msg);	
 		}			
 	}

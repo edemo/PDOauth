@@ -44,3 +44,7 @@ class UriServiceTest(PDUnitTest, ResponseInfo):
     @test
     def the_uri_service_gives_back_the_BACKEND_PATH(self):
         self._checkUri('BACKEND_PATH')
+
+    @test
+    def the_uri_service_gives_back_the_LOGIN_URL(self):
+        self._checkUri('LOGIN_URL')

@@ -172,7 +172,7 @@
 				document.getElementById("registration-form-username-container").style.display="none";
 			break;
 		}
-		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with {0}",heading);
+		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
 	}
 
 	PageScript.prototype.register = function(credentialType) {
@@ -188,10 +188,11 @@
 	    	email: email,
 	    	digest: digest
 	    }
-	    this.ajaxpost("/v1/register", text, this.myCallback)
+	    this.ajaxpost("/v1/register", text, this.meCallback)
 	}
 	
-	PageScript.prototype.sslRegisterCallback= function(){
+	PageScript.prototype.onSslRegister= function(){
+		console.log('ssl_onSslRegister')
 		if (self.sslCallback()) self.sslLogin();
 	}
 
@@ -202,7 +203,25 @@
 	PageScript.prototype.sslCallback=function() {
 		console.log("sslCallback")
 		response=document.getElementById("SSL").contentDocument.body.innerHTML
+		console.log(response)
 		if (response!="")  {
+			var msg
+			if (data=JSON.parse(response)) {
+				msg=self.processErrors(data)
+			}
+			else {
+				msg.title=_("Server failure")
+				msg.error=response
+			}
+			self.displayMsg(msg)
+			return false
+		}
+		else return true
+	}
+
+	PageScript.prototype.sslLoginCallback=function(status, response) {
+		console.log("sslCallback")
+		if (status!=200)  {
 			var msg
 			if (data=JSON.parse(response)) {
 				msg=self.processErrors(data)
@@ -214,32 +233,43 @@
 			self.displayMsg(msg)
 			return false
 		}
-		else return true
-	}	
+		else { 
+			self.get_me; 
+			return true
+		}
+	}		
 	
 	PageScript.prototype.doRegister=function() {
 		if ( document.getElementById("registration-keygenform_confirmField").checked ) {
+			console.log(self.registrationMethode)
 			switch (self.registrationMethode) {
 				case "pw":
+					console.log('pw')
 					self.register("password")
 					break;
 				case "fb":
+					console.log('fb')
 					self.register("facebook")
 					break;
 				case "ssl":
-					document.getElementById("SSL").onload=self.sslRegisterCallback;
+					console.log('ssl_register')
+					document.getElementById("SSL").onload=self.onSslRegister;
 					document.getElementById('registration-keygenform').submit();
 					console.log("after submit")
 //					self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
 					break;
 			}
 		}
-		else self.displayMsg({title:_("Acceptance is missing"),error:_("Text for missing accaptance of term of use")})
+		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
 	}
 
 	PageScript.prototype.sslLogin = function() {
-		document.getElementById("SSL").onload=function(){win.location.reload()}
-		document.getElementById("SSL").src=self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login'
+//		document.getElementById("SSL").onload=function(){if (self.sslCallback()) win.location.reload()}
+	//	document.getElementById("SSL").src=
+		console.log('ssl_login')
+		var xmlhttp = this.ajaxBase( self.initCallback )
+		xmlhttp.open( "GET", self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login' , true);
+		xmlhttp.send();
 	}
 	
 //Getdigest functions	
@@ -281,6 +311,10 @@
 					messageBox.className="given"
 					document.getElementById("assurance-giving_submit-button").className=""
 				}
+				else {
+					document.getElementById(formName+"_code-generation-input").style.display="none"
+				}
+				
 			} else {
 				self.displayMsg({title:_("Error message"),error: text});
 				diegestInput.value =""
@@ -370,6 +404,22 @@
 **    Adding credencials      **
 ********************************
 */	
+
+	PageScript.prototype.addCredential = function(credentialType, identifier, secret) {
+		var data = {
+			credentialType: credentialType,
+			identifier: identifier,
+			secret: secret
+		}
+		self.ajaxpost("/v1/add_credential", data, self.addCredentialCallback)
+	}
+
+	PageScript.prototype.addCredentialCallback = function(status,text){
+		var data = JSON.parse(text);
+		if (status != 200) self.displayMsg(self.processErrors(data));
+		else self.get_me();
+	}
+	
 	PageScript.prototype.addSslCredential = function(data) {
 		document.getElementById("SSL").onload=self.addSslCredentialCallback;
 		document.getElementById('add-ssl-credential-keygenform').submit();
@@ -388,8 +438,23 @@
 	    	digest: digest,
 	    	csrf_token: csrf_token
 	    }
-	    self.ajaxpost("/v1/users/me/update_hash", text, this.hashCallback)
+	    self.ajaxpost("/v1/users/me/update_hash", text, self.changeHashCallback)
 	}	
+	
+	PageScript.prototype.changeHashCallback = function(status,text) {
+		switch (status) {
+			case 500:
+				self.displayMsg({title:_("Server failure"),error:text})
+				break;
+			case 200:
+				self.get_me()
+				self.viewChangeHashContainer()
+			default:
+				var data = JSON.parse(text);
+				self.displayMsg(self.processErrors(data));	
+		}
+	}
+	
 	PageScript.prototype.viewChangeHashForm = function() {
 		document.getElementById("change-hash-form_hash-changer").style.display="table-row";
 		document.getElementById("change-hash-form_hash-container").style.display="none";
@@ -417,19 +482,19 @@
 				
 		var result = '\
 		<table>\
-			<tr>\
+			<trid="change-email-form_container>\
 				<td nowrap><b>'+_('Email address:')+'</b></td>\
 				<td id="email-change">\
-					<input type="text" value="'+data.email+'" id="userdata_editform_email_input">\
+					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off">\
 				</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a></td>\
+				<td class="button-container"><a onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a></td>\
 			</tr>\
 			<tr id="change-hash-form_hash-container">\
 				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
 				<td>\
 					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
-				<td>\
+				<td class="button-container">\
 					<a onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
 				</td>\
 			</tr>\
@@ -453,15 +518,15 @@
 						</div>\
 					</div>\
 				</td>\
-				<td>\
-					<a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+				<td class="button-container">\
+					<a onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
 					<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
 				</td>\
 			</tr>\
 		</table>\
 		<h4><b>'+_("My credentials")+'</b></h4>\
 		<table class="multiheader">';
-		var c={	pw:[_("Password"),"password","pageScript.addPasswordCredential()",true],
+		var c={	pw:[_("Password"),"password","document.getElementById('change-email_form').style.display='table-row'",true],
 				ssl:[_("SSL certificate"),"certificate","pageScript.addSslCredential()",true],
 				fb:["Facebook","facebook","facebook.add_fb_credential()",false],
 				git:["Github","github","pageScript.addGithubCredential()",false],
@@ -470,13 +535,30 @@
 				};
 		var credential_list = ""
 		for( var i in c) {
-			credential_list = ""
+			credential_list=(i=='pw')?'\
+			<tr id="change-email_form">\
+				<td>\
+					<div class="form-level">\
+					<input class="input-block" name="username" type="text" autocapitalize="off" placeholder="Felhasználónév" id="AddPasswordCredentialForm_username_input">\
+					<span class="form-icon_"><i class="fa fa-envelope-o"></i>/<i class="fa fa-user"></i></span>\
+					</div>\
+					<div class="form-level">\
+					<input class="input-block" type="password" placeholder="*********" id="AddPasswordCredentialForm_password_input">\
+					<span class="form-icon_"><i class=" fa fa-lock"></i></span>\
+					</div>\
+				</td>\
+				<td class="button-container">\
+					<a onclick="javascript:pageScript.addPasswordCredential()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a onclick="javascript:document.getElementById(\'change-email_form\').style.display=\'none\'" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
+				</td>\
+			</tr>\
+			':"";
 			for(var j=0; j<data.credentials.length; j++) {
 				if (data.credentials[j].credentialType==c[i][1]) {
-					credential_list += '\
+				credential_list += '\
 			<tr>\
-				<td  ><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
-				<td>\
+				<td><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
+				<td class="button-container">\
 					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\''+c[i][1]+'\')" class="btn btn_ fa fa-trash"></a>\
 				</td>\
 			</tr>'
@@ -499,5 +581,28 @@
 		</table>'+sslForm
 		return result;		
 	}	
+/*
+******************************************
+** Cryptographic for ssl authentication **
+******************************************
+
+/***** Settings tab *****/	
+	PageScript.prototype.createAndSaveAKeyPair=function() {
+		return window.crypto.subtle.generateKey(
+			{
+				name: "RSASSA-PKCS1-v1_5",
+				modulusLength: 2048,
+				publicExponent: new Uint8Array([1, 0, 1]), // 24 bit representation of 65537
+				hash: {name: "SHA-256"}
+			},
+			false, // can extract it later if we want
+			["sign", "verify"]).then(
+				function(key) {
+					keyPair = key;
+					console.log(key);
+					return key;
+				}).catch(function(a){console.log(a)});
+	}
+
 }()
 )

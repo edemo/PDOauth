@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long
+# encoding: utf-8
 from test.helpers.PDUnitTest import PDUnitTest, test
 from test.helpers.UserUtil import UserUtil
 from test.helpers.FakeInterFace import FakeInterface, FakeMail, FakeApp
@@ -7,7 +8,6 @@ from pdoauth.models.Credential import Credential
 from pdoauth.models import User
 from smtplib import SMTPException
 from pdoauth.ReportedError import ReportedError
-from pdoauth.Messages import exceptionSendingEmail
 
 exampleBody = """Dear abc@xyz.uw,
 This is a reset email.
@@ -148,7 +148,7 @@ class EmailTest(PDUnitTest, UserUtil):
             self.failingMailer.sendDeregisterMail(self.user)
         
         self.assertEqual(context.exception.descriptor,
-            exceptionSendingEmail.format('some smtp error'))  # @UndefinedVariable
+            "Nem sikerült elküldeni a levelet: some smtp error")
         
     def tearDown(self):
         self.mailer.mail.outbox=list()

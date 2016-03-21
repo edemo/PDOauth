@@ -255,7 +255,7 @@ table.multiheader th{
 #registration-form-method-selector button.active{
 	background-color:black;
 }
-#code-generation-input, #change-hash-form_code-generation-input{
+#code-generation-input, #change-hash-form_code-generation-input, #change-email_form{
 	display: none;
 }
 .bordered {
@@ -311,6 +311,10 @@ ul.disced {
 #assurance-giving_message.given{
 	color: darkgreen;
 	border: 1px solid darkgreen;
+}
+td.button-container, td.button-container {
+    width: 10%;
+    min-width: 12rem;
 }
 		</style>
 	</head>
@@ -475,7 +479,8 @@ ul.disced {
 						</div>
 					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
-				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni.</p>
+				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni. A kód elkészítéséhez szükséged lesz a 
+						Személyi azonosítódra is, melyet a lakcímkártyád hátoldalán találhatsz meg. </p>
 				<div class="digest-input">
 					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
 							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
@@ -507,6 +512,7 @@ ul.disced {
 					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
 
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
+				<button type="button" onclick="javascript:pageScript.createAndSaveAKeyPair()">Keygen</button>
 			</section>
 		</div>
 

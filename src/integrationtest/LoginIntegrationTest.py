@@ -48,9 +48,7 @@ class LoginIntegrationTest(IntegrationTest, UserTesting):
             data = dict(identifier="userid", secret=self.mkRandomPassword(), credentialType='incorrect')
             resp = client.post(config.BASE_URL + '/v1/login', data=data)
             self.assertEquals(resp.status_code, 403)
-            text = self.getResponseText(resp)
-            expected = '{{"errors": [{0}]}}'.format(credErr)
-            self.assertEquals(text,expected)
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def user_can_authenticate_on_login_page(self):
