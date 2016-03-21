@@ -22,6 +22,8 @@ class Decorators(WebInterface, Responses):
             resp = func(*args, **kwargs)
         except ReportedError as e:
             resp = self.errorReport(e)
+        if not getattr(resp,"headers",False):
+            resp = self.make_response(resp, 200)
         resp.headers['Cache-Control'] = "no-cache, no-store, must-revalidate"
         resp.headers['Pragma'] = "no-cache"
         resp.headers['Expires'] = "0"
