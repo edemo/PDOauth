@@ -91,9 +91,15 @@ class Controller(
         for assurance in assurances:
             assurance.rm()
 
+
+    def removeAppMaps(self, user):
+        for appmap in AppMap.getForUser(user):
+            appmap.rm()
+
     def removeUser(self, user):
         self.removeCredentials(user)
         self.removeAssurances(user)
+        self.removeAppMaps(user)
         user.rm()
 
     def doDeregistrationDoit(self, form):
@@ -133,7 +139,7 @@ class Controller(
         anotherUsers = User.getByDigest(digest)
         if anotherUsers:
             if self.isAnyoneHandAssurredOf(anotherUsers):
-                user.rm()
+                self.removeUser(user)
                 raise ReportedError([anotherUserUsingYourHash], 400)
             additionalInfo["message"] = anotherUserUsingYourHash
 

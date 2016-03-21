@@ -6,8 +6,11 @@ from test.helpers.UserUtil import UserUtil
 from test.helpers.FakeInterFace import FakeForm
 import time
 from uuid import uuid4
+from pdoauth.models.Application import Application
+from pdoauth.models.AppMap import AppMap
 
 class DeregisterTest(PDUnitTest, UserUtil):
+    addAppMapToUser=False
 
     def _doDeregister(self):
         data = dict(csrf_token=self.controller.getCSRF())
@@ -42,6 +45,9 @@ class DeregisterTest(PDUnitTest, UserUtil):
     def _getDeregistrationSecret(self):
         self._loginAndDeregister()
         user = self.cred.user
+        if self.addAppMapToUser==True:
+            app = Application.query.first()
+            AppMap.new(app, user)
         deregistrationCredential = Credential.getByUser(user, 'deregister')
         secret = deregistrationCredential.secret
         return secret
@@ -109,3 +115,10 @@ class DeregisterTest(PDUnitTest, UserUtil):
         self.assertTrue(self.countExpiredCreds('deregister')>=5)
         self._doDeregistrationDoit()
         self.assertTrue(self.countExpiredCreds('deregister')==0)
+
+    @test
+    def your_user_with_appmap_is_deleted_in_deregistration(self):
+        self.addAppMapToUser=True
+        self._doDeregistrationDoit()
+        user = User.getByEmail(self.userCreationEmail)
+        self.assertTrue(user is None)
