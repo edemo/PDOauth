@@ -139,7 +139,7 @@ class Controller(
         anotherUsers = User.getByDigest(digest)
         if anotherUsers:
             if self.isAnyoneHandAssurredOf(anotherUsers):
-                user.rm()
+                self.removeUser(user)
                 raise ReportedError([anotherUserUsingYourHash], 400)
             additionalInfo["message"] = anotherUserUsingYourHash
 
@@ -148,7 +148,7 @@ class Controller(
         digest = form.digest.data
         if digest == '':
             digest = None
-        if user.hash == digest:
+        if (digest is not None) and (user.hash == digest):
             additionalInfo["message"] = sameHash
         else:
             self.checkHashInOtherUsers(user, additionalInfo, digest)

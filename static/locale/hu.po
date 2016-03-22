@@ -297,7 +297,7 @@ msgid "assurer.magyar"
 msgstr "magyar tanusító"
 
 msgid "assurer.assurer"
-msgstr "tanúsító kinevező"
+msgstr "kinevezhet tanúsítót "
 
 msgid "assurer.vizsgazott"
 msgstr "vizsgabiztos"
@@ -329,7 +329,7 @@ msgstr "Regisztráció %s használatával"
 
 #: static/js/account.js:211 static/js/account.js:230
 msgid "Server error occured"
-msgstr ""
+msgstr "Szerver hiba"
 
 #: static/js/account.js:237 static/js/account.js:263
 #, fuzzy
@@ -338,7 +338,7 @@ msgstr "Hiányzik a beleegyezésed"
 
 #: static/js/account.js:237
 msgid "Text for missing accaptance of term of use"
-msgstr ""
+msgstr "A Felhasználási Feltételek elfogadása"
 
 #: static/js/account.js:280 static/js/account.js:310
 #, fuzzy
@@ -508,7 +508,7 @@ msgstr "Keményen dolgozunk,"
 #: static/js/script.js:520 static/js/script.js:534 static/js/script.js:538
 #: static/js/script.js:542
 msgid "This function is not working yet."
-msgstr "de ez a funkció sajnos még nem működik."
+msgstr "Ez a funkció sajnos még nem működik."
 
 #: static/js/script.js:450
 msgid "Congratulation!"
@@ -525,7 +525,7 @@ msgstr "Hiányzik a hitelesítő eszköz"
 
 #: static/js/script.js:589
 msgid "Plase accept the consequences with checking the checkbox"
-msgstr ""
+msgstr "A jelölőnégyzetbe kattintva el kell fogadnod a következményeket. "
 
 #: static/js/account.js:170 static/js/account.js:465 static/js/account.js:530
 msgid "SSL certificate"
@@ -534,50 +534,50 @@ msgstr "SSL hitelesítéssel"
 #: wtforms/validators.py:55
 #, fuzzy, python-format
 msgid "Invalid field name '%s'."
-msgstr "Nem jó az email-cím"
+msgstr "Hibás mező név '%s'."
 
 #: wtforms/validators.py:63
 #, python-format
 msgid "Field must be equal to %(other_name)s."
-msgstr ""
+msgstr "A mezőnek egyenlőnek kell lenni  %(other_name)s."
 
 #: wtforms/validators.py:96
 #, python-format
 msgid "Field must be at least %(min)d character long."
 msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "A mezőnek legalább  %(min)d karakterből kell állnia."
+msgstr[1] "A mezőnek legalább  %(min)d karakterből kell állnia."
 
 #: wtforms/validators.py:99
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
 msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "A mező nem lehet hosszabb mint %(max)d karakter."
+msgstr[1] "A mező nem lehet hosszabb mint %(max)d karakter."
 
 #: wtforms/validators.py:102
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr ""
+msgstr "A mező minimum  %(min)d, maximum %(max)d karakter hosszú lehet"
 
 #: wtforms/validators.py:138
 #, python-format
 msgid "Number must be at least %(min)s."
-msgstr ""
+msgstr "A szám legalább %(min)s"
 
 #: wtforms/validators.py:140
 #, python-format
 msgid "Number must be at most %(max)s."
-msgstr ""
+msgstr "A szám maximum %(max)s lehet. "
 
 #: wtforms/validators.py:142
 #, python-format
 msgid "Number must be between %(min)s and %(max)s."
-msgstr ""
+msgstr "A szám minimum  %(min)s, maximum %(max)s lehet"
 
 #: wtforms/validators.py:198 wtforms/validators.py:233
 msgid "This field is required."
-msgstr ""
+msgstr "Kötelező kitölteni"
 
 #: wtforms/validators.py:264
 #, fuzzy
@@ -601,11 +601,11 @@ msgstr "Nem jó az email-cím"
 
 #: wtforms/validators.py:393
 msgid "Invalid URL."
-msgstr ""
+msgstr "Érvénytelen URL hivatkozás"
 
 #: wtforms/validators.py:412
 msgid "Invalid UUID."
-msgstr ""
+msgstr "Ervénytelen UUID."
 
 #: wtforms/validators.py:440
 #, fuzzy, python-format
@@ -615,23 +615,23 @@ msgstr "érvénytelen hitelesítés típus"
 #: wtforms/validators.py:472
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr ""
+msgstr "hibás érték, nem lehet: %(values)s."
 
 #: wtforms/csrf/core.py:83 wtforms/ext/csrf/form.py:47
 msgid "Invalid CSRF Token"
-msgstr ""
+msgstr "Érvénytelen CSRF Token"
 
 #: wtforms/csrf/session.py:61 wtforms/ext/csrf/session.py:58
 msgid "CSRF token missing"
-msgstr ""
+msgstr "Hiányzó CSRF Token"
 
 #: wtforms/csrf/session.py:69 wtforms/ext/csrf/session.py:66
 msgid "CSRF failed"
-msgstr ""
+msgstr "CSRFhiba "
 
 #: wtforms/csrf/session.py:74 wtforms/ext/csrf/session.py:71
 msgid "CSRF token expired"
-msgstr ""
+msgstr "A CSRF Token lejárt"
 
 #: wtforms/ext/appengine/fields.py:87 wtforms/ext/appengine/fields.py:164
 #: wtforms/ext/appengine/fields.py:166 wtforms/ext/django/fields.py:96
@@ -639,64 +639,64 @@ msgstr ""
 #: wtforms/ext/sqlalchemy/fields.py:177 wtforms/ext/sqlalchemy/fields.py:182
 #: wtforms/fields/core.py:456
 msgid "Not a valid choice"
-msgstr ""
+msgstr "Nem választható"
 
 #: wtforms/ext/appengine/fields.py:185
 msgid "Not a valid list"
-msgstr ""
+msgstr "Érvénytelen lista"
 
 #: wtforms/ext/appengine/fields.py:204
 msgid "Not a valid integer list"
-msgstr ""
+msgstr "Érvénytelen integer lista"
 
 #: wtforms/ext/dateutil/fields.py:63
 msgid "Please input a date/time value"
-msgstr ""
+msgstr "Adj meg dátumot és időt"
 
 #: wtforms/ext/dateutil/fields.py:75 wtforms/ext/dateutil/fields.py:83
 msgid "Invalid date/time input"
-msgstr ""
+msgstr "Érvénytelen dátum/idő"
 
 #: wtforms/ext/sqlalchemy/validators.py:34
 msgid "Already exists."
-msgstr ""
+msgstr "Már létezik"
 
 #: wtforms/fields/core.py:449
 msgid "Invalid Choice: could not coerce"
-msgstr ""
+msgstr "Érvénytelen választás"
 
 #: wtforms/fields/core.py:482
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr ""
+msgstr "Érvénytelen választás, egy vagy több adat hibás"
 
 #: wtforms/fields/core.py:489
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field"
-msgstr ""
+msgstr "'%(value)s' nem lehetséges itt"
 
 #: wtforms/fields/core.py:572
 msgid "Not a valid integer value"
-msgstr ""
+msgstr "Érvénytelen integer érték"
 
 #: wtforms/fields/core.py:638
 msgid "Not a valid decimal value"
-msgstr ""
+msgstr "Nem érvényes tizedes jegy "
 
 #: wtforms/fields/core.py:665
 msgid "Not a valid float value"
-msgstr ""
+msgstr "Nem érvényes érték "
 
 #: wtforms/fields/core.py:724
 msgid "Not a valid datetime value"
-msgstr ""
+msgstr "Nem érvényes időpont"
 
 #: wtforms/fields/core.py:741
 msgid "Not a valid date value"
-msgstr ""
+msgstr "Nem érvényes dátum"
 
 #: src/pdoauth/Messages.py:28
 msgid "you already have this hash: nothing is done"
-msgstr ""
+msgstr "Ez a Titkos Kód már elmentve"
 
 #: static/js/account.js:175
 #, javascript-format
@@ -708,12 +708,8 @@ msgid "Server failure"
 msgstr "Szerverhiba"
 
 #: static/js/account.js:263
-msgid ""
-"For the registration you have to accept the terms of use. To accept the "
-"terms of use please mark the checkbox!"
-msgstr ""
-"A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az "
-"elfogadáshoz kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
+msgid "For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!"
+msgstr "A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az elfogadáshoz kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
 
 #: static/js/fb.js:96 static/js/fb.js:132 static/js/fb.js:145
 msgid "Facebook error"
@@ -733,11 +729,41 @@ msgstr ""
 "Ha fiók törlésével kapcsolatos figyelmeztetést tudomásul vétted, kattints a "
 "jelölőnégyzetbe!"
 
-#~ msgid "hashgiven"
-#~ msgstr "van Titkos Kód"
+msgid "hashgiven"
+msgstr "van Titkos Kód"
 
-#~ msgid "false"
-#~ msgstr "nincs"
+msgid "false"
+msgstr "nincs"
 
-#~ msgid "true"
-#~ msgstr "igen"
+msgid "true"
+msgstr "igen"
+
+msgid "pubkey"
+msgstr "Publikus kulcs"
+
+msgid "email"
+msgstr "E-mail cím"
+
+msgid "secret"
+msgstr "titokmező"
+
+msgid "password"
+msgstr "Jelszó"
+
+msgid "identifier"
+msgstr "Felhasználó azonosító"
+
+msgid "digest"
+msgstr "Titkos Kód"
+
+msgid "application will get the data below:"
+msgstr "alkalmazás az alábbi adatokat fogja megkapni:"
+
+msgid "The %s application needs to sign in with your ADA account"
+msgstr "A %s alkalmazás használatához ADA bejelentkezés szükséges"
+
+msgid "The %s application will get the data below:"
+msgstr "A %s alkalmazás az alábbi adatokat fogja megkapni:"
+
+msgid "The %s application needs you have the assurances below"
+msgstr "A %s alkalmazás használatának feltétele, hogy rendelkezz az alábbi igazolásokkal:"
