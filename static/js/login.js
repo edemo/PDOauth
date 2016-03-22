@@ -60,6 +60,7 @@
 					if ( !data.assurances.hasOwnProperty(assurance)) {
 						self.unhideAssuranceSection(assurance,false)
 						a=true;
+						if (self.neededAssurances.length==1) {self.showForm(assurance)}
 					}
 					else self.unhideAssuranceSection(assurance,true)
 				})
@@ -211,6 +212,6 @@
 		document.getElementById(formName+"_header").style.display="block";
 		document.getElementById(formName+"_input").style.display="none";
 	}
-	
+
 }()
 )

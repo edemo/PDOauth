@@ -704,7 +704,7 @@ console.log("logoutCallback")
 					document.getElementById(formName+"_code-generation-input").style.display="none"
 				}
 				if (formName=="login"){
-					self.activateButton("code-generation-input_button", self.changeHash)
+					self.changeHash()
 				}
 			}
 			else {
@@ -718,13 +718,30 @@ console.log("logoutCallback")
 				}
 			}
 		}
-	
+
+		this.methodChooser = function(method) {
+			var selfButton = formName+"_make-self"
+			var hereButton = formName+"_make-here"
+			switch (method) {
+				case "here":
+					document.getElementById(formName+"_code-generation-input").style.display="block"
+					document.getElementById(formName+"_digest-input").style.display="none"
+					self.activateButton( selfButton, function(){self.digestGetter(formName).methodChooser('self')} )
+					self.deactivateButton( hereButton )
+					break;
+				case "self":
+					document.getElementById(formName+"_code-generation-input").style.display="none"
+					document.getElementById(formName+"_digest-input").style.display="block"
+					self.activateButton( hereButton, function(){self.digestGetter(formName).methodChooser('here')} )
+					self.deactivateButton( selfButton )
+					break;
+				default:
+			}
+		}
+		
 		this.getDigest = function() {
-			console.log(formName)
-			text = this.createXmlForAnchor(formName)
-			if (text == null)
-				return;
-			console.log(text)
+			text = createXmlForAnchor(formName)
+			if (text == null) return;
 			http = self.ajaxBase(digestCallback);
 			http.open("POST",self.QueryString.uris.ANCHOR_URL+"anchor",true);
 			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -733,7 +750,7 @@ console.log("logoutCallback")
 			http.send(text);
 		}
 	
-		this.createXmlForAnchor = function(formName) {
+		function createXmlForAnchor(formName) {
 			console.log(formName)
 			personalId = document.getElementById(formName+"_predigest_input").value;
 			motherValue = document.getElementById(formName+"_predigest_mothername").value;
@@ -854,7 +871,22 @@ console.log("logoutCallback")
 		}
 		else return true
 	}
-
+	
+	PageScript.prototype.deactivateButton = function(buttonId) {
+		b=document.getElementById(buttonId)
+		if (b) {
+			b.className+=" inactive";
+			b.onclick=function(){return}
+		}		
+	}
+	
+	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
+		b=document.getElementById(buttonId)
+		if (b) {
+			b.className=b.className.slice(0,b.className.indexOf("inactive"))
+			b.onclick=onclickFunc
+		}
+	}
 }
 pageScript = new PageScript();
 

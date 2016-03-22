@@ -9,11 +9,12 @@
 			<link rel="gettext" lang="hu" href="locale/hu.po" />
 		<style>
 
-div.func, #popup, #login_code-generation-input, #SSL, section.input_form {
+div.func, #popup, #login_digest-input, #SSL, section.input_form {
 display:none;
 }
 .wrapper {
 max-width: 22rem;
+margin 0 auto;
 }
 input[type="password"], input[type="text"]  {
 width:98%;
@@ -166,7 +167,7 @@ label.label-inline {
 <!-- End login section -->
 			<div class="func" id="emailverification_section">
 				<section class="container_ form_header" id="emailverification_header">
-					<b>"Ellenőrzőtt email" iagzolás</b>
+					<b>"Ellenőrzőtt email" igazolás</b>
 					<span id="emailverification_ok" class="right"><i class="fa fa-check"></i></span>
 					<button id="emailverification_button" class="right" type="button" onclick="pageScript.showForm('emailverification')">Szeretnék</button>
 				</section>
@@ -195,9 +196,9 @@ label.label-inline {
 						A Titkos Kódot magad is előállíthatod, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe, vagy elkészíthetjuk itt.
 					</p>
 					<p class="center">
-						<button class="button" type="button" onclick="javascript:document.getElementById('login_code-generation-input').style.display='block'">Készítsük el itt</button>
+						<button class="button inactive" type="button" id="login_make-here" >Készítsük el itt</button>
 						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
-							<button class="button" type="button" onclick="javascript:document.getElementById('login_code-generation-input').style.display='none'">Elkészítem magam</button>
+							<button id="login_make-self" class="button" type="button" onclick="javascript:pageScript.digestGetter('login').methodChooser('self')">Elkészítem magam</button>
 						</a>
 					</p>
 						<div id="login_code-generation-input" class="form">
@@ -208,20 +209,23 @@ label.label-inline {
 								<input type="text" placeholder="" id="login_predigest_mothername" onkeyup="pageScript.convert_mothername('login_predigest')">
 								<p class="center">
 									<button type="button" onclick="pageScript.digestGetter('login').getDigest()">A kód előállítása</button>
+									<button id="code-generation-cancel_button" type="button" onclick="pageScript.hideForm('hashgiven')">Mégse</button>
 								</p>
 								<div class="monitor" id="login_predigest_monitor"></div>
 							</div>
 						</div>
-						<div >
-						<p><label for="digest">Titkos Kód:</label></p>
-						<textarea data-autoresize class="digest" name="digest" type="text" id="login_digest_input" onkeyup="pageScript.textareaOnKeyup(this)"></textarea>
+						<div id="login_digest-input">
+							<p>
+								<label for="digest">Titkos Kód:</label>
+							</p>
+							<textarea data-autoresize class="digest" name="digest" type="text" id="login_digest_input" onkeyup="pageScript.textareaOnKeyup(this)"></textarea>
+							<div class="center">
+								<p class="center">
+									<button id="code-generation-input_button" type="button" class="inactive">Titkos Kód mentése</button>
+									<button id="code-generation-cancel_button" type="button" onclick="pageScript.hideForm('hashgiven')">Mégse</button>
+								<p>
+							</div>
 						</div>
-					<div class="center">
-						<p class="center">
-							<button id="code-generation-input_button" type="button" class="inactive">Titkos Kód mentése</button>
-							<button id="code-generation-cancel_button" type="button" onclick="pageScript.hideForm('hashgiven')">Mégse</button>
-						<p>
-					</div>
 				</section>
 			</div>
 			
