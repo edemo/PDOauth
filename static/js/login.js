@@ -6,6 +6,7 @@
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		self.parseAppCallbackUrl();
+		self.dataGivingAccepted=false;
 		console.log(self.neededAssurances)
 		console.log(self.appDomain)
 		this.ajaxget("/adauris", this.uriCallback)
@@ -41,7 +42,12 @@
 	
 	PageScript.prototype.init_=function(){
 		console.log("init_ called")
-		self.ajaxget("/v1/users/me", self.initCallback)		
+		if ( self.dataGivingAccepted ) {
+			if( self.QueryString.next) {
+				self.doRedirect(decodeURIComponent(self.QueryString.next))
+			}
+		}
+		else self.ajaxget("/v1/users/me", self.initCallback)		
 	}
 	
 	PageScript.prototype.initCallback = function(status, text) {
@@ -65,8 +71,6 @@
 					else self.unhideAssuranceSection(assurance,true)
 				})
 				if (!a) {
-					self.greating("The %s application will get the data below:")
-					self.unhideSection("accept_section")
 					self.ajaxget('/v1/getmyapps',self.myappsCallback)
 				}
 				else {
@@ -101,12 +105,17 @@
 					if (!self.myApps[i].username) a=true
 				}
 			}
-			if ( self.page=="login" && a){
+
+			if ( self.page=="login" && !self.dataGivingAccepted ){
+				self.greating("The %s application will get the data below:")
 				self.showSection("accept_section")
 			}
 			else {
-				if( self.QueryString.next) {
+				if ( self.dataGivingAccepted ) self.setAppCanEmailMe(self.currentAppId);
+				else {
+					if( self.QueryString.next) {
 					self.doRedirect(decodeURIComponent(self.QueryString.next))
+					}
 				}
 			}
 		}
@@ -125,6 +134,7 @@
 	PageScript.prototype.showSection=function(section) {
 		self.hideAllSection()
 		self.unhideSection(section)
+		if (section=="register_section" && self.neededAssurances.indexOf('hashgiven')!=-1) self.unhideSection("registration-form-getdigest_input")
 	}
 	
 	PageScript.prototype.unhideSection=function(section) {

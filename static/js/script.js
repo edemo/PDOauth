@@ -270,7 +270,24 @@ console.log(theUri)
 		}
 		else console.log(text);
 	}
-	
+	PageScript.prototype.registerCallback = function(status, text) {
+		if (status!=500) {
+			var data = JSON.parse(text);
+			var msg = self.processErrors(data)
+			if (status == 200 ) {
+				if( self.page=="account"){
+					self.get_me()
+				}
+				if( self.page=="login"){
+					self.dataGivingAccepted=true
+					self.ajaxget('/v1/getmyapps',self.myappsCallback)
+				}
+			}
+			else self.displayMsg(msg);
+		}
+		else console.log(text);
+	}	
+
 	PageScript.prototype.reloadCallback = function(status, text) {
 		if (status!=500) {
 			var data = JSON.parse(text);
@@ -694,17 +711,23 @@ console.log("logoutCallback")
 				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
 				$("#"+formName + "_digest_input").trigger('keyup');
 				document.getElementById(formName + "_predigest_input").value = "";
-				if (formName=="assurancing") {
-					var messageBox=document.getElementById("assurance-giving_message")
-					messageBox.innerHTML=_("The Secret Hash is given for assuring")
-					messageBox.className="given"
-					document.getElementById("assurance-giving_submit-button").className=""
-				}
-				else {
-					document.getElementById(formName+"_code-generation-input").style.display="none"
-				}
-				if (formName=="login"){
-					self.changeHash()
+				switch (formName) {
+					case "assurancing":
+						var messageBox=document.getElementById("assurance-giving_message")
+						messageBox.innerHTML=_("The Secret Hash is given for assuring")
+						messageBox.className="given"
+						document.getElementById("assurance-giving_submit-button").className=""
+						break;
+					case "login":
+						self.changeHash()
+						break;
+					case "registration-form":
+						document.getElementById(formName+"_code-generation-input").style.display="none"
+						document.getElementById(formName+"_digest-input").style.display="block"
+						self.activateButton( formName+"_make-here", function(){self.digestGetter(formName).methodChooser('here')})
+						break;
+					default:
+						document.getElementById(formName+"_code-generation-input").style.display="none"
 				}
 			}
 			else {
@@ -808,7 +831,7 @@ console.log("logoutCallback")
 	    var secret = document.getElementById("registration-form_secret_input").value;
 	    var email = document.getElementById("registration-form_email_input").value;
 		var d;
-		var digest =(d=document.getElementById("registration-keygenform_digest_input"))?d.value:"";
+		var digest =(d=document.getElementById("registration-form_digest_input"))?d.value:"";
 	    var text= {
 	    	credentialType: credentialType,
 	    	identifier: identifier,
@@ -817,7 +840,7 @@ console.log("logoutCallback")
 	    	digest: digest
 	    }
 		console.log(text)
-	    this.ajaxpost("/v1/register", text, this.meCallback)
+	    this.ajaxpost("/v1/register", text, this.registerCallback)
 	}
 	
 	PageScript.prototype.onSslRegister= function(){
@@ -830,7 +853,7 @@ console.log("logoutCallback")
 	}
 
 	PageScript.prototype.doRegister=function() {
-		if ( document.getElementById("registration-keygenform_confirmField").checked ) {
+		if ( document.getElementById("registration-form_confirmField").checked ) {
 			console.log(self.registrationMethode)
 			switch (self.registrationMethode) {
 				case "pw":
