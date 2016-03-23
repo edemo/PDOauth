@@ -474,10 +474,17 @@ td.button-container, td.button-container {
 							<p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
 						</div>
 						<div id="registration-form-password-container" class="form-level">
-							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
+							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input" onkeyup="pageScript.passwordChanged('registration-form')">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
-							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
 						</div>
+						<div class="input-block" id="registration-form_pw-strength-meter"></div>
+						<div id="registration-form-password-backup-container" class="form-level">
+							<input title="" class="input-block" type="password" placeholder="Jelszó ismét" id="registration-form_secret_backup" onkeyup="pageScript.pwEqual('registration-form')">
+							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
+						</div>
+						<div class="input-block" id="registration-form_pw-equal"></div>
+						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
+
 					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
 				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni. A kód elkészítéséhez szükséged lesz a 
