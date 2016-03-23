@@ -317,6 +317,12 @@ td.button-container, td.button-container {
     width: 10%;
     min-width: 12rem;
 }
+.waiting {
+    background-image: url("waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
 		</style>
 	</head>
 	<body onload="pageScript.main()">
@@ -473,18 +479,19 @@ td.button-container, td.button-container {
 							<span class="form-icon_"><i class=" fa fa-user"></i></span>
 							<p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
 						</div>
-						<div id="registration-form-password-container" class="form-level">
+						<div id="registration-form-password-container">
+						<div class="form-level">
 							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input" onkeyup="pageScript.passwordChanged('registration-form')">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 						<div class="input-block" id="registration-form_pw-strength-meter"></div>
-						<div id="registration-form-password-backup-container" class="form-level">
+						<div class="form-level">
 							<input title="" class="input-block" type="password" placeholder="Jelszó ismét" id="registration-form_secret_backup" onkeyup="pageScript.pwEqual('registration-form')">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 						<div class="input-block" id="registration-form_pw-equal"></div>
 						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
-
+						</div>
 					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
 				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni. A kód elkészítéséhez szükséged lesz a 

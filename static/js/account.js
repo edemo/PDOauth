@@ -41,6 +41,40 @@
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 		}
 	}
+	
+	PageScript.prototype.userNotLoggedIn = function(status, text) {
+		var data = JSON.parse(text);
+		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		self.refreshTheNavbar()
+		if (self.QueryString.section) {
+			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+			else return;
+		}
+		else self.displayTheSection();
+	}
+	
+	PageScript.prototype.userIsLoggedIn = function(text) {
+		var data = JSON.parse(text);
+		self.isLoggedIn=true
+		self.ajaxget('/v1/getmyapps',self.myappsCallback)
+		if (data.assurances) {
+			document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
+			document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
+			document.getElementById("assurance-giving_assurance_selector").innerHTML=self.parseAssurances(data);
+			if (!(data.assurances.assurer)) self.isAssurer=false;
+			else {
+				self.isAssurer=true;
+			}
+		}
+		self.refreshTheNavbar()
+		if (self.QueryString.section) {
+			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+			else return;
+		}
+		else self.displayTheSection();
+	}
+
+	
 	PageScript.prototype.modNavbarItem=function(){
 		document.getElementById("")
 	}
@@ -102,7 +136,7 @@
 		if (self.QueryString.section && self.QueryString.section=="email_verification"){
 			if (self.QueryString.secret) self.verifyEmail()
 		}
-		self.ajaxget("/v1/users/me", self.initCallback)		
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
@@ -385,6 +419,60 @@
 					console.log(key);
 					return key;
 				}).catch(function(a){console.log(a)});
+	}
+
+	PageScript.prototype.callSetAppCanEmailMe=function(app){
+		var value=document.getElementById("application-allow-email-me-"+app).checked
+		self.setAppCanEmailMe(app,value,self.myCallback)
+	}
+	PageScript.prototype.myappsCallback = function(status,text){
+		if (status!=200) return;
+		self.aps=JSON.parse(text)
+		var applist='\
+		<table>\
+			<tr>\
+				<th>'+_("Application")+'</th>\
+				<th>'+_("Domain")+'</th>\
+				<th>'+_("User identifier")+'</th>\
+				<th>'+_("Emailing")+'</th>\
+				<th>'+_("Allow emailing")+'</th>\
+			</tr>'
+		for(app in self.aps){ 
+		if (self.aps[app].username) { 
+			applist+='\
+			<tr>\
+				<td>'+self.aps[app].name+'</td>\
+				<td><a href="//'+self.aps[app].hostname+'">'+self.aps[app].hostname+'</a></td>\
+				<td>'+self.aps[app].username+'</td>\
+				<td>'+_(self.aps[app].can_email.toString())+'</td>\
+				<td>\
+					<input type="checkbox" id="application-allow-email-me-'+app+'"\
+					'+((self.aps[app].email_enabled)?'checked':'')+'\
+					onclick="javascript: pageScript.callSetAppCanEmailMe('+app+')">\
+				</td>\
+			</tr>'
+			}	
+		}
+		applist +='\
+		</table>';
+		document.getElementById("me_Applications").innerHTML=applist;
+	}
+
+	PageScript.prototype.parseAssurances = function(data) {
+		var selector = ''
+		var text
+		for(ass in data.assurances) {
+			var pos
+			if ( pos=ass.indexOf(".")+1 ) {
+				text=ass.slice(pos)
+				selector += '\
+				<option value="'+text+'">\
+				'+_(text)+'\
+				</option>\
+				';
+			}
+		}
+		return selector;		
 	}
 
 }()

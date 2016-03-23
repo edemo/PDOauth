@@ -118,48 +118,14 @@ console.log(theUri)
 			return msg;
 	}
 	
-	PageScript.prototype.myappsCallback = function(status,text){
-		if (status!=200) return;
-		self.aps=JSON.parse(text)
-		var applist='\
-		<table>\
-			<tr>\
-				<th>'+_("Application")+'</th>\
-				<th>'+_("Domain")+'</th>\
-				<th>'+_("User identifier")+'</th>\
-				<th>'+_("Emailing")+'</th>\
-				<th>'+_("Allow emailing")+'</th>\
-			</tr>'
-		for(app in self.aps){ 
-		if (self.aps[app].username) { 
-			applist+='\
-			<tr>\
-				<td>'+self.aps[app].name+'</td>\
-				<td><a href="//'+self.aps[app].hostname+'">'+self.aps[app].hostname+'</a></td>\
-				<td>'+self.aps[app].username+'</td>\
-				<td>'+_(self.aps[app].can_email.toString())+'</td>\
-				<td>\
-					<input type="checkbox" id="application-allow-email-me-'+app+'"\
-					'+((self.aps[app].email_enabled)?'checked':'')+'\
-					onclick="javascript: pageScript.setAppCanEmailMe('+app+')">\
-				</td>\
-			</tr>'
-			}	
-		}
-		applist +='\
-		</table>';
-		document.getElementById("me_Applications").innerHTML=applist;
-	}
-	
-	PageScript.prototype.setAppCanEmailMe=function(app){
-		var value=document.getElementById("application-allow-email-me-"+app).checked
+	PageScript.prototype.setAppCanEmailMe=function(app, value, callback){
 		var csrf_token = self.getCookie('csrf');
-	    text= {
+	    data= {
 			canemail: value,
-	    	appname: self.aps[app].name,
+	    	appname: self.myApps[self.currentAppId].name,
 	    	csrf_token: csrf_token
 	    }
-	    self.ajaxpost("/v1/setappcanemail", text, this.myCallback)
+	    self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {
@@ -204,37 +170,6 @@ console.log(theUri)
 			var date=new Date(timestamp*1000)
 			return date.toLocaleDateString();
 		}
-		
-	PageScript.prototype.parseAssurances = function(data) {
-		var selector = ''
-		var text
-		for(ass in data.assurances) {
-			var pos
-			if ( pos=ass.indexOf(".")+1 ) {
-				text=ass.slice(pos)
-				selector += '\
-				<option value="'+text+'">\
-				'+_(text)+'\
-				</option>\
-				';
-			}
-		}
-		return selector;		
-	}
-	
-	PageScript.prototype.loginCallback=function(status, text){
-		var data = JSON.parse(text)
-		if (status == 200 ) {
-			self.isLoggedIn=true
-			self.get_me()
-			document.getElementById("LoginForm_password_input").value=""
-			document.getElementById("LoginForm_email_input").value=""
-		}
-		else {
-			this.msg = self.processErrors(data)
-			self.displayMsg(this.msg);			
-		}
-	}
 	
 // oldie	
 	PageScript.prototype.myCallback = function(status, text) {
@@ -279,8 +214,7 @@ console.log(theUri)
 					self.get_me()
 				}
 				if( self.page=="login"){
-					self.dataGivingAccepted=true
-					self.ajaxget('/v1/getmyapps',self.myappsCallback)
+					self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
 				}
 			}
 			else self.displayMsg(msg);
@@ -309,60 +243,12 @@ console.log(theUri)
 		win.location=href	
 	}
 	
-	PageScript.prototype.get_me = function() {
-		self.ajaxget("/v1/users/me", self.initCallback)
+	PageScript.prototype.get_me = function(callback) {
+		var loggedIn=callback || self.userIsLoggedIn 
+console.log(loggedIn)		
+		self.ajaxget("/v1/users/me", self.callback(loggedIn,self.userNotLoggedIn))
 	}
 	
-	PageScript.prototype.initCallback = function(status, text) {
-		console.log("initcallback "+status)
-		var data = JSON.parse(text);
-		if (status != 200) {
-//			self.menuHandler("login").menuActivate();
-//			self.menuHandler("account").menuHide();
-//			self.menuHandler("assurer").menuHide();
-//			self.menuHandler("registration").menuUnhide();
-			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
-		}
-		else {
-			self.ajaxget('/v1/getmyapps',self.myappsCallback)
-			self.isLoggedIn=true
-//			if (!self.activeButton)	self.menuHandler("account").menuActivate();
-//			else {
-//				var a=["login", "register"];
-//				if ( a.indexOf(self.activeButtonName) > -1 ) self.menuHandler("account").menuActivate();
-//			}
-//			self.menuHandler("login").menuHide();
-//			self.menuHandler("registration").menuHide();
-			if (data.assurances) {
-				document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
-				document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
-//				document.getElementById("me_Applications").innerHTML=self.parseSettings(data);
-				document.getElementById("assurance-giving_assurance_selector").innerHTML=self.parseAssurances(data);
-//				if (data.assurances.emailverification) document.getElementById("InitiateResendRegistrationEmail_Container").style.display = 'none';
-//				if (data.email) {
-//					document.getElementById("AddSslCredentialForm_email_input").value=data.email;
-//					document.getElementById("PasswordResetInitiateForm_email_input").value=data.email;
-//				}
-//				if (!(data.assurances.assurer)) self.menuHandler("assurer").menuHide();
-//				else self.menuHandler("assurer").menuUnhide();
-				if (!(data.assurances.assurer)) self.isAssurer=false;
-				else {
-					self.isAssurer=true;
-//					document.getElementById("assurance-giving").innerHTML=self.parseAssurancing(data);
-				}
-			}
-//			self.fill_RemoveCredentialContainer(data);
-		}
-		self.refreshTheNavbar()
-		if (self.page=="account") {
-			if (self.QueryString.section) {
-				if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
-				else return;
-			}
-			else self.displayTheSection();
-		}
-	}
-
 // Button actions
 
 	PageScript.prototype.doPasswordReset = function() {
@@ -396,9 +282,12 @@ console.log(theUri)
 		}
 		if (onerror==true) self.displayMsg({error:errorMsg, title:_("Missing data")});
 		else {
-			this.ajaxpost("/v1/login", {credentialType: "password", identifier: username, secret: password}, this.loginCallback)
-//			document.getElementById("DeRegisterForm_identifier_input").value=username;
-//			document.getElementById("DeRegisterForm_secret_input").value=password;
+			var data = {
+				credentialType: "password", 
+				identifier: username, 
+				secret: password
+				}
+			self.ajaxpost( "/v1/login", data, self.callback(self.userIsLoggedIn) )
 		}
 	}
 
@@ -410,9 +299,7 @@ console.log(theUri)
 	    	identifier: username,
 	    	secret: password
 	    }
-	    this.ajaxpost("/v1/login", data , this.loginCallback)
-//		document.getElementById("DeRegisterForm_identifier_input").value=username;
-//		document.getElementById("DeRegisterForm_secret_input").value=password;
+	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
 
 
@@ -674,7 +561,7 @@ console.log("logoutCallback")
 
 	PageScript.prototype.sslLogin = function() {
 		console.log("sslLogin")
-		var xmlhttp = this.ajaxBase( self.initCallback )
+		var xmlhttp = this.ajaxBase( self.callback(self.userIsLoggedIn,self.userNotLoggedIn) )
 		xmlhttp.open( "GET", self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login' , true);
 		xmlhttp.send();
 	}
@@ -807,6 +694,8 @@ console.log("logoutCallback")
 				heading=_("email address and/or username / password")
 				document.getElementById("registration-form-password-container").style.display="block";
 				document.getElementById("registration-form-username-container").style.display="block";
+				document.getElementById("registration-form_secret_input").value="";
+				document.getElementById("registration-form_identifier_input").value="";
 			break;
 			case "fb":
 				heading=_("my facebook account")
@@ -830,17 +719,16 @@ console.log("logoutCallback")
 			document.getElementById("registration-form_identifier_input").value;
 	    var secret = document.getElementById("registration-form_secret_input").value;
 	    var email = document.getElementById("registration-form_email_input").value;
-		var d;
-		var digest =(d=document.getElementById("registration-form_digest_input"))?d.value:"";
-	    var text= {
+		var d=document.getElementById("registration-form_digest_input");
+		var digest =(d)?d.value:"";
+	    var data= {
 	    	credentialType: credentialType,
 	    	identifier: identifier,
 	    	secret: secret,
 	    	email: email,
 	    	digest: digest
 	    }
-		console.log(text)
-	    this.ajaxpost("/v1/register", text, this.registerCallback)
+	    this.ajaxpost("/v1/register", data, self.registerCallback)
 	}
 	
 	PageScript.prototype.onSslRegister= function(){
@@ -858,8 +746,8 @@ console.log("logoutCallback")
 			switch (self.registrationMethode) {
 				case "pw":
 					console.log('pw')
-					var pwInput=document.getElementById(formName+"registration-form_secret_input")
-					var pwBackup=document.getElementById(formName+"registration-form_secret_backup")
+					var pwInput=document.getElementById("registration-form_secret_input")
+					var pwBackup=document.getElementById("registration-form_secret_backup")
 					if (pwInput.value!=pwBackup.value) self.displayMsg({title:_("Error message"),error:_("The passwords are not identical")})
 					else self.register("password")
 					break;
@@ -945,9 +833,38 @@ console.log("logoutCallback")
 		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
+
+	PageScript.prototype.reportServerFailure = function(text){
+		self.displayMsg({title:_("Server error occured"),error: text})
+	}
+
+	PageScript.prototype.callback = function(next,error){
+		var next  = next || function(){return}
+		var error = error || defaultErrorHandler
+		function callback(status,text,xml) {
+			switch (status){
+				case 200:
+					next(text,xml)
+					break;
+				case 500:
+					self.reportServerFailure(text)
+					break;
+				default:
+					error(status,text,xml)
+			}
+		}
+		function defaultErrorHandler(status,text,xml){
+			console.log(text)
+			data=JSON.parse(text)
+			self.displayMsg(self.processErrors(data))
+		}
+		return callback
+	}		
 }
 	
 pageScript = new PageScript();
+
+
 
 /* 
 ==============================================

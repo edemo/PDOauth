@@ -97,6 +97,12 @@ label.label-inline {
 div.checkbox {
     display: flex;
 }
+.waiting {
+    background-image: url("waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
 	</style>
 	</head>
 
@@ -204,7 +210,7 @@ div.checkbox {
 					</p>
 					<p class="center">
 						<button class="button inactive" type="button" id="login_make-here" >Készítsük el itt</button>
-						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
+						<a class="digest_self_made_button" id="" target="_blank">
 							<button id="login_make-self" class="button" type="button" onclick="javascript:pageScript.digestGetter('login').methodChooser('self')">Elkészítem magam</button>
 						</a>
 					</p>
@@ -315,7 +321,7 @@ div.checkbox {
 						</p>
 						<p class="center">
 							<button class="button inactive" type="button" id="registration-form_make-here" >Készítsük el itt</button>
-							<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
+							<a class="digest_self_made_button" id="" target="_blank">
 								<button id="registration-form_make-self" class="button" type="button" onclick="javascript:pageScript.digestGetter('registration-form').methodChooser('self')">Elkészítem magam</button>
 							</a>
 						</p>
@@ -349,7 +355,7 @@ div.checkbox {
 						<li>nyilvános igazolásaim</li>
 					</ul>
 					<div class="checkbox">
-						<input type="checkbox" id="confirmForm_allowEmailToMe" name="accept" value="accept" checked>
+						<input type="checkbox" id="registration-form_allowEmailToMe" name="accept" value="accept" checked>
 						<label class="label-inline" for="confirmField">Az alkalmazás felveheti velem a kapcsolatot</label>
 					</div>
 					<div class="checkbox">

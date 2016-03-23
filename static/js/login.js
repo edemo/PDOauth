@@ -9,7 +9,7 @@
 		self.dataGivingAccepted=false;
 		console.log(self.neededAssurances)
 		console.log(self.appDomain)
-		this.ajaxget("/adauris", this.uriCallback)
+		self.ajaxget("/adauris", self.callback(self.initialise) )
 	}
 	
 	PageScript.prototype.parseAppCallbackUrl = function() {
@@ -23,65 +23,97 @@
 				if (b.need)	self.neededAssurances=b.need.split(',')
 			}
 		}
-
 	}
 	
-	PageScript.prototype.uriCallback = function(status,text) {
-		var data = JSON.parse(text);
-		if (status==200) {
-			self.QueryString.uris = data
-			if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
-			self.uribase = self.QueryString.uris.BACKEND_PATH
-			var keygenform = document.getElementById("registration-keygenform")
-			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
-			loc = '' + win.location
-			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
-			if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_);
-			else self.init_()
-		}
-		else self.displayMsg(self.processErrors(data));
+	PageScript.prototype.initialise = function(text) {
+		// initialising variables
+		self.QueryString.uris = JSON.parse(text);
+		self.uribase = self.QueryString.uris.BACKEND_PATH
+		
+		// redirect to official account page if callback uri is missing
+		if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
+
+		// initialising keygenform submit url
+		var keygenform=document.getElementById("registration-keygenform")
+		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+
+		// filling hrefs of anchors
+		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
+
+		// waiting for gettext loads po files
+		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_);
+		else self.init_()
 	}
 	
 	PageScript.prototype.init_=function(){
 		console.log("init_ called")
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
+	}
+	
+	PageScript.prototype.userNotLoggedIn = function(status, text) {
+		var data = JSON.parse(text);
+		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		else {
+			self.greating("The %s application needs to sign in with your ADA account")
+			self.unhideSection("login_section")
+		}
+	}
+	
+	PageScript.prototype.userIsLoggedIn = function(text) {
+		var data = JSON.parse(text);
+		self.isLoggedIn=true
+		self.hideAllSection()
+		if (self.neededAssurances) {
+			var missing=false;
+			[].forEach.call(self.neededAssurances, function(assurance){
+				if ( !data.assurances.hasOwnProperty(assurance)) {
+					self.unhideAssuranceSection(assurance,false)
+					missing=true;
+					if (self.neededAssurances.length==1) self.showForm(assurance)
+				}
+				else self.unhideAssuranceSection(assurance,true)
+			})
+			if (missing) {
+				self.greating("The %s application needs you have the assurances below")
+				return
+			}
+		}
+		self.ajaxget('/v1/getmyapps',self.callback(self.myappsCallback))
 		if ( self.dataGivingAccepted ) {
 			if( self.QueryString.next) {
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
-		else self.ajaxget("/v1/users/me", self.initCallback)		
 	}
 	
-	PageScript.prototype.initCallback = function(status, text) {
-		var data = JSON.parse(text);
-		if (status != 200) {
-			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
-			self.greating("The %s application needs to sign in with your ADA account")
-			self.unhideSection("login_section")
+	PageScript.prototype.finishRegistration = function (text) {
+		console.log('finis registering')
+		self.myappsCallback(text)
+		self.dataGivingAccepted=true
+		value=document.getElementById("registration-form_allowEmailToMe").checked
+		self.setAppCanEmailMe(self.currentAppId, value, self.init_)
+	}
+	
+	PageScript.prototype.myappsCallback= function (text) {
+		console.log('myappsCallback')
+		self.myApps=JSON.parse(text)
+		for (i=0; i<self.myApps.length; i++){
+			if (self.myApps[i].hostname==self.appDomain) {
+				self.currentAppId=i
+				if (self.myApps[i].username) self.dataGivingAccepted=true
+			}
+		}
+		if ( !self.dataGivingAccepted ){
+			self.greating("The %s application will get the data below:")
+			self.showSection("accept_section")
 		}
 		else {
-			self.isLoggedIn=true
-			self.hideAllSection()
-			if (self.neededAssurances) {
-				var a=false;
-				[].forEach.call(self.neededAssurances, function(assurance){
-					if ( !data.assurances.hasOwnProperty(assurance)) {
-						self.unhideAssuranceSection(assurance,false)
-						a=true;
-						if (self.neededAssurances.length==1) {self.showForm(assurance)}
-					}
-					else self.unhideAssuranceSection(assurance,true)
-				})
-				if (!a) {
-					self.ajaxget('/v1/getmyapps',self.myappsCallback)
-				}
-				else {
-					self.greating("The %s application needs you have the assurances below")
-				}
+			if ( self.QueryString.next) {
+				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
-			else self.ajaxget('/v1/getmyapps',self.myappsCallback)
 		}
 	}
+	
 	PageScript.prototype.unhideAssuranceSection= function(assurance,given) {
 		document.getElementById(assurance+"_ok").style.display=(given)?"block":"none"
 		document.getElementById(assurance+"_button").style.display=(given)?"none":"block"
@@ -93,37 +125,6 @@
 	PageScript.prototype.greating = function (message){
 		if (self.appDomain) {
 			document.getElementById("greatings").innerHTML=_(message, '<b>'+self.appDomain+'</b>')
-		}
-	}
-	
-	PageScript.prototype.myappsCallback= function (status,text) {
-		console.log('myappsCallback')
-		if (status == 200 ) {
-			self.myApps=JSON.parse(text)
-			var a=false;
-			for (i=0; i<self.myApps.length; i++){
-				if (self.myApps[i].hostname==self.appDomain) {
-					self.currentAppId=[i]
-					if (!self.myApps[i].username) a=true
-				}
-			}
-
-			if ( self.page=="login" && !self.dataGivingAccepted ){
-				self.greating("The %s application will get the data below:")
-				self.showSection("accept_section")
-			}
-			else {
-				if ( self.dataGivingAccepted ) self.setAppCanEmailMe(self.currentAppId);
-				else {
-					if( self.QueryString.next) {
-					self.doRedirect(decodeURIComponent(self.QueryString.next))
-					}
-				}
-			}
-		}
-		else { 
-
-			self.displayMsg(self.processErrors(text))
 		}
 	}
 	
@@ -150,24 +151,15 @@
 	
 	PageScript.prototype.acceptGivingTheData=function(flag){
 		if (flag){
-			self.setAppCanEmailMe(self.currentAppId)
+			self.dataGivingAccepted=true
+			var value=document.getElementById("confirmForm_allowEmailToMe").checked
+			self.setAppCanEmailMe(self.currentAppId, value, self.init_)
 		}
 		else {
 			self.doRedirect(document.referrer)
 		}
 	}
-	
-	PageScript.prototype.setAppCanEmailMe=function(app){
-		var value=document.getElementById("confirmForm_allowEmailToMe").checked
-		var csrf_token = self.getCookie('csrf');
-	    text= {
-			canemail: value,
-	    	appname: self.myApps[self.currentAppId].name,
-	    	csrf_token: csrf_token
-	    }
-	    self.ajaxpost("/v1/setappcanemail", text, self.init_)
-	}
-	
+
 	PageScript.prototype.textareaOnKeyup = function(textarea) {
 		if (textarea) {
 			if (textarea.value.length==128) self.activateButton('code-generation-input_button',self.changeHash);
@@ -194,25 +186,16 @@
 	PageScript.prototype.changeHash = function() {
 	    digest = document.getElementById("login_digest_input").value;
 	    csrf_token = self.getCookie('csrf');
-	    text= {
+	    data= {
 	    	digest: digest,
 	    	csrf_token: csrf_token
 	    }
-	    self.ajaxpost("/v1/users/me/update_hash", text, self.changeHashCallback)
+	    self.ajaxpost( "/v1/users/me/update_hash", data, self.callback(self.hashIsUpdated) )
 	}	
 	
-	PageScript.prototype.changeHashCallback = function(status,text) {
-		switch (status) {
-			case 500:
-				self.displayMsg({title:_("Server failure"),error:text})
-				break;
-			case 200:
-				self.hideAllSection()
-				self.init_()
-			default:
-				var data = JSON.parse(text);
-				self.displayMsg(self.processErrors(data));	
-		}
+	PageScript.prototype.hashIsUpdated = function(text) {
+		self.hideAllSection()
+		self.init_()
 	}
 	
 	PageScript.prototype.showForm = function(formName) {
