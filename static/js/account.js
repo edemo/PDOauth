@@ -117,7 +117,7 @@
 		self.QueryString.uris = JSON.parse(text);
 		self.uribase = self.QueryString.uris.BACKEND_PATH
 		var keygenform = document.getElementById("registration-keygenform")
-		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
+		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
 		
 		// filling hrefs of anchors
 		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
