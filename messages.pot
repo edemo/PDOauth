@@ -709,3 +709,66 @@ msgstr ""
 #: static/js/script.js:561
 msgid "To accept the terms please mark the checkbox!"
 msgstr ""
+
+msgid "hashgiven"
+msgstr ""
+
+msgid "false"
+msgstr ""
+
+msgid "true"
+msgstr ""
+
+msgid "pubkey"
+msgstr ""
+
+msgid "email"
+msgstr ""
+
+msgid "secret"
+msgstr ""
+
+msgid "password"
+msgstr ""
+
+msgid "identifier"
+msgstr ""
+
+msgid "digest"
+msgstr ""
+
+msgid "application will get the data below:"
+msgstr ""
+
+msgid "The %s application needs to sign in with your ADA account"
+msgstr ""
+
+msgid "The %s application will get the data below:"
+msgstr ""
+
+msgid "The %s application needs you have the assurances below"
+msgstr ""
+
+msgid "The passwords are not identical"
+msgstr ""
+
+msgid "Passwords are not equal."
+msgstr ""
+
+msgid "OK."
+msgstr ""
+
+msgid "Strong!"
+msgstr ""
+
+msgid "Medium!"
+msgstr ""
+
+msgid "Weak!"
+msgstr ""
+
+msgid "More Characters"
+msgstr ""
+
+msgid "Type Password"
+msgstr ""
