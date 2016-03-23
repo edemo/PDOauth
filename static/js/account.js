@@ -4,7 +4,7 @@
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		xxxx=self
-		this.ajaxget("/adauris", self.uriCallback)
+		this.ajaxget("/adauris", self.callback(self.initialisation))
 		var section = self.QueryString.section
 		console.log("section:"+section)
 			switch (section) {
@@ -113,22 +113,18 @@
 		return "closePopup";
 	}
 
-	PageScript.prototype.uriCallback = function(status,text) {
-		var data = JSON.parse(text);
-		if (status==200) {
-			self.QueryString.uris = data
-			self.uribase = self.QueryString.uris.BACKEND_PATH
-			var keygenform = document.getElementById("registration-keygenform")
-			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
-			loc = '' + win.location
-			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
-			if (!Gettext.isAllPoLoaded) {
-				console.log('várunk a gettextre');
-				Gettext.outerStuff.push(self.init_);
-			}
-			else self.init_()
-		}
-		else self.displayMsg(self.processErrors(data));
+	PageScript.prototype.initialisation = function(text) {
+		self.QueryString.uris = JSON.parse(text);
+		self.uribase = self.QueryString.uris.BACKEND_PATH
+		var keygenform = document.getElementById("registration-keygenform")
+		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
+		
+		// filling hrefs of anchors
+		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
+
+		// waiting for gettext loads po files
+		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
+		else self.init_()
 	}
 	
 	PageScript.prototype.init_=function(){
@@ -198,7 +194,7 @@
 		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
-			this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
+			self.ajaxget("/v1/user_by_email/"+email, self.callback(self.myCallback))
 		}
 	}
 	
@@ -207,13 +203,13 @@
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
 	    csrf_token = self.getCookie('csrf');
-	    text= {
+	    data= {
 	    	digest: digest,
 	    	assurance: assurance,
 	    	email: email,
 	    	csrf_token: csrf_token
 	    }
-	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
+	    self.ajaxpost("/v1/add_assurance", data, self.callback(self.myCallback))
 	}
 
 /*
@@ -321,7 +317,7 @@
 					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
 					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
 					<button class="button" type="button" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
-					<a id="digest_self_made_button" href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
+					<a href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
 						<button class="button" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
 					</a>\
 					<div id="change-hash-form_code-generation-input" class="form">\

@@ -9,9 +9,6 @@ function PageScript(test) {
 	this.registrationMethode="pw";
 
 PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
-  // This function is anonymous, is executed immediately and 
-  // the return value is assigned to QueryString!
-  win=win || window 			// to be testable
   var query_string = {};
   var query = search.substring(1);
   var vars = query.split("&");
@@ -172,21 +169,17 @@ console.log(theUri)
 		}
 	
 // oldie	
-	PageScript.prototype.myCallback = function(status, text) {
+	PageScript.prototype.myCallback = function(text) {
 
-		if (status!=500) {
-			var data = JSON.parse(text);
-			var msg = self.processErrors(data)
-			if (status == 200 ) {
-				if( self.page=="login"){
-					if( self.QueryString.next) {
-						self.doRedirect(decodeURIComponent(self.QueryString.next))
-					}
-				}
+		if( self.page=="login"){
+			if( self.QueryString.next) {
+				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
-			self.displayMsg(msg);
 		}
-		else console.log(text);
+		var data = JSON.parse(text);
+		var msg = self.processErrors(data)
+		self.displayMsg(msg);
+
 	}
 	
 	PageScript.prototype.meCallback = function(status, text) {
@@ -205,21 +198,15 @@ console.log(theUri)
 		}
 		else console.log(text);
 	}
-	PageScript.prototype.registerCallback = function(status, text) {
-		if (status!=500) {
+	PageScript.prototype.registerCallback = function(text) {
 			var data = JSON.parse(text);
 			var msg = self.processErrors(data)
-			if (status == 200 ) {
-				if( self.page=="account"){
-					self.get_me()
-				}
-				if( self.page=="login"){
-					self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
-				}
+			if( self.page=="account"){
+				self.get_me()
 			}
-			else self.displayMsg(msg);
-		}
-		else console.log(text);
+			if( self.page=="login"){
+				self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
+			}
 	}	
 
 	PageScript.prototype.reloadCallback = function(status, text) {
@@ -260,7 +247,7 @@ console.log(loggedIn)
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
 		var emailInput=document.getElementById(myForm+"_email_input").value
 		if (emailInput!="")
-			self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.myCallback);
+			self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.callback(self.myCallback));
 		else {
 			emailInput.className="missing";
 			this.displayMsg({"title":"Hiba","error":"Nem adtál meg email címet"})
@@ -326,20 +313,6 @@ console.log("logoutCallback")
 				console.log("logout")
 	    this.ajaxget("/v1/logout", this.logoutCallback)
 	}
-
-
-
-	PageScript.prototype.register_with_facebook = function(userId, accessToken, email) {
-	    username = userId;
-	    password = accessToken;
-	    text = {
-	    	credentialType: "facebook",
-	    	identifier: username,
-	    	secret: password,
-	    	email: email
-	    }
-	    this.ajaxpost("/v1/register", text, this.myCallback)
-	}
 	
 	PageScript.prototype.getCookie = function(cname) {
 	    var name = cname + "=";
@@ -357,17 +330,6 @@ console.log("logoutCallback")
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 		}
-/*	
-	PageScript.prototype.refreshMe = function() {
-		self.ajaxget( '/v1/users/me', self.refreshCallback );
-	} 
-	
-	PageScript.prototype.refreshCallback = function (status, text) {
-		var data = JSON.parse(text);
-		if (status==200) document.getElementById("me_Msg").innerHTML=self.parseUserdata(data);	
-		else self.displayMsg(self.processErrors(data));
-	}
-*/
 
 	PageScript.prototype.loadjs = function(src) {
 	    var fileref=document.createElement('script')
@@ -384,27 +346,6 @@ console.log("logoutCallback")
 	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
 		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
 		else self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
-//obsolote	
-	PageScript.prototype.fill_RemoveCredentialContainer = function(data) {
-		var container = '';
-		var i=0;
-		for(CR in data.credentials) {
-			container += '<div id="RemoveCredential_'+i+'">';
-			container += '<table class="content_"><tr><td width="25%"><p id="RemoveCredential_'+i+'_credentialType">';
-			container += data.credentials[CR].credentialType+'</p></td>';
-			container += '<td style="max-width: 100px;"><pre id="RemoveCredential_'+i+'_identifier">'
-			container += data.credentials[CR].identifier+'</pre></td>';
-			container += '<td width="10%"><div><button class="button" type="button" id="RemoveCredential_'+i+'_button" ';
-			container += 'onclick="javascript:pageScript.RemoveCredential(';
-			container += "'RemoveCredential_"+i+"').doRemove()";
-			container += '">Törlöm</button></div></td>';
-			container += '</tr></table></div>' ;
-			i++;
-		}
-		container += "";
-		document.getElementById("Remove_Credential_Container").innerHTML=container;
 	}
 	
 	PageScript.prototype.RemoveCredential = function(formName) {
@@ -463,7 +404,7 @@ console.log("logoutCallback")
 				text = {	csrf_token: self.getCookie("csrf"),
 							deregister_secret: self.QueryString.secret
 							}
-				self.ajaxpost( "/v1/deregister_doit", text, self.deregisterCallback )
+				self.ajaxpost( "/v1/deregister_doit", text, self.callback(self.deregisterCallback) )
 			}
 			else {
 				var msg={ 	title:_("Error message"),
@@ -480,68 +421,18 @@ console.log("logoutCallback")
 	
 	PageScript.prototype.initiateDeregister = function(theForm) {
 		text = { csrf_token: self.getCookie("csrf") }
-		self.ajaxpost("/v1/deregister", text, self.myCallback)
+		self.ajaxpost("/v1/deregister", text, self.callback(self.myCallback))
 	}
 	
-	PageScript.prototype.deregisterCallback = function(status, text) {
-		var data = JSON.parse(text);
-		var msg=self.processErrors(data)
-		if (status == 200) {
-			self.isLoggedIn=false
-			self.refreshTheNavbar();
-			if (self.page=="account") {
-				self.displayTheSection("login");
-			}
-			msg.callback=function(){self.doRedirect(self.QueryString.uris.START_URL)};
+	PageScript.prototype.deregisterCallback = function(text) {
+		var msg=self.processErrors(JSON.parse(text))
+		self.isLoggedIn=false
+		self.refreshTheNavbar();
+		if (self.page=="account") {
+			self.displayTheSection("login");
 		}
+		msg.callback=function(){self.doRedirect(self.QueryString.uris.START_URL)};
 		self.displayMsg(msg);
-	}
-			
-
-	PageScript.prototype.menuHandler = function(menu_item) {
-		self.menuName=menu_item;
-		self.menuButton=document.getElementById(self.menuName+"-menu");
-		self.menuTab=document.getElementById("tab-content-"+self.menuName);
-		if (typeof(theMenu=document.getElementsByClassName("active-menu")[0])!="undefined") {
-			self.activeButton=theMenu;
-			self.activeButtonName=self.activeButton.id.split("-")[0];
-			self.activeTab=document.getElementById("tab-content-"+self.activeButtonName);
-		}
-		
-		self.menuActivate = function() {
-			if (self.activeButton) { 
-				self.activeButton.className="";
-				self.activeTab.style.display="none";
-			}
-			self.menuButton.style.display="block";
-			self.menuButton.className="active-menu";
-			self.menuTab.style.display="block";
-		}
-
-		self.menuHide = function() {
-			self.menuButton.style.display="none";
-		}
-		
-		self.menuUnhide = function() {
-			self.menuButton.style.display="block";
-		}
-		return self;
-	}
-
-	PageScript.prototype.display = function(toHide, toDisplay){
-		if (toHide) document.getElementById(toHide).style.display="none";
-		if (toDisplay) { 
-			document.getElementById(toDisplay).style.display="block";
-			}
-		else {
-			if (self.isLoggedIn) document.getElementById("my_account_section").style.display="block";
-			else document.getElementById("login_section").style.display="block";
-		}
-	}
-	
-	PageScript.prototype.queryString=function(){
-		this.secret=(self.QueryString.secret)?self.QueryString.secret:"";
-		this.section=(self.QueryString.section)?self.QueryString.section:"";
 	}
 	
 	PageScript.prototype.refreshTheNavbar=function(){
@@ -728,7 +619,7 @@ console.log("logoutCallback")
 	    	email: email,
 	    	digest: digest
 	    }
-	    this.ajaxpost("/v1/register", data, self.registerCallback)
+	    this.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
 	}
 	
 	PageScript.prototype.onSslRegister= function(){
@@ -737,7 +628,7 @@ console.log("logoutCallback")
 	}
 
 	PageScript.prototype.addSslCredentialCallback= function(){
-		if (self.sslCallback()) self.getMe();
+		if (self.sslCallback()) self.get_me();
 	}
 
 	PageScript.prototype.doRegister=function() {
