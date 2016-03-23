@@ -23,12 +23,14 @@
 				if (b.need)	self.neededAssurances=b.need.split(',')
 			}
 		}
+
 	}
 	
 	PageScript.prototype.uriCallback = function(status,text) {
 		var data = JSON.parse(text);
 		if (status==200) {
 			self.QueryString.uris = data
+			if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
 			self.uribase = self.QueryString.uris.BACKEND_PATH
 			var keygenform = document.getElementById("registration-keygenform")
 			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
