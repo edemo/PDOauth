@@ -273,7 +273,7 @@
 				<td class="button-container"><a onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a></td>\
 			</tr>\
 			<tr id="change-hash-form_hash-container">\
-				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
+				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
 				<td>\
 					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
@@ -282,7 +282,7 @@
 				</td>\
 			</tr>\
 			<tr id="change-hash-form_hash-changer" style="display: none;">\
-				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
+				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
 				<td>\
 					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
 					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\

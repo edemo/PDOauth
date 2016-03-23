@@ -375,8 +375,8 @@ msgstr "E-mail cím:"
 
 #: static/js/account.js:428 static/js/account.js:437 static/js/account.js:493
 #: static/js/account.js:502
-msgid "The Secret Hash:"
-msgstr "Titkos Kód:"
+msgid "My Secret Hash:"
+msgstr "Titkos Kódom:"
 
 #: static/js/account.js:439 static/js/account.js:504
 msgid "If you change your Secret Hash, all of your assurences will be deleted!"
