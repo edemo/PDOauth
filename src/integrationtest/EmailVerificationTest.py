@@ -36,7 +36,7 @@ class EmailVerificationTests(IntegrationTest, UserTesting):
 
     def registerAndObtainValidationUri(self):
         with app.test_client() as client:
-            resp = self.register(client) # @UnusedVariable
+            resp = self.register(client)
             email = self.registeredEmail
             logout_user()
             self.assertUserResponse(resp)

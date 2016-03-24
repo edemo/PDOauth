@@ -165,7 +165,7 @@ class Controller(
         cred = CredentialManager.create_user_with_creds(
             form.credentialType.data,
             form.identifier.data,
-            form.secret.data,
+            form.password.data,
             form.email.data,
             None)
         user = cred.user
@@ -379,7 +379,7 @@ class Controller(
         CredentialManager.addCredToUser(user,
             form.credentialType.data,
             form.identifier.data,
-            form.secret.data)
+            form.password.data)
         return self.as_dict(user)
 
     def deleteHandAssuredAssurances(self, assurances):

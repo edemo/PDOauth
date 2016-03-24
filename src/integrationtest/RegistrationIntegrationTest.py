@@ -40,11 +40,11 @@ class RegistrationIntegrationTest(IntegrationTest, UserTesting):
     @test
     def password_registration_needs_good_password(self):
         data = self.prepareAuthInterfaceData()
-        data['secret'] = '1234'
+        data['password'] = '1234'
         with app.test_client() as client:
             resp = client.post(config.BASE_URL + '/v1/register', data=data)
             self.assertEquals(resp.status_code, 400)
-            self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["secret: '))
+            self.assertTrue(self.getResponseText(resp).startswith('{"errors": ["password: '))
 
     @test
     def registration_should_give_a_credential_type(self):

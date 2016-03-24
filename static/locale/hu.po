@@ -307,12 +307,12 @@ msgstr "{0} tanúsító"
 
 #: static/js/account.js:115
 msgid "Your email validation was succesfull."
-msgstr "Az email címed ellenőrzése sikerült."
+msgstr "Az email címed igazolása sikerült."
 
 #: static/js/account.js:119
 msgid "Your email validation <b>failed</b>.<br/>The servers response: "
 msgstr ""
-"Az email címed ellenőrzése <b>nem</b> sikerült.<br/>A szerver üzenete: "
+"Az email címed igazolása <b>nem</b> sikerült.<br/>A szerver üzenete: "
 
 #: static/js/account.js:159
 msgid "email address and/or username / password"
