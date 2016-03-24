@@ -20,7 +20,7 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
         data = {
                 'credentialType': 'password',
                 'identifier': user.username,
-                'secret': user.password
+                'password': user.password
         }
         resp = client.post(config.BASE_URL+'/v1/login', data=data)
         return resp
@@ -32,7 +32,7 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
         self.registeredPassword = "password_{0}".format(self.mkRandomPassword())
         data = {'credentialType':'password',
             'identifier':"id_{0}".format(self.randString),
-            'secret':self.registeredPassword,
+            'password':self.registeredPassword,
             'email':email,
             'digest':self.createHash()}
         return data
