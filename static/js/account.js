@@ -4,7 +4,7 @@
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		xxxx=self
-		this.ajaxget("/adauris", self.callback(self.initialisation))
+		this.ajaxget("/adauris", self.callback(self.commonInit))
 		var section = self.QueryString.section
 		console.log("section:"+section)
 			switch (section) {
@@ -40,6 +40,15 @@
 		if (self.QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 		}
+	}
+	
+	PageScript.prototype.initialise = function(text) {
+		var keygenform = document.getElementById("registration-keygenform")
+		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+
+		// waiting for gettext loads po files
+		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
+		else self.init_()
 	}
 	
 	PageScript.prototype.userNotLoggedIn = function(status, text) {
@@ -113,20 +122,6 @@
 		return "closePopup";
 	}
 
-	PageScript.prototype.initialisation = function(text) {
-		self.QueryString.uris = JSON.parse(text);
-		self.uribase = self.QueryString.uris.BACKEND_PATH
-		var keygenform = document.getElementById("registration-keygenform")
-		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
-		
-		// filling hrefs of anchors
-		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
-
-		// waiting for gettext loads po files
-		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
-		else self.init_()
-	}
-	
 	PageScript.prototype.init_=function(){
 		console.log("init_")
 		if (self.QueryString.section && self.QueryString.section=="email_verification"){
@@ -222,15 +217,10 @@
 		var data = {
 			credentialType: credentialType,
 			identifier: identifier,
-			secret: secret
 		}
-		self.ajaxpost("/v1/add_credential", data, self.addCredentialCallback)
-	}
-
-	PageScript.prototype.addCredentialCallback = function(status,text){
-		var data = JSON.parse(text);
-		if (status != 200) self.displayMsg(self.processErrors(data));
-		else self.get_me();
+		if (credentialType=="password") data.password=secret
+		else data.secret=secret
+		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me()))
 	}
 	
 	PageScript.prototype.addSslCredential = function(data) {
