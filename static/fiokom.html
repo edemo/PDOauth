@@ -317,6 +317,12 @@ td.button-container, td.button-container {
     width: 10%;
     min-width: 12rem;
 }
+.waiting {
+    background-image: url("waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
 		</style>
 	</head>
 	<body onload="pageScript.main()">
@@ -412,7 +418,7 @@ td.button-container, td.button-container {
 						</div>
 						<div class="form-level">
 						<!-- label for="LoginForm_password_input">Jelszó:</label -->
-						<input class="input-block" type="password" placeholder="*********" id="LoginForm_password_input">
+						<input class="input-block" type="password" placeholder="Jelszó" id="LoginForm_password_input">
 						<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 						<button type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
@@ -473,10 +479,18 @@ td.button-container, td.button-container {
 							<span class="form-icon_"><i class=" fa fa-user"></i></span>
 							<p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
 						</div>
-						<div id="registration-form-password-container" class="form-level">
-							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
+						<div id="registration-form-password-container">
+						<div class="form-level">
+							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input" onkeyup="pageScript.passwordChanged('registration-form')">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
-							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
+						</div>
+						<div class="input-block" id="registration-form_pw-strength-meter"></div>
+						<div class="form-level">
+							<input title="" class="input-block" type="password" placeholder="Jelszó ismét" id="registration-form_secret_backup" onkeyup="pageScript.pwEqual('registration-form')">
+							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
+						</div>
+						<div class="input-block" id="registration-form_pw-equal"></div>
+						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
 						</div>
 					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
@@ -490,7 +504,7 @@ td.button-container, td.button-container {
 							, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
 				</div>
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
-						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
+						<a class="digest_self_made_button" target="_blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
 						</a>
 						<div id="code-generation-input" class="form">
@@ -513,7 +527,7 @@ td.button-container, td.button-container {
 					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
 
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
-				<button type="button" onclick="javascript:pageScript.createAndSaveAKeyPair()">Keygen</button>
+<!--				<button type="button" onclick="javascript:pageScript.createAndSaveAKeyPair()">Keygen</button> -->
 			</section>
 		</div>
 
@@ -811,7 +825,7 @@ td.button-container, td.button-container {
                     <h3 class="menu_head">Hasznos linkek</h3>
                     <div class="footer_menu">
                         <ul>
-                            <li><i class="fa fa-anchor"></i> <a target="_blank" anchor-link href="https://testanchor.edemokraciagep.org/ ">Titkos Kód Gép</a></li>
+                            <li><i class="fa fa-anchor"></i> <a target="_blank" class="digest_self_made_button">Titkos Kód Gép</a></li>
                             <li><i class="fa fa-github"></i> <a target="_blank" href="https://www.gitbook.com/@edemo">Gitbook</a></li>
                         </ul>
                     </div>

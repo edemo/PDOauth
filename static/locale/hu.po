@@ -174,9 +174,7 @@ msgstr "Nem vagy bejelentkezve"
 #: src/pdoauth/Messages.py:39 src/pdoauth/Messages.py:40
 #: src/pdoauth/Messages.py:41
 msgid "bad deregistration secret"
-msgstr ""
-"A fiók törlésének lehetősége már nem érvényes. Ha törölni akarod a fiókod "
-"próbáld meg mégegyszer!"
+msgstr "A fiók törlő kulcs érvényessége lejárt. Kezdeményezd újból a fióktörlés 'fiókom' oldalon."
 
 #: src/pdoauth/Messages.py:40 src/pdoauth/Messages.py:41
 #: src/pdoauth/Messages.py:42
@@ -375,8 +373,8 @@ msgstr "E-mail cím:"
 
 #: static/js/account.js:428 static/js/account.js:437 static/js/account.js:493
 #: static/js/account.js:502
-msgid "The Secret Hash:"
-msgstr "Titkos Kód:"
+msgid "My Secret Hash:"
+msgstr "Titkos Kódom:"
 
 #: static/js/account.js:439 static/js/account.js:504
 msgid "If you change your Secret Hash, all of your assurences will be deleted!"
@@ -767,3 +765,27 @@ msgstr "A %s alkalmazás az alábbi adatokat fogja megkapni:"
 
 msgid "The %s application needs you have the assurances below"
 msgstr "A %s alkalmazás használatának feltétele, hogy rendelkezz az alábbi igazolásokkal:"
+
+msgid "The passwords are not identical"
+msgstr "A jelszavak nem egyeznek meg"
+
+msgid "Passwords are not equal."
+msgstr "A jelszavak nem egyeznek meg."
+
+msgid "OK."
+msgstr "Rendben."
+
+msgid "Strong!"
+msgstr "Erős"
+
+msgid "Medium!"
+msgstr "Közepes"
+
+msgid "Weak!"
+msgstr "Gyenge"
+
+msgid "More Characters"
+msgstr "Több karakter kell"
+
+msgid "Type Password"
+msgstr "Írd be a jelszavad"
