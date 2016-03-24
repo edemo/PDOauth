@@ -496,19 +496,19 @@ td.button-container, td.button-container {
 						<div id="code-generation-input" class="form">
 							<div class="bordered">
 								<label for="input">Személyi azonosító:</label>
-								<input type="text" placeholder="" id="registration-keygenform_predigest_input" onkeyup="pageScript.convert_mothername('registration-keygenform_predigest')">
+								<input type="text" placeholder="" id="registration-form_predigest_input" onkeyup="pageScript.convert_mothername('registration-form_predigest')">
 								<label for="mothername">Anyja neve:</label>
-								<input type="text" placeholder="" id="registration-keygenform_predigest_mothername" onkeyup="pageScript.convert_mothername('registration-keygenform_predigest')">
-								<button type="button" onclick="pageScript.digestGetter('registration-keygenform').getDigest()">A kód előállítása</button>
-								<div class="monitor" id="registration-keygenform_predigest_monitor"></div>
+								<input type="text" placeholder="" id="registration-form_predigest_mothername" onkeyup="pageScript.convert_mothername('registration-form_predigest')">
+								<button type="button" onclick="pageScript.digestGetter('registration-form').getDigest()">A kód előállítása</button>
+								<div class="monitor" id="registration-form_predigest_monitor"></div>
 							</div>
 						</div>
 						<div style="margin-top:40px">
 						<label for="digest">Titkos Kód:</label>
-						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-keygenform_digest_input"></textarea>
+						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-form_digest_input"></textarea>
 						</div>
 					</form>
-					<input type="checkbox" id="registration-keygenform_confirmField" name="accept" value="accept">
+					<input type="checkbox" id="registration-form_confirmField" name="accept" value="accept">
 					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az 
 					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
 
