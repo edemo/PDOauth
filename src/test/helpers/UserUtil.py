@@ -70,9 +70,9 @@ class UserUtil(ResponseInfo, RandomUtil):
             cred.user.active=False
         self.data = dict(credentialType='password',
             identifier=None,
-            secret=None)
+            password=None)
         self.addDataBasedOnOptionValue('identifier', identifier, self.userCreationUserid)
-        self.addDataBasedOnOptionValue('secret', secret, self.usercreationPassword)
+        self.addDataBasedOnOptionValue('password', secret, self.usercreationPassword)
         form = FakeForm(self.data)
         return form
 

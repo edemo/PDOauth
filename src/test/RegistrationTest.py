@@ -16,7 +16,7 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.setupUserCreationData()
         self.data = dict(credentialType='password',
                 identifier=self.userCreationUserid,
-                secret=self.usercreationPassword,
+                password=self.usercreationPassword,
                 email=None,
                 digest=None)
         self.addDataBasedOnOptionValue('email', email, self.userCreationEmail)
