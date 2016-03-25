@@ -295,7 +295,7 @@ console.log(loggedIn)
 	    data = {
 	    	credentialType: 'facebook',
 	    	identifier: username,
-	    	secret: password
+	    	password: password
 	    }
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
