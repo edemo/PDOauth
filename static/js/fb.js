@@ -139,7 +139,7 @@ function FaceBook(pageScript) {
 			FB.api('/me', function(response2) {
 				document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
 				document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
-				document.getElementById("registration-form_email_input").value=response2.email;
+				document.getElementById("registration-form_email_input").value=(response2.email)?response2.email:"Add meg az emailcímed!";
 		    });
 		} else {
 		  self.pageScript.displayMsg({ title:_("Facebook error"), error:_('Can not login with your Facebook account') })
