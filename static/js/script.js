@@ -35,6 +35,16 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		return this
 	}
 	
+	PageScript.prototype.commonInit=function(text) {
+		// initialising variables
+		self.QueryString.uris = JSON.parse(text);
+		self.uribase = self.QueryString.uris.BACKEND_PATH;
+
+		// filling hrefs of anchors
+		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
+		self.initialise()
+	}
+	
 	PageScript.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
 		if (win.XMLHttpRequest)
@@ -272,19 +282,20 @@ console.log(loggedIn)
 			var data = {
 				credentialType: "password", 
 				identifier: username, 
-				secret: password
+				password: password
 				}
 			self.ajaxpost( "/v1/login", data, self.callback(self.userIsLoggedIn) )
 		}
 	}
 
 	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
+		console.log("facebook login")
 	    username = userId
 	    password = encodeURIComponent(accessToken)
 	    data = {
 	    	credentialType: 'facebook',
 	    	identifier: username,
-	    	secret: password
+	    	password: password
 	    }
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
@@ -615,11 +626,12 @@ console.log("logoutCallback")
 	    var data= {
 	    	credentialType: credentialType,
 	    	identifier: identifier,
-	    	secret: secret,
 	    	email: email,
 	    	digest: digest
 	    }
-	    this.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
+		if (credentialType=="password") data.password=secret;
+		else data.secret=secret
+	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
 	}
 	
 	PageScript.prototype.onSslRegister= function(){

@@ -9,7 +9,7 @@
 		self.dataGivingAccepted=false;
 		console.log(self.neededAssurances)
 		console.log(self.appDomain)
-		self.ajaxget("/adauris", self.callback(self.initialise) )
+		self.ajaxget("/adauris", self.callback(self.commonInit) )
 	}
 	
 	PageScript.prototype.parseAppCallbackUrl = function() {
@@ -25,20 +25,13 @@
 		}
 	}
 	
-	PageScript.prototype.initialise = function(text) {
-		// initialising variables
-		self.QueryString.uris = JSON.parse(text);
-		self.uribase = self.QueryString.uris.BACKEND_PATH
-		
+	PageScript.prototype.initialise = function() {
 		// redirect to official account page if callback uri is missing
 		if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
 
 		// initialising keygenform submit url
 		var keygenform=document.getElementById("registration-keygenform")
 		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
-
-		// filling hrefs of anchors
-		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
 
 		// waiting for gettext loads po files
 		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_);
