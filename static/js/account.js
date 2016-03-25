@@ -157,7 +157,6 @@
 		[].forEach.call( lis, function (e) { e.className=""; } );
 		if (!section){
 			if (self.isLoggedIn){
-
 				self.unhideSection("my_account_section")
 				document.getElementById("nav-bar-my_account").className="active"
 				if (self.isAssurer) self.unhideSection("assurer_section")
@@ -167,8 +166,13 @@
 				document.getElementById("nav-bar-login").className="active"
 			}
 		}
-		else {
-			self.unhideSection(section+"_section")
+		else { 
+			if (self.isLoggedIn && (section=="registration")) {
+				self.unhideSection("my_account_section")
+			}
+			else {
+				self.unhideSection(section+"_section")
+			}
 			var navbar=document.getElementById("nav-bar-"+section)
 			if (navbar) navbar.className="active";
 		}
@@ -346,7 +350,7 @@
 					<span class="form-icon_"><i class="fa fa-envelope-o"></i>/<i class="fa fa-user"></i></span>\
 					</div>\
 					<div class="form-level">\
-					<input class="input-block" type="password" placeholder="*********" id="AddPasswordCredentialForm_password_input">\
+					<input class="input-block" type="password" placeholder="Jelszó" id="AddPasswordCredentialForm_password_input">\
 					<span class="form-icon_"><i class=" fa fa-lock"></i></span>\
 					</div>\
 				</td>\
