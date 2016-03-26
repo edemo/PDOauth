@@ -192,31 +192,26 @@ console.log(theUri)
 
 	}
 	
-	PageScript.prototype.meCallback = function(status, text) {
-		if (status!=500) {
-			var data = JSON.parse(text);
-			var msg = self.processErrors(data)
-			if (status == 200 ) {
-				if( self.page=="account"){
-					self.get_me()
-				}
-				if( self.page=="login"){
-					self.init_();
-				}
-			}
-			else self.displayMsg(msg);
-		}
-		else console.log(text);
+	PageScript.prototype.meCallback = function(text) {
+		var data = JSON.parse(text);
+		var msg = self.processErrors(data)
+		self.get_me()
+		self.displayMsg(msg);
 	}
+
 	PageScript.prototype.registerCallback = function(text) {
-			var data = JSON.parse(text);
-			var msg = self.processErrors(data)
-			if( self.page=="account"){
-				self.get_me()
-			}
-			if( self.page=="login"){
-				self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
-			}
+		self.isLoggedIn=true
+		if( self.page=="account"){
+			var msg={
+				title:_("Congratulation!"),
+				error:_("You have succesfully registered and logged in. </br> Please click the link inside the email we sent you to validate your email address, otherwise your account will be destroyed in one week.")
+				}
+			self.displayMsg(msg)
+			self.userIsLoggedIn (text)
+		}
+		if( self.page=="login"){
+			self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
+		}
 	}	
 
 	PageScript.prototype.reloadCallback = function(status, text) {
@@ -370,7 +365,7 @@ console.log("logoutCallback")
 				identifier: identifier
 			}
 			console.log("text")
-			this.ajaxpost("/v1/remove_credential", text, self.meCallback);
+			this.ajaxpost("/v1/remove_credential", text, self.callback(self.meCallback));
 		}
 		return self
 	}
@@ -596,6 +591,7 @@ console.log("logoutCallback")
 				heading=_("email address and/or username / password")
 				document.getElementById("registration-form-password-container").style.display="block";
 				document.getElementById("registration-form-username-container").style.display="block";
+				document.getElementById("registration-ssltext-container").style.display="none";
 				document.getElementById("registration-form_secret_input").value="";
 				document.getElementById("registration-form_identifier_input").value="";
 			break;
@@ -603,12 +599,14 @@ console.log("logoutCallback")
 				heading=_("my facebook account")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
+				document.getElementById("registration-ssltext-container").style.display="none";
 				facebook.fbregister()
 			break;
 			case "ssl":
 				heading=_("SSL certificate")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
+				document.getElementById("registration-ssltext-container").style.display="block";
 			break;
 		}
 		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
