@@ -772,3 +772,6 @@ msgstr ""
 
 msgid "Type Password"
 msgstr ""
+
+msgid "You have succesfully registered and logged in. </br> Please click the link inside the email we sent you to validate your email address, otherwise your account will be destroyed in one week."
+msgstr ""
