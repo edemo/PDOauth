@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-20 09:21+0100\n"
+"POT-Creation-Date: 2016-03-26 16:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,225 +51,239 @@ msgid "credentialType: Invalid value, must be one of:"
 msgstr ""
 
 #: src/pdoauth/Messages.py:12 src/pdoauth/Messages.py:13
+#: src/pdoauth/Messages.py:14
 msgid "Missing parameter redirect_uri in URL query"
 msgstr ""
 
 #: src/pdoauth/Messages.py:13 src/pdoauth/Messages.py:14
+#: src/pdoauth/Messages.py:15
 msgid "Missing parameter response_type in URL query"
 msgstr ""
 
 #: src/pdoauth/Messages.py:14 src/pdoauth/Messages.py:15
+#: src/pdoauth/Messages.py:16
 msgid "Missing parameter client_id in URL query"
 msgstr ""
 
 #: src/pdoauth/Messages.py:15 src/pdoauth/Messages.py:16
+#: src/pdoauth/Messages.py:17
 msgid "unsupported_grant_type"
 msgstr ""
 
 #: src/pdoauth/Messages.py:16 src/pdoauth/Messages.py:17
+#: src/pdoauth/Messages.py:18
 msgid "invalid_client"
 msgstr ""
 
 #: src/pdoauth/Messages.py:17 src/pdoauth/Messages.py:18
+#: src/pdoauth/Messages.py:19
 msgid "unsupported_response_type"
 msgstr ""
 
 #: src/pdoauth/Messages.py:18 src/pdoauth/Messages.py:19
+#: src/pdoauth/Messages.py:20
 msgid "unauthorized_client"
 msgstr ""
 
 #: src/pdoauth/Messages.py:19 src/pdoauth/Messages.py:20
+#: src/pdoauth/Messages.py:21
 msgid "invalid_scope"
 msgstr ""
 
 #: src/pdoauth/Messages.py:20 src/pdoauth/Messages.py:21
+#: src/pdoauth/Messages.py:22
 msgid "Invalid request"
 msgstr ""
 
 #: src/pdoauth/Messages.py:21 src/pdoauth/Messages.py:22
+#: src/pdoauth/Messages.py:23
 msgid "access_denied"
 msgstr ""
 
 #: src/pdoauth/Messages.py:22 src/pdoauth/Messages.py:23
+#: src/pdoauth/Messages.py:24
 msgid "invalid_grant"
 msgstr ""
 
 #: src/pdoauth/Messages.py:24 src/pdoauth/Messages.py:59
 #: src/pdoauth/Messages.py:25 src/pdoauth/Messages.py:60
-#: src/pdoauth/Messages.py:61
+#: src/pdoauth/Messages.py:61 src/pdoauth/Messages.py:26
+#: src/pdoauth/Messages.py:62
 msgid "You have to register first"
 msgstr ""
 
 #: src/pdoauth/Messages.py:25 src/pdoauth/Messages.py:26
+#: src/pdoauth/Messages.py:27
 msgid "No certificate given"
 msgstr ""
 
 #: src/pdoauth/Messages.py:26 src/pdoauth/Messages.py:27
+#: src/pdoauth/Messages.py:28
 msgid "another user is using your hash"
 msgstr ""
 
 #: src/pdoauth/Messages.py:27 src/pdoauth/Messages.py:28
-#: src/pdoauth/Messages.py:29
+#: src/pdoauth/Messages.py:29 src/pdoauth/Messages.py:30
 msgid "More users with the same hash; specify both hash and email"
 msgstr ""
 
 #: src/pdoauth/Messages.py:28 src/pdoauth/Messages.py:29
-#: src/pdoauth/Messages.py:30
+#: src/pdoauth/Messages.py:30 src/pdoauth/Messages.py:31
 msgid "no authorization to show other users"
 msgstr ""
 
 #: src/pdoauth/Messages.py:29 src/pdoauth/Messages.py:30
-#: src/pdoauth/Messages.py:31
+#: src/pdoauth/Messages.py:31 src/pdoauth/Messages.py:32
 msgid "Password reset email has been successfully sent."
 msgstr ""
 
 #: src/pdoauth/Messages.py:30 src/pdoauth/Messages.py:31
-#: src/pdoauth/Messages.py:32
+#: src/pdoauth/Messages.py:32 src/pdoauth/Messages.py:33
 msgid "You cannot delete the login you are using"
 msgstr ""
 
 #: src/pdoauth/Messages.py:31 src/pdoauth/Messages.py:32
-#: src/pdoauth/Messages.py:33
+#: src/pdoauth/Messages.py:33 src/pdoauth/Messages.py:34
 msgid "No such user"
 msgstr ""
 
 #: src/pdoauth/Messages.py:32 src/pdoauth/Messages.py:33
-#: src/pdoauth/Messages.py:34
+#: src/pdoauth/Messages.py:34 src/pdoauth/Messages.py:35
 msgid "bad Authorization header"
 msgstr ""
 
 #: src/pdoauth/Messages.py:33 src/pdoauth/Messages.py:34
-#: src/pdoauth/Messages.py:35
+#: src/pdoauth/Messages.py:35 src/pdoauth/Messages.py:36
 msgid "no authorization"
 msgstr ""
 
 #: src/pdoauth/Messages.py:34 src/pdoauth/Messages.py:35
-#: src/pdoauth/Messages.py:36
+#: src/pdoauth/Messages.py:36 src/pdoauth/Messages.py:37
 msgid "authentication needed"
 msgstr ""
 
 #: src/pdoauth/Messages.py:35 src/pdoauth/Messages.py:36
-#: src/pdoauth/Messages.py:37
+#: src/pdoauth/Messages.py:37 src/pdoauth/Messages.py:38
 msgid "logged out"
 msgstr ""
 
 #: src/pdoauth/Messages.py:36 src/pdoauth/Messages.py:37
-#: src/pdoauth/Messages.py:38
+#: src/pdoauth/Messages.py:38 src/pdoauth/Messages.py:39
 msgid "deregistration email has been sent"
 msgstr ""
 
 #: src/pdoauth/Messages.py:37 src/pdoauth/Messages.py:38
-#: src/pdoauth/Messages.py:39
+#: src/pdoauth/Messages.py:39 src/pdoauth/Messages.py:40
 msgid "secret is needed for deregistration_doit"
 msgstr ""
 
 #: src/pdoauth/Messages.py:38 src/pdoauth/Messages.py:39
-#: src/pdoauth/Messages.py:40
+#: src/pdoauth/Messages.py:40 src/pdoauth/Messages.py:41
 msgid "not logged in"
 msgstr ""
 
 #: src/pdoauth/Messages.py:39 src/pdoauth/Messages.py:40
-#: src/pdoauth/Messages.py:41
+#: src/pdoauth/Messages.py:41 src/pdoauth/Messages.py:42
 msgid "bad deregistration secret"
 msgstr ""
 
 #: src/pdoauth/Messages.py:40 src/pdoauth/Messages.py:41
-#: src/pdoauth/Messages.py:42
+#: src/pdoauth/Messages.py:42 src/pdoauth/Messages.py:43
 msgid "you are deregistered"
 msgstr ""
 
 #: src/pdoauth/Messages.py:41 src/pdoauth/Messages.py:42
-#: src/pdoauth/Messages.py:43
+#: src/pdoauth/Messages.py:43 src/pdoauth/Messages.py:44
 msgid "new hash registered"
 msgstr ""
 
 #: src/pdoauth/Messages.py:42 src/pdoauth/Messages.py:43
-#: src/pdoauth/Messages.py:44
+#: src/pdoauth/Messages.py:44 src/pdoauth/Messages.py:45
 msgid "old password does not match"
 msgstr ""
 
 #: src/pdoauth/Messages.py:43 src/pdoauth/Messages.py:44
-#: src/pdoauth/Messages.py:45
+#: src/pdoauth/Messages.py:45 src/pdoauth/Messages.py:46
 msgid "password changed succesfully"
 msgstr ""
 
 #: src/pdoauth/Messages.py:44 src/pdoauth/Messages.py:45
-#: src/pdoauth/Messages.py:46
+#: src/pdoauth/Messages.py:46 src/pdoauth/Messages.py:47
 msgid "This user does not have that digest"
 msgstr ""
 
 #: src/pdoauth/Messages.py:45 src/pdoauth/Messages.py:46
-#: src/pdoauth/Messages.py:47
+#: src/pdoauth/Messages.py:47 src/pdoauth/Messages.py:48
 msgid "No user with this hash"
 msgstr ""
 
 #: src/pdoauth/Messages.py:46 src/pdoauth/Messages.py:47
-#: src/pdoauth/Messages.py:48
+#: src/pdoauth/Messages.py:48 src/pdoauth/Messages.py:49
 msgid "unknown token"
 msgstr ""
 
 #: src/pdoauth/Messages.py:47 src/pdoauth/Messages.py:48
-#: src/pdoauth/Messages.py:49
+#: src/pdoauth/Messages.py:49 src/pdoauth/Messages.py:50
 msgid "email verified OK"
 msgstr ""
 
 #: src/pdoauth/Messages.py:48 src/pdoauth/Messages.py:49
-#: src/pdoauth/Messages.py:50
+#: src/pdoauth/Messages.py:50 src/pdoauth/Messages.py:51
 msgid "Invalid email address"
 msgstr ""
 
 #: src/pdoauth/Messages.py:49 src/pdoauth/Messages.py:50
-#: src/pdoauth/Messages.py:51
+#: src/pdoauth/Messages.py:51 src/pdoauth/Messages.py:52
 msgid "expired token"
 msgstr ""
 
 #: src/pdoauth/Messages.py:50 src/pdoauth/Messages.py:51
-#: src/pdoauth/Messages.py:52
+#: src/pdoauth/Messages.py:52 src/pdoauth/Messages.py:53
 msgid "Password successfully changed"
 msgstr ""
 
 #: src/pdoauth/Messages.py:51 src/pdoauth/Messages.py:52
-#: src/pdoauth/Messages.py:53
+#: src/pdoauth/Messages.py:53 src/pdoauth/Messages.py:54
 msgid "The secret has expired"
 msgstr ""
 
 #: src/pdoauth/Messages.py:52 src/pdoauth/Messages.py:53
-#: src/pdoauth/Messages.py:54
+#: src/pdoauth/Messages.py:54 src/pdoauth/Messages.py:55
 msgid "No such credential"
 msgstr ""
 
 #: src/pdoauth/Messages.py:53 src/pdoauth/Messages.py:54
-#: src/pdoauth/Messages.py:55
+#: src/pdoauth/Messages.py:55 src/pdoauth/Messages.py:56
 msgid "credential removed"
 msgstr ""
 
 #: src/pdoauth/Messages.py:55 src/pdoauth/Messages.py:56
-#: src/pdoauth/Messages.py:57
+#: src/pdoauth/Messages.py:57 src/pdoauth/Messages.py:58
 msgid "error in cert"
 msgstr ""
 
 #: src/pdoauth/Messages.py:56 src/pdoauth/Messages.py:57
-#: src/pdoauth/Messages.py:58
+#: src/pdoauth/Messages.py:58 src/pdoauth/Messages.py:59
 msgid "Inactive or disabled user"
 msgstr ""
 
 #: src/pdoauth/Messages.py:57 src/pdoauth/Messages.py:58
-#: src/pdoauth/Messages.py:59
+#: src/pdoauth/Messages.py:59 src/pdoauth/Messages.py:60
 msgid "Bad username or password"
 msgstr ""
 
 #: src/pdoauth/Messages.py:58 src/pdoauth/Messages.py:59
-#: src/pdoauth/Messages.py:60
+#: src/pdoauth/Messages.py:60 src/pdoauth/Messages.py:61
 msgid "Cannot login to facebook"
 msgstr ""
 
 #: src/pdoauth/Messages.py:60 src/pdoauth/Messages.py:61
-#: src/pdoauth/Messages.py:62
+#: src/pdoauth/Messages.py:62 src/pdoauth/Messages.py:63
 msgid "Unknown application"
 msgstr ""
 
 #: src/pdoauth/Messages.py:61 src/pdoauth/Messages.py:62
-#: src/pdoauth/Messages.py:63
+#: src/pdoauth/Messages.py:63 src/pdoauth/Messages.py:64
 msgid "No hash given"
 msgstr ""
 
@@ -299,19 +313,19 @@ msgstr "vizsgabiztos"
 msgid "assurer.{0}"
 msgstr "ilyen igazolást tud kiadni: {0}"
 
-#: static/js/account.js:115
+#: static/js/account.js:115 static/js/account.js:140
 msgid "Your email validation was succesfull."
 msgstr ""
 
-#: static/js/account.js:119
+#: static/js/account.js:119 static/js/account.js:144
 msgid "Your email validation <b>failed</b>.<br/>The servers response: "
 msgstr ""
 
-#: static/js/account.js:159
+#: static/js/account.js:159 static/js/script.js:591
 msgid "email address and/or username / password"
 msgstr ""
 
-#: static/js/account.js:164
+#: static/js/account.js:164 static/js/script.js:599
 msgid "my facebook account"
 msgstr ""
 
@@ -319,11 +333,11 @@ msgstr ""
 msgid "Registration with {0}"
 msgstr ""
 
-#: static/js/account.js:211 static/js/account.js:230
+#: static/js/account.js:211 static/js/account.js:230 static/js/script.js:739
 msgid "Server error occured"
 msgstr ""
 
-#: static/js/account.js:237 static/js/account.js:263
+#: static/js/account.js:237 static/js/account.js:263 static/js/script.js:668
 msgid "Acceptance is missing"
 msgstr ""
 
@@ -331,34 +345,37 @@ msgstr ""
 msgid "Text for missing accaptance of term of use"
 msgstr ""
 
-#: static/js/account.js:280 static/js/account.js:310
+#: static/js/account.js:280 static/js/account.js:310 static/js/script.js:501
 msgid "The Secret Hash is given for assuring"
 msgstr ""
 
 #: static/js/account.js:285 static/js/script.js:97 static/js/script.js:568
 #: static/js/script.js:582 static/js/script.js:588 static/js/account.js:319
 #: static/js/script.js:98 static/js/script.js:554 static/js/script.js:560
+#: static/js/script.js:112 static/js/script.js:416 static/js/script.js:422
+#: static/js/script.js:518 static/js/script.js:652
 msgid "Error message"
 msgstr ""
 
-#: static/js/account.js:289 static/js/account.js:323
+#: static/js/account.js:289 static/js/account.js:323 static/js/script.js:522
 msgid "The Secret Hash isn't given yet"
 msgstr ""
 
 #: static/js/account.js:316 static/js/account.js:320 static/js/script.js:368
 #: static/js/account.js:350 static/js/account.js:354 static/js/script.js:369
+#: static/js/script.js:275 static/js/script.js:566 static/js/script.js:570
 msgid "Missing data"
 msgstr ""
 
-#: static/js/account.js:316 static/js/account.js:350
+#: static/js/account.js:316 static/js/account.js:350 static/js/script.js:566
 msgid "Personal identifier is missing"
 msgstr ""
 
-#: static/js/account.js:320 static/js/account.js:354
+#: static/js/account.js:320 static/js/account.js:354 static/js/script.js:570
 msgid "Mother's name is missing"
 msgstr ""
 
-#: static/js/account.js:421 static/js/account.js:486
+#: static/js/account.js:421 static/js/account.js:486 static/js/account.js:293
 msgid "Email address:"
 msgstr ""
 
@@ -367,44 +384,46 @@ msgstr ""
 msgid "The Secret Hash:"
 msgstr ""
 
-#: static/js/account.js:439 static/js/account.js:504
+#: static/js/account.js:439 static/js/account.js:504 static/js/account.js:311
 msgid "If you change your Secret Hash, all of your assurences will be deleted!"
 msgstr ""
 
-#: static/js/account.js:441 static/js/account.js:506
+#: static/js/account.js:441 static/js/account.js:506 static/js/account.js:313
 msgid "Let's make it here"
 msgstr ""
 
-#: static/js/account.js:443 static/js/account.js:508
+#: static/js/account.js:443 static/js/account.js:508 static/js/account.js:315
 msgid "I make it myself"
 msgstr ""
 
-#: static/js/account.js:447 static/js/account.js:512
+#: static/js/account.js:447 static/js/account.js:512 static/js/account.js:319
 msgid "Personal identifier"
 msgstr ""
 
-#: static/js/account.js:449 static/js/account.js:514
+#: static/js/account.js:449 static/js/account.js:514 static/js/account.js:321
 msgid "Mother's name"
 msgstr ""
 
-#: static/js/account.js:451 static/js/account.js:516
+#: static/js/account.js:451 static/js/account.js:516 static/js/account.js:323
 msgid "Generate"
 msgstr ""
 
 #: static/js/account.js:457 static/js/account.js:490 static/js/account.js:522
-#: static/js/account.js:551
+#: static/js/account.js:551 static/js/account.js:297 static/js/account.js:329
+#: static/js/account.js:358
 msgid "save"
 msgstr ""
 
 #: static/js/account.js:458 static/js/account.js:523 static/js/account.js:552
+#: static/js/account.js:330 static/js/account.js:359
 msgid "cancel"
 msgstr ""
 
-#: static/js/account.js:462 static/js/account.js:527
+#: static/js/account.js:462 static/js/account.js:527 static/js/account.js:334
 msgid "My credentials"
 msgstr ""
 
-#: static/js/account.js:464 static/js/account.js:529
+#: static/js/account.js:464 static/js/account.js:529 static/js/account.js:336
 msgid "Password"
 msgstr ""
 
@@ -416,64 +435,64 @@ msgid ""
 "plurals"
 msgstr ""
 
-#: static/js/script.js:89 static/js/script.js:90
+#: static/js/script.js:89 static/js/script.js:90 static/js/script.js:104
 msgid "Server message"
 msgstr ""
 
-#: static/js/script.js:93 static/js/script.js:94
+#: static/js/script.js:93 static/js/script.js:94 static/js/script.js:108
 msgid "User informations"
 msgstr ""
 
-#: static/js/script.js:119 static/js/script.js:120
+#: static/js/script.js:119 static/js/script.js:120 static/js/account.js:424
 msgid "Application"
 msgstr ""
 
-#: static/js/script.js:120 static/js/script.js:121
+#: static/js/script.js:120 static/js/script.js:121 static/js/account.js:425
 msgid "Domain"
 msgstr ""
 
 #: static/js/script.js:121 static/js/script.js:160 static/js/script.js:122
-#: static/js/script.js:161
+#: static/js/script.js:161 static/js/account.js:426 static/js/script.js:142
 msgid "User identifier"
 msgstr ""
 
-#: static/js/script.js:122 static/js/script.js:123
+#: static/js/script.js:122 static/js/script.js:123 static/js/account.js:427
 msgid "Emailing"
 msgstr ""
 
-#: static/js/script.js:123 static/js/script.js:124
+#: static/js/script.js:123 static/js/script.js:124 static/js/account.js:428
 msgid "Allow emailing"
 msgstr ""
 
-#: static/js/script.js:164 static/js/script.js:165
+#: static/js/script.js:164 static/js/script.js:165 static/js/script.js:146
 msgid "Assurances"
 msgstr ""
 
-#: static/js/script.js:168 static/js/script.js:169
+#: static/js/script.js:168 static/js/script.js:169 static/js/script.js:150
 msgid "Name"
 msgstr ""
 
-#: static/js/script.js:169 static/js/script.js:170
+#: static/js/script.js:169 static/js/script.js:170 static/js/script.js:151
 msgid "Assurer"
 msgstr ""
 
-#: static/js/script.js:170 static/js/script.js:171
+#: static/js/script.js:170 static/js/script.js:171 static/js/script.js:152
 msgid "Date of assurance"
 msgstr ""
 
-#: static/js/script.js:171 static/js/script.js:172
+#: static/js/script.js:171 static/js/script.js:172 static/js/script.js:153
 msgid "Valid until"
 msgstr ""
 
-#: static/js/script.js:183 static/js/script.js:184
+#: static/js/script.js:183 static/js/script.js:184 static/js/script.js:165
 msgid "unlimited"
 msgstr ""
 
-#: static/js/script.js:360 static/js/script.js:361
+#: static/js/script.js:360 static/js/script.js:361 static/js/script.js:267
 msgid "User name is missing. "
 msgstr ""
 
-#: static/js/script.js:365 static/js/script.js:366
+#: static/js/script.js:365 static/js/script.js:366 static/js/script.js:272
 msgid "Password is missing. "
 msgstr ""
 
@@ -482,7 +501,9 @@ msgstr ""
 #: static/js/script.js:550 static/js/script.js:554 static/js/script.js:443
 #: static/js/script.js:471 static/js/script.js:512 static/js/script.js:516
 #: static/js/script.js:520 static/js/script.js:534 static/js/script.js:538
-#: static/js/script.js:542
+#: static/js/script.js:542 static/js/script.js:337 static/js/script.js:354
+#: static/js/script.js:374 static/js/script.js:378 static/js/script.js:382
+#: static/js/script.js:396 static/js/script.js:400 static/js/script.js:404
 msgid "Under construction"
 msgstr ""
 
@@ -491,11 +512,13 @@ msgstr ""
 #: static/js/script.js:550 static/js/script.js:554 static/js/script.js:443
 #: static/js/script.js:471 static/js/script.js:512 static/js/script.js:516
 #: static/js/script.js:520 static/js/script.js:534 static/js/script.js:538
-#: static/js/script.js:542
+#: static/js/script.js:542 static/js/script.js:337 static/js/script.js:354
+#: static/js/script.js:374 static/js/script.js:378 static/js/script.js:382
+#: static/js/script.js:396 static/js/script.js:400 static/js/script.js:404
 msgid "This function is not working yet."
 msgstr ""
 
-#: static/js/script.js:450
+#: static/js/script.js:450 static/js/script.js:206
 msgid "Congratulation!"
 msgstr ""
 
@@ -503,7 +526,7 @@ msgstr ""
 msgid "The Secret Hash has been constructed successfully."
 msgstr ""
 
-#: static/js/script.js:583 static/js/script.js:555
+#: static/js/script.js:583 static/js/script.js:555 static/js/script.js:417
 msgid "The secret is missing"
 msgstr ""
 
@@ -512,6 +535,7 @@ msgid "Plase accept the consequences with checking the checkbox"
 msgstr ""
 
 #: static/js/account.js:170 static/js/account.js:465 static/js/account.js:530
+#: static/js/account.js:337 static/js/script.js:606
 msgid "SSL certificate"
 msgstr ""
 
@@ -679,16 +703,17 @@ msgstr ""
 msgid "you already have this hash: nothing is done"
 msgstr ""
 
-#: static/js/account.js:175
+#: static/js/account.js:175 static/js/script.js:612
 #, javascript-format
 msgid "Registration with %s "
 msgstr ""
 
-#: static/js/account.js:213 static/js/account.js:447
+#: static/js/account.js:213 static/js/account.js:447 static/js/account.js:254
+#: static/js/script.js:681
 msgid "Server failure"
 msgstr ""
 
-#: static/js/account.js:263
+#: static/js/account.js:263 static/js/script.js:668
 msgid ""
 "For the registration you have to accept the terms of use. To accept the "
 "terms of use please mark the checkbox!"
@@ -706,7 +731,7 @@ msgstr ""
 msgid "application needs to sign in with your ADA account"
 msgstr ""
 
-#: static/js/script.js:561
+#: static/js/script.js:561 static/js/script.js:423
 msgid "To accept the terms please mark the checkbox!"
 msgstr ""
 
@@ -749,26 +774,61 @@ msgstr ""
 msgid "The %s application needs you have the assurances below"
 msgstr ""
 
+#: static/js/script.js:652
 msgid "The passwords are not identical"
 msgstr ""
 
+#: static/js/script.js:735
 msgid "Passwords are not equal."
 msgstr ""
 
+#: static/js/script.js:734
 msgid "OK."
 msgstr ""
 
+#: static/js/script.js:719
 msgid "Strong!"
 msgstr ""
 
+#: static/js/script.js:722
 msgid "Medium!"
 msgstr ""
 
+#: static/js/script.js:725
 msgid "Weak!"
 msgstr ""
 
+#: static/js/script.js:716
 msgid "More Characters"
 msgstr ""
 
+#: static/js/script.js:713
 msgid "Type Password"
+msgstr ""
+
+#: src/pdoauth/Messages.py:12
+msgid "credentialType"
+msgstr ""
+
+#: src/pdoauth/Messages.py:13
+msgid "Invalid value, must be one of"
+msgstr ""
+
+#: src/pdoauth/Messages.py:29
+msgid "you already have this hash,so nothing is done"
+msgstr ""
+
+#: src/pdoauth/Messages.py:65
+msgid "Nem sikerült elküldeni a levelet"
+msgstr ""
+
+#: static/js/account.js:300 static/js/account.js:309
+msgid "My Secret Hash:"
+msgstr ""
+
+#: static/js/script.js:207
+msgid ""
+"You have succesfully registered and logged in. </br> Please click the link "
+"inside the email we sent you to validate your email address, otherwise your "
+"account will be destroyed in one week."
 msgstr ""
