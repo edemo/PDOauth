@@ -23,11 +23,10 @@
 	
 	PageScript.prototype.statCallback=function(text) {
 		data=JSON.parse(text)
-			document.getElementById("user-counter").innerHTML=(data.users)?data.users:0
-			document.getElementById("magyar-counter").innerHTML=(data.assurances.magyar)?data.assurances.magyar:0
-			document.getElementById("assurer-counter").innerHTML=(data.assurances.assurer)?data.assurances.assurer:0
-			document.getElementById("application-counter").innerHTML=(data.applications)?data.applications:0
-		}
+		document.getElementById("user-counter").innerHTML=(data.users)?data.users:0
+		document.getElementById("magyar-counter").innerHTML=(data.assurances.magyar)?data.assurances.magyar:0
+		document.getElementById("assurer-counter").innerHTML=(data.assurances.assurer)?data.assurances.assurer:0
+		document.getElementById("application-counter").innerHTML=(data.applications)?data.applications:0
 	}
 }()
 )
