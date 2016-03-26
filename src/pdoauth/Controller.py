@@ -26,7 +26,7 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     addedAssurance, noShowAuthorization, unknownToken, expiredToken,\
     emailVerifiedOK, invalidEmailAdress, passwordResetSent, theSecretHasExpired,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
-    credentialRemoved, sameHash
+    credentialRemoved, sameHash, verificationEmailSent
 
 class Controller(
         WebInterface, Responses, EmailHandling,
@@ -327,6 +327,12 @@ class Controller(
     def getCredentialForEmailverifyToken(self, token):
         cred = Credential.getBySecret('emailcheck', token)
         return cred
+
+    def sendVerifyEmail(self):
+        current_user = self.getCurrentUser()
+        self.sendPasswordVerificationEmail(current_user)
+        return self.simple_response(verificationEmailSent)
+        
 
     def doverifyEmail(self, token):
         cred = self.getCredentialForEmailverifyToken(token)

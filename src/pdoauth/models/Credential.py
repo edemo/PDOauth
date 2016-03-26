@@ -27,6 +27,12 @@ class Credential(db.Model, ModelUtils):
         self.identifier = identifier
         self.secret = secret
     
+    def getAdditionalInfo(self):
+        l = self.identifier.split(":")
+        if len(l)>1:
+            return l[1]
+        return None
+
     @classmethod
     def get(cls, credentialType, identifier):
         return Credential.query.filter_by(credentialType = credentialType, identifier = identifier).first()

@@ -9,19 +9,16 @@ class element_to_be_useable(object):
         self.locator = locator
 
     def __call__(self, driver):
-        print self.locator
         try:
             element = driver.find_element(*self.locator)
         except:
             print sys.exc_info()
             element = None
-        #print "e=",element
         if element:
             displayValue=element.value_of_css_property('display')
             displayok = displayValue in ('block', 'inline','inline-block')
             displayed = element.is_displayed()
             enabled = element.is_enabled()
-            #print displayValue, displayed, enabled
             if displayed and enabled and displayok:
                 return element
         return False
