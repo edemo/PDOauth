@@ -5,7 +5,7 @@ class Observable(object):
     def subscribe(cls,observerfunct,event):
         if cls.observers is None:
             cls.observers = dict()
-        if not cls.observers.has_key(event):
+        if not event in cls.observers:
             cls.observers[event]=list()
         cls.observers[event].append(observerfunct)
 

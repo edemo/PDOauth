@@ -3,21 +3,21 @@ from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
-import re
 from pdoauth.models.Assurance import Assurance, emailVerification
 from flask_login import logout_user
 from integrationtest import config
 import time
 from integrationtest.helpers.UserTesting import UserTesting
+from test.helpers.EmailUtil import EmailUtil
 
 app.extensions["mail"].suppress = True
 
-class EmailVerificationTests(IntegrationTest, UserTesting):
+class EmailVerificationTests(IntegrationTest, UserTesting, EmailUtil):
 
     @test
     def email_validation_gives_emailverification_assurance(self):
         self.setupRandom()
-        with app.test_client() as client:
+        with app.test_client():
             email = self.registerAndObtainValidationUri()
             self.assertTrue(self.validateUri.startswith(config.BASE_URL + "/v1/verify_email"))
         with app.test_client() as client:
@@ -36,7 +36,7 @@ class EmailVerificationTests(IntegrationTest, UserTesting):
 
     def registerAndObtainValidationUri(self):
         with app.test_client() as client:
-            resp = self.register(client) # @UnusedVariable
+            resp = self.register(client)
             email = self.registeredEmail
             logout_user()
             self.assertUserResponse(resp)
@@ -64,3 +64,10 @@ class EmailVerificationTests(IntegrationTest, UserTesting):
             self.assertEquals(resp.status_code, 404)
             self.assertEquals(self.getResponseText(resp),'{"errors": ["unknown token"]}')
 
+    @test
+    def email_validation_email_can_be_resent(self):
+        with app.test_client() as client:
+            self.login(client)
+            client.get(config.BASE_URL + "/v1/send_verify_email")
+            user=User.get(self.userid)
+            self.assertEqual(self.userCreationEmail, Credential.getByUser(user, "emailcheck").user.email)

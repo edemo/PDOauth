@@ -2,14 +2,14 @@ from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance
 from test.helpers.PDUnitTest import PDUnitTest, test
-from test.helpers.UserUtil import UserUtil
 from test.helpers.FakeInterFace import FakeForm
 import time
 from uuid import uuid4
+from test.helpers.EmailUtil import EmailUtil
 from pdoauth.models.Application import Application
 from pdoauth.models.AppMap import AppMap
 
-class DeregisterTest(PDUnitTest, UserUtil):
+class DeregisterTest(PDUnitTest, EmailUtil):
     addAppMapToUser=False
 
     def _doDeregister(self):
@@ -46,7 +46,7 @@ class DeregisterTest(PDUnitTest, UserUtil):
         self._loginAndDeregister()
         user = self.cred.user
         if self.addAppMapToUser==True:
-            app = Application.query.first()
+            app = Application.query.first()  # @UndefinedVariable
             AppMap.new(app, user)
         deregistrationCredential = Credential.getByUser(user, 'deregister')
         secret = deregistrationCredential.secret

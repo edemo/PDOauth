@@ -4,7 +4,7 @@
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		xxxx=self
-		this.ajaxget("/adauris", self.uriCallback)
+		this.ajaxget("/adauris", self.callback(self.commonInit))
 		var section = self.QueryString.section
 		console.log("section:"+section)
 			switch (section) {
@@ -41,6 +41,49 @@
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 		}
 	}
+	
+	PageScript.prototype.initialise = function(text) {
+		var keygenform = document.getElementById("registration-keygenform")
+		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+
+		// waiting for gettext loads po files
+		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
+		else self.init_()
+	}
+	
+	PageScript.prototype.userNotLoggedIn = function(status, text) {
+		var data = JSON.parse(text);
+		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		self.refreshTheNavbar()
+		if (self.QueryString.section) {
+			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+			else return;
+		}
+		else self.displayTheSection();
+	}
+	
+	PageScript.prototype.userIsLoggedIn = function(text) {
+		var data = JSON.parse(text);
+		self.isLoggedIn=true
+		self.ajaxget('/v1/getmyapps',self.myappsCallback)
+		if (data.assurances) {
+			document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
+			document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
+			document.getElementById("assurance-giving_assurance_selector").innerHTML=self.parseAssurances(data);
+			if (!(data.assurances.assurer)) self.isAssurer=false;
+			else {
+				self.isAssurer=true;
+			}
+		}
+		self.refreshTheNavbar()
+		if (self.QueryString.section) {
+			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+			else return;
+		}
+		else self.displayTheSection();
+	}
+
+	
 	PageScript.prototype.modNavbarItem=function(){
 		document.getElementById("")
 	}
@@ -79,30 +122,12 @@
 		return "closePopup";
 	}
 
-	PageScript.prototype.uriCallback = function(status,text) {
-		var data = JSON.parse(text);
-		if (status==200) {
-			self.QueryString.uris = data
-			self.uribase = self.QueryString.uris.BACKEND_PATH
-			var keygenform = document.getElementById("registration-keygenform")
-			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
-			loc = '' + win.location
-			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
-			if (!Gettext.isAllPoLoaded) {
-				console.log('várunk a gettextre');
-				Gettext.outerStuff.push(self.init_);
-			}
-			else self.init_()
-		}
-		else self.displayMsg(self.processErrors(data));
-	}
-	
 	PageScript.prototype.init_=function(){
 		console.log("init_")
 		if (self.QueryString.section && self.QueryString.section=="email_verification"){
 			if (self.QueryString.secret) self.verifyEmail()
 		}
-		self.ajaxget("/v1/users/me", self.initCallback)		
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
@@ -132,7 +157,6 @@
 		[].forEach.call( lis, function (e) { e.className=""; } );
 		if (!section){
 			if (self.isLoggedIn){
-
 				self.unhideSection("my_account_section")
 				document.getElementById("nav-bar-my_account").className="active"
 				if (self.isAssurer) self.unhideSection("assurer_section")
@@ -142,8 +166,13 @@
 				document.getElementById("nav-bar-login").className="active"
 			}
 		}
-		else {
-			self.unhideSection(section+"_section")
+		else { 
+			if (self.isLoggedIn && (section=="registration")) {
+				self.unhideSection("my_account_section")
+			}
+			else {
+				self.unhideSection(section+"_section")
+			}
 			var navbar=document.getElementById("nav-bar-"+section)
 			if (navbar) navbar.className="active";
 		}
@@ -164,7 +193,7 @@
 		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
-			this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
+			self.ajaxget("/v1/user_by_email/"+email, self.callback(self.myCallback))
 		}
 	}
 	
@@ -173,13 +202,13 @@
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
 	    csrf_token = self.getCookie('csrf');
-	    text= {
+	    data= {
 	    	digest: digest,
 	    	assurance: assurance,
 	    	email: email,
 	    	csrf_token: csrf_token
 	    }
-	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
+	    self.ajaxpost("/v1/add_assurance", data, self.callback(self.myCallback))
 	}
 
 /*
@@ -192,15 +221,10 @@
 		var data = {
 			credentialType: credentialType,
 			identifier: identifier,
-			secret: secret
 		}
-		self.ajaxpost("/v1/add_credential", data, self.addCredentialCallback)
-	}
-
-	PageScript.prototype.addCredentialCallback = function(status,text){
-		var data = JSON.parse(text);
-		if (status != 200) self.displayMsg(self.processErrors(data));
-		else self.get_me();
+		if (credentialType=="password") data.password=secret
+		else data.secret=secret
+		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me()))
 	}
 	
 	PageScript.prototype.addSslCredential = function(data) {
@@ -273,7 +297,7 @@
 				<td class="button-container"><a onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a></td>\
 			</tr>\
 			<tr id="change-hash-form_hash-container">\
-				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
+				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
 				<td>\
 					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
@@ -282,12 +306,12 @@
 				</td>\
 			</tr>\
 			<tr id="change-hash-form_hash-changer" style="display: none;">\
-				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
+				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
 				<td>\
 					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
 					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
 					<button class="button" type="button" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
-					<a id="digest_self_made_button" href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
+					<a href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
 						<button class="button" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
 					</a>\
 					<div id="change-hash-form_code-generation-input" class="form">\
@@ -326,7 +350,7 @@
 					<span class="form-icon_"><i class="fa fa-envelope-o"></i>/<i class="fa fa-user"></i></span>\
 					</div>\
 					<div class="form-level">\
-					<input class="input-block" type="password" placeholder="*********" id="AddPasswordCredentialForm_password_input">\
+					<input class="input-block" type="password" placeholder="Jelszó" id="AddPasswordCredentialForm_password_input">\
 					<span class="form-icon_"><i class=" fa fa-lock"></i></span>\
 					</div>\
 				</td>\
@@ -385,6 +409,60 @@
 					console.log(key);
 					return key;
 				}).catch(function(a){console.log(a)});
+	}
+
+	PageScript.prototype.callSetAppCanEmailMe=function(app){
+		var value=document.getElementById("application-allow-email-me-"+app).checked
+		self.setAppCanEmailMe(app,value,self.myCallback)
+	}
+	PageScript.prototype.myappsCallback = function(status,text){
+		if (status!=200) return;
+		self.aps=JSON.parse(text)
+		var applist='\
+		<table>\
+			<tr>\
+				<th>'+_("Application")+'</th>\
+				<th>'+_("Domain")+'</th>\
+				<th>'+_("User identifier")+'</th>\
+				<th>'+_("Emailing")+'</th>\
+				<th>'+_("Allow emailing")+'</th>\
+			</tr>'
+		for(app in self.aps){ 
+		if (self.aps[app].username) { 
+			applist+='\
+			<tr>\
+				<td>'+self.aps[app].name+'</td>\
+				<td><a href="//'+self.aps[app].hostname+'">'+self.aps[app].hostname+'</a></td>\
+				<td>'+self.aps[app].username+'</td>\
+				<td>'+_(self.aps[app].can_email.toString())+'</td>\
+				<td>\
+					<input type="checkbox" id="application-allow-email-me-'+app+'"\
+					'+((self.aps[app].email_enabled)?'checked':'')+'\
+					onclick="javascript: pageScript.callSetAppCanEmailMe('+app+')">\
+				</td>\
+			</tr>'
+			}	
+		}
+		applist +='\
+		</table>';
+		document.getElementById("me_Applications").innerHTML=applist;
+	}
+
+	PageScript.prototype.parseAssurances = function(data) {
+		var selector = ''
+		var text
+		for(ass in data.assurances) {
+			var pos
+			if ( pos=ass.indexOf(".")+1 ) {
+				text=ass.slice(pos)
+				selector += '\
+				<option value="'+text+'">\
+				'+_(text)+'\
+				</option>\
+				';
+			}
+		}
+		return selector;		
 	}
 
 }()
