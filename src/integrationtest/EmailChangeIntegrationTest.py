@@ -22,11 +22,9 @@ class EmailChangeIntegrationTest(IntegrationTest, UserTesting, EmailUtil, CSRFMi
         with app.test_client() as client:
             resp = self.initiateEmailChange(client)
             self.assertEmailChangeIsInitiated(resp)
-            print self.secret
             data = dict(confirm=True,secret=self.secret)
             resp = client.post(config.BASE_URL + '/v1/confirmemailchange', data=data)
             text = self.getResponseText(resp)
-            print text
             self.assertEqual(200,resp.status_code)
             self.assertEqual(Messages.emailChanged, json.loads(text)["message"])
             user=User.get(self.userid)

@@ -4,7 +4,6 @@ from pdoauth.models.Credential import Credential
 import time
 from uuid import uuid4
 from pdoauth.models.User import User
-from test.helpers.UserUtil import UserUtil
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.EmailUtil import EmailUtil

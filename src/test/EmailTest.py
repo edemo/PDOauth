@@ -4,7 +4,6 @@ from test.helpers.PDUnitTest import PDUnitTest, test
 from pdoauth.models.Credential import Credential
 from pdoauth.models import User
 from pdoauth.ReportedError import ReportedError
-from pdoauth.Messages import exceptionSendingEmail
 from test.helpers.EmailUtil import TestMailer, FailingMailer, exampleBody,\
     exampleHtml, EmailUtil
 

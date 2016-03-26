@@ -64,3 +64,10 @@ class EmailVerificationTests(IntegrationTest, UserTesting, EmailUtil):
             self.assertEquals(resp.status_code, 404)
             self.assertEquals(self.getResponseText(resp),'{"errors": ["unknown token"]}')
 
+    @test
+    def email_validation_email_can_be_resent(self):
+        with app.test_client() as client:
+            self.login(client)
+            client.get(config.BASE_URL + "/v1/send_verify_email")
+            user=User.get(self.userid)
+            self.assertEqual(self.userCreationEmail, Credential.getByUser(user, "emailcheck").user.email)

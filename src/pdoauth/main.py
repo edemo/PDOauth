@@ -107,6 +107,10 @@ def register(form):
 def verifyEmail(emailToken):
     return CONTROLLER.doverifyEmail(emailToken)
 
+@DECORATOR.interfaceFunc("/v1/send_verify_email", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def sendVerifyEmail():
+    return CONTROLLER.sendVerifyEmail()
+
 @DECORATOR.interfaceFunc("/v1/user_by_email/<email>", methods=["GET"],
     checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def get_by_email(email):
