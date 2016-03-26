@@ -99,8 +99,7 @@ class UserInfoTest(PDUnitTest, UserUtil, CryptoTestUtil, AuthProviderUtil):
         with self.assertRaises(ReportedError) as context:
             userid = self.controller.getCurrentUser().userid
             self.controller.getSession()['auth_user'] =  (userid, userid)
-            resp = self.controller.doShowUser("nonexisting")
-            print resp
+            self.controller.doShowUser("nonexisting")
         self.assertEqual(context.exception.status,404)
 
     @test

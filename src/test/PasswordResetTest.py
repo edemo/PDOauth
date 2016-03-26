@@ -1,6 +1,5 @@
 #pylint: disable=no-member
 from test.helpers.PDUnitTest import PDUnitTest, test
-from test.helpers.UserUtil import UserUtil
 import re
 from pdoauth.models.Credential import Credential
 import time
@@ -9,8 +8,9 @@ from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.User import User
 from uuid import uuid4
 from pdoauth.ReportedError import ReportedError
+from test.helpers.EmailUtil import EmailUtil
 
-class PasswordResetTest(PDUnitTest, UserUtil):
+class PasswordResetTest(PDUnitTest, EmailUtil):
 
     @test
     def password_reset_email_is_sent_to_valid_email(self):

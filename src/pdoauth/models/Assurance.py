@@ -35,7 +35,9 @@ class Assurance(db.Model, ModelUtils):
         
 
     @classmethod
-    def listByUser(cls, user):
+    def listByUser(cls, user, assurance=None):
+        if assurance is not None:
+            return Assurance.query.filter_by(user=user, name=assurance).all()
         assurances = Assurance.query.filter_by(user=user).all()
         return assurances
 

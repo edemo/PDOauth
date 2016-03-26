@@ -1,11 +1,13 @@
 #pylint: disable=no-member
-from uuid import uuid4
 import time
-from pdoauth.models.Credential import Credential
 from flask_mail import Message
 from smtplib import SMTPException
 from pdoauth.ReportedError import ReportedError
-from pdoauth.Messages import exceptionSendingEmail
+from pdoauth.Messages import exceptionSendingEmail, badChangeEmailSecret,\
+    emailChangeEmailSent, emailChanged
+from pdoauth.CredentialManager import CredentialManager
+from pdoauth.models.Credential import Credential
+from pdoauth.models.Assurance import Assurance
 
 class EmailData(object):
     def __init__(self, name, secret, expiry):
@@ -18,14 +20,16 @@ class EmailData(object):
 class EmailHandling(object):
     passwordResetCredentialType = 'email_for_password_reset'
 
-    def sendEmail(self, user, secret, expiry, topic, rmuser = False):
+    def sendEmail(self, user, secret, expiry, topic, rmuser = False, recipient=None):
+        if recipient is None:
+            recipient=user.email
         emailData = EmailData(user.email, secret, expiry)
         bodyTextCfg = topic + '_EMAIL_BODY_TEXT'
         bodyHtmlCfg = topic + '_EMAIL_BODY_HTML'
         subjectCfg = topic + '_EMAIL_SUBJECT'
         text = self.getConfig(bodyTextCfg).format(emailData)
         html = self.getConfig(bodyHtmlCfg).format(emailData)
-        msg = Message(recipients=[user.email],
+        msg = Message(recipients=[recipient],
             body=text,
             html=html,
             subject=self.getConfig(subjectCfg),
@@ -38,21 +42,48 @@ class EmailHandling(object):
             raise ReportedError("{0}: {1}".format(exceptionSendingEmail,e))  # @UndefinedVariable
 
     def sendPasswordVerificationEmail(self, user):
-        secret=unicode(uuid4())
-        expiry = time.time() + 60*60*24*4
-        Credential.new(user, 'emailcheck', unicode(expiry), secret )
+        credentialType = 'emailcheck'
+        secret, expiry = CredentialManager.createTemporaryCredential(user, credentialType)
         self.sendEmail(user, secret, expiry, "PASSWORD_VERIFICATION", rmuser = True)
 
     def sendPasswordResetMail(self, user):
-        passwordResetEmailExpiration = 14400
-        secret = unicode(uuid4())
-        expirationTime = time.time() + passwordResetEmailExpiration
-        expirationString = unicode(expirationTime)+":"+user.email
-        Credential.new(user, self.passwordResetCredentialType, expirationString,secret)
-        self.sendEmail(user, secret, expirationTime, "PASSWORD_RESET")
+        secret, expiry = CredentialManager.createTemporaryCredential(
+                            user,
+                            self.passwordResetCredentialType,
+                            expiry=CredentialManager.fourHoursInSeconds)
+        self.sendEmail(user, secret, expiry, "PASSWORD_RESET")
 
     def sendDeregisterMail(self, user):
-        secret=unicode(uuid4())
-        expiry = time.time() + 60*60*24*4
-        Credential.new(user, 'deregister', unicode(expiry), secret )
+        secret, expiry = CredentialManager.createTemporaryCredential(user, 'deregister')
         self.sendEmail(user, secret, expiry, "DEREGISTRATION")
+
+    def changeEmail(self, form):
+        user = self.getCurrentUser()
+        self.emailChangeInit(form.newemail.data,user)
+        return self.simple_response(emailChangeEmailSent)
+
+    def emailChangeInit(self, newEmailAddress, user):
+        secret, expiry = CredentialManager.createTemporaryCredential(user, "changeemail", additionalInfo=newEmailAddress)
+        self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_OLD")
+        self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_NEW", recipient=newEmailAddress)
+        Credential.deleteExpired("changeemail")
+
+    def updateEmailByCredential(self, cred):
+        cred.user.email = cred.getAdditionalInfo()
+        cred.user.save()
+        for assurance in Assurance.listByUser(cred.user, 'emailverification'):
+            assurance.rm()
+        self.sendEmail(cred.user, None, None, "CHANGE_EMAIL_DONE")
+        self.sendPasswordVerificationEmail(cred.user)
+
+    def confirmEmailChange(self,form):
+        self.confirmChangeEmail(form.confirm.data, form.secret.data)
+        return self.simple_response(emailChanged)
+        
+    def confirmChangeEmail(self, confirm, secret):
+        cred = Credential.getBySecret("changeemail", secret)
+        if cred is None:
+            raise ReportedError(badChangeEmailSecret, 403)
+        if confirm is True:
+            self.updateEmailByCredential(cred)
+        cred.rm()

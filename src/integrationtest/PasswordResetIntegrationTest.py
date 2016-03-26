@@ -4,13 +4,13 @@ from pdoauth.models.Credential import Credential
 import time
 from uuid import uuid4
 from pdoauth.models.User import User
-from test.helpers.UserUtil import UserUtil
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from test.helpers.PDUnitTest import PDUnitTest
+from test.helpers.EmailUtil import EmailUtil
 
 app.extensions["mail"].suppress = True
 
-class PasswordResetIntegrationTest(IntegrationTest, PDUnitTest, UserUtil):
+class PasswordResetIntegrationTest(IntegrationTest, PDUnitTest, EmailUtil):
 
     def setUp(self):
         self.createUserWithCredentials()

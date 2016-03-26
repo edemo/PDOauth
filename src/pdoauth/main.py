@@ -13,6 +13,8 @@ from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
 from pdoauth.forms.PasswordResetForm import PasswordResetForm
 from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.forms.AssuranceForm import AssuranceForm
+from pdoauth.forms.EmailChangeForm import EmailChangeForm
+from pdoauth.forms.ConfirmEmailChangeForm import ConfirmEmailChangeForm
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
@@ -105,10 +107,24 @@ def register(form):
 def verifyEmail(emailToken):
     return CONTROLLER.doverifyEmail(emailToken)
 
+@DECORATOR.interfaceFunc("/v1/send_verify_email", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def sendVerifyEmail():
+    return CONTROLLER.sendVerifyEmail()
+
 @DECORATOR.interfaceFunc("/v1/user_by_email/<email>", methods=["GET"],
     checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def get_by_email(email):
     return CONTROLLER.doGetByEmail(email)
+
+@DECORATOR.interfaceFunc("/v1/emailchange", methods=["POST"],
+    formClass=EmailChangeForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def email_change(form):
+    return CONTROLLER.changeEmail(form)
+
+@DECORATOR.interfaceFunc("/v1/confirmemailchange", methods=["POST"],
+    formClass=ConfirmEmailChangeForm)
+def confirm_email_change(form):
+    return CONTROLLER.confirmEmailChange(form)
 
 @DECORATOR.interfaceFunc("/v1/add_assurance", methods=["POST"],
     formClass=AssuranceForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
