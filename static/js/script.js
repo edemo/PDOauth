@@ -69,6 +69,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 
 	PageScript.prototype.ajaxpost = function( uri, data, callback ) {
+		console.log(data)
 		xmlhttp = this.ajaxBase( callback );
 		xmlhttp.open( "POST", self.uribase + uri, true );
 		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
@@ -348,12 +349,7 @@ console.log("logoutCallback")
 		this.loadjs("ts.js")
 	}
 	
-	PageScript.prototype.changeEmailAddress = function() {
-	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
-		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
-		else self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
+
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
 		this.doRemove = function(type) {

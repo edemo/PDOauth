@@ -774,7 +774,7 @@ td.button-container, td.button-container {
 				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be. 
 				Az <b>igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi jelölőnégyzet kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
-				<div class="example-send-yourself-copy">
+				<div>
 					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
 					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
 				</div>
@@ -800,6 +800,32 @@ td.button-container, td.button-container {
 			</section>
 		</div>
 <!-- End password reset section -->	
+
+<!-- Email change section-->
+		<div class="func" id="emailchange_section">
+			<section class="container_">
+				<h3 class="title">Email cím cseréje</h3>
+				<p>Az új email címed <span id="emailchange_email"></span> lesz</p>
+				<div>
+					<input type="checkbox" id="accept_emailchange" name="accept_emailchange" value="accept">
+					<label class="label-inline" for="accept_emailchange"> igen, változtassuk meg.</label>
+				</div>
+				<button type="button" onclick="javascript:pageScript.changeEmail()">Cserélem</button>
+				<button type="button" onclick="javascript:pageScript.doRedirect('fiokom.html')">Mégse</button>
+			</section>
+		</div>
+<!-- Email change section -->	
+
+<!-- Cancel email change section-->
+		<div class="func" id="cancelemailchange_section">
+			<section class="container_">
+				<h3 class="title">Új jelszó megadása</h3>
+				<p id="cancelemailchange_message"></p>
+				<button type="button" onclick="javascript:pageScript.doRedirect('fiokom.html')">Ok</button>
+			</section>
+		</div>
+<!-- Cancel email change section -->
+
 	</div>
 
 <!-- Footer Area Start -->
