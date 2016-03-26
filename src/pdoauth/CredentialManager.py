@@ -28,10 +28,10 @@ class CredentialManager(object):
         return cred
 
     @staticmethod
-    def createTemporaryCredential(user, credentialType, expiry=fourDaysInSeconds):
+    def createTemporaryCredential(user, credentialType, expiry=fourDaysInSeconds, additionalInfo=None):
         secret = unicode(uuid4())
         expiry = time.time() + expiry
-        Credential.new(user, credentialType, unicode(expiry), secret)
+        Credential.new(user, credentialType, unicode(expiry)+":"+unicode(additionalInfo), secret)
         return secret, expiry
 
 

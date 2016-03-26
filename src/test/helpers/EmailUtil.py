@@ -2,9 +2,15 @@ from pdoauth.EmailHandling import EmailHandling
 from test.helpers.FakeInterFace import FakeInterface, FakeApp, FakeMail
 from smtplib import SMTPException
 from bs4 import BeautifulSoup
-from pdoauth.models.Credential import Credential
 import re
 from test.helpers.UserUtil import UserUtil
+from test import config
+from pdoauth.Messages import emailChangeEmailSent
+import json
+from pdoauth.models.Credential import Credential
+from pdoauth.models.User import User
+
+
 
 exampleBody = """Dear abc@xyz.uw,
 This is a reset email.
@@ -70,4 +76,29 @@ class EmailUtil(UserUtil):
 
     def assertSubjectIs(self, subject):
         return self.assertEqual(self.mailer.mail.outbox[0].subject, subject)
+
+    def doConfirmChangeEmail(self, secret=None, confirm=True):
+        self.controller.emailChangeInit(self.newEmailAddress, self.user)
+        if secret is None:
+            secret = Credential.getByUser(self.user, 'changeemail').secret
+        self.controller.confirmChangeEmail(confirm, secret)
+
+    def initiateEmailChange(self, client):
+        self.login(client)
+        csrf = self.getCSRF(client)
+        self.newEmail = self.createRandomEmailAddress()
+        data = dict(csrf_token=csrf, newemail=self.newEmail)
+        resp = client.post(config.BASE_URL + '/v1/emailchange', data=data)
+        return resp
+
+    def assertEmailChangeIsInitiated(self, resp):
+        text = self.getResponseText(resp)
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(emailChangeEmailSent, json.loads(text)['message'])
+        user = User.getByEmail(self.userCreationEmail)
+        self.userid=user.userid
+        tempCredential = Credential.getByUser(user, "changeemail")
+        self.secret = tempCredential.secret
+        self.assertEqual(self.newEmail, tempCredential.getAdditionalInfo())
+
 

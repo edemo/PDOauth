@@ -63,4 +63,6 @@ youHaveToRegisterFirst = _("You have to register first")
 unknownApplication = _("Unknown application")
 noHashGiven = _("No hash given")
 exceptionSendingEmail = _("Nem sikerült elküldeni a levelet")
-
+badChangeEmailSecret = _("bad secret for email change")
+emailChangeEmailSent = _("email change email sent")
+emailChanged = _("email address changed")
