@@ -46,7 +46,7 @@ class CredentialManager(object):
             cred = Credential.getByUser(user, "password")
             if cred is None:
                 return None
-        hashed = cls.protect_secret(form.secret.data)
+        hashed = cls.protect_secret(form.password.data)
         if cred.secret == hashed:
             return cred
         return None

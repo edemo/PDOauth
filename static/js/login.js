@@ -6,9 +6,10 @@
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		self.parseAppCallbackUrl();
+		self.dataGivingAccepted=false;
 		console.log(self.neededAssurances)
 		console.log(self.appDomain)
-		this.ajaxget("/adauris", this.uriCallback)
+		self.ajaxget("/adauris", self.callback(self.initialise) )
 	}
 	
 	PageScript.prototype.parseAppCallbackUrl = function() {
@@ -24,87 +25,187 @@
 		}
 	}
 	
-	PageScript.prototype.uriCallback = function(status,text) {
-		var data = JSON.parse(text);
-		if (status==200) {
-			self.QueryString.uris = data
-			self.uribase = self.QueryString.uris.BACKEND_PATH
-			var keygenform = document.getElementById("registration-keygenform")
-			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
-			loc = '' + win.location
-			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
-			if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_);
-			else self.init_()
-		}
-		else self.displayMsg(self.processErrors(data));
+	PageScript.prototype.initialise = function(text) {
+		// initialising variables
+		self.QueryString.uris = JSON.parse(text);
+		self.uribase = self.QueryString.uris.BACKEND_PATH
+		
+		// redirect to official account page if callback uri is missing
+		if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
+
+		// initialising keygenform submit url
+		var keygenform=document.getElementById("registration-keygenform")
+		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+
+		// filling hrefs of anchors
+		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
+
+		// waiting for gettext loads po files
+		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_);
+		else self.init_()
 	}
 	
 	PageScript.prototype.init_=function(){
 		console.log("init_ called")
-		if (self.QueryString.section && self.QueryString.section=="email_verification"){
-			if (self.QueryString.secret) self.verifyEmail()
-		}
-		self.ajaxget("/v1/users/me", self.initCallback)		
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
 	}
 	
-	PageScript.prototype.initCallback = function(status, text) {
+	PageScript.prototype.userNotLoggedIn = function(status, text) {
 		var data = JSON.parse(text);
-		if (status != 200) {
-			if (self.appDomain) {
-			document.getElementById("greatings").innerHTML='\
-		<p>\
-			<b>'+self.appDomain+'</b> '+_("application needs to sign in with your ADA account")+'\
-		</p>'
+		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		else {
+			self.greating("The %s application needs to sign in with your ADA account")
+			self.unhideSection("login_section")
+		}
+	}
+	
+	PageScript.prototype.userIsLoggedIn = function(text) {
+		var data = JSON.parse(text);
+		self.isLoggedIn=true
+		self.hideAllSection()
+		if (self.neededAssurances) {
+			var missing=false;
+			[].forEach.call(self.neededAssurances, function(assurance){
+				if ( !data.assurances.hasOwnProperty(assurance)) {
+					self.unhideAssuranceSection(assurance,false)
+					missing=true;
+					if (self.neededAssurances.length==1) self.showForm(assurance)
+				}
+				else self.unhideAssuranceSection(assurance,true)
+			})
+			if (missing) {
+				self.greating("The %s application needs you have the assurances below")
+				return
 			}
-			if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		}
+		self.ajaxget('/v1/getmyapps',self.callback(self.myappsCallback))
+		if ( self.dataGivingAccepted ) {
+			if( self.QueryString.next) {
+				self.doRedirect(decodeURIComponent(self.QueryString.next))
+			}
+		}
+	}
+	
+	PageScript.prototype.finishRegistration = function (text) {
+		console.log('finis registering')
+		self.myappsCallback(text)
+		self.dataGivingAccepted=true
+		value=document.getElementById("registration-form_allowEmailToMe").checked
+		self.setAppCanEmailMe(self.currentAppId, value, self.init_)
+	}
+	
+	PageScript.prototype.myappsCallback= function (text) {
+		console.log('myappsCallback')
+		self.myApps=JSON.parse(text)
+		for (i=0; i<self.myApps.length; i++){
+			if (self.myApps[i].hostname==self.appDomain) {
+				self.currentAppId=i
+				if (self.myApps[i].username) self.dataGivingAccepted=true
+			}
+		}
+		if ( !self.dataGivingAccepted ){
+			self.greating("The %s application will get the data below:")
+			self.showSection("accept_section")
 		}
 		else {
-			self.ajaxget('/v1/getmyapps',self.myappsCallback)
-			self.isLoggedIn=true
-		}	
+			if ( self.QueryString.next) {
+				self.doRedirect(decodeURIComponent(self.QueryString.next))
+			}
+		}
+	}
+	
+	PageScript.prototype.unhideAssuranceSection= function(assurance,given) {
+		document.getElementById(assurance+"_ok").style.display=(given)?"block":"none"
+		document.getElementById(assurance+"_button").style.display=(given)?"none":"block"
+		document.getElementById(assurance+"_header").style.display="block"
+		document.getElementById(assurance+"_input").style.display="none"
+		self.unhideSection(assurance+"_section")
+	}
+				
+	PageScript.prototype.greating = function (message){
+		if (self.appDomain) {
+			document.getElementById("greatings").innerHTML=_(message, '<b>'+self.appDomain+'</b>')
+		}
 	}
 	
 	PageScript.prototype.displayMsg = function( msg ) {
 		var text=(msg.error)?msg.error:""+(msg.success)?msg.success:""
 		document.getElementById("message-container").innerHTML=text
+		self.unhideSection("message-container")
 	}
 	
-	PageScript.prototype.myappsCallback= function (status,text) {
-		console.log('myappsCallback')
-		if (status == 200 ) {
-			self.myApps=JSON.parse(text)
-			var a=false;
-			for (i=0; i<self.myApps.length; i++){
-				if (self.myApps[i].hostname==self.appDomain && !self.myApps[i].username) a=true
-			}
-			if ( self.page=="login" && a){
-				self.showSection("accept_section")
-			}
-			else {
-				if( self.QueryString.next) {
-					self.doRedirect(decodeURIComponent(self.QueryString.next))
-				}
-			}
-		}
-		else { 
-
-			self.displayMsg(self.processErrors(text))
-		}
-	}
 	PageScript.prototype.showSection=function(section) {
 		self.hideAllSection()
-		self.showSection(section)
+		self.unhideSection(section)
+		if (section=="register_section" && self.neededAssurances.indexOf('hashgiven')!=-1) self.unhideSection("registration-form-getdigest_input")
 	}
+	
 	PageScript.prototype.unhideSection=function(section) {
 		document.getElementById(section).style.display="block";
 	}
+	
 	PageScript.prototype.hideAllSection=function(){
-		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
+		var a=document.getElementsByClassName("func");
+		[].forEach.call( a, function (e) { e.style.display="none"; } );
 	}
 	
-	PageScript.prototype.sslLogin = function() {
-		document.getElementById("SSL").onload=function(){win.location.reload()}
-		document.getElementById("SSL").src=self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login'
+	PageScript.prototype.acceptGivingTheData=function(flag){
+		if (flag){
+			self.dataGivingAccepted=true
+			var value=document.getElementById("confirmForm_allowEmailToMe").checked
+			self.setAppCanEmailMe(self.currentAppId, value, self.init_)
+		}
+		else {
+			self.doRedirect(document.referrer)
+		}
+	}
+
+	PageScript.prototype.textareaOnKeyup = function(textarea) {
+		if (textarea) {
+			if (textarea.value.length==128) self.activateButton('code-generation-input_button',self.changeHash);
+			else self.deactivateButton('code-generation-input_button');
+		}
+	}
+
+	PageScript.prototype.deactivateButton = function(buttonId) {
+		b=document.getElementById(buttonId)
+		if (b) {
+			b.className+=" inactive";
+			b.onclick=function(){return}
+		}		
+	}
+	
+	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
+		b=document.getElementById(buttonId)
+		if (b) {
+			b.className="";
+			b.onclick=onclickFunc
+		}
+	}
+	
+	PageScript.prototype.changeHash = function() {
+	    digest = document.getElementById("login_digest_input").value;
+	    csrf_token = self.getCookie('csrf');
+	    data= {
+	    	digest: digest,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost( "/v1/users/me/update_hash", data, self.callback(self.hashIsUpdated) )
+	}	
+	
+	PageScript.prototype.hashIsUpdated = function(text) {
+		self.hideAllSection()
+		self.init_()
+	}
+	
+	PageScript.prototype.showForm = function(formName) {
+		document.getElementById(formName+"_header").style.display="none";
+		document.getElementById(formName+"_input").style.display="block";
+	}
+	
+	PageScript.prototype.hideForm = function(formName) {
+		document.getElementById(formName+"_header").style.display="block";
+		document.getElementById(formName+"_input").style.display="none";
 	}
 
 }()

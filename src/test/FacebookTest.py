@@ -16,7 +16,7 @@ class FacebookTest(PDUnitTest, UserUtil):
         data = {
                 'credentialType': 'facebook',
                 'identifier': interface.facebook_id,
-                'secret': interface.accessToken
+                'password': interface.accessToken
         }
         self.form = FakeForm(data)
 
@@ -40,7 +40,7 @@ class FacebookTest(PDUnitTest, UserUtil):
 
     @test
     def facebook_login_needs_correct_access_token_as_password(self):
-        self.form.set('secret',self.mkRandomPassword())
+        self.form.set('password',self.mkRandomPassword())
         with self.assertRaises(ReportedError) as e:
             self.controller.doLogin(self.form)
         self.assertEqual(e.exception.status, 403)

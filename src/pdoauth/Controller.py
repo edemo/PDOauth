@@ -56,7 +56,7 @@ class Controller(
     def redirectIfNotLoggedIn(self):
         if not self.getCurrentUser().is_authenticated():
             resp = self.error_response([authenticationNeeded], 302)
-            startUrl = self.app.config.get("START_URL")
+            startUrl = self.app.config.get("LOGIN_URL")
             nextArg = {"next":self.getRequest().url}
             uri = "{1}?{0}".format(urlencode(nextArg), startUrl)
             resp.headers['Location'] = uri
@@ -91,9 +91,15 @@ class Controller(
         for assurance in assurances:
             assurance.rm()
 
+
+    def removeAppMaps(self, user):
+        for appmap in AppMap.getForUser(user):
+            appmap.rm()
+
     def removeUser(self, user):
         self.removeCredentials(user)
         self.removeAssurances(user)
+        self.removeAppMaps(user)
         user.rm()
 
     def doDeregistrationDoit(self, form):
@@ -133,7 +139,7 @@ class Controller(
         anotherUsers = User.getByDigest(digest)
         if anotherUsers:
             if self.isAnyoneHandAssurredOf(anotherUsers):
-                user.rm()
+                self.removeUser(user)
                 raise ReportedError([anotherUserUsingYourHash], 400)
             additionalInfo["message"] = anotherUserUsingYourHash
 
@@ -142,7 +148,7 @@ class Controller(
         digest = form.digest.data
         if digest == '':
             digest = None
-        if user.hash == digest:
+        if (digest is not None) and (user.hash == digest):
             additionalInfo["message"] = sameHash
         else:
             self.checkHashInOtherUsers(user, additionalInfo, digest)
@@ -159,7 +165,7 @@ class Controller(
         cred = CredentialManager.create_user_with_creds(
             form.credentialType.data,
             form.identifier.data,
-            form.secret.data,
+            form.password.data,
             form.email.data,
             None)
         user = cred.user
@@ -373,7 +379,7 @@ class Controller(
         CredentialManager.addCredToUser(user,
             form.credentialType.data,
             form.identifier.data,
-            form.secret.data)
+            form.password.data)
         return self.as_dict(user)
 
     def deleteHandAssuredAssurances(self, assurances):
@@ -386,6 +392,7 @@ class Controller(
             BASE_URL = self.getConfig('BASE_URL'),
             BACKEND_PATH = self.getConfig('BACKEND_PATH'),
             START_URL = self.getConfig('START_URL'),
+            LOGIN_URL = self.getConfig('LOGIN_URL'),
             PASSWORD_RESET_FORM_URL = self.getConfig('PASSWORD_RESET_FORM_URL'),
             SSL_LOGIN_BASE_URL = self.getConfig('SSL_LOGIN_BASE_URL'),
             SSL_LOGOUT_URL = self.getConfig('SSL_LOGOUT_URL'),

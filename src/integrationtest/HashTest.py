@@ -164,3 +164,20 @@ class HashTest(IntegrationTest, UserTesting, CSRFMixin):
                 ,self.getResponseText(resp)
             )
 
+
+    @test
+    def hash_should_not_be_whitespace(self):
+        with app.test_client() as client:
+            resp = self.login(client)
+            self.assertUserResponse(resp)
+            csrf = self.getCSRF(client)
+            data = dict(
+                digest= '  ',
+                csrf_token= csrf
+            )
+            resp = client.post(config.BASE_URL+'/v1/users/me/update_hash', data=data)
+            self.assertEqual(400,resp.status_code)
+            self.assertEqual(
+                '{"errors": ["digest: Field must be between 128 and 128 characters long."]}'
+                ,self.getResponseText(resp)
+            )

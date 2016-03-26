@@ -19,10 +19,15 @@ class Decorators(WebInterface, Responses):
                 if not form.validate_on_submit():
                     return self.form_validation_error_response(form, status)
                 kwargs["form"] = form
-            return func(*args, **kwargs)
+            resp = func(*args, **kwargs)
         except ReportedError as e:
             resp = self.errorReport(e)
-            return resp
+        if not getattr(resp,"headers",False):
+            resp = self.make_response(resp, 200)
+        resp.headers['Cache-Control'] = "no-cache, no-store, must-revalidate"
+        resp.headers['Pragma'] = "no-cache"
+        resp.headers['Expires'] = "0"
+        return resp
 
     def errorReport(self, e):
         logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))

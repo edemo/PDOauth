@@ -4,7 +4,7 @@
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		xxxx=self
-		this.ajaxget("/adauris", self.uriCallback)
+		this.ajaxget("/adauris", self.callback(self.initialisation))
 		var section = self.QueryString.section
 		console.log("section:"+section)
 			switch (section) {
@@ -41,6 +41,40 @@
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 		}
 	}
+	
+	PageScript.prototype.userNotLoggedIn = function(status, text) {
+		var data = JSON.parse(text);
+		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		self.refreshTheNavbar()
+		if (self.QueryString.section) {
+			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+			else return;
+		}
+		else self.displayTheSection();
+	}
+	
+	PageScript.prototype.userIsLoggedIn = function(text) {
+		var data = JSON.parse(text);
+		self.isLoggedIn=true
+		self.ajaxget('/v1/getmyapps',self.myappsCallback)
+		if (data.assurances) {
+			document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
+			document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
+			document.getElementById("assurance-giving_assurance_selector").innerHTML=self.parseAssurances(data);
+			if (!(data.assurances.assurer)) self.isAssurer=false;
+			else {
+				self.isAssurer=true;
+			}
+		}
+		self.refreshTheNavbar()
+		if (self.QueryString.section) {
+			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+			else return;
+		}
+		else self.displayTheSection();
+	}
+
+	
 	PageScript.prototype.modNavbarItem=function(){
 		document.getElementById("")
 	}
@@ -79,22 +113,18 @@
 		return "closePopup";
 	}
 
-	PageScript.prototype.uriCallback = function(status,text) {
-		var data = JSON.parse(text);
-		if (status==200) {
-			self.QueryString.uris = data
-			self.uribase = self.QueryString.uris.BACKEND_PATH
-			var keygenform = document.getElementById("registration-keygenform")
-			keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen"
-			loc = '' + win.location
-			document.getElementById("digest_self_made_button").href=self.QueryString.uris.ANCHOR_URL
-			if (!Gettext.isAllPoLoaded) {
-				console.log('várunk a gettextre');
-				Gettext.outerStuff.push(self.init_);
-			}
-			else self.init_()
-		}
-		else self.displayMsg(self.processErrors(data));
+	PageScript.prototype.initialisation = function(text) {
+		self.QueryString.uris = JSON.parse(text);
+		self.uribase = self.QueryString.uris.BACKEND_PATH
+		var keygenform = document.getElementById("registration-keygenform")
+		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+		
+		// filling hrefs of anchors
+		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
+
+		// waiting for gettext loads po files
+		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
+		else self.init_()
 	}
 	
 	PageScript.prototype.init_=function(){
@@ -102,7 +132,7 @@
 		if (self.QueryString.section && self.QueryString.section=="email_verification"){
 			if (self.QueryString.secret) self.verifyEmail()
 		}
-		self.ajaxget("/v1/users/me", self.initCallback)		
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
@@ -149,220 +179,6 @@
 		}
 	}
 	
-	PageScript.prototype.setRegistrationMethode=function(methode){
-		self.registrationMethode=methode;
-		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) { e.className=e.className.replace(" active",""); } );
-		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
-		var heading
-		switch (methode) {
-			case "pw":
-				heading=_("email address and/or username / password")
-				document.getElementById("registration-form-password-container").style.display="block";
-				document.getElementById("registration-form-username-container").style.display="block";
-			break;
-			case "fb":
-				heading=_("my facebook account")
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
-				facebook.fbregister()
-			break;
-			case "ssl":
-				heading=_("SSL certificate")
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
-			break;
-		}
-		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with {0}",heading);
-	}
-
-	PageScript.prototype.register = function(credentialType) {
-		//
-	    var identifier = document.getElementById("registration-form_identifier_input").value;
-	    var secret = document.getElementById("registration-form_secret_input").value;
-	    var email = document.getElementById("registration-form_email_input").value;
-	    var digest = document.getElementById("registration-keygenform_digest_input").value;
-	    text= {
-	    	credentialType: credentialType,
-	    	identifier: identifier,
-	    	secret: secret,
-	    	email: email,
-	    	digest: digest
-	    }
-	    this.ajaxpost("/v1/register", text, this.myCallback)
-	}
-	
-	PageScript.prototype.sslRegisterCallback= function(){
-		if (self.sslCallback()) self.sslLogin();
-	}
-
-	PageScript.prototype.addSslCredentialCallback= function(){
-		if (self.sslCallback()) self.getMe();
-	}
-
-	PageScript.prototype.sslCallback=function() {
-		console.log("sslCallback")
-		response=document.getElementById("SSL").contentDocument.body.innerHTML
-		if (response!="")  {
-			var msg
-			if (data=JSON.parse(response)) {
-				msg=self.processErrors(data)
-			}
-			else {
-				msg.title=_("Server error occured")
-				msg.error=response
-			}
-			self.displayMsg(msg)
-			return false
-		}
-		else return true
-	}
-
-	PageScript.prototype.sslLoginCallback=function(status, response) {
-		console.log("sslCallback")
-		if (status!=200)  {
-			var msg
-			if (data=JSON.parse(response)) {
-				msg=self.processErrors(data)
-			}
-			else {
-				msg.title=_("Server error occured")
-				msg.error=response
-			}
-			self.displayMsg(msg)
-			return false
-		}
-		else { 
-			self.get_me; 
-			return true
-		}
-	}		
-	
-	PageScript.prototype.doRegister=function() {
-		if ( document.getElementById("registration-keygenform_confirmField").checked ) {
-			console.log(self.registrationMethode)
-			switch (self.registrationMethode) {
-				case "pw":
-					console.log('pw')
-					self.register("password")
-					break;
-				case "fb":
-					console.log('fb')
-					self.register("facebook")
-					break;
-				case "ssl":
-					console.log('ssl')
-					document.getElementById("SSL").onload=self.sslRegisterCallback;
-					document.getElementById('registration-keygenform').submit();
-					console.log("after submit")
-//					self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
-					break;
-			}
-		}
-		else self.displayMsg({title:_("Acceptance is missing"),error:_("Text for missing accaptance of term of use")})
-	}
-
-	PageScript.prototype.sslLogin = function() {
-//		document.getElementById("SSL").onload=function(){if (self.sslCallback()) win.location.reload()}
-	//	document.getElementById("SSL").src=
-		var xmlhttp = this.ajaxBase( self.initCallback )
-		xmlhttp.open( "GET", self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login' , true);
-		xmlhttp.send();
-	}
-	
-//Getdigest functions	
-	PageScript.prototype.normalizeString = function(val) {
-		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
-		var unaccented="ouooueauiouooueaui";
-		var s = "";
-		
-		for (var i = 0, len = val.length; i < len; i++) {
-		  c = val[i];
-		  if(c.match('[abcdefghijklmnopqrstuvwxyz]')) {
-		    s=s+c;
-		  } else if(c.match('[ABCDEFGHIJKLMNOPQRSTUVXYZ]')) {
-		    s=s+c.toLowerCase();
-		  } else if(c.match('['+accented+']')) {
-		    for (var j = 0, alen = accented.length; j <alen; j++) {
-		      if(c.match(accented[j])) {
-		        s=s+unaccented[j];
-		      }
-		    }
-		  }
-		}
-		return s;
-	}
-	
-	PageScript.prototype.digestGetter = function(formName) {
-		var formName=formName
-		var digestCallback
-		
-		digestCallback = function(status,text,xml) {
-			var diegestInput=document.getElementById(formName + "_digest_input")
-			if (status==200) {
-				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
-				$("#"+formName + "_digest_input").trigger('keyup');
-				document.getElementById(formName + "_predigest_input").value = "";
-				if (formName=="assurancing") {
-					var messageBox=document.getElementById("assurance-giving_message")
-					messageBox.innerHTML=_("The Secret Hash is given for assuring")
-					messageBox.className="given"
-					document.getElementById("assurance-giving_submit-button").className=""
-				}
-				else {
-					document.getElementById(formName+"_code-generation-input").style.display="none"
-				}
-				
-			} else {
-				self.displayMsg({title:_("Error message"),error: text});
-				diegestInput.value =""
-				if (formName=="assurancing") {
-					var messageBox=document.getElementById("assurance-giving_message")
-					messageBox.innerHTML=_("The Secret Hash isn't given yet")
-					messageBox.className="missing"
-					document.getElementById("assurance-giving_submit-button").className="inactive"
-				}
-			}
-		}
-	
-		this.getDigest = function() {
-			console.log(formName)
-			text = this.createXmlForAnchor(formName)
-			if (text == null)
-				return;
-			console.log(text)
-			http = self.ajaxBase(digestCallback);
-			http.open("POST",self.QueryString.uris.ANCHOR_URL+"anchor",true);
-			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		  	http.setRequestHeader("Content-length", text.length);
-		  	http.setRequestHeader("Connection", "close");
-			http.send(text);
-		}
-	
-		this.createXmlForAnchor = function(formName) {
-			console.log(formName)
-			personalId = document.getElementById(formName+"_predigest_input").value;
-			motherValue = document.getElementById(formName+"_predigest_mothername").value;
-			mothername = self.normalizeString(motherValue);
-			if ( personalId == "") {
-				self.displayMsg({title:_('Missing data'), error:_("Personal identifier is missing")})
-				return;
-			}
-			if ( mothername == "") {
-				self.displayMsg({title:_('Missing data'), error:_("Mother's name is missing")})
-				return;
-			}
-			return ("<request><id>"+personalId+"</id><mothername>"+mothername+"</mothername></request>");
-		}
-		
-		return this
-	}
-	
-	PageScript.prototype.convert_mothername = function(formName) {
-		var inputElement = document.getElementById( formName+"_mothername");
-		var outputElement = document.getElementById( formName+"_monitor");
-		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
-	}
-	
 	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
 		var offset = this.offsetHeight - this.clientHeight;
 		var resizeTextarea = function(el) {
@@ -378,7 +194,7 @@
 		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
-			this.ajaxget("/v1/user_by_email/"+email, this.myCallback)
+			self.ajaxget("/v1/user_by_email/"+email, self.callback(self.myCallback))
 		}
 	}
 	
@@ -387,13 +203,13 @@
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
 	    csrf_token = self.getCookie('csrf');
-	    text= {
+	    data= {
 	    	digest: digest,
 	    	assurance: assurance,
 	    	email: email,
 	    	csrf_token: csrf_token
 	    }
-	    this.ajaxpost("/v1/add_assurance", text, this.myCallback)
+	    self.ajaxpost("/v1/add_assurance", data, self.callback(self.myCallback))
 	}
 
 /*
@@ -414,7 +230,7 @@
 	PageScript.prototype.addCredentialCallback = function(status,text){
 		var data = JSON.parse(text);
 		if (status != 200) self.displayMsg(self.processErrors(data));
-		else self.get_me;
+		else self.get_me();
 	}
 	
 	PageScript.prototype.addSslCredential = function(data) {
@@ -479,29 +295,29 @@
 				
 		var result = '\
 		<table>\
-			<tr>\
+			<trid="change-email-form_container>\
 				<td nowrap><b>'+_('Email address:')+'</b></td>\
 				<td id="email-change">\
-					<input type="text" value="'+data.email+'" id="userdata_editform_email_input">\
+					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off">\
 				</td>\
-				<td><a onclick="javascript:pageScript.myAccountItem(\"email-change\").edit" class="btn btn_ fa fa-edit"></a></td>\
+				<td class="button-container"><a onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a></td>\
 			</tr>\
 			<tr id="change-hash-form_hash-container">\
-				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
+				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
 				<td>\
 					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
-				<td>\
+				<td class="button-container">\
 					<a onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
 				</td>\
 			</tr>\
 			<tr id="change-hash-form_hash-changer" style="display: none;">\
-				<td nowrap><b>'+_("The Secret Hash:")+'</b></td>\
+				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
 				<td>\
 					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
 					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
 					<button class="button" type="button" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
-					<a id="digest_self_made_button" href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
+					<a href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
 						<button class="button" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
 					</a>\
 					<div id="change-hash-form_code-generation-input" class="form">\
@@ -515,7 +331,7 @@
 						</div>\
 					</div>\
 				</td>\
-				<td>\
+				<td class="button-container">\
 					<a onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
 					<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
 				</td>\
@@ -523,7 +339,7 @@
 		</table>\
 		<h4><b>'+_("My credentials")+'</b></h4>\
 		<table class="multiheader">';
-		var c={	pw:[_("Password"),"password","pageScript.addPasswordCredential()",true],
+		var c={	pw:[_("Password"),"password","document.getElementById('change-email_form').style.display='table-row'",true],
 				ssl:[_("SSL certificate"),"certificate","pageScript.addSslCredential()",true],
 				fb:["Facebook","facebook","facebook.add_fb_credential()",false],
 				git:["Github","github","pageScript.addGithubCredential()",false],
@@ -532,13 +348,30 @@
 				};
 		var credential_list = ""
 		for( var i in c) {
-			credential_list = ""
+			credential_list=(i=='pw')?'\
+			<tr id="change-email_form">\
+				<td>\
+					<div class="form-level">\
+					<input class="input-block" name="username" type="text" autocapitalize="off" placeholder="Felhasználónév" id="AddPasswordCredentialForm_username_input">\
+					<span class="form-icon_"><i class="fa fa-envelope-o"></i>/<i class="fa fa-user"></i></span>\
+					</div>\
+					<div class="form-level">\
+					<input class="input-block" type="password" placeholder="*********" id="AddPasswordCredentialForm_password_input">\
+					<span class="form-icon_"><i class=" fa fa-lock"></i></span>\
+					</div>\
+				</td>\
+				<td class="button-container">\
+					<a onclick="javascript:pageScript.addPasswordCredential()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a onclick="javascript:document.getElementById(\'change-email_form\').style.display=\'none\'" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
+				</td>\
+			</tr>\
+			':"";
 			for(var j=0; j<data.credentials.length; j++) {
 				if (data.credentials[j].credentialType==c[i][1]) {
-					credential_list += '\
+				credential_list += '\
 			<tr>\
-				<td  ><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
-				<td>\
+				<td><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
+				<td class="button-container">\
 					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\''+c[i][1]+'\')" class="btn btn_ fa fa-trash"></a>\
 				</td>\
 			</tr>'
@@ -582,6 +415,60 @@
 					console.log(key);
 					return key;
 				}).catch(function(a){console.log(a)});
+	}
+
+	PageScript.prototype.callSetAppCanEmailMe=function(app){
+		var value=document.getElementById("application-allow-email-me-"+app).checked
+		self.setAppCanEmailMe(app,value,self.myCallback)
+	}
+	PageScript.prototype.myappsCallback = function(status,text){
+		if (status!=200) return;
+		self.aps=JSON.parse(text)
+		var applist='\
+		<table>\
+			<tr>\
+				<th>'+_("Application")+'</th>\
+				<th>'+_("Domain")+'</th>\
+				<th>'+_("User identifier")+'</th>\
+				<th>'+_("Emailing")+'</th>\
+				<th>'+_("Allow emailing")+'</th>\
+			</tr>'
+		for(app in self.aps){ 
+		if (self.aps[app].username) { 
+			applist+='\
+			<tr>\
+				<td>'+self.aps[app].name+'</td>\
+				<td><a href="//'+self.aps[app].hostname+'">'+self.aps[app].hostname+'</a></td>\
+				<td>'+self.aps[app].username+'</td>\
+				<td>'+_(self.aps[app].can_email.toString())+'</td>\
+				<td>\
+					<input type="checkbox" id="application-allow-email-me-'+app+'"\
+					'+((self.aps[app].email_enabled)?'checked':'')+'\
+					onclick="javascript: pageScript.callSetAppCanEmailMe('+app+')">\
+				</td>\
+			</tr>'
+			}	
+		}
+		applist +='\
+		</table>';
+		document.getElementById("me_Applications").innerHTML=applist;
+	}
+
+	PageScript.prototype.parseAssurances = function(data) {
+		var selector = ''
+		var text
+		for(ass in data.assurances) {
+			var pos
+			if ( pos=ass.indexOf(".")+1 ) {
+				text=ass.slice(pos)
+				selector += '\
+				<option value="'+text+'">\
+				'+_(text)+'\
+				</option>\
+				';
+			}
+		}
+		return selector;		
 	}
 
 }()

@@ -3,7 +3,6 @@ from test import config
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
-from pdoauth.forms import credErr
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.CSRFMixin import CSRFMixin
@@ -19,33 +18,36 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
     def credential_can_be_retrieved_by_type_and_identifier(self):
         self.assertEquals(self.cred.user, self.user)
 
+    def addPasswordCredential(self, client, username=None, credentialtype=None, password=None, nofield=None):
+        if username is None:
+            username = "user_{0}".format(self.randString)
+        if credentialtype is None:
+            credentialtype = "password"
+        if password is None:
+            password = "secret is {0}".format(self.mkRandomPassword())
+        data = {"csrf_token":self.getCSRF(client), 
+            "credentialType":credentialtype, 
+            "identifier":username, 
+            "password":password}
+        if nofield is not None:
+            data.pop(nofield)
+        uri = config.BASE_URL + "/v1/add_credential"
+        resp = client.post(uri, data=data)
+        return resp
+
     @test
     def a_logged_in_user_can_add_credential(self):
         with app.test_client() as client:
             self.login(client)
             self.setupRandom()
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "identifier": "user_{0}".format(self.randString),
-                "secret": "secret is {0}".format(self.mkRandomPassword())
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client)
             self.assertEqual(200, resp.status_code)
 
     @test
     def a_not_logged_in_user_cannot_add_credential(self):
         with app.test_client() as client:
             self.setupRandom()
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "identifier": "user_{0}".format(self.randString),
-                "secret": "secret is {0}".format(self.randString)
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client)
             self.assertEqual(403, resp.status_code)
 
     @test
@@ -54,53 +56,27 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.login(client)
             self.setupRandom()
             username = "user_{0}".format(self.randString)
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "identifier": username,
-                "secret": "secret is {0}".format(self.mkRandomPassword())
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
             credBefore = Credential.get("password", username)
             self.assertTrue(credBefore is None)
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client, username=username, nofield="credentialType")
             self.assertEqual(400, resp.status_code)
             credAfter = Credential.get("password", username)
             self.assertTrue(credAfter is None)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def the_added_credential_should_contain_valid_credentialType(self):
         with app.test_client() as client:
             self.login(client)
-            self.setupRandom()
-            username = "user_{0}".format(self.randString)
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "invalid",
-                "identifier": username,
-                "secret": "secret is {0}".format(self.mkRandomPassword())
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            credBefore = Credential.get("password", username)
-            self.assertTrue(credBefore is None)
-            resp = client.post(uri, data=data)
-            self.assertEqual(400, resp.status_code)
-            credAfter = Credential.get("password", username)
-            self.assertTrue(credAfter is None)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+            resp = self.addPasswordCredential(client, credentialtype="invalid")
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def the_added_credential_should_contain_identifier(self):
         with app.test_client() as client:
             self.login(client)
             self.setupRandom()
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "secret": "secret is {0}".format(self.mkRandomPassword())
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client,nofield="identifier")
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
@@ -108,15 +84,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
     def the_added_credential_should_contain_valid_identifier(self):
         with app.test_client() as client:
             self.login(client)
-            self.setupRandom()
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "identifier": "aaa",
-                "secret": "secret is {0}".format(self.mkRandomPassword())
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client,username="aaa")
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
@@ -124,17 +92,9 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
     def the_added_credential_should_contain_secret(self):
         with app.test_client() as client:
             self.login(client)
-            self.setupRandom()
-            username = "user_{0}".format(self.randString)
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "identifier": username,
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client,nofield="password")
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long.", "secret: password should contain lowercase", "secret: password should contain uppercase", "secret: password should contain digit"]}',
+            self.assertEqual('{"errors": ["password: Field must be at least 8 characters long.", "password: password should contain lowercase", "password: password should contain uppercase", "password: password should contain digit"]}',
                  self.getResponseText(resp))
 
     @test
@@ -142,64 +102,31 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         with app.test_client() as client:
             self.login(client)
             self.setupRandom()
-            username = "user_{0}".format(self.randString)
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "identifier": username,
-                "secret": "sH0rt"
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client,password="sH0rt")
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["secret: Field must be at least 8 characters long."]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["password: Field must be at least 8 characters long."]}', self.getResponseText(resp))
 
     @test
     def the_password_should_contain_lowercase_letters(self):
         with app.test_client() as client:
             self.login(client)
-            self.setupRandom()
-            username = "user_{0}".format(self.randString)
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "identifier": username,
-                "secret": "THIS P4SSWORD IS UPPERCASE"
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client,password="THIS P4SSWORD IS UPPERCASE")
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["secret: password should contain lowercase"]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["password: password should contain lowercase"]}', self.getResponseText(resp))
 
     @test
     def the_password_should_contain_uppercase_letters(self):
         with app.test_client() as client:
             self.login(client)
-            self.setupRandom()
-            username = "user_{0}".format(self.randString)
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "identifier": username,
-                "secret": "th1s p4ssw0rd 15 10w3rc453"
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client,password="th1s p4ssw0rd 15 10w3rc453")
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["secret: password should contain uppercase"]}', self.getResponseText(resp))
+            self.assertEqual('{"errors": ["password: password should contain uppercase"]}', self.getResponseText(resp))
 
     @test
     def cannot_add_an_already_existing_identifier(self):
         with app.test_client() as client:
             self.login(client)
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "password",
-                "identifier": self.userCreationUserid,
-                "secret": self.mkRandomPassword()
-            }
-            uri = config.BASE_URL + "/v1/add_credential"
-            resp = client.post(uri, data=data)
+            resp = self.addPasswordCredential(client,username=self.userCreationUserid)
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["identifier: There is already a user with that username"]}', self.getResponseText(resp))
 
@@ -263,7 +190,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             }
             resp = client.post(config.BASE_URL + "/v1/remove_credential", data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def you_should_give_valid_credentialType_for_credential_deletion(self):
@@ -277,7 +204,7 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             }
             resp = client.post(config.BASE_URL + "/v1/remove_credential", data=data)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+            self.assertCredentialErrorresponse(resp)
 
     @test
     def you_should_give_the_identifier_for_credential_deletion(self):

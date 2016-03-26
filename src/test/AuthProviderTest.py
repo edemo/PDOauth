@@ -95,4 +95,4 @@ class AuthProviderTest(PDUnitTest, UserUtil, AuthProviderUtil):
         self.assertEquals(302,e.exception.status)
         print "\n", e.exception.uri
         print e.exception.descriptor
-        self.assertTrue(e.exception.uri.startswith(config.BASE_URL + "/static/login.html"))
+        self.assertTrue(e.exception.uri.startswith(config.Config.BASE_URL + "/static/login.html"))

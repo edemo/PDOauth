@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long
+# encoding: utf-8
 from test.helpers.PDUnitTest import PDUnitTest, test
 from pdoauth.models.Credential import Credential
 from pdoauth.models import User
@@ -114,7 +115,7 @@ class EmailTest(PDUnitTest, EmailUtil):
             self.failingMailer.sendDeregisterMail(self.user)
         
         self.assertEqual(context.exception.descriptor,
-            exceptionSendingEmail.format('some smtp error'))  # @UndefinedVariable
+            "Nem sikerült elküldeni a levelet: some smtp error")
         
     def tearDown(self):
         self.mailer.mail.outbox=list()

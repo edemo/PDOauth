@@ -193,4 +193,4 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
 
     def validate_access(self, uri):
         if not self.getCurrentUser().is_authenticated():
-            raise ReportedError(accessDenied, 302, uri=self.app.config.get('START_URL'))
+            raise ReportedError(accessDenied, 302, uri=self.app.config.get('LOGIN_URL'))
