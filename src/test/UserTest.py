@@ -11,6 +11,7 @@ class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
     def setUp(self):
         self.User_can_be_created()
+        PDUnitTest.setUp(self)
 
     def User_can_be_created(self):
         self.setupRandom()
