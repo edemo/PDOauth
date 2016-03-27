@@ -161,21 +161,14 @@
 		self.ajaxget( "/v1/verify_email/" + self.QueryString.secret, self.callback(this.succes,this.error) )
 	}
 
-	PageScript.prototype.changeEmail=function() {
+	PageScript.prototype.changeEmail=function(confirm) {
 		var data={
-			confirm: document.getElementById("").checked,
+			confirm: confirm,
 			secret: self.QueryString.secret
 		}
-		this.success=function(text){}
-		this.error=function(){}
-		self.ajaxpost( "/v1/confirmemailchange/", data, self.callback(this.success, this.error) )
+		this.success=function(text){self.displayMsg({title:"Üzi",error:text})}
+		self.ajaxpost( "/v1/confirmemailchange", data, self.callback(this.success) )
 	}	
-	
-	PageScript.prototype.cancelEmailChange=function() {
-		this.success=function(text){}
-		this.error=function(){}
-		self.ajaxget( "/v1/verify_email/", self.callback(this.success, this.error) )
-	}		
 	
 	PageScript.prototype.navigateToTheSection=function(section) {
 		if (self.QueryString.section) self.doRedirect(self.QueryString.uris.BASE_URL+"/fiokom.html");
@@ -249,13 +242,13 @@
 */	
 
 	PageScript.prototype.addCredential = function(credentialType, identifier, secret) {
+		console.log("addCredential:"+credentialType)
 		var data = {
 			credentialType: credentialType,
 			identifier: identifier,
+			password: secret
 		}
-		if (credentialType=="password") data.password=secret
-		else data.secret=secret
-		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me()))
+		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me))
 	}
 	
 	PageScript.prototype.addSslCredential = function(data) {
@@ -437,6 +430,7 @@
 		var value=document.getElementById("application-allow-email-me-"+app).checked
 		self.setAppCanEmailMe(app,value,self.myCallback)
 	}
+	
 	PageScript.prototype.myappsCallback = function(status,text){
 		if (status!=200) return;
 		self.aps=JSON.parse(text)

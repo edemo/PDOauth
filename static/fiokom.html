@@ -805,26 +805,13 @@ td.button-container, td.button-container {
 		<div class="func" id="emailchange_section">
 			<section class="container_">
 				<h3 class="title">Email cím cseréje</h3>
-				<p>Az új email címed <span id="emailchange_email"></span> lesz</p>
-				<div>
-					<input type="checkbox" id="accept_emailchange" name="accept_emailchange" value="accept">
-					<label class="label-inline" for="accept_emailchange"> igen, változtassuk meg.</label>
-				</div>
-				<button type="button" onclick="javascript:pageScript.changeEmail()">Cserélem</button>
-				<button type="button" onclick="javascript:pageScript.doRedirect('fiokom.html')">Mégse</button>
+				<p>Az email címed megváltoztatását kedzdeményezted. A "Cserélem" gombra kattintva véglegesítjuk az új email címidet: <span id="emailchange_email"></span></p>
+				<p>Ha meggondoltad magad kattints a "Mégse" gombra."</p>
+				<button type="button" onclick="javascript:pageScript.changeEmail(true)">Cserélem</button>
+				<button type="button" onclick="javascript:pageScript.changeEmail(false)">Mégse</button>
 			</section>
 		</div>
 <!-- Email change section -->	
-
-<!-- Cancel email change section-->
-		<div class="func" id="cancelemailchange_section">
-			<section class="container_">
-				<h3 class="title">Új jelszó megadása</h3>
-				<p id="cancelemailchange_message"></p>
-				<button type="button" onclick="javascript:pageScript.doRedirect('fiokom.html')">Ok</button>
-			</section>
-		</div>
-<!-- Cancel email change section -->
 
 	</div>
 
@@ -935,6 +922,7 @@ td.button-container, td.button-container {
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
+		<script type='text/javascript' src="js/base.js"></script>
 
 		<iframe id="SSL" name="ssl" onload="console.log('loaded')"></iframe>
 	</body>

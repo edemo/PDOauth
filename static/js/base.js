@@ -1,32 +1,109 @@
-(function(){	
-	var self;
-	PageScript.prototype.page = "blog";
+function Base(test) {
+	var self = this
+	test=test || { debug: false, uribase: "" }
+	this.debug=test.debug
+	win = test.win || window;
+    self.pageScript
+	this.isLoggedIn=false;
+	this.isAssurer=false;
+	this.registrationMethode="pw";
 
-	PageScript.prototype.main = function() {
-		self=this.getThis()
-		this.ajaxget("/adauris", this.uriCallback)
-	}
-
-	PageScript.prototype.uriCallback = function(status,text) {
-		var data = JSON.parse(text);
-		xxxx=self;
-		if (status==200) {
-			self.QueryString.uris = data
-			self.uribase = self.QueryString.uris.BACKEND_PATH;
-			loc = '' + win.location
-			if (loc.indexOf(self.QueryString.uris.SSL_LOGIN_BASE_URL) === 0) {
-				self.ajaxget(self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login',pageScript.initCallback, true)
+	Base.prototype.ajax=function(uri,method,onSuccess,onError){
+		console.log(this)
+		
+	this.prototype.callback = function(next,error){
+		var next  = next || function(){return}
+		var error = error || defaultErrorHandler
+		function callback(status,text,xml) {
+			switch (status){
+				case 200:
+					next(text,xml)
+					break;
+				case 500:
+				case 405:
+				case 404:
+					this.reportServerFailure(text)
+					break;
+				default:
+					error(status,text,xml)
 			}
-			self.ajaxget("/v1/users/me", self.initCallback)
-			self.getStatistics()
 		}
-		else self.displayMsg(self.processErrors(data));
+		function defaultErrorHandler(status,text,xml){
+			console.log(text)
+			data=JSON.parse(text)
+			self.displayMsg(self.processErrors(data))
+		}
+		return callback
+	}
+
+	this.reportServerFailure = function(text){
+		self.displayMsg({title:_("Server error occured"),error: text})
 	}
 	
-	PageScript.prototype.initCallback = function(status, text) {
-		self.isLoggedIn=(status == 200)
-		self.refreshTheNavbar()
+	this.ajaxBase = function(callback) {
+		var xmlhttp;
+		if (win.XMLHttpRequest)
+		  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp = new win.XMLHttpRequest();
+//		  xmlhttp.oName="XMLHttpRequest"; // for testing
+		  }
+		else
+		  {// code for IE6, IE5
+		  xmlhttp = new win.ActiveXObject("Microsoft.XMLHTTP");
+//		  xmlhttp.oName="ActiveXObject";   // for testing
+		  }
+		xmlhttp.callback=callback // for testing
+		xmlhttp.onreadystatechange=function()
+		  {
+		  if (xmlhttp.readyState==4)
+		    {
+		    	callback(xmlhttp.status,xmlhttp.responseText,xmlhttp.responseXML);
+		    }
+		  }
+		return xmlhttp;
 	}
-	
-}()
-)
+
+	this.ajaxpost = function( uri, data, callback ) {
+		xmlhttp = this.ajaxBase( callback );
+		xmlhttp.open( "POST", self.uribase + uri, true );
+		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
+		l = []
+		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
+		var dataString = l.join("&")
+		console.log(uri)
+		console.log(data)
+		xmlhttp.send( dataString );
+	}
+
+	this.ajaxget = function( uri, callback, direct) {
+		xmlhttp = this.ajaxBase( callback )
+		if (direct) {
+			theUri = uri;
+		} else {
+			theUri = self.uribase + uri;
+		}
+		console.log(theUri)
+		xmlhttp.open( "GET", theUri , true);
+		xmlhttp.send();
+	}
+	this.interface = function(){
+		if (method=="post") {
+			return function(data){
+				this.onSuccess=onSuccess
+				console.log(this.onSuccess)
+				this.onError=onError
+				this.ajaxpost(uri,data,this.callback(this.onSuccess,this.onError))
+			}
+		}
+		else {
+			a=function(){
+				console.log(this.onSuccess)
+				this.ajaxget(uri,this.callback(this.onSuccess,this.onError))
+			}
+			a.onSuccess = onSuccess
+			a.onError = onError
+			return a
+		}	
+	}		
+	}
+}

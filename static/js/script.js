@@ -35,6 +35,34 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		return this
 	}
 	
+	PageScript.prototype.reportServerFailure = function(text){
+		self.displayMsg({title:_("Server error occured"),error: text})
+	}
+
+	PageScript.prototype.callback = function(next,error){
+		var next  = next || function(){return}
+		var error = error || defaultErrorHandler
+		function callback(status,text,xml) {
+			switch (status){
+				case 200:
+					next(text,xml)
+					break;
+				case 500:
+				case 405:
+					self.reportServerFailure(text)
+					break;
+				default:
+					error(status,text,xml)
+			}
+		}
+		function defaultErrorHandler(status,text,xml){
+			console.log(text)
+			data=JSON.parse(text)
+			self.displayMsg(self.processErrors(data))
+		}
+		return callback
+	}
+	
 	PageScript.prototype.commonInit=function(text) {
 		// initialising variables
 		self.QueryString.uris = JSON.parse(text);
@@ -69,14 +97,14 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 
 	PageScript.prototype.ajaxpost = function( uri, data, callback ) {
-		console.log(data)
 		xmlhttp = this.ajaxBase( callback );
 		xmlhttp.open( "POST", self.uribase + uri, true );
 		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
 		l = []
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		var dataString = l.join("&")
-		console.log(uri+' - '+data)
+		console.log(uri)
+		console.log(data)
 		xmlhttp.send( dataString );
 	}
 
@@ -87,7 +115,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		} else {
 			theUri = self.uribase + uri;
 		}
-console.log(theUri)
+		console.log(theUri)
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
@@ -215,31 +243,24 @@ console.log(theUri)
 		}
 	}	
 
-	PageScript.prototype.reloadCallback = function(status, text) {
-		if (status!=500) {
-			var data = JSON.parse(text);
-			var msg = self.processErrors(data)
-			if (status == 200 ) {
-				if( self.page=="account"){
-					if( self.QueryString.next) {
-						self.doRedirect(decodeURIComponent(self.QueryString.next))
-					}
-					msg.callback = function(){self.doRedirect("fiokom.html")};
-				}
-			}
-			self.displayMsg(msg);
-		}
-		else console.log(text);
+	PageScript.prototype.reloadCallback = function(text) {
+		var msg = self.processErrors(JSON.parse(text))
+		msg.callback = self.doLoadHome;
+		self.displayMsg(msg);
 	}
 	
 	PageScript.prototype.doRedirect = function(href){ 
 		win.location=href	
 	}
 	
-	PageScript.prototype.get_me = function(callback) {
-		var loggedIn=callback || self.userIsLoggedIn 
-console.log(loggedIn)		
-		self.ajaxget("/v1/users/me", self.callback(loggedIn,self.userNotLoggedIn))
+	PageScript.prototype.doLoadHome = function() {
+		self.doRedirect(self.QueryString.uris.START_URL);
+	}
+	
+	PageScript.prototype.get_me = function() {
+		this.success=self.userIsLoggedIn
+		this.error=self.userNotLoggedIn
+		self.ajaxget("/v1/users/me", self.callback(this.success, this.error))
 	}
 	
 // Button actions
@@ -247,7 +268,7 @@ console.log(loggedIn)
 	PageScript.prototype.doPasswordReset = function() {
 		secret = document.getElementById("PasswordResetForm_secret_input").value;
 	    password = document.getElementById("PasswordResetForm_password_input").value;
-	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.reloadCallback)
+	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, self.callback(self.reloadCallback))
 	}
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
@@ -296,7 +317,6 @@ console.log(loggedIn)
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
 
-
 	PageScript.prototype.logoutCallback = function(status, text) {
 console.log("logoutCallback")
 		data=JSON.parse(text)
@@ -310,10 +330,6 @@ console.log("logoutCallback")
 				self.doRedirect( self.QueryString.uris.START_URL)
 			}
 		}
-	}
-	
-	PageScript.prototype.doLoadHome = function() {
-		self.doRedirect(self.QueryString.uris.START_URL);
 	}
 	
 	PageScript.prototype.logout = function() {
@@ -731,32 +747,7 @@ console.log("logoutCallback")
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
 
-	PageScript.prototype.reportServerFailure = function(text){
-		self.displayMsg({title:_("Server error occured"),error: text})
-	}
-
-	PageScript.prototype.callback = function(next,error){
-		var next  = next || function(){return}
-		var error = error || defaultErrorHandler
-		function callback(status,text,xml) {
-			switch (status){
-				case 200:
-					next(text,xml)
-					break;
-				case 500:
-					self.reportServerFailure(text)
-					break;
-				default:
-					error(status,text,xml)
-			}
-		}
-		function defaultErrorHandler(status,text,xml){
-			console.log(text)
-			data=JSON.parse(text)
-			self.displayMsg(self.processErrors(data))
-		}
-		return callback
-	}		
+	
 }
 	
 pageScript = new PageScript();
