@@ -5,18 +5,34 @@ import time
 from uuid import uuid4
 from pdoauth.models.User import User
 from pdoauth.ReportedError import ReportedError
-from pdoauth.Messages import badChangeEmailSecret
+from pdoauth.Messages import badChangeEmailSecret,\
+    thereIsAlreadyAUserWithThatEmail
 from pdoauth.models.Assurance import Assurance
 
 class EmailChangeTest(PDUnitTest, EmailUtil):
 
     def setUp(self):
+        self.anyuser = User.query.first()  # @UndefinedVariable
         self.user = self.createUserWithCredentials().user
         Assurance.new(self.user, 'emailverification', self.user)
         self.oldEmailAddress = self.userCreationEmail
         self.newEmailAddress = "email{0}@example.com".format(self.mkRandomString(5))
         PDUnitTest.setUp(self)
 
+    @test
+    def emailChangeInit_throws_error_if_new_email_equals_the_old(self):
+        with self.assertRaises(ReportedError) as context:
+            self.controller.emailChangeInit(self.userCreationEmail, self.user)
+        self.assertEqual(context.exception.descriptor,thereIsAlreadyAUserWithThatEmail)
+        self.assertEqual(context.exception.status,418)
+
+    @test
+    def emailChangeInit_throws_error_if_new_email_equals_an_existing_one(self):
+        with self.assertRaises(ReportedError) as context:
+            self.controller.emailChangeInit(self.anyuser.email, self.user)
+        self.assertEqual(context.exception.descriptor,thereIsAlreadyAUserWithThatEmail)
+        self.assertEqual(context.exception.status,418)
+        
     @test
     def emailChangeInit_creates_a_temporary_credential(self):
         self.controller.emailChangeInit(self.newEmailAddress, self.user)

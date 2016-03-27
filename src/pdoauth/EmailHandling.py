@@ -4,10 +4,11 @@ from flask_mail import Message
 from smtplib import SMTPException
 from pdoauth.ReportedError import ReportedError
 from pdoauth.Messages import exceptionSendingEmail, badChangeEmailSecret,\
-    emailChangeEmailSent, emailChanged
+    emailChangeEmailSent, emailChanged, thereIsAlreadyAUserWithThatEmail
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance
+from pdoauth.models import User
 
 class EmailData(object):
     def __init__(self, name, secret, expiry, addfields):
@@ -65,6 +66,8 @@ class EmailHandling(object):
         return self.simple_response(emailChangeEmailSent)
 
     def emailChangeInit(self, newEmailAddress, user):
+        if User.getByEmail(newEmailAddress):
+            raise ReportedError(thereIsAlreadyAUserWithThatEmail, 418)
         secret, expiry = CredentialManager.createTemporaryCredential(user, "changeemail",additionalInfo=newEmailAddress )
         self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_OLD", newemail=newEmailAddress, oldemail=user.email )
         self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_NEW", recipient=newEmailAddress, newemail=newEmailAddress, oldemail=user.email)
