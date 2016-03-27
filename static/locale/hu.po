@@ -864,3 +864,6 @@ msgstr ""
 "A regisztrációd sikerült, amiről email-ben is értesítettünk. </br> Az ebben "
 "lévő linkre kell kattintanod, hogy ellenőrizhessük az email címed "
 "valódiságát. Ha ez nem történik meg, a fiókodat egy hét múlva töröljük"
+
+msgid "email change email sent"
+msgstr "Az emailcím cseréhez szükséges levelet elküldtük. Az új email címed aktíválásához kattints a levélben található linkre."

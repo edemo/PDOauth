@@ -774,7 +774,7 @@ td.button-container, td.button-container {
 				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be. 
 				Az <b>igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi jelölőnégyzet kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
-				<div class="example-send-yourself-copy">
+				<div>
 					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
 					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
 				</div>
@@ -800,6 +800,19 @@ td.button-container, td.button-container {
 			</section>
 		</div>
 <!-- End password reset section -->	
+
+<!-- Email change section-->
+		<div class="func" id="emailchange_section">
+			<section class="container_">
+				<h3 class="title">Email cím cseréje</h3>
+				<p>Az email címed megváltoztatását kedzdeményezted. A "Cserélem" gombra kattintva véglegesítjuk az új email címidet: <span id="emailchange_email"></span></p>
+				<p>Ha meggondoltad magad kattints a "Mégse" gombra."</p>
+				<button type="button" onclick="javascript:pageScript.changeEmail(true)">Cserélem</button>
+				<button type="button" onclick="javascript:pageScript.changeEmail(false)">Mégse</button>
+			</section>
+		</div>
+<!-- Email change section -->	
+
 	</div>
 
 <!-- Footer Area Start -->
@@ -909,6 +922,7 @@ td.button-container, td.button-container {
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
+		<script type='text/javascript' src="js/base.js"></script>
 
 		<iframe id="SSL" name="ssl" onload="console.log('loaded')"></iframe>
 	</body>

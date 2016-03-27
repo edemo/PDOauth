@@ -22,6 +22,9 @@
 				case "pwreset" :
 					self.QueryString.section="password_reset"
 					self.unhideSection(self.QueryString.section+"_section")
+					if (self.QueryString.secret) {
+						document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
+					}
 					break;
 				case "deregistration" :
 					self.QueryString.section="deregistration"
@@ -31,15 +34,19 @@
 					self.QueryString.section="email_verification"
 					self.unhideSection(self.QueryString.section+"_section")
 					break;
+				case "cancelemailchange" :
+					self.QueryString.section="cancelemailchange"
+					self.unhideSection(self.QueryString.section+"_section")
+					break;
+				case "emailchange" :
+					self.QueryString.section="emailchange"
+					self.unhideSection(self.QueryString.section+"_section")
+					break;
 				case "login" :
 					self.unhideSection(section+"_section")
 					break;
 				default:
 			}
-		
-		if (self.QueryString.secret) {
-			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
-		}
 	}
 	
 	PageScript.prototype.initialise = function(text) {
@@ -124,27 +131,44 @@
 
 	PageScript.prototype.init_=function(){
 		console.log("init_")
-		if (self.QueryString.section && self.QueryString.section=="email_verification"){
-			if (self.QueryString.secret) self.verifyEmail()
+		if (self.QueryString.section){
+			switch (self.QueryString.section) {
+				case "email_verification":
+					if (self.QueryString.secret) self.verifyEmail()
+					break;
+				case "emailchange":
+					if (self.QueryString.email) {
+						document.getElementById("emailchange_email").innerHTML=self.QueryString.email
+					}
+					break;
+				case "cancelemailchange":
+					if (self.QueryString.secret) self.cancelEmailChange()
+					break;
+			}
 		}
 		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
-		self.ajaxget( "/v1/verify_email/"+self.QueryString.secret, self.emailVerificationCallback )
-	}	
-	
-	PageScript.prototype.emailVerificationCallback=function(status, text) {
-		var message
-		if (status==200) {
-			message=_("Your email validation was succesfull.")
+		var target   = document.getElementById("email_verification_message").innerHTML
+		this.success = function(text){
+			target=_("Your email validation was succesfull.")
 		}
-		else {
-			data=JSON.parse(text);
-			message=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
+		this.error   = function(status,text){
+			var data=JSON.parse(text);
+			target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
 		}
-		document.getElementById("email_verification_message").innerHTML=message
+		self.ajaxget( "/v1/verify_email/" + self.QueryString.secret, self.callback(this.succes,this.error) )
 	}
+
+	PageScript.prototype.changeEmail=function(confirm) {
+		var data={
+			confirm: confirm,
+			secret: self.QueryString.secret
+		}
+		this.success=function(text){self.displayMsg({title:"Üzi",error:text})}
+		self.ajaxpost( "/v1/confirmemailchange", data, self.callback(this.success) )
+	}	
 	
 	PageScript.prototype.navigateToTheSection=function(section) {
 		if (self.QueryString.section) self.doRedirect(self.QueryString.uris.BASE_URL+"/fiokom.html");
@@ -218,13 +242,13 @@
 */	
 
 	PageScript.prototype.addCredential = function(credentialType, identifier, secret) {
+		console.log("addCredential:"+credentialType)
 		var data = {
 			credentialType: credentialType,
 			identifier: identifier,
+			password: secret
 		}
-		if (credentialType=="password") data.password=secret
-		else data.secret=secret
-		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me()))
+		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me))
 	}
 	
 	PageScript.prototype.addSslCredential = function(data) {
@@ -240,26 +264,17 @@
 
 	PageScript.prototype.changeHash = function() {
 	    digest = document.getElementById("change-hash-form_digest_input").value;
-	    csrf_token = this.getCookie('csrf');
-	    text= {
+	    csrf_token = self.getCookie('csrf');
+	    data= {
 	    	digest: digest,
 	    	csrf_token: csrf_token
 	    }
-	    self.ajaxpost("/v1/users/me/update_hash", text, self.changeHashCallback)
+	    self.ajaxpost("/v1/users/me/update_hash", data, self.changeHashCallback)
 	}	
 	
-	PageScript.prototype.changeHashCallback = function(status,text) {
-		switch (status) {
-			case 500:
-				self.displayMsg({title:_("Server failure"),error:text})
-				break;
-			case 200:
-				self.get_me()
-				self.viewChangeHashContainer()
-			default:
-				var data = JSON.parse(text);
-				self.displayMsg(self.processErrors(data));	
-		}
+	PageScript.prototype.changeHashCallback = function(text) {
+		self.get_me()
+		self.viewChangeHashContainer()
 	}
 	
 	PageScript.prototype.viewChangeHashForm = function() {
@@ -415,6 +430,7 @@
 		var value=document.getElementById("application-allow-email-me-"+app).checked
 		self.setAppCanEmailMe(app,value,self.myCallback)
 	}
+	
 	PageScript.prototype.myappsCallback = function(status,text){
 		if (status!=200) return;
 		self.aps=JSON.parse(text)
@@ -464,6 +480,23 @@
 		}
 		return selector;		
 	}
-
+	
+	PageScript.prototype.changeEmailAddress = function() {
+	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
+		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
+		else {
+			var csrf_token = self.getCookie('csrf');
+			var data= {
+				newemail: email,
+				csrf_token: csrf_token
+			}
+			self.ajaxpost('/v1/emailchange',data, self.callback(self.changeEmailCallback) )
+		}	
+	}
+	
+	PageScript.prototype.changeEmailCallback = function(text) {
+		self.displayMsg(self.processErrors(JSON.parse(text)))
+	}
+	
 }()
 )

@@ -18,9 +18,9 @@ class CryptoUtils(object):
         return ''.join([random.choice(UNICODE_ASCII_CHARACTERS) for x in xrange(length)])  # @UnusedVariable
 
     def contentsOfFileNamedInConfig(self, confkey):
-        decorated = open(self.getConfig(confkey))
-        ret = decorated.read()
-        decorated.close()
+        theFile = open(self.getConfig(confkey))
+        ret = theFile.read()
+        theFile.close()
         return ret
 
     def createCertFromSPKAC(self, spkacInput, commonName, email):
@@ -34,14 +34,5 @@ class CryptoUtils(object):
         serial = now
         notAfter = now + 60 * 60 * 24 * 365 * 2
         certObj = theSPKAC.gen_crt(ca_pkey, ca_crt, serial, now, notAfter, 'sha1')
-        return certObj
-
-    def parseCert(self, cert):
-        try:
-            x509 = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
-        except Exception:
-            raise ReportedError([errorInCert, cert],400)
-        digest = x509.digest('sha1')
-        commonName = x509.get_subject().commonName.encode('raw_unicode_escape').decode('utf-8')
-        identifier = u"{0}/{1}".format(digest, commonName)
-        return identifier, digest
+        cert = crypto.load_certificate(crypto.FILETYPE_PEM,certObj.as_pem())
+        return cert

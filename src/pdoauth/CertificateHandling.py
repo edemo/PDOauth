@@ -4,12 +4,31 @@ import urlparse
 from pdoauth.ReportedError import ReportedError
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.CryptoUtils import CryptoUtils
-from pdoauth.Messages import noCertificateGiven
+from pdoauth.Messages import noCertificateGiven, errorInCert
 from pdoauth.LoginHandling import youHaveToRegisterFirst
+from OpenSSL import crypto
+from pdoauth.CertificateAuthority import CertificateAuthority
 
 class CertificateHandling(CryptoUtils):
+
+    def getDigest(self, cert):
+        try:
+            return cert.digest(b"sha512")
+        except:
+            raise ReportedError(errorInCert)
+
+    def getIdentifier(self, cert):
+        try:
+            cn = cert.get_subject().commonName
+            digest = self.getDigest(cert)
+            identifier = "{0}/{1}".format(cn, digest)
+            return identifier
+        except:
+            raise ReportedError(errorInCert)
+
     def addCertCredentialToUser(self, cert, user):
-        identifier, digest = self.parseCert(cert)
+        identifier = self.getIdentifier(cert)
+        digest = self.getDigest(cert)
         Credential.new(user, "certificate", identifier, digest)
 
     def registerAndLoginCertUser(self, form, cert):
@@ -26,24 +45,21 @@ class CertificateHandling(CryptoUtils):
             commonName = email
         else:
             commonName = "someone"
-        certObj = self.createCertFromSPKAC(spkacInput, commonName, email)
-        certAsPem = certObj.as_pem()
-        return certAsPem, certObj
+        cert = self.createCertFromSPKAC(spkacInput, commonName, email)
+        return cert
 
-    def createCertResponse(self, certObj):
-        resp = self.make_response(certObj.as_der(), 200)
+    def addHeadersToCertResponse(self, resp):
         resp.headers["Content-Type"] = "application/x-x509-user-cert"
         self.setCSRFCookie(resp)
-        return resp
 
     def doKeygen(self, form):
-        certAsPem, certObj = self.extractCertFromForm(form)
+        cert = self.extractCertFromForm(form)
         user = self.getCurrentUser()
         if user.is_authenticated():
-            self.addCertCredentialToUser(certAsPem, user)
+            self.addCertCredentialToUser(cert, user)
         else:
-            self.registerAndLoginCertUser(form, certAsPem)
-        return self.createCertResponse(certObj)
+            self.registerAndLoginCertUser(form, cert)
+        return self.createCertResponse(cert)
 
     def getEmailFromQueryParameters(self):
         requestUrl = self.getRequestUrl()
@@ -64,17 +80,42 @@ class CertificateHandling(CryptoUtils):
     def loginOrRegisterCertUser(self, cert, email):
         if cert is None or cert == '':
             raise ReportedError([noCertificateGiven], 403)
-        identifier, digest = self.parseCert(cert)
+        identifier = self.getIdentifier(cert)
         cred = Credential.get("certificate", identifier)
         if cred is None:
+            digest = self.getDigest(cert)
             cred = self.registerCertUser(email, identifier, digest, cred)
         cred.user.activate()
         return cred
 
     def doSslLogin(self):
-        cert = self.getEnvironmentVariable('SSL_CLIENT_CERT')
+        certtext = self.getEnvironmentVariable('SSL_CLIENT_CERT')
+        try:
+            cert = crypto.load_certificate(crypto.FILETYPE_PEM,certtext)
+        except:
+            raise ReportedError(errorInCert)
         email = self.getEmailFromQueryParameters()
         cred = self.loginOrRegisterCertUser(cert, email)
         resp = self.finishLogin(cred)
         resp.headers['Access-Control-Allow-Origin']="*"
         return resp
+
+    def createCertFromReq(self, reqstring, email):
+        req = crypto.load_certificate_request(crypto.FILETYPE_PEM, reqstring)
+        cacert = CertificateAuthority.getInstance(self)
+        cert = cacert.signRequest(req, email)
+        return cert
+
+    def createCertResponse(self, cert):
+        resp = self.make_response(crypto.dump_certificate(crypto.FILETYPE_ASN1,cert), 200)
+        self.addHeadersToCertResponse(resp)
+        return resp
+
+    def signRequest(self,form):
+        cert = self.createCertFromReq(form.pubkey.data, form.email.data)
+        user = self.getCurrentUser()
+        if user.is_authenticated():
+            self.addCertCredentialToUser(cert, user)
+        else:
+            self.registerAndLoginCertUser(form, cert)
+        return self.createCertResponse(cert)

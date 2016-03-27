@@ -81,6 +81,7 @@ function FaceBook(pageScript) {
 			callback(response)
 		} else if (response.status === 'not_authorized') {
 			console.log('not_authorised')
+			FB.login(function(resp){callback(resp)})
 		} else {
 			console.log('login')
 			FB.login(function(resp){callback(resp)})
@@ -139,7 +140,8 @@ function FaceBook(pageScript) {
 			FB.api('/me', function(response2) {
 				document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
 				document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
-				document.getElementById("registration-form_email_input").value=(response2.email)?response2.email:"Add meg az emailcímed!";
+				if (response2.email) document.getElementById("registration-form_email_input").value=response2.email;
+				else document.getElementById("registration-form_email_input").placeholder="Add meg az emailcímed!";
 		    });
 		} else {
 		  self.pageScript.displayMsg({ title:_("Facebook error"), error:_('Can not login with your Facebook account') })
