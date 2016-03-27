@@ -7,6 +7,7 @@ from test.config import Config
 from test.helpers.FakeInterFace import FakeMail
 from test.helpers.CryptoTestUtil import CryptoTestUtil, TEST_USER_IDENTIFIER
 from test.helpers.UserUtil import UserUtil
+from pdoauth.Messages import errorInCert
 
 CREDENTIAL_REPRESENTATION = '{{"credentialType": "certificate", "identifier": "{0}"}}'.format(TEST_USER_IDENTIFIER)
 
@@ -64,7 +65,7 @@ class SslLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
         resp = self.createUserAndLoginWithCert()
         self.assertEquals(resp.status_code, 200)
         body = self.getResponseText(resp)
-        self.assertTrue(CREDENTIAL_REPRESENTATION in
+        self.assertIn(CREDENTIAL_REPRESENTATION,
             body)
         resp = self.showUserByCurrentUser('me')
         self.assertEqual(200, resp.status_code)
@@ -78,17 +79,17 @@ class SslLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
     @test
     def you_cannot_login_without_a_cert(self):
         self.assertReportedError(
-            self.controller.doSslLogin, [], 403, ["No certificate given"])
+            self.controller.doSslLogin, [], 400, errorInCert)
 
     @test
     def empty_certstring_gives_error(self):
         self.assertReportedError(
-            self.sslLoginWithCert, [''], 403, ["No certificate given"])
+            self.sslLoginWithCert, [''], 400, errorInCert)
 
     @test
     def junk_certstring_gives_error(self):
         self.assertReportedError(
-            self.sslLoginWithCert, ['junk'], 400, ["error in cert", "junk"])
+            self.sslLoginWithCert, ['junk'], 400, errorInCert)
 
     @test
     def ssl_login_is_cors_enabled(self):

@@ -58,6 +58,10 @@ def authorization_code():
 def keygen(form):
     return CONTROLLER.doKeygen(form)
 
+@DECORATOR.interfaceFunc("/v1/ca/signreq", methods=["POST"], formClass=KeygenForm)
+def signreq(form):
+    return CONTROLLER.signRequest(form)
+
 @DECORATOR.interfaceFunc("/v1/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister(form):
     return CONTROLLER.doDeregister(form)
