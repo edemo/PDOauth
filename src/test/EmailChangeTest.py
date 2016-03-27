@@ -45,6 +45,9 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.assertIn(self.user.email, message.body)
         self.assertTrue(message.html.startswith("oldhtml "))
         self.assertIn(self.user.email, message.html)
+        self.assertIn(self.oldEmailAddress, message.body)
+        self.assertIn(self.newEmailAddress, message.body)
+
 
     @test
     def emailChangeInit_email_to_new_address_is_formatted_correctly(self):
@@ -54,6 +57,8 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.assertIn(self.user.email, message.body)
         self.assertTrue(message.html.startswith("newhtml "))
         self.assertIn(self.user.email, message.html)
+        self.assertIn(self.oldEmailAddress, message.body)
+        self.assertIn(self.newEmailAddress, message.body)
 
     @test
     def emailChangeInit_does_not_change_email_address(self):

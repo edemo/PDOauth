@@ -10,20 +10,22 @@ from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance
 
 class EmailData(object):
-    def __init__(self, name, secret, expiry):
+    def __init__(self, name, secret, expiry, addfields):
         self.name = name
         self.secret = secret
         self.expiry = time.strftime("%d %b %Y %H:%M:%S", time.gmtime(expiry))
         self.expiry = time.strftime("%d %b %Y %H:%M:%S", time.gmtime(expiry))
+        for key in addfields:
+            setattr(self,key,addfields[key])
     
     
 class EmailHandling(object):
     passwordResetCredentialType = 'email_for_password_reset'
 
-    def sendEmail(self, user, secret, expiry, topic, rmuser = False, recipient=None):
+    def sendEmail(self, user, secret, expiry, topic, rmuser = False, recipient=None, **addfields):
         if recipient is None:
             recipient=user.email
-        emailData = EmailData(user.email, secret, expiry)
+        emailData = EmailData(user.email, secret, expiry, addfields)
         bodyTextCfg = topic + '_EMAIL_BODY_TEXT'
         bodyHtmlCfg = topic + '_EMAIL_BODY_HTML'
         subjectCfg = topic + '_EMAIL_SUBJECT'
@@ -63,9 +65,9 @@ class EmailHandling(object):
         return self.simple_response(emailChangeEmailSent)
 
     def emailChangeInit(self, newEmailAddress, user):
-        secret, expiry = CredentialManager.createTemporaryCredential(user, "changeemail", additionalInfo=newEmailAddress)
-        self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_OLD")
-        self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_NEW", recipient=newEmailAddress)
+        secret, expiry = CredentialManager.createTemporaryCredential(user, "changeemail",additionalInfo=newEmailAddress )
+        self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_OLD", newemail=newEmailAddress, oldemail=user.email )
+        self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_NEW", recipient=newEmailAddress, newemail=newEmailAddress, oldemail=user.email)
         Credential.deleteExpired("changeemail")
 
     def updateEmailByCredential(self, cred):
