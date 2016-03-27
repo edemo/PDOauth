@@ -18,6 +18,6 @@ class PDUnitTest(Fixture):
     def assertReportedError(self, funct, args, status, descriptor):
         with self.assertRaises(ReportedError) as context:
             funct(*args)
-        self.assertEquals(context.exception.status, status)
         self.assertEqual(descriptor, context.exception.descriptor)
+        self.assertEquals(context.exception.status, status)
 
