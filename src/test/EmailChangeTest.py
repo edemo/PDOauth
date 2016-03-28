@@ -34,19 +34,39 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.assertEqual(context.exception.status,418)
         
     @test
-    def emailChangeInit_creates_a_temporary_credential(self):
+    def emailChangeInit_creates_a_temporary_changeemail_credential(self):
         self.controller.emailChangeInit(self.newEmailAddress, self.user)
         self.assertNotEqual(None, Credential.getByUser(self.user, "changeemail"))
+
+    @test
+    def emailChangeinit_creates_a_temporary_changeemailandverify_credential(self):
+        self.controller.emailChangeInit(self.newEmailAddress, self.user)
+        self.assertNotEqual(None, Credential.getByUser(self.user, "changeemailandverify"))
 
     @test
     def changeemail_credential_contains_new_emailaddress(self):
         self.controller.emailChangeInit(self.newEmailAddress, self.user)
         self.assertEqual(self.newEmailAddress, Credential.getByUser(self.user, "changeemail").getAdditionalInfo())
         
+
     @test
     def emailChangeInit_sends_email_to_old_address(self):
         self.controller.emailChangeInit(self.newEmailAddress, self.user)
         self.assertEqual(self.oldEmailAddress,self.controller.mail.outbox[0].recipients[0])
+
+    @test
+    def emailChangeInit_email_to_old_address_contains_changeemail_credential_secret(self):
+        self.controller.emailChangeInit(self.newEmailAddress, self.user)
+        cred = Credential.getByUser(self.user, "changeemail")
+        message = self.controller.mail.outbox[0]
+        self.assertIn(cred.secret, message.body)
+
+    @test
+    def emailChangeInit_email_to_new_address_contains_changeemailandverify_credential_secret(self):
+        self.controller.emailChangeInit(self.newEmailAddress, self.user)
+        cred = Credential.getByUser(self.user, "changeemailandverify")
+        message = self.controller.mail.outbox[1]
+        self.assertIn(cred.secret, message.body)
 
     @test
     def emailChangeInit_sends_email_to_new_address(self):
@@ -92,6 +112,14 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.assertTrue(self.countExpiredCreds('changeemail')==0)
 
     @test
+    def emailChangeInit_clears_timed_out_changeemailandverify_credentials(self):
+        for someone in User.query.all()[:5]:  # @UndefinedVariable
+            Credential.new(someone, 'changeemailandverify', unicode(time.time()-1)+":"+unicode(uuid4()), unicode(uuid4()))
+        self.assertTrue(self.countExpiredCreds('changeemailandverify')>=5)
+        self.controller.emailChangeInit(self.newEmailAddress, self.user)
+        self.assertTrue(self.countExpiredCreds('changeemailandverify')==0)
+
+    @test
     def confirmChangeEmail_throws_403_bad_secret_for_email_change_if_secret_is_not_correct(self):
         with self.assertRaises(ReportedError) as context:
             self.doConfirmChangeEmail(secret="badSecret")
@@ -116,6 +144,11 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.assertEqual(None,Credential.getByUser(self.user, 'changeemail'))
 
     @test
+    def confirmChangeEmail_deletes_changeemailandverify_credential(self):
+        self.doConfirmChangeEmail()
+        self.assertEqual(None,Credential.getByUser(self.user, 'changeemailandverify'))
+
+    @test
     def confirmChangeEmail_deletes_emailverification_assurance(self):
         self.doConfirmChangeEmail()
         self.assertEqual(list(),Assurance.listByUser(self.user,'emailverification'))
@@ -126,9 +159,14 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.assertEqual(None,Credential.getByUser(self.user, 'changeemail'))
 
     @test
+    def confirmChangeEmail_deletes_changeemailandverify_credential_even_when_confirm_is_false(self):
+        self.doConfirmChangeEmail(confirm=False)
+        self.assertEqual(None,Credential.getByUser(self.user, 'changeemailandverify'))
+
+    @test
     def confirmChangeEmail_sends_an_email_to_the_new_address_with_a_security_warning(self):
         self.doConfirmChangeEmail()
-        message = self.controller.mail.outbox[2]
+        message = self.controller.mail.outbox[3]
         self.assertEqual(self.oldEmailAddress,self.controller.mail.outbox[0].recipients[0])
         self.assertTrue(message.body.startswith("warnDear "))
         self.assertIn(self.user.email, message.body)
@@ -136,6 +174,11 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.assertIn(self.user.email, message.html)
 
     @test
-    def confirmChangeEmail_starts_an_emailverification_for_the_new_address(self):
+    def confirmChangeEmail_starts_an_emailverification_for_the_new_address_if_called_with_changeemail_secret(self):
         self.doConfirmChangeEmail()
         self.assertEqual(self.user,Credential.getByUser(self.user, 'emailcheck').user)
+
+    @test
+    def confirmChangeEmail_adds_a_emailverification_assurance_if_called_with_changeemailandverify_secret(self):
+        self.doConfirmChangeEmail(useverifysecret=True)
+        self.assertIn("emailverification",Assurance.getByUser(self.user))
