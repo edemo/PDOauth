@@ -77,10 +77,13 @@ class EmailUtil(UserUtil):
     def assertSubjectIs(self, subject):
         return self.assertEqual(self.mailer.mail.outbox[0].subject, subject)
 
-    def doConfirmChangeEmail(self, secret=None, confirm=True):
+    def doConfirmChangeEmail(self, secret=None, confirm=True, useverifysecret=False):
         self.controller.emailChangeInit(self.newEmailAddress, self.user)
         if secret is None:
-            secret = Credential.getByUser(self.user, 'changeemail').secret
+            if useverifysecret:
+                secret = Credential.getByUser(self.user, 'changeemailandverify').secret
+            else:
+                secret = Credential.getByUser(self.user, 'changeemail').secret
         self.controller.confirmChangeEmail(confirm, secret)
 
     def initiateEmailChange(self, client):

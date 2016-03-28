@@ -920,7 +920,7 @@ msgstr ""
 
 #: src/pdoauth/Messages.py:67
 msgid "bad secret for email change"
-msgstr ""
+msgstr "Az email csere hivatkozás érvénytelen"
 
 #: src/pdoauth/Messages.py:68
 msgid "email change email sent"
@@ -939,6 +939,6 @@ msgid ""
 "inside the email we sent you to validate your email address, otherwise your "
 "account will be destroyed in one week."
 msgstr ""
-"A regisztrációd sikerült, amiről email-ben is értesítettünk. </br> Az ebben "
-"lévő linkre kell kattintanod, hogy ellenőrizhessük az email címed "
-"valódiságát. Ha ez nem történik meg, a fiókodat egy hét múlva töröljük"
+"A regisztrációd sikerült, amiről email-ben is értesítettünk. </br> Az emailben  "
+"megadott linkre kell kattintanod, hogy igazold az email címed "
+"valódiságát. Ha ez nem történik meg egy héten belül, a fiókodat automatikusan töröljük"

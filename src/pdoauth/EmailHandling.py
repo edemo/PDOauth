@@ -70,16 +70,21 @@ class EmailHandling(object):
             raise ReportedError(thereIsAlreadyAUserWithThatEmail, 418)
         secret, expiry = CredentialManager.createTemporaryCredential(user, "changeemail",additionalInfo=newEmailAddress )
         self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_OLD", newemail=newEmailAddress, oldemail=user.email )
+        secret, expiry = CredentialManager.createTemporaryCredential(user, "changeemailandverify",additionalInfo=newEmailAddress )
         self.sendEmail(user, secret, expiry, "CHANGE_EMAIL_NEW", recipient=newEmailAddress, newemail=newEmailAddress, oldemail=user.email)
         Credential.deleteExpired("changeemail")
+        Credential.deleteExpired("changeemailandverify")
 
-    def updateEmailByCredential(self, cred):
+    def updateEmailByCredential(self, cred, verify):
         cred.user.email = cred.getAdditionalInfo()
         cred.user.save()
         for assurance in Assurance.listByUser(cred.user, 'emailverification'):
             assurance.rm()
+        if verify:
+            Assurance.new(cred.user, 'emailverification', cred.user)
+        else:
+            self.sendPasswordVerificationEmail(cred.user)
         self.sendEmail(cred.user, None, None, "CHANGE_EMAIL_DONE")
-        self.sendPasswordVerificationEmail(cred.user)
 
     def confirmEmailChange(self,form):
         self.confirmChangeEmail(form.confirm.data, form.secret.data)
@@ -87,8 +92,16 @@ class EmailHandling(object):
         
     def confirmChangeEmail(self, confirm, secret):
         cred = Credential.getBySecret("changeemail", secret)
+        verify = False
         if cred is None:
-            raise ReportedError(badChangeEmailSecret, 403)
+            credverify = Credential.getBySecret("changeemailandverify", secret)
+            if credverify is None:
+                raise ReportedError(badChangeEmailSecret, 403)
+            else:
+                cred = credverify
+                verify = True
         if confirm is True:
-            self.updateEmailByCredential(cred)
-        cred.rm()
+            self.updateEmailByCredential(cred, verify)
+        user = cred.user
+        Credential.getByUser(user, "changeemail").rm()
+        Credential.getByUser(user, "changeemailandverify").rm()
