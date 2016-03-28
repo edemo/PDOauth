@@ -323,6 +323,9 @@ td.button-container, td.button-container {
     background-position: center;
 	min-height: 150px;
 	}
+#registration-ssltext-container {
+	display: none;
+}
 		</style>
 	</head>
 	<body onload="pageScript.main()">
@@ -466,10 +469,14 @@ td.button-container, td.button-container {
 					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
 				</div>
 				<h4 id="registration-form-method-heading" >Regisztráció email cím és/vagy felhasználónév és jelszó segítségével</h4>
+				<p id="registration-ssltext-container">
+					<b>Ha a certificate mentése után nem jelenne meg a "fiókom" felület, töltsd újra az oldalt!!</b>
+				</p>
 				<form target="ssl" id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
 					<div class="form">
 						<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
 						<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked>
+
 						<div id="registration-form-email-container" class="form-level">
 							<input class="input-block" name="email" type="email" placeholder="Email cím" id="registration-form_email_input">
 							<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
@@ -767,7 +774,7 @@ td.button-container, td.button-container {
 				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be. 
 				Az <b>igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi jelölőnégyzet kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
-				<div class="example-send-yourself-copy">
+				<div>
 					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
 					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
 				</div>
@@ -786,13 +793,26 @@ td.button-container, td.button-container {
 					<fieldset>
 						<input type="text" class="disabled" id="PasswordResetForm_secret_input" style="display:none;">
 						<label for="PasswordResetForm_password_input">Új jelszó:</label>
-						<input type="password" placeholder="*********" id="PasswordResetForm_password_input">
+						<input type="password" placeholder="Jelszó" id="PasswordResetForm_password_input">
 						<button type="button" onclick="javascript:pageScript.doPasswordReset()">Jelszó mentése</button>
 					</fieldset>
 				</form>
 			</section>
 		</div>
 <!-- End password reset section -->	
+
+<!-- Email change section-->
+		<div class="func" id="emailchange_section">
+			<section class="container_">
+				<h3 class="title">Email cím cseréje</h3>
+				<p>Az email címed megváltoztatását kedzdeményezted. A "Cserélem" gombra kattintva véglegesítjuk az új email címidet: <span id="emailchange_email"></span></p>
+				<p>Ha meggondoltad magad kattints a "Mégse" gombra."</p>
+				<button type="button" onclick="javascript:pageScript.changeEmail(true)">Cserélem</button>
+				<button type="button" onclick="javascript:pageScript.changeEmail(false)">Mégse</button>
+			</section>
+		</div>
+<!-- Email change section -->	
+
 	</div>
 
 <!-- Footer Area Start -->
@@ -855,7 +875,7 @@ td.button-container, td.button-container {
                     <div class="footer_mid pull-right">
 
                         <ul class="social-contact list-inline">
-                            <li> <a target="_blank" href="https://www.facebook.com/Adatom-1688616028083495/"><i class="fa fa-facebook"></i></a></li>
+                            <li> <a target="_blank" href="https://www.facebook.com/adatom.hu"><i class="fa fa-facebook"></i></a></li>
                             <li> <a target="_blank" href="https://github.com/edemo/"><i class="fa fa-github"></i></a></li>
 <!-- temporaly hidden
 
@@ -902,6 +922,7 @@ td.button-container, td.button-container {
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
+		<script type='text/javascript' src="js/base.js"></script>
 
 		<iframe id="SSL" name="ssl" onload="console.log('loaded')"></iframe>
 	</body>

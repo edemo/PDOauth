@@ -35,6 +35,34 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		return this
 	}
 	
+	PageScript.prototype.reportServerFailure = function(text){
+		self.displayMsg({title:_("Server error occured"),error: text})
+	}
+
+	PageScript.prototype.callback = function(next,error){
+		var next  = next || function(){return}
+		var error = error || defaultErrorHandler
+		function callback(status,text,xml) {
+			switch (status){
+				case 200:
+					next(text,xml)
+					break;
+				case 500:
+				case 405:
+					self.reportServerFailure(text)
+					break;
+				default:
+					error(status,text,xml)
+			}
+		}
+		function defaultErrorHandler(status,text,xml){
+			console.log(text)
+			data=JSON.parse(text)
+			self.displayMsg(self.processErrors(data))
+		}
+		return callback
+	}
+	
 	PageScript.prototype.commonInit=function(text) {
 		// initialising variables
 		self.QueryString.uris = JSON.parse(text);
@@ -75,7 +103,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		l = []
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		var dataString = l.join("&")
-		console.log(uri+' - '+data)
+		console.log(uri)
+		console.log(data)
 		xmlhttp.send( dataString );
 	}
 
@@ -86,7 +115,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		} else {
 			theUri = self.uribase + uri;
 		}
-console.log(theUri)
+		console.log(theUri)
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
@@ -192,58 +221,46 @@ console.log(theUri)
 
 	}
 	
-	PageScript.prototype.meCallback = function(status, text) {
-		if (status!=500) {
-			var data = JSON.parse(text);
-			var msg = self.processErrors(data)
-			if (status == 200 ) {
-				if( self.page=="account"){
-					self.get_me()
-				}
-				if( self.page=="login"){
-					self.init_();
-				}
-			}
-			else self.displayMsg(msg);
-		}
-		else console.log(text);
+	PageScript.prototype.meCallback = function(text) {
+		var data = JSON.parse(text);
+		var msg = self.processErrors(data)
+		self.get_me()
+		self.displayMsg(msg);
 	}
+
 	PageScript.prototype.registerCallback = function(text) {
-			var data = JSON.parse(text);
-			var msg = self.processErrors(data)
-			if( self.page=="account"){
-				self.get_me()
-			}
-			if( self.page=="login"){
-				self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
-			}
+		self.isLoggedIn=true
+		if( self.page=="account"){
+			var msg={
+				title:_("Congratulation!"),
+				error:_("You have succesfully registered and logged in. </br> Please click the link inside the email we sent you to validate your email address, otherwise your account will be destroyed in one week.")
+				}
+			self.displayMsg(msg)
+			self.userIsLoggedIn (text)
+		}
+		if( self.page=="login"){
+			self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
+		}
 	}	
 
-	PageScript.prototype.reloadCallback = function(status, text) {
-		if (status!=500) {
-			var data = JSON.parse(text);
-			var msg = self.processErrors(data)
-			if (status == 200 ) {
-				if( self.page=="account"){
-					if( self.QueryString.next) {
-						self.doRedirect(decodeURIComponent(self.QueryString.next))
-					}
-					msg.callback = function(){self.doRedirect("fiokom.html")};
-				}
-			}
-			self.displayMsg(msg);
-		}
-		else console.log(text);
+	PageScript.prototype.reloadCallback = function(text) {
+		var msg = self.processErrors(JSON.parse(text))
+		msg.callback = self.doLoadHome;
+		self.displayMsg(msg);
 	}
 	
 	PageScript.prototype.doRedirect = function(href){ 
 		win.location=href	
 	}
 	
-	PageScript.prototype.get_me = function(callback) {
-		var loggedIn=callback || self.userIsLoggedIn 
-console.log(loggedIn)		
-		self.ajaxget("/v1/users/me", self.callback(loggedIn,self.userNotLoggedIn))
+	PageScript.prototype.doLoadHome = function() {
+		self.doRedirect(self.QueryString.uris.START_URL);
+	}
+	
+	PageScript.prototype.get_me = function() {
+		this.success=self.userIsLoggedIn
+		this.error=self.userNotLoggedIn
+		self.ajaxget("/v1/users/me", self.callback(this.success, this.error))
 	}
 	
 // Button actions
@@ -251,7 +268,7 @@ console.log(loggedIn)
 	PageScript.prototype.doPasswordReset = function() {
 		secret = document.getElementById("PasswordResetForm_secret_input").value;
 	    password = document.getElementById("PasswordResetForm_password_input").value;
-	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, this.reloadCallback)
+	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, self.callback(self.reloadCallback))
 	}
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
@@ -300,7 +317,6 @@ console.log(loggedIn)
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
 
-
 	PageScript.prototype.logoutCallback = function(status, text) {
 console.log("logoutCallback")
 		data=JSON.parse(text)
@@ -314,10 +330,6 @@ console.log("logoutCallback")
 				self.doRedirect( self.QueryString.uris.START_URL)
 			}
 		}
-	}
-	
-	PageScript.prototype.doLoadHome = function() {
-		self.doRedirect(self.QueryString.uris.START_URL);
 	}
 	
 	PageScript.prototype.logout = function() {
@@ -353,12 +365,7 @@ console.log("logoutCallback")
 		this.loadjs("ts.js")
 	}
 	
-	PageScript.prototype.changeEmailAddress = function() {
-	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
-		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
-		else self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
+
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
 		this.doRemove = function(type) {
@@ -370,7 +377,7 @@ console.log("logoutCallback")
 				identifier: identifier
 			}
 			console.log("text")
-			this.ajaxpost("/v1/remove_credential", text, self.meCallback);
+			this.ajaxpost("/v1/remove_credential", text, self.callback(self.meCallback));
 		}
 		return self
 	}
@@ -596,6 +603,7 @@ console.log("logoutCallback")
 				heading=_("email address and/or username / password")
 				document.getElementById("registration-form-password-container").style.display="block";
 				document.getElementById("registration-form-username-container").style.display="block";
+				document.getElementById("registration-ssltext-container").style.display="none";
 				document.getElementById("registration-form_secret_input").value="";
 				document.getElementById("registration-form_identifier_input").value="";
 			break;
@@ -603,12 +611,14 @@ console.log("logoutCallback")
 				heading=_("my facebook account")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
+				document.getElementById("registration-ssltext-container").style.display="none";
 				facebook.fbregister()
 			break;
 			case "ssl":
 				heading=_("SSL certificate")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
+				document.getElementById("registration-ssltext-container").style.display="block";
 			break;
 		}
 		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
@@ -737,32 +747,7 @@ console.log("logoutCallback")
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
 
-	PageScript.prototype.reportServerFailure = function(text){
-		self.displayMsg({title:_("Server error occured"),error: text})
-	}
-
-	PageScript.prototype.callback = function(next,error){
-		var next  = next || function(){return}
-		var error = error || defaultErrorHandler
-		function callback(status,text,xml) {
-			switch (status){
-				case 200:
-					next(text,xml)
-					break;
-				case 500:
-					self.reportServerFailure(text)
-					break;
-				default:
-					error(status,text,xml)
-			}
-		}
-		function defaultErrorHandler(status,text,xml){
-			console.log(text)
-			data=JSON.parse(text)
-			self.displayMsg(self.processErrors(data))
-		}
-		return callback
-	}		
+	
 }
 	
 pageScript = new PageScript();
