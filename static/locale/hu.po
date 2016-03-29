@@ -317,19 +317,19 @@ msgid "emailverification"
 msgstr "ellenőrzött email-cím igazolás"
 
 msgid "assurer"
-msgstr "tanusító"
+msgstr "Tanusító"
 
 msgid "assurer.magyar"
-msgstr "magyar tanusító"
+msgstr "'magyar'Tanúsító"
 
 msgid "assurer.assurer"
-msgstr "kinevezhet tanúsítót "
+msgstr "Kinevezhet Tanúsítót "
 
 msgid "assurer.vizsgazott"
-msgstr "vizsgabiztos"
+msgstr "Vizsgabiztos"
 
 msgid "assurer.{0}"
-msgstr "{0} tanúsító"
+msgstr "{0} Tanúsító"
 
 #: static/js/account.js:115 static/js/account.js:140 static/js/account.js:155
 msgid "Your email validation was succesfull."
