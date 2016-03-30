@@ -1,5 +1,6 @@
 from pdoauth.EmailHandling import EmailHandling
-from test.helpers.FakeInterFace import FakeInterface, FakeApp, FakeMail
+from test.helpers.FakeInterFace import FakeInterface, FakeApp, FakeMail,\
+    FakeForm
 from smtplib import SMTPException
 from bs4 import BeautifulSoup
 import re
@@ -84,7 +85,7 @@ class EmailUtil(UserUtil):
                 secret = Credential.getByUser(self.user, 'changeemailandverify').secret
             else:
                 secret = Credential.getByUser(self.user, 'changeemail').secret
-        self.controller.confirmChangeEmail(confirm, secret)
+        return self.controller.confirmEmailChange(FakeForm(dict(confirm=confirm, secret=secret)))
 
     def initiateEmailChange(self, client):
         self.login(client)

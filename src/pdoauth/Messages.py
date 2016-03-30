@@ -67,3 +67,5 @@ exceptionSendingEmail = _("Nem sikerült elküldeni a levelet")
 badChangeEmailSecret = _("bad secret for email change")
 emailChangeEmailSent = _("email change email sent")
 emailChanged = _("email address changed")
+emailChangeIsCancelled = _("email address change is cancelled")
+
