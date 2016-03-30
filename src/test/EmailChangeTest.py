@@ -182,3 +182,12 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
     def confirmChangeEmail_adds_a_emailverification_assurance_if_called_with_changeemailandverify_secret(self):
         self.doConfirmChangeEmail(useverifysecret=True)
         self.assertIn("emailverification",Assurance.getByUser(self.user))
+
+    @test
+    def confirmChangeEmail_email__is_formatted_correctly(self):
+        self.doConfirmChangeEmail()
+        message = self.controller.mail.outbox[3]
+        self.assertIn(self.oldEmailAddress, message.body)
+        self.assertIn(self.newEmailAddress, message.body)
+        self.assertIn(self.oldEmailAddress, message.html)
+        self.assertIn(self.newEmailAddress, message.html)

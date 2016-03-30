@@ -76,6 +76,7 @@ class EmailHandling(object):
         Credential.deleteExpired("changeemailandverify")
 
     def updateEmailByCredential(self, cred, verify):
+        oldemail=cred.user.email
         cred.user.email = cred.getAdditionalInfo()
         cred.user.save()
         for assurance in Assurance.listByUser(cred.user, 'emailverification'):
@@ -84,7 +85,7 @@ class EmailHandling(object):
             Assurance.new(cred.user, 'emailverification', cred.user)
         else:
             self.sendPasswordVerificationEmail(cred.user)
-        self.sendEmail(cred.user, None, None, "CHANGE_EMAIL_DONE")
+        self.sendEmail(cred.user, None, None, "CHANGE_EMAIL_DONE",oldemail=oldemail, newemail=cred.user.email)
 
     def confirmEmailChange(self,form):
         self.confirmChangeEmail(form.confirm.data, form.secret.data)
