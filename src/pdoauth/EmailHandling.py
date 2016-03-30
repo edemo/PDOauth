@@ -4,7 +4,8 @@ from flask_mail import Message
 from smtplib import SMTPException
 from pdoauth.ReportedError import ReportedError
 from pdoauth.Messages import exceptionSendingEmail, badChangeEmailSecret,\
-    emailChangeEmailSent, emailChanged, thereIsAlreadyAUserWithThatEmail
+    emailChangeEmailSent, emailChanged, thereIsAlreadyAUserWithThatEmail,\
+    emailChangeIsCancelled
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance
@@ -76,6 +77,7 @@ class EmailHandling(object):
         Credential.deleteExpired("changeemailandverify")
 
     def updateEmailByCredential(self, cred, verify):
+        oldemail=cred.user.email
         cred.user.email = cred.getAdditionalInfo()
         cred.user.save()
         for assurance in Assurance.listByUser(cred.user, 'emailverification'):
@@ -84,13 +86,19 @@ class EmailHandling(object):
             Assurance.new(cred.user, 'emailverification', cred.user)
         else:
             self.sendPasswordVerificationEmail(cred.user)
-        self.sendEmail(cred.user, None, None, "CHANGE_EMAIL_DONE")
+        self.sendEmail(cred.user, None, None, "CHANGE_EMAIL_DONE",oldemail=oldemail, newemail=cred.user.email)
 
     def confirmEmailChange(self,form):
-        self.confirmChangeEmail(form.confirm.data, form.secret.data)
-        return self.simple_response(emailChanged)
+        return self.confirmChangeEmail(form.confirm.data, form.secret.data)
         
-    def confirmChangeEmail(self, confirm, secret):
+
+    def removeTemporaryEmailCredentials(self, cred):
+        user = cred.user
+        Credential.getByUser(user, "changeemail").rm()
+        Credential.getByUser(user, "changeemailandverify").rm()
+
+
+    def findTemporaryEmailCredential(self, secret):
         cred = Credential.getBySecret("changeemail", secret)
         verify = False
         if cred is None:
@@ -100,8 +108,14 @@ class EmailHandling(object):
             else:
                 cred = credverify
                 verify = True
+        return cred, verify
+
+    def confirmChangeEmail(self, confirm, secret):
+        cred, verify = self.findTemporaryEmailCredential(secret)
         if confirm is True:
             self.updateEmailByCredential(cred, verify)
-        user = cred.user
-        Credential.getByUser(user, "changeemail").rm()
-        Credential.getByUser(user, "changeemailandverify").rm()
+            resp = self.simple_response(emailChanged)
+        else:
+            resp = self.simple_response(emailChangeIsCancelled)            
+        self.removeTemporaryEmailCredentials(cred)
+        return resp

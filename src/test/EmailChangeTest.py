@@ -6,8 +6,9 @@ from uuid import uuid4
 from pdoauth.models.User import User
 from pdoauth.ReportedError import ReportedError
 from pdoauth.Messages import badChangeEmailSecret,\
-    thereIsAlreadyAUserWithThatEmail
+    thereIsAlreadyAUserWithThatEmail, emailChangeIsCancelled, emailChanged
 from pdoauth.models.Assurance import Assurance
+import json
 
 class EmailChangeTest(PDUnitTest, EmailUtil):
 
@@ -139,6 +140,16 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.assertEqual(self.oldEmailAddress, user.email)
 
     @test
+    def confirmChange_message_is_appropriate_if_confirm_is_false(self):
+        resp = self.doConfirmChangeEmail(confirm=False)
+        self.assertEqual(json.loads(self.getResponseText(resp))["message"], emailChangeIsCancelled)
+
+    @test
+    def confirmChange_message_is_appropriate_if_confirm_is_true(self):
+        resp = self.doConfirmChangeEmail()
+        self.assertEqual(json.loads(self.getResponseText(resp))["message"], emailChanged)
+
+    @test
     def confirmChangeEmail_deletes_changeemail_credential(self):
         self.doConfirmChangeEmail()
         self.assertEqual(None,Credential.getByUser(self.user, 'changeemail'))
@@ -182,3 +193,12 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
     def confirmChangeEmail_adds_a_emailverification_assurance_if_called_with_changeemailandverify_secret(self):
         self.doConfirmChangeEmail(useverifysecret=True)
         self.assertIn("emailverification",Assurance.getByUser(self.user))
+
+    @test
+    def confirmChangeEmail_email__is_formatted_correctly(self):
+        self.doConfirmChangeEmail()
+        message = self.controller.mail.outbox[3]
+        self.assertIn(self.oldEmailAddress, message.body)
+        self.assertIn(self.newEmailAddress, message.body)
+        self.assertIn(self.oldEmailAddress, message.html)
+        self.assertIn(self.newEmailAddress, message.html)
