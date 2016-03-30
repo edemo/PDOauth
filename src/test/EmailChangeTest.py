@@ -6,8 +6,9 @@ from uuid import uuid4
 from pdoauth.models.User import User
 from pdoauth.ReportedError import ReportedError
 from pdoauth.Messages import badChangeEmailSecret,\
-    thereIsAlreadyAUserWithThatEmail
+    thereIsAlreadyAUserWithThatEmail, emailChangeIsCancelled, emailChanged
 from pdoauth.models.Assurance import Assurance
+import json
 
 class EmailChangeTest(PDUnitTest, EmailUtil):
 
@@ -137,6 +138,16 @@ class EmailChangeTest(PDUnitTest, EmailUtil):
         self.doConfirmChangeEmail(confirm=False)
         user = User.get(self.user.userid)
         self.assertEqual(self.oldEmailAddress, user.email)
+
+    @test
+    def confirmChange_message_is_appropriate_if_confirm_is_false(self):
+        resp = self.doConfirmChangeEmail(confirm=False)
+        self.assertEqual(json.loads(self.getResponseText(resp))["message"], emailChangeIsCancelled)
+
+    @test
+    def confirmChange_message_is_appropriate_if_confirm_is_true(self):
+        resp = self.doConfirmChangeEmail()
+        self.assertEqual(json.loads(self.getResponseText(resp))["message"], emailChanged)
 
     @test
     def confirmChangeEmail_deletes_changeemail_credential(self):
