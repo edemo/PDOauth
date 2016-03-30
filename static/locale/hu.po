@@ -931,7 +931,7 @@ msgstr ""
 #: src/pdoauth/Messages.py:69
 #, fuzzy
 msgid "email address changed"
-msgstr "E-mail cím:"
+msgstr "E-mail cím cseréje megtörtént"
 
 #: static/js/script.js:236
 msgid ""
@@ -947,4 +947,4 @@ msgstr ""
 #: src/pdoauth/Messages.py:70
 #, fuzzy
 msgid "email address change is cancelled"
-msgstr "E-mail cím:"
+msgstr "E-mail cím csere nem történt meg"
