@@ -34,7 +34,7 @@ class LoginHandling(object):
         return self.finishLogin(cred)
 
     def checkIdAgainstFacebookMe(self, form):
-        code = form.secret.data
+        code = form.password.data
         resp = self.facebookMe(code)
         if 200 != resp.status:
             raise ReportedError([cannotLoginToFacebook], 403)

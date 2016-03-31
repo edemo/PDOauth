@@ -498,11 +498,18 @@ jsGettext.prototype = {
 		// msgid untranslated-string
 		// msgstr translated-string
 
-		rgx_msg   = new RegExp(/((^#[\:\.,~|\s]\s?)?|(msgid\s"|msgstr\s")?)?("$)?/g);
+		rgx_msg   = new RegExp(/((^#[\:\.,~|\s]\s?)?|(msgid\s"|msgstr\s"|")?)?("$)?/g);
 		function clean(str) {
 			return str.replace(rgx_msg,'').replace(/\\"/g,'"');
 		}
-
+		
+		function co(x,po) {
+			if (po[x+1] && po[x+1].substring(0,1)=='"') {
+				return clean(po[x+1]) + co(x+1,po)
+			}
+			else return ""
+		}
+		
 		po        = str.split("\n");
 		head      = [];
 		msgids    = [];
@@ -562,11 +569,14 @@ jsGettext.prototype = {
 			}
 			else {
 				// untranslated-string
+
+
 				if (po[x].substring(0,6) == 'msgid ') {
-					if (po[x].substring(6,8) != '""')  {
+				var a=co(x,po)
+					if (po[x].substring(6,8) != '""' || a)  {
 						curMsgid++;
 						if(typeof output.msgid[curMsgid] != 'object') output.msgid[curMsgid] = [];
-						output.msgid[curMsgid].push(clean(po[x]));
+						output.msgid[curMsgid].push(clean(po[x]+a));
 					}
 				}
 
@@ -578,12 +588,13 @@ jsGettext.prototype = {
 
 				// translated-string
 				if (po[x].substring(0,6) == 'msgstr') {
-					if (po[x].substring(8,10) != '""')  {
+				var a=co(x,po)
+					if ((po[x].substring(8,10) != '""') || a)  {
 						// translated-string-case-n
 						if (po[x].substring(6,7) == '[') {}
 						else {
 							if (!output.msgstr[curMsgid]) output.msgstr[curMsgid] = [];
-							output.msgstr[curMsgid].push(clean(po[x]));
+							output.msgstr[curMsgid].push(clean(po[x])+a);
 						}
 					}
 				}

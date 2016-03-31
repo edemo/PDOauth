@@ -23,10 +23,14 @@ class RandomUtil(object):
         userid = "aaa_{0}".format(cls.mkRandomString(6))
         return userid
 
+    @classmethod
+    def createRandomEmailAddress(cls):
+        return "email{0}@example.com".format(cls.mkRandomString(6))
+
     def setupUserCreationData(self, userid=None, password=None, email=None):
         self.setupRandom()
         if email is None:
-            email = "email{0}@example.com".format(self.randString)
+            email = self.createRandomEmailAddress()
         if userid is None:
             userid = self.createRandomUserId()
         if password is None:

@@ -7,4 +7,4 @@ from pdoauth.forms import credentialValidator, userNameValidator,\
 class LoginForm(Form):
     credentialType = TextField('credentialType',credentialValidator)
     identifier = TextField('identifier', userNameValidator)
-    secret = TextField('secret', passwordValidator)
+    password = TextField('password', passwordValidator)

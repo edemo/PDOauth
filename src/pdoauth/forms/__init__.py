@@ -28,8 +28,8 @@ passwordValidator = [validators.Length(min=8),
                      validators.Regexp(".*[A-Z].*", message=passwordShouldContainUppercase),
                      validators.Regexp(".*[0-9].*", message=passwordShouldContainDigit)]
 secretValidator = [validators.Length(min=8),
-                     validators.Regexp(".*[a-z].*", message=secretShouldContainLowercase),
-                     validators.Regexp(".*[0-9].*", message=secretShouldContainDigit)]
+                     validators.Regexp("(?s).*[a-z].*", message=secretShouldContainLowercase),
+                     validators.Regexp("(?s).*[0-9].*", message=secretShouldContainDigit)]
 emailValidator = [validators.Email()]
 digestValidator = [validators.Length(min=128, max=128), validators.regexp("[0-9A-Fa-f]*")]
 assuranceValidator = [validators.Length(min=4, max=50)]

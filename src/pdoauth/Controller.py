@@ -26,7 +26,7 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     addedAssurance, noShowAuthorization, unknownToken, expiredToken,\
     emailVerifiedOK, invalidEmailAdress, passwordResetSent, theSecretHasExpired,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
-    credentialRemoved, sameHash
+    credentialRemoved, sameHash, verificationEmailSent
 
 class Controller(
         WebInterface, Responses, EmailHandling,
@@ -165,7 +165,7 @@ class Controller(
         cred = CredentialManager.create_user_with_creds(
             form.credentialType.data,
             form.identifier.data,
-            form.secret.data,
+            form.password.data,
             form.email.data,
             None)
         user = cred.user
@@ -328,6 +328,12 @@ class Controller(
         cred = Credential.getBySecret('emailcheck', token)
         return cred
 
+    def sendVerifyEmail(self):
+        current_user = self.getCurrentUser()
+        self.sendPasswordVerificationEmail(current_user)
+        return self.simple_response(verificationEmailSent)
+        
+
     def doverifyEmail(self, token):
         cred = self.getCredentialForEmailverifyToken(token)
         self.checkEmailverifyCredential(cred)
@@ -379,7 +385,7 @@ class Controller(
         CredentialManager.addCredToUser(user,
             form.credentialType.data,
             form.identifier.data,
-            form.secret.data)
+            form.password.data)
         return self.as_dict(user)
 
     def deleteHandAssuredAssurances(self, assurances):

@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>ADA test page</title>
+		<script type='text/javascript' src="qunit-1.18.0.js"></script>
+		<script type='text/javascript' src="qunit-reporter-junit.js"></script>
+		<script type='text/javascript' src="blanket.min.js"></script>
+		<script type='text/javascript' src="debug.js"></script>
+		<script type='text/javascript' src="../js/script.js" data-cover></script>
+		<script type='text/javascript' src="../js/fb.js"></script>
+		<link rel="stylesheet" href="qunit-1.18.0.css">
+		<link rel="stylesheet" href="main.css">
+		<style>
+#qunit-tests pre {
+    word-break: break-word;
+}
+		</style>		
+	</head>
+
+	<body onload="test.main()" style="overflow: hidden;">
+		<header style="position:absolute; top:0; left:0; width:350px;">
+			<section>
+				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">index.html</button>
+				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">fiokom.html</button>
+				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">login.html</button>
+				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">user_howto.html</button>
+				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">about_us.html</button>
+			</section>
+			<div id="qunit"></div>
+			<div id="qunit-fixture"></div>
+		</header>
+		<section style="position:absolute; left:353; right:0; padding: 5px; bottom:0; top:0">
+			<iframe name="testarea" id="testarea" style="width:100%;height:100%"></iframe>
+		</section>
+	</body>
+</html>

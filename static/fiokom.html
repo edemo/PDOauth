@@ -317,6 +317,15 @@ td.button-container, td.button-container {
     width: 10%;
     min-width: 12rem;
 }
+.waiting {
+    background-image: url("waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
+#registration-ssltext-container {
+	display: none;
+}
 		</style>
 	</head>
 	<body onload="pageScript.main()">
@@ -412,7 +421,7 @@ td.button-container, td.button-container {
 						</div>
 						<div class="form-level">
 						<!-- label for="LoginForm_password_input">Jelszó:</label -->
-						<input class="input-block" type="password" placeholder="*********" id="LoginForm_password_input">
+						<input class="input-block" type="password" placeholder="Jelszó" id="LoginForm_password_input">
 						<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 						<button type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
@@ -460,10 +469,14 @@ td.button-container, td.button-container {
 					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
 				</div>
 				<h4 id="registration-form-method-heading" >Regisztráció email cím és/vagy felhasználónév és jelszó segítségével</h4>
+				<p id="registration-ssltext-container">
+					<b>Ha a certificate mentése után nem jelenne meg a "fiókom" felület, töltsd újra az oldalt!!</b>
+				</p>
 				<form target="ssl" id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
 					<div class="form">
 						<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
 						<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked>
+
 						<div id="registration-form-email-container" class="form-level">
 							<input class="input-block" name="email" type="email" placeholder="Email cím" id="registration-form_email_input">
 							<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
@@ -473,10 +486,18 @@ td.button-container, td.button-container {
 							<span class="form-icon_"><i class=" fa fa-user"></i></span>
 							<p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
 						</div>
-						<div id="registration-form-password-container" class="form-level">
-							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
+						<div id="registration-form-password-container">
+						<div class="form-level">
+							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input" onkeyup="pageScript.passwordChanged('registration-form')">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
-							<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
+						</div>
+						<div class="input-block" id="registration-form_pw-strength-meter"></div>
+						<div class="form-level">
+							<input title="" class="input-block" type="password" placeholder="Jelszó ismét" id="registration-form_secret_backup" onkeyup="pageScript.pwEqual('registration-form')">
+							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
+						</div>
+						<div class="input-block" id="registration-form_pw-equal"></div>
+						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
 						</div>
 					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
@@ -490,7 +511,7 @@ td.button-container, td.button-container {
 							, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
 				</div>
 						<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='block'">Készítsük el itt</button>
-						<a id="digest_self_made_button" href="https://testanchor.edemokraciagep.org" target="_blank">
+						<a class="digest_self_made_button" target="_blank">
 							<button class="button" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
 						</a>
 						<div id="code-generation-input" class="form">
@@ -513,7 +534,7 @@ td.button-container, td.button-container {
 					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
 
 				<button type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
-				<button type="button" onclick="javascript:pageScript.createAndSaveAKeyPair()">Keygen</button>
+<!--				<button type="button" onclick="javascript:pageScript.createAndSaveAKeyPair()">Keygen</button> -->
 			</section>
 		</div>
 
@@ -623,7 +644,7 @@ td.button-container, td.button-container {
                           <div role="tabpanel" class="tab-pane" id="4">
                                 <div class="col-md-12 col-sm-9">
                                     <div class="c-tab">
-										<p><b>Ha szeretnél igazolást csináltatni magadnak, az alábbiakat kell tenned:</b></p>
+										<p><b>Ha szeretnél "magyar" igazolást csináltatni magadnak, az alábbiakat kell tenned:</b></p>
 										<ul class="disced">
 											<li>ha még nem tetted volna meg, készítsd el a Titkos Kódod</li>
 											<li>válassz az alábbi listából egy Tanúsítót</li>
@@ -632,14 +653,13 @@ td.button-container, td.button-container {
 											<li>a találkozóra vidd magaddal a lakcímkártyád és egy személy azonosító igazolványt</li>
 											<li>a Tanúsító leellenőrzi a Titkos Kódodat, és kiállítja az igazolásodat</li>
 											<li>az új igazolásod látszódni fog az "Adataim" fül alatt</li>
-											<li>a tanúsításról kapsz egy pdf dokumentumot email-ben</li>
 										</ul>
                                          <h4><b>Tanúsítók listája</b></h4>
 										 <table>
 											<tr>
 												<th>Név</th>
 												<th>Tanúsítási körzet</th>
-												<th>Kiadható igazolások</th>
+												<th>Jogosítványok</th>
 												<th></th>
 											</tr>
 											<tr>
@@ -738,7 +758,7 @@ td.button-container, td.button-container {
 <!-- Email verification success -->
 		<div class="func" id="email_verification_section">
 			<section class="container_">
-				<h3 class="title">Email cím validálása</h3>
+				<h3 class="title">Az email címed igazolása</h3>
 				<p id="email_verification_message"></p>
 				<button type="button" onclick="javascript:pageScript.doRedirect('fiokom.html')">Ok</button>
 			</section>
@@ -753,7 +773,7 @@ td.button-container, td.button-container {
 				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be. 
 				Az <b>igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi jelölőnégyzet kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
-				<div class="example-send-yourself-copy">
+				<div>
 					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
 					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
 				</div>
@@ -772,13 +792,26 @@ td.button-container, td.button-container {
 					<fieldset>
 						<input type="text" class="disabled" id="PasswordResetForm_secret_input" style="display:none;">
 						<label for="PasswordResetForm_password_input">Új jelszó:</label>
-						<input type="password" placeholder="*********" id="PasswordResetForm_password_input">
+						<input type="password" placeholder="Jelszó" id="PasswordResetForm_password_input">
 						<button type="button" onclick="javascript:pageScript.doPasswordReset()">Jelszó mentése</button>
 					</fieldset>
 				</form>
 			</section>
 		</div>
 <!-- End password reset section -->	
+
+<!-- Email change section-->
+		<div class="func" id="emailchange_section">
+			<section class="container_">
+				<h3 class="title">Email cím cseréje</h3>
+				<p>Az email címed megváltoztatását kedzdeményezted. A "Cserélem" gombra kattintva véglegesítjuk az új email címidet: <span id="emailchange_email"></span></p>
+				<p>Ha meggondoltad magad kattints a "Mégse" gombra."</p>
+				<button type="button" onclick="javascript:pageScript.changeEmail(true)">Cserélem</button>
+				<button type="button" onclick="javascript:pageScript.changeEmail(false)">Mégse</button>
+			</section>
+		</div>
+<!-- Email change section -->	
+
 	</div>
 
 <!-- Footer Area Start -->
@@ -811,7 +844,7 @@ td.button-container, td.button-container {
                     <h3 class="menu_head">Hasznos linkek</h3>
                     <div class="footer_menu">
                         <ul>
-                            <li><i class="fa fa-anchor"></i> <a target="_blank" anchor-link href="https://testanchor.edemokraciagep.org/ ">Titkos Kód Gép</a></li>
+                            <li><i class="fa fa-anchor"></i> <a target="_blank" class="digest_self_made_button">Titkos Kód Gép</a></li>
                             <li><i class="fa fa-github"></i> <a target="_blank" href="https://www.gitbook.com/@edemo">Gitbook</a></li>
                         </ul>
                     </div>
@@ -841,7 +874,7 @@ td.button-container, td.button-container {
                     <div class="footer_mid pull-right">
 
                         <ul class="social-contact list-inline">
-                            <li> <a target="_blank" href="https://www.facebook.com/Adatom-1688616028083495/"><i class="fa fa-facebook"></i></a></li>
+                            <li> <a target="_blank" href="https://www.facebook.com/adatom.hu"><i class="fa fa-facebook"></i></a></li>
                             <li> <a target="_blank" href="https://github.com/edemo/"><i class="fa fa-github"></i></a></li>
 <!-- temporaly hidden
 
@@ -888,6 +921,7 @@ td.button-container, td.button-container {
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
+		<script type='text/javascript' src="js/base.js"></script>
 
 		<iframe id="SSL" name="ssl" onload="console.log('loaded')"></iframe>
 	</body>
