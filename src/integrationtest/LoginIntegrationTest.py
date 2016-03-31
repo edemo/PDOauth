@@ -15,7 +15,7 @@ class LoginIntegrationTest(IntegrationTest, UserTesting):
     @test
     def password_login_needs_identifier(self):
         with app.test_client() as client:
-            data = dict(secret=self.mkRandomPassword())
+            data = dict(password=self.mkRandomPassword())
             resp = client.post(config.BASE_URL + '/v1/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
@@ -28,15 +28,15 @@ class LoginIntegrationTest(IntegrationTest, UserTesting):
             resp = client.post(config.BASE_URL + '/v1/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
-            self.assertEqual('{{"errors": ["secret: Field must be at least 8 characters long.",\
- "secret: password should contain lowercase", "secret: password should contain uppercase",\
- "secret: password should contain digit", {0}]}}'.format(credErr),
+            self.assertEqual('{{"errors": ["password: Field must be at least 8 characters long.",\
+ "password: password should contain lowercase", "password: password should contain uppercase",\
+ "password: password should contain digit", {0}]}}'.format(credErr),
                 text)
 
     @test
     def password_login_needs_correct_identifier_and_secret(self):
         with app.test_client() as client:
-            data = dict(identifier="userid", secret=self.mkRandomPassword(), credentialType='password')
+            data = dict(identifier="userid", password=self.mkRandomPassword(), credentialType='password')
             resp = client.post(config.BASE_URL + '/v1/login', data=data)
             self.assertEquals(resp.status_code, 403)
             text = self.getResponseText(resp)
@@ -45,7 +45,7 @@ class LoginIntegrationTest(IntegrationTest, UserTesting):
     @test
     def password_login_needs_correct_credentialType(self):
         with app.test_client() as client:
-            data = dict(identifier="userid", secret=self.mkRandomPassword(), credentialType='incorrect')
+            data = dict(identifier="userid", password=self.mkRandomPassword(), credentialType='incorrect')
             resp = client.post(config.BASE_URL + '/v1/login', data=data)
             self.assertEquals(resp.status_code, 403)
             self.assertCredentialErrorresponse(resp)

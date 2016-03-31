@@ -73,7 +73,7 @@ class CredentialTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.setupUserCreationData()
         if userid is None:
             userid = self.userCreationUserid
-        form = FakeForm(dict(credentialType='password', identifier=userid, secret=self.usercreationPassword))
+        form = FakeForm(dict(credentialType='password', identifier=userid, password=self.usercreationPassword))
         resp = self.controller.doAddCredential(form)
         return resp
 

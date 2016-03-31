@@ -4,7 +4,7 @@ from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String, BOOLEAN, Integer
 import uuid
 from pdoauth.ReportedError import ReportedError
-from pdoauth.Messages import noHashGiven
+from pdoauth.Messages import noHashGiven, thereIsAlreadyAUserWithThatEmail
 
 class AlreadyExistingUser(Exception):
     pass
@@ -27,7 +27,7 @@ class User(db.Model, ModelUtils):
     def new(cls, email, digest=None):
         u = cls.getByEmail(email)
         if u is not None:
-            raise ReportedError(["there is already a user with this email"])
+            raise ReportedError([thereIsAlreadyAUserWithThatEmail])
         user = cls( email,digest)
         user.save()
         return user

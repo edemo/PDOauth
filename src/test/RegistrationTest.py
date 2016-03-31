@@ -1,7 +1,6 @@
 # pylint: disable=line-too-long
 from test.helpers.PDUnitTest import PDUnitTest, test
 from test.helpers.FakeInterFace import FakeForm
-from test.helpers.UserUtil import UserUtil
 from pdoauth.models.Credential import Credential
 from Crypto.Hash.SHA256 import SHA256Hash
 from test.helpers.CryptoTestUtil import CryptoTestUtil, SPKAC
@@ -9,14 +8,15 @@ from pdoauth.models.Assurance import Assurance
 from pdoauth.models.User import User
 import time
 from uuid import uuid4
+from test.helpers.EmailUtil import EmailUtil
 
-class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
+class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
 
     def prepareLoginForm(self, digest =None, email=None):
         self.setupUserCreationData()
         self.data = dict(credentialType='password',
                 identifier=self.userCreationUserid,
-                secret=self.usercreationPassword,
+                password=self.usercreationPassword,
                 email=None,
                 digest=None)
         self.addDataBasedOnOptionValue('email', email, self.userCreationEmail)
@@ -103,7 +103,7 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
             self.controller.doRegistration,
             [form],
             400,
-            ["there is already a user with this email"])
+            ["There is already a user with that email"])
 
     @test
     def when_a_hash_is_registered_which_is_already_used_by_another_user___the_user_is_notified_about_the_fact(self):
