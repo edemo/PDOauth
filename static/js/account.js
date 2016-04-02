@@ -509,7 +509,7 @@
 	
 	PageScript.prototype.emailChangeEditButton_onclick = function() {
 		document.getElementById("ChangeEmailAddressForm_email_input").value=""
-		document.getElementById("ChangeEmailAddressForm_email_input").placeholder=_("Type new email address here")
+		document.getElementById("ChangeEmailAddressForm_email_input").placeholder=_("Type your new email address here")
 	}
 	
 	PageScript.prototype.emailChangeInput_onkeyup = function(){
