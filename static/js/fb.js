@@ -35,7 +35,6 @@ function FaceBook(pageScript) {
 		var appID
 		if (appID=this.pageScript.QueryString.uris.FACEBOOK_APP_ID) {
 			window.fbAsyncInit = function() {
-				console.log("fb async init")
 				FB.init({
 					appId      : appID,
 					cookie     : true,  // enable cookies to allow the server to access 
@@ -45,7 +44,6 @@ function FaceBook(pageScript) {
 				});
 			};
 
-			console.log("fbjs loaded");
   // Load the SDK asynchronously
 			(function(d, s, id) {
 				var js, fjs = d.getElementsByTagName(s)[0];

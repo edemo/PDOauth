@@ -318,6 +318,7 @@
 				</td>\
 				<td class="button-container">\
 					<a onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
+					<a onclick="javascript:pageScript.deleteHash()" class="btn btn_ fa fa-trash"></a>\
 				</td>\
 			</tr>\
 			<tr id="change-hash-form_hash-changer" style="display: none;">\
@@ -496,6 +497,11 @@
 	
 	PageScript.prototype.changeEmailCallback = function(text) {
 		self.displayMsg(self.processErrors(JSON.parse(text)))
+	}
+	
+	PageScript.prototype.deleteHash = function() {
+		document.getElementById("change-hash-form_digest_input").value=""
+		self.changeHash();
 	}
 	
 }()
