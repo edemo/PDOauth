@@ -307,9 +307,12 @@
 			<trid="change-email-form_container>\
 				<td nowrap><b>'+_('Email address:')+'</b></td>\
 				<td id="email-change">\
-					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off">\
+					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" onkeyup="javascript:pageScript.emailChangeInput_onkeyup()">\
 				</td>\
-				<td class="button-container"><a onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a></td>\
+				<td class="button-container">\
+					<a onclick="javascript:pageScript.emailChangeEditButton_onclick()" class="btn btn_ fa fa-edit"></a>\
+					<a id="changeEmil_saveButton" onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save inactive" title="'+_("save")+'"></a>\
+				</td>\
 			</tr>\
 			<tr id="change-hash-form_hash-container">\
 				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
@@ -504,5 +507,18 @@
 		self.changeHash();
 	}
 	
+	PageScript.prototype.emailChangeEditButton_onclick = function() {
+		document.getElementById("ChangeEmailAddressForm_email_input").value=""
+		document.getElementById("ChangeEmailAddressForm_email_input").placeholder=_("Type new email address here")
+	}
+	
+	PageScript.prototype.emailChangeInput_onkeyup = function(){
+		rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
+		var inputField = document.getElementById("ChangeEmailAddressForm_email_input")
+		if (rgx_email.exec(inputField.value)) {
+			self.activateButton("changeEmil_saveButton", self.changeEmailAddress)
+		}
+		else self.deactivateButton("changeEmil_saveButton")
+	}
 }()
 )

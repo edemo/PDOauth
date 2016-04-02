@@ -67,7 +67,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		// initialising variables
 		self.QueryString.uris = JSON.parse(text);
 		self.uribase = self.QueryString.uris.BACKEND_PATH;
-		facebook.fbinit();
+		if (facebook.fbinit) facebook.fbinit();
 
 		// filling hrefs of anchors
 		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
