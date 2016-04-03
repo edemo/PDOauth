@@ -53,7 +53,10 @@ class CertificateHandling(CryptoUtils):
         self.setCSRFCookie(resp)
 
     def doKeygen(self, form):
-        cert = self.extractCertFromForm(form)
+        try:
+            cert = self.extractCertFromForm(form)
+        except:
+            raise ReportedError(errorInCert)
         user = self.getCurrentUser()
         if user.is_authenticated():
             self.addCertCredentialToUser(cert, user)

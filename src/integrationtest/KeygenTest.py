@@ -5,6 +5,7 @@ from pdoauth.models.User import User
 from integrationtest.helpers.UserTesting import UserTesting
 from test.helpers.CryptoTestUtil import SPKAC
 
+wrong_pubkey = "MIICrjCCAZgCAQAwOzE5MAkGA1UEBhMCUlUwLAYDVQQDDCVTaW1wbGUgdGVzdCAo0L/RgNC+0YHRgtC+0Lkg0YLQtdGB0YIpMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuuQlljmrP1oWkbnOvL1FTZFWlnEtgHd/mY8bB/z1raqILqhQXNbZJ/MKd23xq/g3RDxY74rAj4pTBDkOWud5k0OoG0UpeHC1NsPOBpq37m6hCcsiash1ss64S8T2Tj6Iu7ZuFZkq41dFm4C9SpOligLfjKAVaMggrSD4XwoptYjTZrusLgrZP5EqMPiU/kDyOzpImz1CXglrpSE2X1MxPNVyr6Dokj/eOLqY6GXrG1GFbmGyrIGFD6ZFPnyofLQT6Yu6y65R0v4cdP+qmbuMXJBqaB0LANEfQFMUlYHeyXvIbgLi39t70z5tsOkDChK4bU/DaR5duIpCmQ0S0FFjjwIDAQABoDAwLgYJKoZIhvcNAQkOMSEwHzAdBgNVHQ4EFgQUmDO/8Sjqv0I2gTNfxB2A7Dlb0ZkwCwYJKoZIhvcNAQENA4IBAQAbQ3x3L8bWXYKBX3QwPepNCLi4i737BU+ufOL0snxgTjkOyyRrMS+g/NoOINfvvDft8uMgkIUT0Y/kP8Ir/V2++EYsnpxK2T2itziVRRRqfrSIzU2EGmPyLGt12b12jCB1Lyq/AyENs1AE49rcagEw8nGaWQXPm9U7WnlupioylAH5YrdEcJVieTUNclMPxLLDXNbDUG72DD6dZPmoVfDqbgSDfsKoB/S6Nj8AMAEtVB7ZMxudfGervcr5ej3LTaYpJ0W0uPlmmvwzxLD3ttm4kt+saatVWOcbXWUZlfSgk+PlEFXYD3+0RmeaqYMgjoU11jVMN/lCsR6UspIaYHHm"
 
 class KeygenTest(PDUnitTest, UserTesting):
 
@@ -19,6 +20,17 @@ class KeygenTest(PDUnitTest, UserTesting):
             "Content-Type":"application/x-www-form-urlencoded"}
         PDUnitTest.setUp(self)
 
+    @test
+    def wrong_data_results_in_error_message(self):
+        data=dict(
+            pubkey=wrong_pubkey,
+            email="valami@drezina.hu"
+            )
+        with app.test_client() as client:
+            resp = client.post("/v1/keygen", data=data, headers=self.headers)
+            self.assertEquals(resp.status_code, 400)
+            self.assertEqual('{"errors": "error in cert"}',self.getResponseText(resp))
+        
     @test
     def with_keygen_you_get_back_a_certificate(self):
         with app.test_client() as client:
