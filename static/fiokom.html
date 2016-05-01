@@ -7,7 +7,7 @@
     <!-- Basic Page Needs
     ================================================== -->
         <meta charset="utf-8">
-        <title>ADA - anonim digitális azonosító</title>
+        <title>ADA - fiókom</title>
         <meta name="description" content="anonim digitális azonosító">
         <!-- Mobile Specific Metas
     ================================================== -->
@@ -186,11 +186,7 @@ button.ssl{
     font-size: 2rem;
     vertical-align: top;
 }
-button.inactive{
-	cursor: default;
-	background-color: #E8E4E3;
-    border: .1rem solid #D8CCCB;
-}
+
 div.func{
 	display:none;
 }
@@ -325,6 +321,14 @@ td.button-container, td.button-container {
 	}
 #registration-ssltext-container {
 	display: none;
+}
+button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a.inactive:hover{
+	cursor: default;
+	background-color: #E8E4E3;
+    border: .1rem solid #D8CCCB;
+}
+.main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a.inactive:hover{
+	color: #D8CCCB;
 }
 		</style>
 	</head>
@@ -921,8 +925,11 @@ td.button-container, td.button-container {
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
-		<script type='text/javascript' src="js/base.js"></script>
+		<script type="text/javascript" src="./js/pkcs/common.js"></script>
+    <script type="text/javascript" src="./js/pkcs/asn1.js"></script>
+    <script type="text/javascript" src="./js/pkcs/x509_schema.js"></script>
+		    <script type="text/javascript" src="./js/pkcs/x509_simpl.js"></script>
 
-		<iframe id="SSL" name="ssl" onload="console.log('loaded')"></iframe>
+		<iframe id="SSL" name="ssl" ></iframe>
 	</body>
 </html>

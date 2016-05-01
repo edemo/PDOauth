@@ -1,3 +1,5 @@
+console.log("script.js")
+
 QueryStringFunc = function (win) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   // This function is anonymous, is executed immediately and 
   // the return value is assigned to QueryString!
@@ -568,6 +570,7 @@ function PageScript(test) {
 	}
 
 	PageScript.prototype.main = function() {
+
 		this.ajaxget("/adauris", this.uriCallback)
 		if (self.QueryString.secret) {
 			document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
