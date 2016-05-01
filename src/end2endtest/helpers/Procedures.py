@@ -5,22 +5,20 @@ class Procedures(object):
     def logOut(self):
         self.beginProcess("logout")
         self.goToLoginPage()
-        element = TE.driver.find_element_by_id("account-menu")
+        element = TE.driver.find_element_by_id("nav-bar-my_account")
         displayed=element.value_of_css_property('display')
         if displayed=="block":
-            self.switchToTab('account')
+            self.switchToTab('my_account')
             self.click("logout_button")
-            self.closeMessage()
         self.endProcess("logout")
 
     def loginWithPasswordAs(self, user):
         self.beginProcess("login with password")
         self.goToLoginPage()
         self.switchToTab('login')
-        self.fillInField("LoginForm_username_input",user.userName)
+        self.fillInField("LoginForm_email_input",user.userName)
         self.fillInField("LoginForm_password_input",user.password)
         self.click("LoginForm_submitButton")
-        self.closeMessage()
         self.endProcess("login with password")
 
     def assignAssurance(self, digest, clientEmail):

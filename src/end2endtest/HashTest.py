@@ -18,7 +18,7 @@ class HashTest(Fixture,BrowsingUtil):
     @test
     def assurer_can_obtain_the_hash_by_filling_in_your_personal_id__mother_name_and_pushing_the_button_near_it(self):
         self.loginWithPasswordAs(TE.assurerUser)
-        self.switchToTab("assurer")
+        self.switchToSection("assurer")
         self.obtainHash("22222222220", "Test Mother", "AddAssuranceForm")
         self.assertHashFromFormEquals("AddAssuranceForm", config.testSignatureAllTwo)
 

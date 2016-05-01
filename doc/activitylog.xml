@@ -1,0 +1,9 @@
+<process name="login with password">
+<click fieldid="nav-bar-login">
+<fillinfield fieldid="LoginForm_email_input">
+<fillinfield fieldid="LoginForm_password_input">
+<click fieldid="LoginForm_submitButton">
+</process>
+<click fieldid="assurer_section">
+<process name="logout">
+</process>

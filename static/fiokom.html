@@ -360,7 +360,7 @@ td.button-container, td.button-container {
 								<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('my_account')">Fiókom</a>
 							</li>
 							<li id="nav-bar-logout">
-								<a href="javascript:void (0)" onclick="pageScript.logout()">Kijelentkezés</a>
+								<a id="logout_button" href="javascript:void (0)" onclick="pageScript.logout()">Kijelentkezés</a>
 							</li>
                         </ul>
                      </nav>
@@ -424,7 +424,7 @@ td.button-container, td.button-container {
 						<input class="input-block" type="password" placeholder="Jelszó" id="LoginForm_password_input">
 						<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
-						<button type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
+						<button id="LoginForm_submitButton" type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
 					</fieldset>
 				</form>
 			</section>
@@ -555,7 +555,7 @@ td.button-container, td.button-container {
                     <ul class="nav nav-tabs main-tab-list text-center" role="tablist">
 					
                           <li role="presentation" class="active">
-                            <a href="#1" role="tab" data-toggle="tab" >
+                            <a href="#1" role="tab" data-toggle="tab" id="account_section">
                               <div class="single-tab">
                                     <div class="f-icon">
                                         <i class="fa fa-table"></i>
@@ -566,7 +566,7 @@ td.button-container, td.button-container {
                           </li>
 						  
                           <li role="presentation">
-                            <a href="#2" role="tab" data-toggle="tab">
+                            <a href="#2" role="tab" data-toggle="tab" id="settings_section">
                                 <div class="single-tab">
                                     <div class="f-icon">
                                         <i class="fa fa-wrench"></i>
@@ -577,7 +577,7 @@ td.button-container, td.button-container {
                           </li>
 						  
                           <li role="presentation">
-                            <a href="#3" role="tab" data-toggle="tab">
+                            <a href="#3" role="tab" data-toggle="tab" id="applications_section">
                                 <div class="single-tab">
                                     <div class="f-icon">
                                         <i class="fa fa-cubes"></i>
@@ -588,7 +588,7 @@ td.button-container, td.button-container {
                           </li>
 						  
                           <li role="presentation">
-                            <a href="#4" role="tab" data-toggle="tab">
+                            <a href="#4" role="tab" data-toggle="tab"  id="assurers_section">
                                 <div class="single-tab">
                                     <div class="f-icon">
                                         <i class="fa fa-check"></i>
@@ -598,8 +598,8 @@ td.button-container, td.button-container {
                             </a>
                           </li>
 						  
-                          <li role="presentation"  class="func" id="assurer_section">
-                            <a href="#5" role="tab" data-toggle="tab">
+                          <li role="presentation"  class="func">
+                            <a href="#5" role="tab" data-toggle="tab" id="assurer_section">
                                 <div class="single-tab">
                                     <div class="f-icon">
                                         <i class="fa fa-user-secret"></i>

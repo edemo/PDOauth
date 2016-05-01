@@ -50,7 +50,8 @@ class PKCS10Test(PDUnitTest, UserTesting):
             resp = client.post("/v1/ca/signreq", data=data)
             self.assertEqual(400,resp.status_code)
             respData = self.fromJson(resp)
-            self.assertEquals(["PEM routines", "PEM_read_bio", "no start line"],respData['errors'][0])
+            print respData['errors']
+            self.assertEquals("error in cert",respData['errors'])
             print self.getResponseText(resp)
 
     @test

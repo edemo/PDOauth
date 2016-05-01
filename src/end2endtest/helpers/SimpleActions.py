@@ -81,11 +81,15 @@ class SimpleActions(object):
         return self.wait_on_element_text(By.ID, "PopupWindow_CloseButton", "Close")
 
     def waitLoginPage(self):
-        return self.waitUntilElementEnabled("qunit-header")
+        return self.waitUntilElementEnabled("section_header")
 
     def switchToTab(self,tab):
-        self.click("{0}-menu".format(tab))
-        self.waitUntilElementEnabled("tab-content-{0}".format(tab))
+        self.click("nav-bar-{0}".format(tab))
+        self.waitUntilElementEnabled("{0}_section".format(tab))
+
+    def switchToSection(self,tab):
+        self.click("{0}_section".format(tab))
+        self.waitUntilElementEnabled("{0}_section".format(tab))
 
     def closeMessage(self):
         self.waitForMessage()

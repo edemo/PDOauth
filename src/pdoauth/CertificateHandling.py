@@ -117,8 +117,8 @@ class CertificateHandling(CryptoUtils):
     def signRequest(self,form):
         try:
             cert = self.createCertFromReq(form.pubkey.data, form.email.data)
-        except Exception as e:
-            return self.error_response(e.message,400)
+        except Exception:
+            raise ReportedError(errorInCert)
         user = self.getCurrentUser()
         if user.is_authenticated():
             self.addCertCredentialToUser(cert, user)
