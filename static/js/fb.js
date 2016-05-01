@@ -31,6 +31,7 @@ function FaceBook(pageScript) {
     });
   }
 
+	console.log("fbinit_")
   	FaceBook.prototype.fbinit = function() {
 		var appID
 		if (appID=this.pageScript.QueryString.uris.FACEBOOK_APP_ID) {
@@ -54,6 +55,7 @@ function FaceBook(pageScript) {
 			}(document, 'script', 'facebook-jssdk'));
 		}
 	}
+		console.log("fbinit__")
   
 	FaceBook.prototype.credentialCallBack = function(response) {
   		var self = this;

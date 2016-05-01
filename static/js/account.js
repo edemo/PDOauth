@@ -51,7 +51,9 @@
 	
 	PageScript.prototype.initialise = function(text) {
 		var keygenform = document.getElementById("registration-keygenform")
-		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+		keygenform = document.getElementById("add-ssl-credential-keygenform")
+		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
 
 		// waiting for gettext loads po files
 		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
@@ -296,9 +298,9 @@
 	PageScript.prototype.parseSettings = function(data) {
 
 		var sslForm='\
-		<form target="ssl" id="add-ssl-credential-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">\
+		<form target="ssl" id="add-ssl-credential-keygenform" method="post" action="'+self.QueryString.uris.BACKEND_PATH+'/v1/keygen" enctype="application/x-x509-user-cert">\
 			<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>\
-			<input id="add-ssl-credential_createuser_input" type="checkbox" name="createUser" value="true" style="display: none">\
+			<input id="add-ssl-credential_createuser_input" type="checkbox" name="createUser" value="false" style="display: none">\
 			<input type="text" id="add-ssl-credential_email_input"  name="email" value="'+data.email+'" style="display: none">\
 		</form>'
 				
