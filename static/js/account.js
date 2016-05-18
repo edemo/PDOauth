@@ -322,7 +322,7 @@
 					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
 				<td class="button-container">\
-					<a onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
+					<a id="viewChangeHashForm" onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
 					<a onclick="javascript:pageScript.deleteHash()" class="btn btn_ fa fa-trash"></a>\
 				</td>\
 			</tr>\
@@ -347,7 +347,7 @@
 					</div>\
 				</td>\
 				<td class="button-container">\
-					<a onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a id="changeHash" onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
 					<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
 				</td>\
 			</tr>\

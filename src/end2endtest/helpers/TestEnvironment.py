@@ -52,6 +52,7 @@ sslBaseUrl = config.Config.SSL_LOGIN_BASE_URL
 loginPagePath = "/static/fiokom.html"
 loginSSLUrl = sslBaseUrl + loginPagePath
 loginUrl = baseUrl + loginPagePath
+testUrl = baseUrl + "/static/test/test.html"
 driver = getDriver()
 app = getApplication()
 assurerUser = getAssurerUser()

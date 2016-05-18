@@ -462,12 +462,14 @@ console.log("logoutCallback")
 			document.getElementById("nav-bar-register").style.display="none";
 			document.getElementById("nav-bar-my_account").style.display="block";
 			document.getElementById("nav-bar-logout").style.display="block";
+			document.getElementById("nav-bar-aboutus").style.display="block";
 		}
 		else {
 			document.getElementById("nav-bar-my_account").style.display="none";
 			document.getElementById("nav-bar-logout").style.display="none";
 			document.getElementById("nav-bar-login").style.display="block";
 			document.getElementById("nav-bar-register").style.display="block";
+			document.getElementById("nav-bar-aboutus").style.display="block";
 		}
 	}
 
@@ -609,7 +611,6 @@ console.log("logoutCallback")
 				heading=_("email address and/or username / password")
 				document.getElementById("registration-form-password-container").style.display="block";
 				document.getElementById("registration-form-username-container").style.display="block";
-				document.getElementById("registration-ssltext-container").style.display="none";
 				document.getElementById("registration-form_secret_input").value="";
 				document.getElementById("registration-form_identifier_input").value="";
 			break;
@@ -617,14 +618,12 @@ console.log("logoutCallback")
 				heading=_("my facebook account")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
-				document.getElementById("registration-ssltext-container").style.display="none";
 				facebook.fbregister()
 			break;
 			case "ssl":
 				heading=_("SSL certificate")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
-				document.getElementById("registration-ssltext-container").style.display="block";
 			break;
 		}
 		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
@@ -645,8 +644,8 @@ console.log("logoutCallback")
 	    	email: email,
 	    	digest: digest
 	    }
-		if (credentialType=="password") data.password=secret;
-		else data.secret=secret
+		data.password=secret;
+		
 	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
 	}
 	

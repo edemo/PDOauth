@@ -2,7 +2,7 @@ from twatson.unittest_annotations import Fixture, test
 from end2endtest.helpers.BrowsingUtil import BrowsingUtil, TE
 
 
-class PasswordResetTest(Fixture,BrowsingUtil):
+class PasswordResetE2ETest(Fixture,BrowsingUtil):
 
     @test
     def password_can_be_reset_using_the_reset_link(self):
@@ -12,7 +12,7 @@ class PasswordResetTest(Fixture,BrowsingUtil):
         oldPassword=user.password
         user.password=password
         self.loginWithPasswordAs(user)
-        self.assertTextInMeMsg(user.email)  # @UndefinedVariable
+        self.assertElementMatchesRe("1","Adataim")
         self.logOut()
         TE.assurerUser.password=oldPassword
         self.doPasswordResetWithNewPassword(oldPassword)

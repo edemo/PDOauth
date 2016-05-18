@@ -21,14 +21,14 @@
 	<body onload="tfrwrk.main()" style="overflow: hidden;">
 		<header style="position:absolute; top:0; left:0; width:400px;">
 			<section>
-				<button onclick="tfrwrk.loadTest(this.innerHTML)">e2e</button>
-				<button onclick="tfrwrk.loadTest(this.innerHTML)">old-login-utest</button>
-				<button onclick="tfrwrk.loadTest(this.innerHTML)">login-utest</button>
-				<button onclick="tfrwrk.loadPage(this.innerHTML)">index.html</button>
-				<button onclick="tfrwrk.loadPage(this.innerHTML)">fiokom.html</button>
-				<button onclick="tfrwrk.loadPage(this.innerHTML)">login.html</button>
-				<button onclick="tfrwrk.loadPage(this.innerHTML)">user_howto.html</button>
-				<button onclick="tfrwrk.loadPage(this.innerHTML)">about_us.html</button>
+				<button id="e2e" onclick="tfrwrk.loadTest(this.innerHTML)">e2e</button>
+				<button id="old-login" onclick="tfrwrk.loadTest(this.innerHTML)">old-login-utest</button>
+				<button id="login-utest" onclick="tfrwrk.loadTest(this.innerHTML)">login-utest</button>
+				<button id="index_html" onclick="tfrwrk.loadPage(this.innerHTML)">index.html</button>
+				<button id="fiokom_html" onclick="tfrwrk.loadPage(this.innerHTML)">fiokom.html</button>
+				<button id="login_html" onclick="tfrwrk.loadPage(this.innerHTML)">login.html</button>
+				<button id="user_howto_html" onclick="tfrwrk.loadPage(this.innerHTML)">user_howto.html</button>
+				<button id="about_us_html" onclick="tfrwrk.loadPage(this.innerHTML)">about_us.html</button>
 			</section>
 		</header>
 		<section style="position:absolute; top:80; width:400px; overflow:scroll; bottom:0;">

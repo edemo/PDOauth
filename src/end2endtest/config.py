@@ -62,7 +62,7 @@ The Test machine
     PASSWORD_RESET_EMAIL_SUBJECT = "password reset"
     PASSWORD_RESET_EMAIL_BODY_TEXT = """Dear {0.name},
 This is a reset email.
-Go to https://local.sso.edemokraciagep.org:8888/static/login.html?secret={0.secret}
+Go to https://local.sso.edemokraciagep.org:8888/static/login.html?section=pwreset&secret={0.secret}
 you have to do it until {0.expiry}.
 
 Sincerely,
@@ -71,7 +71,7 @@ The Test machine
     PASSWORD_RESET_EMAIL_BODY_HTML = """<html><head></head><body>
 Dear {0.name},<br>
 This is a reset email.<br/>
-Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?secret={0.secret}">Click</a><br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?section=pwreset&secret={0.secret}">Click</a><br/>
 you have to do it until {0.expiry}.<br/>
 <br/>
 Sincerely,<br/>
@@ -99,7 +99,7 @@ The Test machine
 </body></html>
 """
 
-testSignatureAllOne = "d60d076693f99692539bc67e4b28aea33e0fc51b67ec68762716b57f58621852a6ef643b2b7bbcba0ae6acbb7f893122d47d87ae29c17413bb42ab0bba7d88b4"
+testSignatureAllOne = "fd0afb360d2772e544a5d952c4b4d63f93bd2e1e3c9cbd316a7950afdf5be4f25cfdc63097023aa3ecd7062e28e367c7f197a2501ee9daa1755161e862b904f5"
 testSignatureAllTwo = "72bd4a1260f51aa6172862c1431e5e2537bf2d65ed74b9b76e4410760901f87cf892bb2621fa4d5d08e85a641ee8bc1026de8660caa61f4f206cd898c7ec6ef6"
 skipSlowTests = False
 skipFacebookTests = True

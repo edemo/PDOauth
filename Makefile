@@ -5,7 +5,7 @@ checkall: install alltests xmldoc
 realclean:
 	rm -rf PDAnchor; git clean -fdx
 testenv:
-	docker run --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master
+	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master
 
 static/qunit-1.18.0.js:
 	curl http://code.jquery.com/qunit/qunit-1.18.0.js -o static/qunit-1.18.0.js
@@ -30,7 +30,7 @@ clean:
 
 alltests: tests integrationtests end2endtest
 
-onlyend2endtest: install testsetup runanchor runserver runemail testsetup waitbeforebegin firefoxtest
+onlyend2endtest: install testsetup runanchor runserver runemail waitbeforebegin firefoxtest
 
 waitbeforebegin:
 	sleep 10
@@ -68,7 +68,9 @@ tests: testsetup
 	PYTHONPATH=src python-coverage run -m unittest discover -v -f -s src/test -p "*.py"
 
 testsetup:
-	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade ; mkdir -p doc/screenshots
+	psql -d template1 -c "drop database root"
+	sudo -u postgres psql -d template1 -c "create database root owner root"
+	make dbupgrade ; mkdir -p doc/screenshots
 
 dbmigrate:
 	PYTHONPATH=src:src/test python src/manage.py db migrate
