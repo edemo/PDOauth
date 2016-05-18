@@ -1,6 +1,6 @@
 (function(){	
 	var self;
-	PageScript.prototype.page = "index";
+	PageScript.prototype.page = "pkcs10";
 
 	PageScript.prototype.main = function() {
 		self=this.getThis()
@@ -8,25 +8,17 @@
 	}
 
 	PageScript.prototype.initialise = function() {
-		self.ajaxget("/v1/users/me", self.initCallback)
-		if (document.getElementById("counter_area")) self.getStatistics()
+	}
+
+	PageScript.prototype.keygen = function(formName) {
+		var stringPEM = document.getElementById("pem-text-block").value;
+		self.ajaxpost("/v1/ca/signreq", {pubkey: stringPEM, email:"gypeng@drezina.hu", createUser: false}, self.callback(self.keygenCallback))
 	}
 	
-	PageScript.prototype.initCallback = function(status, text) {
-		self.isLoggedIn = (status == 200)
-		self.refreshTheNavbar()
+	PageScript.prototype.keygenCallback = function() {
+		console.log("Keygencallback")
 	}
 	
-	PageScript.prototype.getStatistics=function(){
-		this.ajaxget("/v1/statistics", self.callback(self.statCallback))
-	}
-	
-	PageScript.prototype.statCallback=function(text) {
-		data=JSON.parse(text)
-		document.getElementById("user-counter").innerHTML=(data.users)?data.users:0
-		document.getElementById("magyar-counter").innerHTML=(data.assurances.magyar)?data.assurances.magyar:0
-		document.getElementById("assurer-counter").innerHTML=(data.assurances.assurer)?data.assurances.assurer:0
-		document.getElementById("application-counter").innerHTML=(data.applications)?data.applications:0
-	}
+
 }()
 )

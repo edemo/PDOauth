@@ -11,6 +11,7 @@ from FacebookUtil import FacebookUtil
 from Assertions import Assertions
 from SimpleActions import SimpleActions
 from ComplexProcedures import ComplexProcedures
+import sys
 
 class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexProcedures):
 
@@ -20,7 +21,7 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
                     "client_id":TE.app.appid, 
                     "redirect_uri":TE.app.redirect_uri}))
         TE.driver.get(oauthUri)
-        self.waitLoginPage()
+        self.waitContentProviderLoginPage()
         uri = "{0}/static/login.html?{1}".format(TE.baseUrl, urlencode({"next":oauthUri}))
         self.assertEqual(uri, TE.driver.current_url)
 
@@ -37,12 +38,13 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
             if handle != self.master:
                 TE.driver.switch_to.window(handle)
 
-    def saveQunitXml(self):
-        self.wait_on_element_text(By.ID, "qunit-testresult", "failed")
+    def saveQunitXml(self, testName):
+        self.wait_on_element_text(By.ID, "qunit-testresult", "failed", timeout=200)
+        time.sleep(3);
         xml = TE.driver.find_element_by_id("qunit-xml").get_attribute("innerHTML")
         mypath = os.path.abspath(__file__)
         up = os.path.dirname
-        xmlpath = os.path.join(up(up(up(up(mypath)))), "doc/screenshots/unittests.xml")
+        xmlpath = os.path.join(up(up(up(up(mypath)))), "doc/screenshots/unittests-{0}.xml".format(testName))
         xmlFile = open(xmlpath, "w")
         xmlFile.write(xml)
         xmlFile.close()
@@ -51,6 +53,9 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
         return TE.assurerUser
 
     def tearDown(self):
+        if sys.exc_info()[0]:
+            test_method_name = self._testMethodName
+            TE.driver.save_screenshot("shippable/%s.png" % test_method_name)
         self.logOut()
         fbuser = User.getByEmail(config.facebookUser1.email)
         if fbuser:

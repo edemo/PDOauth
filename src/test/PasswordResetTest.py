@@ -53,7 +53,7 @@ class PasswordResetTest(PDUnitTest, EmailUtil):
 
     def createPasswordResetFormWithSecret(self):
         passwordResetLink = self.the_reset_link_is_in_the_reset_email()
-        self.secret = passwordResetLink.split('?secret=')[1]
+        self.secret = passwordResetLink.split('secret=')[1]
         self.setupRandom()
         self.newPassword = self.mkRandomPassword()
         data = dict(password=self.newPassword, secret=self.secret)

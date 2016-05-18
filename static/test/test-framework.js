@@ -1,4 +1,4 @@
-function PageScript(test) {
+function TFRWRK(test) {
 	var self = this
 	test=test || { debug: false, uribase: "" }
 	this.debug=test.debug
@@ -8,7 +8,7 @@ function PageScript(test) {
 	this.isAssurer=false;
 	this.registrationMethode="pw";
 
-PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
+TFRWRK.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   var query_string = {};
   var query = search.substring(1);
   var vars = query.split("&");
@@ -31,18 +31,19 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
     this.QueryString = self.QueryStringFunc(win.location.search);
 	
-	PageScript.prototype.getThis=function() {
+	TFRWRK.prototype.getThis=function() {
 		return this
 	}
 	
-	PageScript.prototype.reportServerFailure = function(text){
+	TFRWRK.prototype.reportServerFailure = function(text){
 		self.displayMsg({title:_("Server error occured"),error: text})
 	}
 
-	PageScript.prototype.callback = function(next,error){
-		var next  = next || function(){return}
-		var error = error || defaultErrorHandler
-		function callback(status,text,xml) {
+	TFRWRK.prototype.callback = function(next,error){
+		var next  = next || function(){return},
+		error = error || defaultErrorHandler,
+		callback = function(status,text,xml) {
+			console.log(status)
 			switch (status){
 				case 200:
 					next(text,xml)
@@ -54,20 +55,20 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				default:
 					error(status,text,xml)
 			}
-		}
-		function defaultErrorHandler(status,text,xml){
+		},
+		defaultErrorHandler = function(status,text,xml){
 			console.log(text)
 			data=JSON.parse(text)
 			self.displayMsg(self.processErrors(data))
-		}
-		return callback
+		};
+		return callback;
 	}
 	
-	PageScript.prototype.commonInit=function(text) {
+	TFRWRK.prototype.commonInit=function(text) {
 		// initialising variables
 		self.QueryString.uris = JSON.parse(text);
 		self.uribase = self.QueryString.uris.BACKEND_PATH;
-		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
+		if ( typeof facebook != "undefined" ) facebook.fbinit();
 		if ( typeof Gettext == "undefined" ) _=function(x){return x};
 
 		// filling hrefs of anchors
@@ -75,7 +76,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		self.initialise()
 	}
 	
-	PageScript.prototype.ajaxBase = function(callback) {
+	TFRWRK.prototype.ajaxBase = function(callback) {
 		var xmlhttp;
 		if (win.XMLHttpRequest)
 		  {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -98,7 +99,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		return xmlhttp;
 	}
 
-	PageScript.prototype.ajaxpost = function( uri, data, callback ) {
+	TFRWRK.prototype.ajaxpost = function( uri, data, callback ) {
 		xmlhttp = this.ajaxBase( callback );
 		xmlhttp.open( "POST", self.uribase + uri, true );
 		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
@@ -110,7 +111,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		xmlhttp.send( dataString );
 	}
 
-	PageScript.prototype.ajaxget = function( uri, callback, direct) {
+	TFRWRK.prototype.ajaxget = function( uri, callback, direct) {
 		xmlhttp = this.ajaxBase( callback )
 		if (direct) {
 			theUri = uri;
@@ -122,9 +123,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		xmlhttp.send();
 	}
 
-	PageScript.prototype.processErrors = function(data) {
-			var msg = {},
-			translateError =function(e){
+	TFRWRK.prototype.processErrors = function(data) {
+			var msg = {};
+			var translateError =function(e){
 				console.log(e)
 				var a=e.split(': ');
 				for(var i=0; i<a.length; i++){
@@ -157,7 +158,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			return msg;
 	}
 	
-	PageScript.prototype.setAppCanEmailMe=function(app, value, callback){
+	TFRWRK.prototype.setAppCanEmailMe=function(app, value, callback){
 		var csrf_token = self.getCookie('csrf');
 	    data= {
 			canemail: value,
@@ -167,7 +168,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
 	}
 	
-	PageScript.prototype.parseUserdata = function(data) {
+	TFRWRK.prototype.parseUserdata = function(data) {
 		var result ='\
 		<table>\
 			<tr>\
@@ -205,13 +206,13 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		return result
 	}
 	
-	PageScript.prototype.timestampToString=function(timestamp){
+	TFRWRK.prototype.timestampToString=function(timestamp){
 			var date=new Date(timestamp*1000)
 			return date.toLocaleDateString();
 		}
 	
 // oldie	
-	PageScript.prototype.myCallback = function(text) {
+	TFRWRK.prototype.myCallback = function(text) {
 
 		if( self.page=="login"){
 			if( self.QueryString.next) {
@@ -224,14 +225,14 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
 	}
 	
-	PageScript.prototype.meCallback = function(text) {
+	TFRWRK.prototype.meCallback = function(text) {
 		var data = JSON.parse(text);
 		var msg = self.processErrors(data)
 		self.get_me()
 		self.displayMsg(msg);
 	}
 
-	PageScript.prototype.registerCallback = function(text) {
+	TFRWRK.prototype.registerCallback = function(text) {
 		self.isLoggedIn=true
 		if( self.page=="account"){
 			var msg={
@@ -246,21 +247,21 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 	}	
 
-	PageScript.prototype.reloadCallback = function(text) {
+	TFRWRK.prototype.reloadCallback = function(text) {
 		var msg = self.processErrors(JSON.parse(text))
 		msg.callback = self.doLoadHome;
 		self.displayMsg(msg);
 	}
 	
-	PageScript.prototype.doRedirect = function(href){ 
+	TFRWRK.prototype.doRedirect = function(href){ 
 		win.location=href	
 	}
 	
-	PageScript.prototype.doLoadHome = function() {
+	TFRWRK.prototype.doLoadHome = function() {
 		self.doRedirect(self.QueryString.uris.START_URL);
 	}
 	
-	PageScript.prototype.get_me = function() {
+	TFRWRK.prototype.get_me = function() {
 		this.success=self.userIsLoggedIn
 		this.error=self.userNotLoggedIn
 		self.ajaxget("/v1/users/me", self.callback(this.success, this.error))
@@ -268,13 +269,13 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 // Button actions
 
-	PageScript.prototype.doPasswordReset = function() {
+	TFRWRK.prototype.doPasswordReset = function() {
 		secret = document.getElementById("PasswordResetForm_secret_input").value;
 	    password = document.getElementById("PasswordResetForm_password_input").value;
 	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, self.callback(self.reloadCallback))
 	}
 	
-	PageScript.prototype.InitiatePasswordReset = function(myForm) {
+	TFRWRK.prototype.InitiatePasswordReset = function(myForm) {
 		var emailInput=document.getElementById(myForm+"_email_input").value
 		if (emailInput!="")
 			self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.callback(self.myCallback));
@@ -284,7 +285,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 	}
 	
-	PageScript.prototype.login = function() {
+	TFRWRK.prototype.login = function() {
 	    username = document.getElementById("LoginForm_email_input").value;
 	    var onerror=false;
 		var errorMsg="";
@@ -308,7 +309,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 	}
 
-	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
+	TFRWRK.prototype.login_with_facebook = function(userId, accessToken) {
 		console.log("facebook login")
 	    username = userId
 	    password = encodeURIComponent(accessToken)
@@ -320,7 +321,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
 
-	PageScript.prototype.logoutCallback = function(status, text) {
+	TFRWRK.prototype.logoutCallback = function(status, text) {
 console.log("logoutCallback")
 		data=JSON.parse(text)
 		if (data.error)	self.displayError();
@@ -335,12 +336,12 @@ console.log("logoutCallback")
 		}
 	}
 	
-	PageScript.prototype.logout = function() {
+	TFRWRK.prototype.logout = function() {
 				console.log("logout")
 	    this.ajaxget("/v1/logout", this.logoutCallback)
 	}
 	
-	PageScript.prototype.getCookie = function(cname) {
+	TFRWRK.prototype.getCookie = function(cname) {
 	    var name = cname + "=";
 	    var ca = win.document.cookie.split(';');
 	    for(var i=0; i<ca.length; i++) {
@@ -353,23 +354,23 @@ console.log("logoutCallback")
 	    return "";
 	} 
 
-	PageScript.prototype.InitiateResendRegistrationEmail = function() {
+	TFRWRK.prototype.InitiateResendRegistrationEmail = function() {
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 		}
 
-	PageScript.prototype.loadjs = function(src) {
+	TFRWRK.prototype.loadjs = function(src) {
 	    var fileref=document.createElement('script')
 	    fileref.setAttribute("type","text/javascript")
 	    fileref.setAttribute("src", src)
 	    document.getElementsByTagName("head")[0].appendChild(fileref)
 	}
 	
-	PageScript.prototype.unittest = function() {
+	TFRWRK.prototype.unittest = function() {
 		this.loadjs("ts.js")
 	}
 	
 
-	PageScript.prototype.RemoveCredential = function(formName) {
+	TFRWRK.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
 		this.doRemove = function(type) {
 			credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML;
@@ -385,41 +386,41 @@ console.log("logoutCallback")
 		return self
 	}
 	
-	PageScript.prototype.GoogleLogin = function(){
+	TFRWRK.prototype.GoogleLogin = function(){
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.GoogleRegister = function(){
+	TFRWRK.prototype.GoogleRegister = function(){
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.TwitterLogin = function(){
+	TFRWRK.prototype.TwitterLogin = function(){
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.addPasswordCredential = function(){
+	TFRWRK.prototype.addPasswordCredential = function(){
 		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value;
 		var secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
 		self.addCredential("password", identifier, secret);
 	}
 	
-	PageScript.prototype.add_facebook_credential = function( FbUserId, FbAccessToken) {
+	TFRWRK.prototype.add_facebook_credential = function( FbUserId, FbAccessToken) {
 		self.addCredential("facebook", FbUserId, FbAccessToken);
 	}
 	
-	PageScript.prototype.addGoogleCredential = function(){
+	TFRWRK.prototype.addGoogleCredential = function(){
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.addGithubCredential = function(){
+	TFRWRK.prototype.addGithubCredential = function(){
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.addTwitterCredential = function(){
+	TFRWRK.prototype.addTwitterCredential = function(){
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.doDeregister = function() {
+	TFRWRK.prototype.doDeregister = function() {
 		if ( document.getElementById("accept_deregister").checked ) {
 			if ( self.QueryString.secret ) {
 				text = {	csrf_token: self.getCookie("csrf"),
@@ -440,12 +441,12 @@ console.log("logoutCallback")
 		}			
 	}
 	
-	PageScript.prototype.initiateDeregister = function(theForm) {
+	TFRWRK.prototype.initiateDeregister = function(theForm) {
 		text = { csrf_token: self.getCookie("csrf") }
 		self.ajaxpost("/v1/deregister", text, self.callback(self.myCallback))
 	}
 	
-	PageScript.prototype.deregisterCallback = function(text) {
+	TFRWRK.prototype.deregisterCallback = function(text) {
 		var msg=self.processErrors(JSON.parse(text))
 		self.isLoggedIn=false
 		self.refreshTheNavbar();
@@ -456,34 +457,29 @@ console.log("logoutCallback")
 		self.displayMsg(msg);
 	}
 	
-	PageScript.prototype.refreshTheNavbar=function(){
+	TFRWRK.prototype.refreshTheNavbar=function(){
 		if (self.isLoggedIn) {
 			document.getElementById("nav-bar-login").style.display="none";
 			document.getElementById("nav-bar-register").style.display="none";
 			document.getElementById("nav-bar-my_account").style.display="block";
 			document.getElementById("nav-bar-logout").style.display="block";
-			document.getElementById("nav-bar-aboutus").style.display="block";
 		}
 		else {
 			document.getElementById("nav-bar-my_account").style.display="none";
 			document.getElementById("nav-bar-logout").style.display="none";
 			document.getElementById("nav-bar-login").style.display="block";
 			document.getElementById("nav-bar-register").style.display="block";
-			document.getElementById("nav-bar-aboutus").style.display="block";
 		}
 	}
 
-	PageScript.prototype.sslLogin = function() {
+	TFRWRK.prototype.sslLogin = function() {
 		console.log("sslLogin")
-		var t=document.getElementById("SSL")
-		if (t) {
-			t.onload=function(){window.location.reload()}
-			t.src=self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login'
-		}
+		var xmlhttp = this.ajaxBase( self.callback(self.userIsLoggedIn,self.userNotLoggedIn) )
+		xmlhttp.open( "GET", self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login' , true);
+		xmlhttp.send();
 	}
-
 //Getdigest functions	
-	PageScript.prototype.normalizeString = function(val) {
+	TFRWRK.prototype.normalizeString = function(val) {
 		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
 		var unaccented="ouooueauiouooueaui";
 		var s = "";
@@ -505,7 +501,7 @@ console.log("logoutCallback")
 		return s;
 	}
 	
-	PageScript.prototype.digestGetter = function(formName) {
+	TFRWRK.prototype.digestGetter = function(formName) {
 		var formName=formName
 		var digestCallback
 		
@@ -596,12 +592,12 @@ console.log("logoutCallback")
 		return this
 	}
 	
-	PageScript.prototype.convert_mothername = function(formName) {
+	TFRWRK.prototype.convert_mothername = function(formName) {
 		var inputElement = document.getElementById( formName+"_mothername");
 		var outputElement = document.getElementById( formName+"_monitor");
 		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
 	}	
-	PageScript.prototype.setRegistrationMethode=function(methode){
+	TFRWRK.prototype.setRegistrationMethode=function(methode){
 		self.registrationMethode=methode;
 		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) { e.className=e.className.replace(" active",""); } );
 		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
@@ -611,6 +607,7 @@ console.log("logoutCallback")
 				heading=_("email address and/or username / password")
 				document.getElementById("registration-form-password-container").style.display="block";
 				document.getElementById("registration-form-username-container").style.display="block";
+				document.getElementById("registration-ssltext-container").style.display="none";
 				document.getElementById("registration-form_secret_input").value="";
 				document.getElementById("registration-form_identifier_input").value="";
 			break;
@@ -618,18 +615,20 @@ console.log("logoutCallback")
 				heading=_("my facebook account")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
+				document.getElementById("registration-ssltext-container").style.display="none";
 				facebook.fbregister()
 			break;
 			case "ssl":
 				heading=_("SSL certificate")
 				document.getElementById("registration-form-password-container").style.display="none";
 				document.getElementById("registration-form-username-container").style.display="none";
+				document.getElementById("registration-ssltext-container").style.display="block";
 			break;
 		}
 		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
 	}
 
-	PageScript.prototype.register = function(credentialType) {
+	TFRWRK.prototype.register = function(credentialType) {
 		//
 	    var identifier = (document.getElementById("registration-form_identifier_input").value=="")?
 			document.getElementById("registration-form_email_input").value:
@@ -644,21 +643,21 @@ console.log("logoutCallback")
 	    	email: email,
 	    	digest: digest
 	    }
-		data.password=secret;
-		
+		if (credentialType=="password") data.password=secret;
+		else data.secret=secret
 	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
 	}
 	
-	PageScript.prototype.onSslRegister= function(){
+	TFRWRK.prototype.onSslRegister= function(){
 		console.log('ssl_onSslRegister')
 		if (self.sslCallback()) self.sslLogin();
 	}
 
-	PageScript.prototype.addSslCredentialCallback= function(){
+	TFRWRK.prototype.addSslCredentialCallback= function(){
 		if (self.sslCallback()) self.get_me();
 	}
 
-	PageScript.prototype.doRegister=function() {
+	TFRWRK.prototype.doRegister=function() {
 		if ( document.getElementById("registration-form_confirmField").checked ) {
 			console.log(self.registrationMethode)
 			switch (self.registrationMethode) {
@@ -685,7 +684,7 @@ console.log("logoutCallback")
 		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
 	}
 	
-	PageScript.prototype.sslCallback=function() {
+	TFRWRK.prototype.sslCallback=function() {
 		console.log("sslCallback")
 		response=document.getElementById("SSL").contentDocument.body.innerHTML
 		console.log(response)
@@ -704,7 +703,7 @@ console.log("logoutCallback")
 		else return true
 	}
 	
-	PageScript.prototype.deactivateButton = function(buttonId) {
+	TFRWRK.prototype.deactivateButton = function(buttonId) {
 		b=document.getElementById(buttonId)
 		if (b) {
 			b.className+=" inactive";
@@ -712,7 +711,7 @@ console.log("logoutCallback")
 		}		
 	}
 	
-	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
+	TFRWRK.prototype.activateButton = function(buttonId, onclickFunc) {
 		b=document.getElementById(buttonId)
 		if (b) {
 			b.className=b.className.slice(0,b.className.indexOf("inactive"))
@@ -720,7 +719,7 @@ console.log("logoutCallback")
 		}
 	}
 
-	PageScript.prototype.passwordChanged = function(formName) {
+	TFRWRK.prototype.passwordChanged = function(formName) {
 		var strength = document.getElementById(formName+"_pw-strength-meter");
 		var strongRegex = new RegExp("^(?=.{10,})((?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^a-zA-Z0-9_])).*$", "g");
 		var mediumRegex = new RegExp("^(?=.{8,})((?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])).*$", "g");
@@ -744,214 +743,35 @@ console.log("logoutCallback")
 		self.pwEqual(formName)
 	}
 	
-	PageScript.prototype.pwEqual = function(formName) {
+	TFRWRK.prototype.pwEqual = function(formName) {
 		var pwInput=document.getElementById(formName+"_secret_input")
 		var pwBackup=document.getElementById(formName+"_secret_backup")
 		var pwEqual=document.getElementById(formName+"_pw-equal")
 		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
-
-    PageScript.prototype.create_PKCS10 = function (formName) {
-		
-		function formatPEM(pem_string)
-        {
-            /// <summary>Format string in order to have each line with length equal to 63</summary>
-            /// <param name="pem_string" type="String">String to format</param>
-
-            var string_length = pem_string.length;
-            var result_string = "";
-
-            for(var i = 0, count = 0; i < string_length; i++, count++)
-            {
-                if(count > 63)
-                {
-                    result_string = result_string + "\r\n";
-                    count = 0;
-                }
-
-                result_string = result_string + pem_string[i];
-            }
-
-            return result_string;
-        }
-        //*********************************************************************************
-        function arrayBufferToString(buffer)
-        {
-            /// <summary>Create a string from ArrayBuffer</summary>
-            /// <param name="buffer" type="ArrayBuffer">ArrayBuffer to create a string from</param>
-
-            var result_string = "";
-            var view = new Uint8Array(buffer);
-
-            for(var i = 0; i < view.length; i++)
-                result_string = result_string + String.fromCharCode(view[i]);
-
-            return result_string;
-        }
-        //*********************************************************************************
-        function stringToArrayBuffer(str)
-        {
-            /// <summary>Create an ArrayBuffer from string</summary>
-            /// <param name="str" type="String">String to create ArrayBuffer from</param>
-
-            var stringLength = str.length;
-
-            var resultBuffer = new ArrayBuffer(stringLength);
-            var resultView = new Uint8Array(resultBuffer);
-
-            for(var i = 0; i < stringLength; i++)
-                resultView[i] = str.charCodeAt(i);
-
-            return resultBuffer;
-        }
-		
-            // #region Initial variables 
-            var sequence = Promise.resolve();
-            var pkcs10_simpl = new org.pkijs.simpl.PKCS10();
-            var publicKey;
-            var privateKey;
-            var hash_algorithm = "sha-512";
-            var signature_algorithm_name = "ECDSA"
-            // #endregion 
-
-            // #region Get a "crypto" extension 
-            var crypto = org.pkijs.getCrypto();
-            if(typeof crypto == "undefined")
-            {
-                self.displayMsg({title:_("Error"), error:_("No WebCrypto extension found")});
-                return;
-            }
-            // #endregion 
-
-            // #region Put a static values 
-            pkcs10_simpl.version = 0;
-            pkcs10_simpl.subject.types_and_values.push(new org.pkijs.simpl.ATTR_TYPE_AND_VALUE({ type: "2.5.4.6", value: new org.pkijs.asn1.PRINTABLESTRING({ value: "RU" }) }));
-            pkcs10_simpl.subject.types_and_values.push(new org.pkijs.simpl.ATTR_TYPE_AND_VALUE({ type: "2.5.4.3", value: new org.pkijs.asn1.UTF8STRING({ value: "Simple test (простой тест)" }) }));
-            pkcs10_simpl.attributes = new Array();
-            // #endregion 
-
-            // #region Create a new key pair 
-            sequence = sequence.then(
-                function()
-                {
-                    // #region Get default algorithm parameters for key generation 
-                    var algorithm = org.pkijs.getAlgorithmParameters(signature_algorithm_name, "generatekey");
-                    if("hash" in algorithm.algorithm)
-                        algorithm.algorithm.hash.name = hash_algorithm;
-                    // #endregion 
-                    return crypto.generateKey(algorithm.algorithm, true, algorithm.usages);
-                }
-                );
-            // #endregion 
-
-            // #region Store new key in an interim variables
-            sequence = sequence.then(
-                function(keyPair)
-                {
-                    publicKey = keyPair.publicKey;
-                    privateKey = keyPair.privateKey;
-					console.log(privateKey)
-//					crypto.importKey("jwk", keyPair, "RSA-OAEP", false, ["sign","verify"]);
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error during key generation: ") + _(error)}); 
-                }
-                );
-            // #endregion 
-
-            // #region Exporting public key into "subjectPublicKeyInfo" value of PKCS#10 
-            sequence = sequence.then(
-                function()
-                {
-                    return pkcs10_simpl.subjectPublicKeyInfo.importKey(publicKey);
-                }
-                );
-            // #endregion 
-
-            // #region SubjectKeyIdentifier 
-            sequence = sequence.then(
-                function(result)
-                {
-                    return crypto.digest({ name: "SHA-1" }, pkcs10_simpl.subjectPublicKeyInfo.subjectPublicKey.value_block.value_hex);
-                }
-                ).then(
-                function(result)
-                {
-                    pkcs10_simpl.attributes.push(new org.pkijs.simpl.ATTRIBUTE({
-                        type: "1.2.840.113549.1.9.14", // pkcs-9-at-extensionRequest
-                        values: [(new org.pkijs.simpl.EXTENSIONS({
-                            extensions_array: [
-                                new org.pkijs.simpl.EXTENSION({
-                                    extnID: "2.5.29.14",
-                                    critical: false,
-                                    extnValue: (new org.pkijs.asn1.OCTETSTRING({ value_hex: result })).toBER(false)
-                                })
-                            ]
-                        })).toSchema()]
-                    }));
-                }
-                );
-            // #endregion 
-
-            // #region Signing final PKCS#10 request 
-            sequence = sequence.then(
-                function()
-                {
-                    return pkcs10_simpl.sign(privateKey, hash_algorithm);
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error during exporting public key: ")+ _(error)});
-                }
-                );
-            // #endregion 
-
-            sequence.then(
-                function(result)
-                {
-                    var pkcs10_schema = pkcs10_simpl.toSchema();
-                    var pkcs10_encoded = pkcs10_schema.toBER(false);
-
-                    var result_string = "-----BEGIN CERTIFICATE REQUEST-----\r\n";
-                    result_string = result_string + formatPEM(window.btoa(arrayBufferToString(pkcs10_encoded)));
-                    result_string = result_string + "\r\n-----END CERTIFICATE REQUEST-----\r\n";
-
-                    document.getElementById(formName+"_pubkey").value = result_string;
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error signing PKCS#10: ")+ _(error)});
-                }
-                );
-        }
 	
+	TFRWRK.prototype.main = function(){
+	}
+	
+	TFRWRK.prototype.loadTest = function(test){
+		var loadTestCallback = function(js){
+			sessionStorage.clear();
+			document.getElementById("qunit").innerHTML=""
+			QUnit.init()
+			QUnit.load()
+			eval(js);
+		}
+		self.ajaxget(test+".js", self.callback(loadTestCallback))
+	}
+	
+	TFRWRK.prototype.loadPage = function(page, test){
+		var testFrame=document.getElementById('testarea')
+		testFrame.onload=function(){
+				test(testFrame);
+				}
+		testFrame.src='../'+page
+	}
 }
 	
-pageScript = new PageScript();
-
-
-
-/* 
-==============================================
-Back To Top Button
-=============================================== */  
- 
-  $(window).scroll(function () {
-            if ($(this).scrollTop() > 50) {
-                $('#back-top').fadeIn();
-            } else {
-                $('#back-top').fadeOut();
-            }
-        });
-      // scroll body to 0px on click
-      $('#back-top').click(function () {
-          $('#back-top a').tooltip('hide');
-          $('body,html').animate({
-              scrollTop: 0
-          }, 800);
-          return false;
-      });
-      
-      if ($('#back-top').length!=0) $('#back-top').tooltip('hide');
+tfrwrk = new TFRWRK();
