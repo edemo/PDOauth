@@ -11,6 +11,7 @@ from FacebookUtil import FacebookUtil
 from Assertions import Assertions
 from SimpleActions import SimpleActions
 from ComplexProcedures import ComplexProcedures
+import sys
 
 class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexProcedures):
 
@@ -52,6 +53,9 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
         return TE.assurerUser
 
     def tearDown(self):
+        if sys.exc_info()[0]:
+            test_method_name = self._testMethodName
+            TE.driver.save_screenshot("shippable/%s.png" % test_method_name)
         self.logOut()
         fbuser = User.getByEmail(config.facebookUser1.email)
         if fbuser:

@@ -29,6 +29,6 @@ class FacebookTest(Fixture, BrowsingUtil):
         self.assertFbUserIsLoggedIn()
 
     def tearDown(self):
+        BrowsingUtil.tearDown(self)
         self.removeFbuser(user=config.facebookUser1)
         self.logoutFromFacebook()
-        BrowsingUtil.tearDown(self)
