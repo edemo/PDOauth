@@ -15,7 +15,7 @@ class FacebookTest(Fixture, BrowsingUtil):
     @test
     def if_a_user_without_public_email_tries_to_register_to_facebook_we_ask_for_email_address(self):
         self.goToLoginPage()
-        self.handleFbRegistration(user=config.facebookUser1)
+        self.handleFbRegistration(user=config.facebookUser1, useEmail=False)
         self.assertPopupErrorMatchesRe(r"Nem j. az email-c.m")
 
     @test

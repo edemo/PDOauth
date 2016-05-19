@@ -53,9 +53,12 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
         return TE.assurerUser
 
     def tearDown(self):
-        if sys.exc_info()[0]:
-            test_method_name = self._testMethodName
-            TE.driver.save_screenshot("shippable/%s.png" % test_method_name)
+        test_method_name = self._testMethodName
+        TE.driver.save_screenshot("shippable/%s.png" % test_method_name)
+        f=open("shippable/%s.log" % test_method_name,"w")
+        for entry in TE.driver.get_log('browser'):
+            f.write("%s\n"%(entry,))
+        f.close()
         self.logOut()
         fbuser = User.getByEmail(config.facebookUser1.email)
         if fbuser:

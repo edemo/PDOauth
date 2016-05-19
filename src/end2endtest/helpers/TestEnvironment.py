@@ -8,6 +8,7 @@ from pdoauth.models import User
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Assurance import Assurance
 from end2endtest import config
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 print "setting up test environment"
 
@@ -16,12 +17,17 @@ def getDriver():
         os.environ['PATH'] += ":/usr/lib/chromium-browser"
         options = Options()
         options.add_argument("--no-sandbox")
-        theDriver = webdriver.Chrome(chrome_options = options)
+        d = DesiredCapabilities.CHROME
+        d['loggingPrefs'] = { 'browser':'ALL' }
+        theDriver = webdriver.Chrome(chrome_options = options, desired_capabilities=d)
     else:
+        d = DesiredCapabilities.FIREFOX
+        d['loggingPrefs'] = { 'browser':'ALL' }
         profile_directory = os.path.join(os.path.dirname(__file__),"..", "firefox-client-nossl-profile")
         profile = FirefoxProfile(profile_directory)
+        profile.set_preference('webdriver.log.file', '/tmp/firefox_console')
         profile.set_preference("security.default_personal_cert", "Select Automatically")
-        theDriver = webdriver.Firefox(firefox_profile=profile)
+        theDriver = webdriver.Firefox(firefox_profile=profile, capabilities=d)
     return theDriver
 
 def getApplication():

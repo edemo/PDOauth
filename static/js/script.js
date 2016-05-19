@@ -106,7 +106,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		var dataString = l.join("&")
 		console.log(uri)
-		console.log(data)
+		console.log(JSON.stringify(data))
 		xmlhttp.send( dataString );
 	}
 
