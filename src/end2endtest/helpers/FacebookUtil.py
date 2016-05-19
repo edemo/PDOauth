@@ -4,6 +4,7 @@ import end2endtest.helpers.TestEnvironment as TE
 from selenium.webdriver.common.by import By
 from end2endtest import config
 from pdoauth.models.AppMap import AppMap
+import time
 
 class FacebookUtil(object):
     def fillInFbPopUp(self, user=None):
@@ -30,24 +31,33 @@ class FacebookUtil(object):
         self.swithToPopUp()
         self.fillInFbPopUp(user)
         TE.driver.switch_to.window(self.master)
+        time.sleep(5)
 
     def handleFbLogin(self, user=None):
         self.click("Facebook_registration_button")
         self.handleFbLoginPage(user)
         self.waitLoginPage()
 
-    def handleFbRegistration(self, user=None):
+    def handleFbRegistration(self, user=None, useEmail=True):
         self.switchToTab('register')
         self.click("registration-form-method-selector-fb")
         self.handleFbLoginPage(user)
         self.waitLoginPage()
+        if useEmail:
+            if user is None:
+                user = config.facebookUser2
+            self.fillInField("registration-form_email_input",user.email)
         self.tickCheckbox("registration-form_confirmField")
         self.click("registration-form_submitButton")
 
-    def handleFbRegistrationAppLogin(self, user=None):
+    def handleFbRegistrationAppLogin(self, user=None, useEmail=True):
         self.click("register")
         self.click("registration-form-method-selector-fb")
         self.handleFbLoginPage(user)
+        if useEmail:
+            if user is None:
+                user = config.facebookUser2
+            self.fillInField("registration-form_email_input",user.email)
         self.tickCheckbox("registration-form_confirmField")
         self.click("registration-form_submitButton")
 

@@ -65,6 +65,7 @@
 <fillinfield fieldid="pass">
 <fillinfield fieldid="email">
 <click fieldid="u_0_2">
+<fillinfield fieldid="registration-form_email_input">
 <tickCheckbox fieldid="registration-form_confirmField">
 <click fieldid="registration-form_submitButton">
 <waitForText fieldid="PopupWindow_TitleDiv" text="GRATULÁLUNK!">
@@ -77,6 +78,7 @@
 <fillinfield fieldid="pass">
 <fillinfield fieldid="email">
 <click fieldid="u_0_2">
+<fillinfield fieldid="registration-form_email_input">
 <tickCheckbox fieldid="registration-form_confirmField">
 <click fieldid="registration-form_submitButton">
 <process name="logout">
@@ -263,6 +265,7 @@
 <fillinfield fieldid="pass">
 <fillinfield fieldid="email">
 <click fieldid="u_0_2">
+<fillinfield fieldid="registration-form_email_input">
 <tickCheckbox fieldid="registration-form_confirmField">
 <click fieldid="registration-form_submitButton">
 <waitForText fieldid="h1" text="404">

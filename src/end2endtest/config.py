@@ -115,7 +115,7 @@ facebookUser1 = FBUser(
     "Elek the tester",
     "111507052513637")
 facebookUser2 = FBUser(
-    "mag+elekne2@magwas.rulez.org",
+    "mag+elekne3@magwas.rulez.org",
     "Elekne is tesztel",
     None)
 ca_certs = "src/end2endtest/server.crt"
