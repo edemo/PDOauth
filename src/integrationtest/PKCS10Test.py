@@ -25,7 +25,7 @@ zbkjq8HlENlyLmrTwjfPVWDXF3Gb
 -----END CERTIFICATE REQUEST-----
 """
 
-
+wrong_pubkey="MIICrjCCAZgCAQAwOzE5MAkGA1UEBhMCUlUwLAYDVQQDDCVTaW1wbGUgdGVzdCAo0L/RgNC+0YHRgtC+0Lkg0YLQtdGB0YIpMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuuQlljmrP1oWkbnOvL1FTZFWlnEtgHd/mY8bB/z1raqILqhQXNbZJ/MKd23xq/g3RDxY74rAj4pTBDkOWud5k0OoG0UpeHC1NsPOBpq37m6hCcsiash1ss64S8T2Tj6Iu7ZuFZkq41dFm4C9SpOligLfjKAVaMggrSD4XwoptYjTZrusLgrZP5EqMPiU/kDyOzpImz1CXglrpSE2X1MxPNVyr6Dokj/eOLqY6GXrG1GFbmGyrIGFD6ZFPnyofLQT6Yu6y65R0v4cdP+qmbuMXJBqaB0LANEfQFMUlYHeyXvIbgLi39t70z5tsOkDChK4bU/DaR5duIpCmQ0S0FFjjwIDAQABoDAwLgYJKoZIhvcNAQkOMSEwHzAdBgNVHQ4EFgQUmDO/8Sjqv0I2gTNfxB2A7Dlb0ZkwCwYJKoZIhvcNAQENA4IBAQAbQ3x3L8bWXYKBX3QwPepNCLi4i737BU+ufOL0snxgTjkOyyRrMS+g/NoOINfvvDft8uMgkIUT0Y/kP8Ir/V2++EYsnpxK2T2itziVRRRqfrSIzU2EGmPyLGt12b12jCB1Lyq/AyENs1AE49rcagEw8nGaWQXPm9U7WnlupioylAH5YrdEcJVieTUNclMPxLLDXNbDUG72DD6dZPmoVfDqbgSDfsKoB/S6Nj8AMAEtVB7ZMxudfGervcr5ej3LTaYpJ0W0uPlmmvwzxLD3ttm4kt+saatVWOcbXWUZlfSgk+PlEFXYD3+0RmeaqYMgjoU11jVMN/lCsR6UspIaYHHm"
 
 class PKCS10Test(PDUnitTest, UserTesting):
     
@@ -39,7 +39,20 @@ class PKCS10Test(PDUnitTest, UserTesting):
         self.headers = {
             "Content-Type":"application/x-www-form-urlencoded"}
         PDUnitTest.setUp(self)
-        
+
+    @test
+    def wrong_data_generates_error_response(self):
+        data = dict(
+            pubkey = wrong_pubkey,
+            email = "valami@drezina.hu"
+            )
+        with app.test_client() as client:
+            resp = client.post("/v1/ca/signreq", data=data)
+            self.assertEqual(400,resp.status_code)
+            respData = self.fromJson(resp)
+            print respData['errors']
+            self.assertEquals("error in cert",respData['errors'])
+            print self.getResponseText(resp)
 
     @test
     def certificate_can_be_created_from_a_PKCS10(self):

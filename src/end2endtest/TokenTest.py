@@ -23,7 +23,7 @@ class TokenTest(Fixture,BrowsingUtil):
     def obtainAccessToken(self):
         app = TE.app
         self.callOauthUri()
-        self.registerUser()
+        self.registerUser(buttonId="register")
         self.waitFortestAppRedirectUri()
         self.assertTrue(TE.driver.current_url.startswith(app.redirect_uri))
         answer = self.getOauthToken(app)

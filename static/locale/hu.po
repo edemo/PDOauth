@@ -948,3 +948,6 @@ msgstr ""
 #, fuzzy
 msgid "email address change is cancelled"
 msgstr "E-mail cím csere nem történt meg"
+
+msgid "Type your new email address here"
+msgstr "Add meg az új email címed"

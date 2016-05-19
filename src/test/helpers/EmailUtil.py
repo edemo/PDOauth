@@ -15,7 +15,7 @@ from pdoauth.models.User import User
 
 exampleBody = """Dear abc@xyz.uw,
 This is a reset email.
-Go to https://local.sso.edemokraciagep.org:8888/static/login.html?secret=th1s1sth4s3cret
+Go to https://local.sso.edemokraciagep.org:8888/static/login.html?section=pwreset&secret=th1s1sth4s3cret
 you have to do it until 11 Dec 2098 12:34:56.
 
 Sincerely,
@@ -25,7 +25,7 @@ The Test machine
 exampleHtml = """<html><head></head><body>
 Dear abc@xyz.uw,<br>
 This is a reset email.<br/>
-Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?secret=th1s1sth4s3cret">Click</a><br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?section=pwreset&secret=th1s1sth4s3cret">Click</a><br/>
 you have to do it until 11 Dec 2098 12:34:56.<br/>
 <br/>
 Sincerely,<br/>
@@ -60,7 +60,7 @@ class EmailUtil(UserUtil):
         text = unicode(self.outbox[0].html)
         soup = BeautifulSoup(text)
         passwordResetLink = soup.find("a")['href']
-        self.secret = passwordResetLink.split('?secret=')[1]
+        self.secret = passwordResetLink.split('secret=')[1]
         self.tempcred = Credential.getBySecret('email_for_password_reset',self.secret)
         return passwordResetLink
 

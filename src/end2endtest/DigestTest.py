@@ -7,19 +7,22 @@ class DigestTest(Fixture, BrowsingUtil, CryptoTestUtil):
     @test
     def you_can_add_a_digest_as_a_logged_in_user(self):
         digest = self.registerAndGiveHash()
-        self.assertTextInMeMsg("hash:\n{0}".format(digest))
+        self.waitUntilElementEnabled("viewChangeHashForm")
+        self.assertElementMatches("change-hash-form_digest-pre", digest)
 
     @test
     def you_can_change_the_digest_as_a_logged_in_user(self):
         self.registerAndGiveHash()
         digest=self.changeMyHash()
-        self.assertTextInMeMsg("hash:\n{0}".format(digest))
+        self.waitUntilElementEnabled("viewChangeHashForm")
+        self.assertElementMatches("change-hash-form_digest-pre", digest)
 
     @test
     def you_can_delete_the_digest_as_a_logged_in_user_by_giving_empty_one(self):
         self.registerAndGiveHash()
         self.changeMyHash("")
-        self.assertTextInMeMsg("hash:\n{0}".format("null"))
+        self.waitUntilElementEnabled("viewChangeHashForm")
+        self.assertElementMatches("change-hash-form_digest-pre", '')
         
     def tearDown(self):
         BrowsingUtil.tearDown(self)

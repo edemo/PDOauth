@@ -53,7 +53,10 @@ class CertificateHandling(CryptoUtils):
         self.setCSRFCookie(resp)
 
     def doKeygen(self, form):
-        cert = self.extractCertFromForm(form)
+        try:
+            cert = self.extractCertFromForm(form)
+        except:
+            raise ReportedError(errorInCert)
         user = self.getCurrentUser()
         if user.is_authenticated():
             self.addCertCredentialToUser(cert, user)
@@ -112,7 +115,10 @@ class CertificateHandling(CryptoUtils):
         return resp
 
     def signRequest(self,form):
-        cert = self.createCertFromReq(form.pubkey.data, form.email.data)
+        try:
+            cert = self.createCertFromReq(form.pubkey.data, form.email.data)
+        except Exception:
+            raise ReportedError(errorInCert)
         user = self.getCurrentUser()
         if user.is_authenticated():
             self.addCertCredentialToUser(cert, user)
