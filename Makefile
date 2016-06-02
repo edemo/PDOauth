@@ -1,6 +1,10 @@
 install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-junit.js static/blanket.min.js bootstrap-3 jquery
 
-checkall: install alltests xmldoc
+checkall: install tests integrationtests xmldoc
+
+checkmanual: install alltests xmldoc
+
+alltests: tests integrationtests end2endtest
 
 realclean:
 	rm -rf PDAnchor; git clean -fdx
@@ -28,7 +32,6 @@ jquery:
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
-alltests: tests integrationtests end2endtest
 
 onlyend2endtest: install testsetup runanchor runserver runemail waitbeforebegin chrometest firefoxtest
 
