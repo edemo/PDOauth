@@ -71,6 +71,7 @@ class Procedures(object):
             self.fillInField("registration-form_predigest_input", personalId)
             self.fillInField("registration-form_predigest_mothername", motherName)
             self.click("registration-form_getDigestButton")
+            self.waitUntilElementHasText("registration-form_digest_input")
         self.click("registration-form_submitButton")
         self.endProcess("register with password")
 
