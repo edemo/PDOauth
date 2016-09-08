@@ -3,12 +3,12 @@ from helpers.BrowsingUtil import BrowsingUtil, TE
 from test.helpers.CryptoTestUtil import CryptoTestUtil
 
 class AssurerTest(Fixture,BrowsingUtil,CryptoTestUtil):
-
+        
     @test
     def an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(self):
         self.goToLoginPage()
-        personalId="11111111110"
-        motherName=self.mkRandomString(10)
+        personalId = "11111111110"
+        motherName = self.mkRandomString(10)
         self.registerUser(personalId=personalId, motherName=motherName)
         self.logOut()
         self.loginWithPasswordAs(TE.assurerUser)

@@ -111,11 +111,14 @@ class FBUser(object):
         self.userid = userid
 
 facebookUser1 = FBUser(
-    "mag+tesztelek@magwas.rulez.org",
+    "hrynmco_carrierosen_1473330015@tfbnw.net",
+    #"mag+tesztelek@magwas.rulez.org",
     "Elek the tester",
-    "111507052513637")
+    "110746159383451")
+    #"111507052513637")
 facebookUser2 = FBUser(
-    "mag+elekne3@magwas.rulez.org",
+    "wvbhblz_wisemanman_1473330385@tfbnw.net",
+    #"mag+elekne3@magwas.rulez.org",
     "Elekne is tesztel",
     None)
 ca_certs = "src/end2endtest/server.crt"

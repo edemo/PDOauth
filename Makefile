@@ -1,6 +1,6 @@
 install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-junit.js static/blanket.min.js bootstrap-3 jquery
 
-checkall: install tests integrationtests xmldoc
+checkall: install tests integrationtests end2endtest xmldoc
 
 checkmanual: install alltests xmldoc
 
