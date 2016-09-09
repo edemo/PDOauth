@@ -158,7 +158,8 @@ class SimpleActions(object):
         self.waitUntilElementEnabled("{0}_section".format(tab))
 
     def switchToSection(self,tab):
-        self.click("{0}_section".format(tab))
+        element = "{0}_section".format(tab)
+        self.click(element)
         self.waitUntilElementEnabled("{0}_section".format(tab))
 
     def closeMessage(self):

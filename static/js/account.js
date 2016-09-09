@@ -331,7 +331,7 @@
 				<td>\
 					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
 					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
-					<button class="button" type="button" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
+					<button class="button" type="button" id="create_hash_here" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
 					<a href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
 						<button class="button" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
 					</a>\
@@ -341,7 +341,7 @@
 							<input type="text" placeholder="" id="change-hash-form_predigest_input" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
 							<label for="mothername">'+_("Mother's name")+':</label>\
 							<input type="text" placeholder="" id="change-hash-form_predigest_mothername" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
-							<button type="button" onclick="pageScript.digestGetter(\'change-hash-form\').getDigest()">'+_("Generate")+'</button>\
+							<button type="button" id="change-hash-form_getDigestButton" onclick="pageScript.digestGetter(\'change-hash-form\').getDigest()">'+_("Generate")+'</button>\
 							<div class="monitor" id="change-hash-form_predigest_monitor"></div>\
 						</div>\
 					</div>\
