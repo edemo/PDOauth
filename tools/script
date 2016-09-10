@@ -1,4 +1,4 @@
 #!/bin/bash
 . tools/prepare
 set -e
-make checkall
+make checkall 2>&1 |tee shippable/makeoutput
