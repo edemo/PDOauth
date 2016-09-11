@@ -1,5 +1,4 @@
 #!/bin/bash
 . tools/prepare
 set -e
-set -o pipefail
-make checkall 2>&1 |tee shippable/makeoutput
+make checkall 
