@@ -1,3 +1,6 @@
+all:
+	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script
+
 install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-junit.js static/blanket.min.js bootstrap-3 jquery
 
 checkall: install tests integrationtests end2endtest xmldoc
