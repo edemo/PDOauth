@@ -1,6 +1,5 @@
 #!/bin/bash
 set -xe
-cd /PDOauth
 chown postgres /var/run/postgresql/
 export DISPLAY=:0
 Xvnc -SecurityTypes=None :0&

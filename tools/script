@@ -1,5 +1,4 @@
 #!/bin/bash
-cd /PDOauth
 . tools/prepare
 set -e
 make checkall 
