@@ -4,8 +4,11 @@ from end2endtest.helpers.BrowsingUtil import BrowsingUtil, TE
 import config
 from selenium.webdriver.common.by import By
 import time
+from pdoauth.models import Assurance
+from test.helpers.UserUtil import UserUtil
+from test.helpers.CryptoTestUtil import CryptoTestUtil
 
-class HashTest(Fixture,BrowsingUtil):
+class HashTest(Fixture,BrowsingUtil, UserUtil, CryptoTestUtil):
 
     def giveHash(self):
         self.goToLoginPage()
@@ -58,6 +61,25 @@ class HashTest(Fixture,BrowsingUtil):
         self.switchToSection("assurer")
         self.obtainHash("22222222220", "Test Mother", "assurancing")
         self.wait_on_element_class(By.ID, 'assurance-giving_message', "given")
+
+    @test
+    def in_hash_collision_if_the_other_user_is_hand_assured_the_offender_receives_a_message(self):
+        anotheruser = self.createUserWithCredentials().user
+        digest = self.createHash()
+        anotheruser.hash = digest
+        Assurance.new(anotheruser, "test", anotheruser)
+        anotheruser.save()
+        self.goToLoginPage()
+        self.switchToTab('register')
+        self.registerUser()
+        self.assertPopupErrorMatchesRe("emailben megadott")
+        self.closeMessage()
+        time.sleep(1)
+        self.switchToSection("settings")
+        self.click("viewChangeHashForm")
+        self.fillInField("change-hash-form_digest_input",digest)
+        self.click("changeHash")
+        self.assertPopupErrorMatchesRe("megadta ezt a Titkos")
 
     def tearDown(self):
         BrowsingUtil.tearDown(self)

@@ -274,9 +274,17 @@
 	    self.ajaxpost("/v1/users/me/update_hash", data, self.changeHashCallback)
 	}	
 	
-	PageScript.prototype.changeHashCallback = function(text) {
-		self.get_me()
-		self.viewChangeHashContainer()
+	PageScript.prototype.changeHashCallback = function(status,text,xml) {
+		if (status==200) { 
+			self.get_me()
+			self.viewChangeHashContainer()
+		}
+		else {
+			var data = JSON.parse(text);
+			var errs = self.processErrors(data);
+			self.displayMsg(errs);	
+		}
+
 	}
 	
 	PageScript.prototype.viewChangeHashForm = function() {
@@ -333,7 +341,7 @@
 					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
 					<button class="button" type="button" id="create_hash_here" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
 					<a href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
-						<button class="button" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
+						<button class="button" id="create_hash_myself" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
 					</a>\
 					<div id="change-hash-form_code-generation-input" class="form">\
 						<div class="bordered">\
