@@ -61,6 +61,9 @@ class EmailHandling(object):
         secret, expiry = CredentialManager.createTemporaryCredential(user, 'deregister')
         self.sendEmail(user, secret, expiry, "DEREGISTRATION")
 
+    def sendHashCollisionMail(self, user):
+        self.sendEmail(user, None, None, "HASHCOLLISION")
+
     def changeEmail(self, form):
         user = self.getCurrentUser()
         self.emailChangeInit(form.newemail.data,user)
