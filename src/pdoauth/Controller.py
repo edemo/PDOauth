@@ -139,8 +139,9 @@ class Controller(
         anotherUsers = User.getByDigest(digest)
         if anotherUsers:
             if self.isAnyoneHandAssurredOf(anotherUsers):
+                self.sendHashCollisionMail(user)
                 self.removeUser(user)
-                raise ReportedError([anotherUserUsingYourHash], 400)
+                raise ReportedError([anotherUserUsingYourHash])
             additionalInfo["message"] = anotherUserUsingYourHash
 
     def checkAndUpdateHash(self, form, user):

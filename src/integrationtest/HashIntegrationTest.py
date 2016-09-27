@@ -7,7 +7,7 @@ import time
 from integrationtest.helpers.CSRFMixin import CSRFMixin
 from integrationtest.helpers.UserTesting import UserTesting
 
-class HashTest(IntegrationTest, UserTesting, CSRFMixin):
+class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
 
     @test
     def a_logged_in_user_can_record_its_hash(self):
@@ -78,7 +78,8 @@ class HashTest(IntegrationTest, UserTesting, CSRFMixin):
             assurances=self.updateHashForUser(client,addDigest=False)
             self.assertEqual(assurances.keys(), [])
 
-    def updateHashForUser(self, client, assurance="test", addDigest=True):
+
+    def doUpdateHashForUser(self, client, assurance="test", addDigest=True, digest=None):
         resp = self.login(client)
         self.assertUserResponse(resp)
         user = User.getByEmail(self.userCreationEmail)
@@ -91,11 +92,17 @@ class HashTest(IntegrationTest, UserTesting, CSRFMixin):
         self.assertEqual(len(assurancesBefore), 1)
         self.setupRandom()
         csrf = self.getCSRF(client)
-        data = dict(
-            csrf_token=csrf)
+        data = dict(csrf_token=csrf)
         if addDigest:
-            data['digest'] = self.createHash()
+            if digest is None:
+                data['digest'] = self.createHash()
+            else:
+                data['digest'] = digest
         resp = client.post(config.BASE_URL + '/v1/users/me/update_hash', data=data)
+        return resp
+
+    def updateHashForUser(self, client, assurance="test", addDigest=True, digest=None):
+        resp = self.doUpdateHashForUser(client, assurance, addDigest, digest)
         self.assertEqual(200, resp.status_code)
         self.userAfter = User.getByEmail(self.userCreationEmail)
         assurances = Assurance.getByUser(self.userAfter)
@@ -106,6 +113,18 @@ class HashTest(IntegrationTest, UserTesting, CSRFMixin):
         with app.test_client() as client:
             assurances = self.updateHashForUser(client)
             self.assertEqual(len(assurances), 1)
+    @test
+    def error_message_on_hash_collision(self):
+        anotheruser = self.createUserWithCredentials().user
+        digest = self.createHash()
+        anotheruser.hash = digest
+        Assurance.new(anotheruser, "test", anotheruser)
+        anotheruser.save()
+
+        with app.test_client() as client:
+            resp = self.doUpdateHashForUser(client, digest=digest)
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["another user is using your hash"]}', resp.data)
 
     def a_hashgiven_assurance_is_created_when_a_hash_is_given(self):
         with app.test_client() as client:

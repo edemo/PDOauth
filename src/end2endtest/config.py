@@ -99,6 +99,21 @@ The Test machine
 </body></html>
 """
 
+    HASHCOLLISION_EMAIL_SUBJECT = "hash collision email"
+    HASHCOLLISION_EMAIL_BODY_TEXT = """Dear {0.name},
+Someone have tried to register with your hash with adatom.
+
+Sincerely,
+The Test machine
+"""
+    HASHCOLLISION_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+Someone have tried to register with your hash with adatom.<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
+"""
+
 testSignatureAllOne = "fd0afb360d2772e544a5d952c4b4d63f93bd2e1e3c9cbd316a7950afdf5be4f25cfdc63097023aa3ecd7062e28e367c7f197a2501ee9daa1755161e862b904f5"
 testSignatureAllTwo = "72bd4a1260f51aa6172862c1431e5e2537bf2d65ed74b9b76e4410760901f87cf892bb2621fa4d5d08e85a641ee8bc1026de8660caa61f4f206cd898c7ec6ef6"
 skipSlowTests = False
@@ -111,11 +126,14 @@ class FBUser(object):
         self.userid = userid
 
 facebookUser1 = FBUser(
-    "mag+tesztelek@magwas.rulez.org",
+    "hrynmco_carrierosen_1473330015@tfbnw.net",
+    #"mag+tesztelek@magwas.rulez.org",
     "Elek the tester",
-    "111507052513637")
+    "110746159383451")
+    #"111507052513637")
 facebookUser2 = FBUser(
-    "mag+elekne3@magwas.rulez.org",
+    "wvbhblz_wisemanman_1473330385@tfbnw.net",
+    #"mag+elekne3@magwas.rulez.org",
     "Elekne is tesztel",
     None)
 ca_certs = "src/end2endtest/server.crt"

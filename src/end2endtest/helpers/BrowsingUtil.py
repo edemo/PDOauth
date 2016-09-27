@@ -11,7 +11,6 @@ from FacebookUtil import FacebookUtil
 from Assertions import Assertions
 from SimpleActions import SimpleActions
 from ComplexProcedures import ComplexProcedures
-import sys
 
 class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexProcedures):
 

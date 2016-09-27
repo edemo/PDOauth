@@ -12,4 +12,4 @@ build:
     - tools/script
     - tools/commitdocs
   on_failure:
-    - rsync -e "ssh -p 22022" -ar shippable/ shippable@demokracia.rulez.org:/var/www/adadocs/PDOauth
+    - rsync -e "ssh -p 22022" -ar shippable/ shippable@demokracia.rulez.org:/var/www/adadocs/PDOauth/$BUILD_NUMBER
