@@ -23,8 +23,11 @@ class AppMap(db.Model, ModelUtils, CryptoUtils):
     def __init__(self, app, user):
         self.app = app
         self.user = user
-        self.userid = SHA512Hash(app.appid + user.userid).hexdigest()[:16]
+        self.userid = self.generateProxyId()
         self.can_email = False
+
+    def generateProxyId(self):
+        return CryptoUtils.randomAsciiString(14)
 
     def getEmail(self):
         return "{0}.{1}@{2}".format(

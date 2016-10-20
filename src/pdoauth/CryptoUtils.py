@@ -14,7 +14,8 @@ UNICODE_ASCII_CHARACTERS = (ascii_letters.decode('ascii') +  # @UndefinedVariabl
 
 class CryptoUtils(object):
 
-    def randomAsciiString(self, length):
+    @staticmethod
+    def randomAsciiString(length):
         return ''.join([random.choice(UNICODE_ASCII_CHARACTERS) for x in xrange(length)])  # @UnusedVariable
 
     def contentsOfFileNamedInConfig(self, confkey):
