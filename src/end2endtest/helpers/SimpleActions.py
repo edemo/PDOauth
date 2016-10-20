@@ -96,17 +96,10 @@ class SimpleActions(object):
     def tickCheckbox(self, elementId):
         self.logAction('<tickCheckbox fieldid="{0}">'.format(elementId))
         element = TE.driver.find_element_by_id(elementId)
-        element.send_keys(Keys.SPACE)
         print element
         print elementId
-        selected = False
-        for t in range(10):
-            time.sleep(1)
-            print "slept"
-            if element.is_selected():
-                selected = True
-                break
-        self.assertTrue(selected)
+        element.click()
+        self.assertTrue(element.is_selected())
             
 
 
