@@ -115,12 +115,13 @@ class Controller(
         self.removeUser(user)
         return self.simple_response(youAreDeregistered)
 
-    def isAnyoneHandAssurredOf(self, anotherUsers):
+    def getHandAssurredOf(self, anotherUsers):
+        who = list()
         for anotherUser in anotherUsers:
             for assurance in Assurance.getByUser(anotherUser):
                 if assurance not in [emailVerification]:
-                    return True
-        return False
+                    who.append(anotherUser)
+        return who
 
 
 
@@ -138,8 +139,10 @@ class Controller(
             return
         anotherUsers = User.getByDigest(digest)
         if anotherUsers:
-            if self.isAnyoneHandAssurredOf(anotherUsers):
-                self.sendHashCollisionMail(user)
+            anotherusers = self.getHandAssurredOf(anotherUsers)
+            if len(anotherusers):
+                for assuredUser in anotherusers:
+                    self.sendHashCollisionMail(assuredUser)
                 self.removeUser(user)
                 raise ReportedError([anotherUserUsingYourHash])
             additionalInfo["message"] = anotherUserUsingYourHash

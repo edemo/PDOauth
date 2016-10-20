@@ -65,7 +65,7 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.assertEqual(None, User.getByEmail(email))
 
     @test
-    def in_hash_collision_if_the_other_user_is_hand_assured_the_original_user_is_notified_in_email(self):
+    def in_hash_collision_if_the_other_user_is_hand_assured_the_assured_user_is_notified_in_email(self):
         self.controller.app = FakeApp()
         self.controller.mail = FakeMail()
         anotheruser = self.createUserWithCredentials().user
@@ -80,7 +80,7 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         with self.assertRaises(ReportedError):
             self.controller.checkHashInOtherUsers(user,additionalInfo,digest)
         message = self.controller.mail.outbox[0]
-        ed = EmailData(user.email, None, None, [])
+        ed = EmailData(anotheruser.email, None, None, [])
         self.assertEqual(message.body,config.Config.HASHCOLLISION_EMAIL_BODY_TEXT.format(ed))
         self.assertEqual(message.html,config.Config.HASHCOLLISION_EMAIL_BODY_HTML.format(ed))
-        self.assertEqual(message.recipients,[user.email])
+        self.assertEqual(message.recipients,[anotheruser.email])
