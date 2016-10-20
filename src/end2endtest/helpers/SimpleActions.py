@@ -5,6 +5,8 @@ import end2endtest.helpers.TestEnvironment as TE
 import sys
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import StaleElementReferenceException
+import time
+import unittest
 
 class element_to_be_useable(object):
     def __init__(self, locator):
@@ -93,7 +95,16 @@ class SimpleActions(object):
 
     def tickCheckbox(self, elementId):
         self.logAction('<tickCheckbox fieldid="{0}">'.format(elementId))
-        return TE.driver.find_element_by_id(elementId).send_keys(Keys.SPACE)
+        element = TE.driver.find_element_by_id(elementId)
+        element.send_keys(Keys.SPACE)
+        selected = False
+        for t in range(10):
+            time.sleep(1)
+            if element.is_selected():
+                selected = True
+                break
+        self.assertTrue(selected)
+            
 
 
     def click(self, fieldId):
