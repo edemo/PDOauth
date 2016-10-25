@@ -11,14 +11,14 @@ class AuthHeaderTest(PDUnitTest, UserUtil, AuthProviderUtil):
         self.app = self.createApp()
         self.setDefaultParams()
 
-    @test
-    def bad_authorization_header_yields_ReportedError(self):
+    
+    def test_bad_authorization_header_yields_ReportedError(self):
         headers = dict(Authorization='Oneword')
         self.controller.interface.set_request_context(headers=headers)
         self.assertRaises(ReportedError, self.controller.authenticateUserOrBearer)
 
-    @test
-    def good_authorization_header_yields_authenticated_user(self):
+    
+    def test_good_authorization_header_yields_authenticated_user(self):
         with app.test_client() as client:
             headers = dict(Authorization='Oneword')
             self.controller.interface.set_request_context(headers=headers)

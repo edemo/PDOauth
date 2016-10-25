@@ -1,4 +1,3 @@
-from urllib import urlencode
 from selenium.webdriver.common.by import By
 from pdoauth.models.User import User
 from test.helpers.RandomUtil import RandomUtil
@@ -7,19 +6,22 @@ import os
 from selenium.common.exceptions import TimeoutException
 import time
 from end2endtest import config
-from FacebookUtil import FacebookUtil
-from Assertions import Assertions
-from SimpleActions import SimpleActions
-from ComplexProcedures import ComplexProcedures
+from pdoauth.WebInterface import WebInterface
+from end2endtest.helpers.FacebookUtil import FacebookUtil
+from end2endtest.helpers.Assertions import Assertions
+from end2endtest.helpers.ComplexProcedures import ComplexProcedures
+from end2endtest.helpers.SimpleActions import SimpleActions
+import pdb
 
 class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexProcedures):
 
     def callOauthUri(self):
-        oauthUri = "{0}/v1/oauth2/auth?{1}".format(TE.backendUrl, urlencode({
+        oauthUri = WebInterface.parametrizeUri("{0}/v1/oauth2/auth".format(TE.backendUrl), {
                     "response_type":"code", 
                     "client_id":TE.app.appid, 
-                    "redirect_uri":TE.app.redirect_uri}))
+                    "redirect_uri":TE.app.redirect_uri})
         TE.driver.get(oauthUri)
+        pdb.set_trace()
         self.waitContentProviderLoginPage()
         uri = "{0}/static/login.html?{1}".format(TE.baseUrl, urlencode({"next":oauthUri}))
         self.assertEqual(uri, TE.driver.current_url)
@@ -54,10 +56,10 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
     def tearDown(self):
         test_method_name = self._testMethodName
         TE.driver.save_screenshot("shippable/%s.png" % test_method_name)
-        f=open("shippable/%s.log" % test_method_name,"w")
-        for entry in TE.driver.get_log('browser'):
-            f.write("%s\n"%(entry,))
-        f.close()
+        #f=open("shippable/%s.log" % test_method_name,"w")
+        #for entry in TE.driver.get_log('browser'):
+        #    f.write("%s\n"%(entry,))
+        #f.close()
         self.logOut()
         fbuser = User.getByEmail(config.facebookUser1.email)
         if fbuser:

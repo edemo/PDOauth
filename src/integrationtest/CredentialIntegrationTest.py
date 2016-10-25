@@ -6,7 +6,6 @@ from pdoauth.models.User import User
 from integrationtest.helpers.IntegrationTest import IntegrationTest, test
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.CSRFMixin import CSRFMixin
-from test.helpers.CryptoTestUtil import SPKAC
 
 class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
     def setUp(self):
@@ -14,9 +13,9 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         self.user = self.createUserWithCredentials().user
         self.cred=Credential.get('password', self.userCreationUserid)
 
-    @test
-    def credential_can_be_retrieved_by_type_and_identifier(self):
-        self.assertEquals(self.cred.user, self.user)
+    
+    def test_credential_can_be_retrieved_by_type_and_identifier(self):
+        self.assertEqual(self.cred.user, self.user)
 
     def addPasswordCredential(self, client, username=None, credentialtype=None, password=None, nofield=None):
         if username is None:
@@ -35,23 +34,23 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         resp = client.post(uri, data=data)
         return resp
 
-    @test
-    def a_logged_in_user_can_add_credential(self):
+    
+    def test_a_logged_in_user_can_add_credential(self):
         with app.test_client() as client:
             self.login(client)
             self.setupRandom()
             resp = self.addPasswordCredential(client)
             self.assertEqual(200, resp.status_code)
 
-    @test
-    def a_not_logged_in_user_cannot_add_credential(self):
+    
+    def test_a_not_logged_in_user_cannot_add_credential(self):
         with app.test_client() as client:
             self.setupRandom()
             resp = self.addPasswordCredential(client)
             self.assertEqual(403, resp.status_code)
 
-    @test
-    def the_added_credential_should_contain_credentialType(self):
+    
+    def test_the_added_credential_should_contain_credentialType(self):
         with app.test_client() as client:
             self.login(client)
             self.setupRandom()
@@ -64,15 +63,15 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertTrue(credAfter is None)
             self.assertCredentialErrorresponse(resp)
 
-    @test
-    def the_added_credential_should_contain_valid_credentialType(self):
+    
+    def test_the_added_credential_should_contain_valid_credentialType(self):
         with app.test_client() as client:
             self.login(client)
             resp = self.addPasswordCredential(client, credentialtype="invalid")
             self.assertCredentialErrorresponse(resp)
 
-    @test
-    def the_added_credential_should_contain_identifier(self):
+    
+    def test_the_added_credential_should_contain_identifier(self):
         with app.test_client() as client:
             self.login(client)
             self.setupRandom()
@@ -80,16 +79,16 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
-    @test
-    def the_added_credential_should_contain_valid_identifier(self):
+    
+    def test_the_added_credential_should_contain_valid_identifier(self):
         with app.test_client() as client:
             self.login(client)
             resp = self.addPasswordCredential(client,username="aaa")
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
-    @test
-    def the_added_credential_should_contain_secret(self):
+    
+    def test_the_added_credential_should_contain_secret(self):
         with app.test_client() as client:
             self.login(client)
             resp = self.addPasswordCredential(client,nofield="password")
@@ -97,8 +96,8 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual('{"errors": ["password: Field must be at least 8 characters long.", "password: password should contain lowercase", "password: password should contain uppercase", "password: password should contain digit"]}',
                  self.getResponseText(resp))
 
-    @test
-    def the_password_should_be_at_least_8_characters_long(self):
+    
+    def test_the_password_should_be_at_least_8_characters_long(self):
         with app.test_client() as client:
             self.login(client)
             self.setupRandom()
@@ -106,32 +105,32 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["password: Field must be at least 8 characters long."]}', self.getResponseText(resp))
 
-    @test
-    def the_password_should_contain_lowercase_letters(self):
+    
+    def test_the_password_should_contain_lowercase_letters(self):
         with app.test_client() as client:
             self.login(client)
             resp = self.addPasswordCredential(client,password="THIS P4SSWORD IS UPPERCASE")
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["password: password should contain lowercase"]}', self.getResponseText(resp))
 
-    @test
-    def the_password_should_contain_uppercase_letters(self):
+    
+    def test_the_password_should_contain_uppercase_letters(self):
         with app.test_client() as client:
             self.login(client)
             resp = self.addPasswordCredential(client,password="th1s p4ssw0rd 15 10w3rc453")
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["password: password should contain uppercase"]}', self.getResponseText(resp))
 
-    @test
-    def cannot_add_an_already_existing_identifier(self):
+    
+    def test_cannot_add_an_already_existing_identifier(self):
         with app.test_client() as client:
             self.login(client)
             resp = self.addPasswordCredential(client,username=self.userCreationUserid)
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["identifier: There is already a user with that username"]}', self.getResponseText(resp))
 
-    @test
-    def a_credential_can_be_deleted(self):
+    
+    def test_a_credential_can_be_deleted(self):
         with app.test_client() as client:
             self.login(client)
             user = User.getByEmail(self.userCreationEmail)
@@ -147,8 +146,8 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(200, resp.status_code)
             self.assertEqual('{"message": "credential removed"}', self.getResponseText(resp))
 
-    @test
-    def the_credential_is_actually_deleted(self):
+    
+    def test_the_credential_is_actually_deleted(self):
         with app.test_client() as client:
             self.login(client)
             user = User.getByEmail(self.userCreationEmail)
@@ -163,24 +162,8 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             client.post(config.BASE_URL + "/v1/remove_credential", data=data)
             self.assertFalse(Credential.get("facebook", credId))
 
-    @test
-    def you_can_delete_certificate_credential(self):
-        with app.test_client() as client:
-            self.login(client)
-            user = User.getByEmail(self.userCreationEmail)
-            data = dict(email=self.userCreationEmail, pubkey=SPKAC)
-            client.post(config.BASE_URL + "/v1/keygen", data=data)
-            certCredential = Credential.getByUser(user, 'certificate')
-            data = {
-                "csrf_token": self.getCSRF(client),
-                "credentialType": "certificate",
-                "identifier": certCredential.identifier,
-            }
-            client.post(config.BASE_URL + "/v1/remove_credential", data=data)
-            self.assertFalse(Credential.get("certificate", certCredential.identifier))
-
-    @test
-    def you_should_give_the_credentialType_for_credential_deletion(self):
+    
+    def test_you_should_give_the_credentialType_for_credential_deletion(self):
         with app.test_client() as client:
             self.login(client)
             credId = self.randString
@@ -192,8 +175,8 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(400, resp.status_code)
             self.assertCredentialErrorresponse(resp)
 
-    @test
-    def you_should_give_valid_credentialType_for_credential_deletion(self):
+    
+    def test_you_should_give_valid_credentialType_for_credential_deletion(self):
         with app.test_client() as client:
             self.login(client)
             credId = self.randString
@@ -206,8 +189,8 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(400, resp.status_code)
             self.assertCredentialErrorresponse(resp)
 
-    @test
-    def you_should_give_the_identifier_for_credential_deletion(self):
+    
+    def test_you_should_give_the_identifier_for_credential_deletion(self):
         with app.test_client() as client:
             self.login(client)
             data = {
@@ -218,8 +201,8 @@ class CredentialIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(400, resp.status_code)
             self.assertEqual('{"errors": ["identifier: Field must be between 4 and 250 characters long."]}', self.getResponseText(resp))
 
-    @test
-    def you_should_give_valid_identifier_for_credential_deletion(self):
+    
+    def test_you_should_give_valid_identifier_for_credential_deletion(self):
         with app.test_client() as client:
             self.login(client)
             user = User.getByEmail(self.userCreationEmail)

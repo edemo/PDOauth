@@ -17,16 +17,16 @@ class HashTest(Fixture,BrowsingUtil, UserUtil, CryptoTestUtil):
         self.obtainHash("11111111110", "Mother Test", "registration-form")
         self.assertHashFromFormEquals("registration-form", config.testSignatureAllOne)
 
-    @test
-    def you_can_obtain_the_hash_by_filling_in_your_personal_id_and_pushing_the_button_near_it(self):
+    
+    def test_you_can_obtain_the_hash_by_filling_in_your_personal_id_and_pushing_the_button_near_it(self):
         """
         In this case your web browser goes directly to anchor.edemokraciagep.org, and gets the hash for you.
         The SSO server never sees your personal id.
         """
         self.giveHash()
 
-    @test
-    def if_you_give_hash_in_registration_you_will_have_a_hashgiven_assurance(self):
+    
+    def test_if_you_give_hash_in_registration_you_will_have_a_hashgiven_assurance(self):
         self.goToLoginPage()
         self.switchToTab('register')
         mothername=self.createRandomUserId()
@@ -35,8 +35,8 @@ class HashTest(Fixture,BrowsingUtil, UserUtil, CryptoTestUtil):
         self.closeMessage()
         self.assertElementMatchesRe("me_Data", "van Titkos K\xf3d")
 
-    @test
-    def if_you_give_hash_after_registration_you_will_have_a_hashgiven_assurance(self):
+    
+    def test_if_you_give_hash_after_registration_you_will_have_a_hashgiven_assurance(self):
         self.goToLoginPage()
         self.switchToTab('register')
         mothername=self.createRandomUserId()
@@ -56,15 +56,15 @@ class HashTest(Fixture,BrowsingUtil, UserUtil, CryptoTestUtil):
         time.sleep(2)
         self.assertElementMatchesRe("me_Data", "van Titkos K\xf3d")
 
-    @test
-    def assurer_can_obtain_the_hash_by_filling_in_your_personal_id__mother_name_and_pushing_the_button_near_it(self):
+    
+    def test_assurer_can_obtain_the_hash_by_filling_in_your_personal_id__mother_name_and_pushing_the_button_near_it(self):
         self.loginWithPasswordAs(TE.assurerUser)
         self.switchToSection("assurer")
         self.obtainHash("22222222220", "Test Mother", "assurancing")
         self.wait_on_element_class(By.ID, 'assurance-giving_message', "given")
 
-    @test
-    def in_hash_collision_if_the_other_user_is_hand_assured_the_offender_receives_a_message(self):
+    
+    def test_in_hash_collision_if_the_other_user_is_hand_assured_the_offender_receives_a_message(self):
         anotheruser = self.createUserWithCredentials().user
         digest = self.createHash()
         anotheruser.hash = digest

@@ -57,8 +57,8 @@ class EmailUtil(UserUtil):
 
     def the_reset_link_is_in_the_reset_email(self):
         self._sendPasswordResetEmail()
-        text = unicode(self.outbox[0].html)
-        soup = BeautifulSoup(text)
+        text = self.outbox[0].html
+        soup = BeautifulSoup(text, "lxml")
         passwordResetLink = soup.find("a")['href']
         self.secret = passwordResetLink.split('secret=')[1]
         self.tempcred = Credential.getBySecret('email_for_password_reset',self.secret)
@@ -68,8 +68,8 @@ class EmailUtil(UserUtil):
         return re.search('href="([^"]*)', self.outbox[0].html).group(1)
 
     def assertEmailContains(self, thingToFind, message):
-        self.assertTrue(thingToFind in unicode(message.body))
-        self.assertTrue(thingToFind in unicode(message.html))
+        self.assertTrue(thingToFind in message.body)
+        self.assertTrue(thingToFind in message.html)
 
     def assertGotAnEmailContaining(self, thingToFind):
         message = self.mailer.mail.outbox[0]

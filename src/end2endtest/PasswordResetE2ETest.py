@@ -4,8 +4,7 @@ from end2endtest.helpers.BrowsingUtil import BrowsingUtil, TE
 
 class PasswordResetE2ETest(Fixture,BrowsingUtil):
 
-    @test
-    def password_can_be_reset_using_the_reset_link(self):
+    def test_password_can_be_reset_using_the_reset_link(self):
         password = "Ez3gyJelsz0"
         user = self.getAssurerUser()
         self.doPasswordResetWithNewPassword(password)

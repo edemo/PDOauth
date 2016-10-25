@@ -60,7 +60,7 @@ def main(argv=None): #pylint ignore=too-many-locals
     program_license = '''%s
 
   Created by Árpád Magosányi on %s.
-  Copyright 2015 Informatikusok az catchedException-demokráciáért. All rights reserved.
+  Copyright 2015 Informatikusok az e-demokráciáért. All rights reserved.
 
   Licensed under GNU GPL v3
 
@@ -98,7 +98,7 @@ USAGE
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###
         return 0
-    except Exception, catchedException:
+    except Exception as catchedException:
         if DEBUG or TESTRUN:
             raise catchedException
         indent = len(program_name) * " "
@@ -107,15 +107,15 @@ USAGE
         return 2
 
 def do_main(verbose, name, secret, redirectUri, assurances):
-    if verbose > 0:
+    if verbose and verbose > 0:
         print("registering application {0} with secret {1} at {2}".format(name, secret, redirectUri))
     app = Application.new(name, secret, redirectUri)
     for assurance in assurances:
         AppAssurance(app,assurance).save()
     if app is None:
-        print "already existing app with this name: {0}".format(name)
+        print("already existing app with this name: {0}".format(name))
         return 2
-    print "id of the app is: {0}".format(app.appid)
+    print("id of the app is: {0}".format(app.appid))
     return 0
 
 def theMain():

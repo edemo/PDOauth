@@ -75,7 +75,7 @@ class AuthProviderUtil(object):
         self.controller.interface.set_request_context(uri, newUri=True)
         resp = self.authProvider.auth_interface()
         data = self.controller.getParamsOfUri(resp.headers['Location'])
-        code = data['code']
+        code = data['code'][0]
         return code
 
     def callAuthInterface(self):
@@ -83,7 +83,7 @@ class AuthProviderUtil(object):
         return code
 
     def assertCorrectKeysInTokenReply(self, data):
-        keys = data.keys()
+        keys = set(data.keys())
         for key in 'access_token', 'token_type', 'expires_in', 'refresh_token':
             keys.remove(key)
         self.assertEqual(len(keys), 0)

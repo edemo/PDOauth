@@ -4,6 +4,7 @@ from flask import json
 from pdoauth.models.Credential import Credential
 from pdoauth.Messages import inactiveOrDisabledUser, badUserNameOrPassword,\
     cannotLoginToFacebook, youHaveToRegisterFirst
+import urllib
 
 class LoginHandling(object):
 
@@ -35,10 +36,11 @@ class LoginHandling(object):
 
     def checkIdAgainstFacebookMe(self, form):
         code = form.password.data
-        resp = self.facebookMe(code)
-        if 200 != resp.status:
-            raise ReportedError([cannotLoginToFacebook], 403)
-        data = json.loads(resp.data)
+        try:
+            resp = self.facebookMe(code)
+        except urllib.error.HTTPError as err:
+            raise ReportedError([cannotLoginToFacebook, err.read()], 403)
+        data = json.loads(resp)
         if data["id"] != form.identifier.data:
             raise ReportedError(["bad facebook id"], 403)
 

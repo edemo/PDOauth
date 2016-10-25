@@ -13,6 +13,8 @@ class Config(object):
     AUTHCODE_EXPIRY = 60
     WTF_CSRF_ENABLED = False
     MAIL_PORT = 1025
+    MAIL_SERVER = "127.0.0.1"
+    MAIL_DEBUG = True
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
     BASE_URL = "https://local.sso.edemokraciagep.org:8888"
     BACKEND_PATH = "/ada"

@@ -47,8 +47,8 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
     def prepareTokenInterfaceParameters(self, paramupdates, code):
         self.tokenParams['code'] = code
         self.tokenParams.update(paramupdates)
-        for key, value in self.tokenParams.items():
-            if value is None:
+        for key in list(self.tokenParams.keys()):
+            if self.tokenParams[key] is None:
                 del self.tokenParams[key]
 
     def callTokenInterface(self, paramupdates, code):

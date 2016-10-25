@@ -1,8 +1,7 @@
 from pdoauth.models.Assurance import Assurance
 from pdoauth.models.Credential import Credential
 from flask import json
-import urlparse
-import urllib
+import uritools
 class Responses(object):
 
     def errors_to_json(self, form):
@@ -27,8 +26,7 @@ class Responses(object):
 
     def as_dict(self, user, **kwargs):
         self.addUserDataToDict(user, kwargs)
-        ret = json.dumps(kwargs)
-        return self.make_response(ret,200)
+        return self.makeJsonResponse(kwargs, 200)
 
     def makeJsonResponse(self, descriptor,status=200):
         ret = json.dumps(descriptor)
@@ -41,24 +39,21 @@ class Responses(object):
         errdict = self.errors_to_json(form)
         return self.error_response(errdict, status)
 
+    def getParamsOfUri(self, url):
+        parts = uritools.urisplit(url)
+        return parts.getquerydict()
+        
     def build_url(self, base, additional_params=None):
-        url = urlparse.urlparse(base)
-        query_params = {}
-        query_params.update(urlparse.parse_qsl(url.query, True))
+        url = uritools.urisplit(base)
+        query_params = url.getquerydict()
         if additional_params is not None:
             query_params.update(additional_params)
-            for k, v in additional_params.iteritems():
+            for k, v in additional_params.items():
                 if v is None:
                     query_params.pop(k)
-    
-        return urlparse.urlunparse((url.scheme,
-                                    url.netloc,
-                                    url.path,
-                                    url.params,
-                                    urllib.urlencode(query_params),
-                                    url.fragment))
-
-    def getParamsOfUri(self, uri):
-        params = dict(urlparse.parse_qsl(urlparse.urlparse(uri).query, True))
-        return params
+        return uritools.uricompose(scheme=url.scheme,
+                                    host=url.host,
+                                    path=url.path,
+                                    query=query_params,
+                                    fragment=url.fragment)
 

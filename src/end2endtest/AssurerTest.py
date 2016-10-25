@@ -1,11 +1,12 @@
 from twatson.unittest_annotations import Fixture, test
 from helpers.BrowsingUtil import BrowsingUtil, TE
 from test.helpers.CryptoTestUtil import CryptoTestUtil
+import pdb
 
 class AssurerTest(Fixture,BrowsingUtil,CryptoTestUtil):
         
-    @test
-    def an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(self):
+    
+    def test_an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(self):
         self.goToLoginPage()
         personalId = "11111111110"
         motherName = self.mkRandomString(10)
@@ -17,8 +18,8 @@ class AssurerTest(Fixture,BrowsingUtil,CryptoTestUtil):
         self.waitForMessage2()
         self.assertPopupTextIs(expectedText)
 
-    @test
-    def an_assurer_can_get_user_information_using_the_users_email(self):
+    
+    def test_an_assurer_can_get_user_information_using_the_users_email(self):
         self.goToLoginPage()
         self.registerUser()
         self.logOut()

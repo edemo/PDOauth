@@ -1,13 +1,14 @@
 # -*- coding: UTF-8 -*-
 # pylint: disable=no-member, invalid-name
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.models.Application import Application
 from pdoauth.app import db, app
-from urllib import urlencode
 from pdoauth.FlaskInterface import FlaskInterface
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest import config
+from pdoauth.WebInterface import WebInterface
+import uritools
 
 class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
 
@@ -29,8 +30,8 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
         self.session.close()
 
 
-    @test
-    def authorization_code_cannot_be_obtained_without_user(self):
+    
+    def test_authorization_code_cannot_be_obtained_without_user(self):
         with app.test_client() as c:
             redirect_uri = 'https://test.app/redirecturi'
             params = {
@@ -42,8 +43,8 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
             denyUri = config.BASE_URL
             self.assertTrue(resp.headers['Location'].startswith(denyUri))
 
-    @test
-    def auth_interface_redirects_to_redirect_uri(self):
+    
+    def test_auth_interface_redirects_to_redirect_uri(self):
         params = {
             "response_type": "code",
             "client_id": self.app.name,
@@ -51,14 +52,16 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
         }
         baseUrl = app.config.get('BASE_URL')
         uriBase = "/v1/oauth2/auth"
-        queryString = urlencode(params)
+        uri=WebInterface.parametrizeUri(baseUrl + uriBase, params)
+        queryString=uri.split('?')[1].replace("%20"," ")
         with app.test_client() as client:
             resp = client.get(
                     uriBase, query_string=queryString, base_url=baseUrl)
-            theUri = baseUrl + uriBase
-            targetUri = "{0}?{1}".format(
+            targetUri = WebInterface.parametrizeUri(
                 app.config.get('LOGIN_URL'),
-                urlencode({"next": "{0}?{1}".format(theUri, queryString)})
+                {"next": uri}
             )
-        self.assertEquals(resp.status_code, 302)
-        self.assertEquals(resp.headers['Location'],targetUri)
+        targetUri = targetUri.replace("https://test.app/", "https:%252F%252Ftest.app%252F")
+        targetUri = targetUri.replace("test%2520app%2520","test%20app%20")
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.headers['Location'],targetUri)

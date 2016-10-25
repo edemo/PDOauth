@@ -5,8 +5,8 @@ from test.helpers.AppInfoUtil import AppInfoUtil
 
 class AppMapTest(AppInfoUtil):
 
-    @test
-    def proxy_id_is_not_created_deterministically(self):
+    
+    def test_proxy_id_is_not_created_deterministically(self):
         cred = self.createLoggedInUser()
         app = self.app
         mapentry = AppMap(app, cred.user)

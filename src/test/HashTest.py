@@ -12,8 +12,8 @@ from test import config
 from pdoauth.EmailHandling import EmailData
 
 class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
-    @test
-    def if_hash_is_same_no_assurances_deleted(self):
+    
+    def test_if_hash_is_same_no_assurances_deleted(self):
         digest = self.createHash()
         user = self.createUserWithCredentials().user
         data = dict(
@@ -26,8 +26,8 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.assertTrue("test" in assurances.keys())
         self.assertTrue("hashgiven" in assurances.keys())
 
-    @test
-    def if_hash_is_same_a_message_is_sent(self):
+    
+    def test_if_hash_is_same_a_message_is_sent(self):
         digest = self.createHash()
         user = self.createUserWithCredentials().user
         data = dict(
@@ -37,8 +37,8 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         resp = self.controller.checkAndUpdateHash(FakeForm(data), user)
         self.assertEqual(sameHash, resp['message'])
 
-    @test
-    def if_hash_is_same_but_empty__no_message(self):
+    
+    def test_if_hash_is_same_but_empty__no_message(self):
         digest = ""
         user = self.createUserWithCredentials().user
         data = dict(
@@ -48,8 +48,8 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         resp = self.controller.checkAndUpdateHash(FakeForm(data), user)
         self.assertEqual(dict(), resp)
         
-    @test
-    def in_hash_collision_if_the_other_user_is_hand_assured_the_user_is_deleted(self):
+    
+    def test_in_hash_collision_if_the_other_user_is_hand_assured_the_user_is_deleted(self):
         anotheruser = self.createUserWithCredentials().user
         digest = self.createHash()
         anotheruser.hash = digest
@@ -64,8 +64,8 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
             self.controller.checkHashInOtherUsers(user,additionalInfo,digest)
         self.assertEqual(None, User.getByEmail(email))
 
-    @test
-    def in_hash_collision_if_the_other_user_is_hand_assured_the_assured_user_is_notified_in_email(self):
+    
+    def test_in_hash_collision_if_the_other_user_is_hand_assured_the_assured_user_is_notified_in_email(self):
         self.controller.app = FakeApp()
         self.controller.mail = FakeMail()
         anotheruser = self.createUserWithCredentials().user

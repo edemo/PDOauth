@@ -37,7 +37,7 @@ class Assertions(object):
     def assertTextInPopupTitle(self, textToPresent):
         self.wait_on_element_text(By.ID, "PopupWindow_TitleDiv", textToPresent)
         body = self.observeField("PopupWindow_TitleDiv")
-        self.assertEquals(textToPresent,body)
+        self.assertEqual(textToPresent,body)
         
     def assertTextPresentInSuccessDiv(self, textToPresent):
         body = self.observeField("PopupWindow_SuccessDiv")
@@ -55,4 +55,4 @@ class Assertions(object):
     def assertElementMatches(self, fieldId, expectedRegEx):
         self.waitUntilElementEnabled(fieldId)
         body = self.observeField(fieldId)
-        self.assertEquals(body, expectedRegEx)
+        self.assertEqual(body, expectedRegEx)

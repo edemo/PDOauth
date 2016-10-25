@@ -17,10 +17,10 @@ import unittest
 class TestDeclaration( object ):
     declarations = {}
     def __init__( self, func, doc_string=None ):
-        if func.func_name.startswith( "test" ):
+        if func.__name__.startswith( "test" ):
             return
         func.__doc__ = doc_string or func.__doc__
-        fname = "test_%s" % func.func_name
+        fname = "test_%s" % func.__name__
         if not fname in TestDeclaration.declarations:
             TestDeclaration.declarations[ fname ] = func
 

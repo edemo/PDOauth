@@ -37,7 +37,7 @@ class User(db.Model, ModelUtils):
         if digest is not None:
             self.hash = digest
 
-        self.userid=unicode(uuid.uuid4())
+        self.userid=uuid.uuid4().hex
         self.active = False
         self.authenticated = False
 
@@ -51,6 +51,7 @@ class User(db.Model, ModelUtils):
     def is_active(self):
         return self.active
 
+    @property
     def is_authenticated(self):
         return self.authenticated
     

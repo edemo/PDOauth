@@ -1,6 +1,5 @@
 #pylint: disable=no-member
 from pdoauth.models.Credential import Credential
-import urlparse
 from pdoauth.ReportedError import ReportedError
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.CryptoUtils import CryptoUtils
@@ -8,12 +7,14 @@ from pdoauth.Messages import noCertificateGiven, errorInCert
 from pdoauth.LoginHandling import youHaveToRegisterFirst
 from OpenSSL import crypto
 from pdoauth.CertificateAuthority import CertificateAuthority
+import uritools
 
 class CertificateHandling(CryptoUtils):
 
     def getDigest(self, cert):
         try:
-            return cert.digest(b"sha512")
+            digest = cert.digest("sha512").decode('utf-8')
+            return digest
         except:
             raise ReportedError(errorInCert)
 
@@ -38,36 +39,14 @@ class CertificateHandling(CryptoUtils):
             self.checkAndUpdateHash(form,cred.user)
         self.loginUser(cred)
 
-    def extractCertFromForm(self, form):
-        spkacInput = form.pubkey.data
-        email = form.email.data
-        if email is not None:
-            commonName = email
-        else:
-            commonName = "someone"
-        cert = self.createCertFromSPKAC(spkacInput, commonName, email)
-        return cert
-
     def addHeadersToCertResponse(self, resp):
         resp.headers["Content-Type"] = "application/x-x509-user-cert"
         self.setCSRFCookie(resp)
 
-    def doKeygen(self, form):
-        try:
-            cert = self.extractCertFromForm(form)
-        except:
-            raise ReportedError(errorInCert)
-        user = self.getCurrentUser()
-        if user.is_authenticated():
-            self.addCertCredentialToUser(cert, user)
-        else:
-            self.registerAndLoginCertUser(form, cert)
-        return self.createCertResponse(cert)
-
     def getEmailFromQueryParameters(self):
         requestUrl = self.getRequestUrl()
-        parsed = urlparse.urlparse(requestUrl)
-        email = urlparse.parse_qs(parsed.query).get('email', None)
+        parsed = uritools.urisplit(requestUrl)
+        email = parsed.getquerydict().get('email')
         return email
 
 
@@ -120,7 +99,7 @@ class CertificateHandling(CryptoUtils):
         except Exception:
             raise ReportedError(errorInCert)
         user = self.getCurrentUser()
-        if user.is_authenticated():
+        if user.is_authenticated:
             self.addCertCredentialToUser(cert, user)
         else:
             self.registerAndLoginCertUser(form, cert)

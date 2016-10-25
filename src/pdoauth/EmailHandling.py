@@ -39,6 +39,7 @@ class EmailHandling(object):
             subject=self.getConfig(subjectCfg),
             sender=self.getConfig('SERVER_EMAIL_ADDRESS'))
         try:
+            self.app.logger.debug("host={0},port={1}".format(self.mail.server,self.mail.port))
             self.mail.send(msg)
         except SMTPException as e:
             if rmuser:

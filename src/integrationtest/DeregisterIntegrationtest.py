@@ -24,28 +24,28 @@ class DeregisterIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
                 self.secret = re.search(r'deregistration_secret=([^"]*)"', body).groups()[0]
         return resp
 
-    @test
-    def you_call_deregister_to_deregister(self):
+    
+    def test_you_call_deregister_to_deregister(self):
         resp = self._doDeregistration()
-        self.assertEquals(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
         self.assertEqual('{"message": "deregistration email has been sent"}', self.getResponseText(resp))
 
-    @test
-    def you_need_csrf_token_to_deregister(self):
+    
+    def test_you_need_csrf_token_to_deregister(self):
         resp = self._doDeregistration(False)
-        self.assertEquals(resp.status_code, 400)
+        self.assertEqual(resp.status_code, 400)
         self.assertEqual('{"errors": ["csrf_token: csrf validation error"]}', self.getResponseText(resp))
 
-    @test
-    def you_need_valid_csrf_token_to_deregister(self):
+    
+    def test_you_need_valid_csrf_token_to_deregister(self):
         resp = self._doDeregistration('invalid')
-        self.assertEquals(resp.status_code, 400)
+        self.assertEqual(resp.status_code, 400)
         self.assertEqual('{"errors": ["csrf_token: csrf validation error"]}', self.getResponseText(resp))
 
-    @test
-    def deregistration_needs_a_logged_in_user(self):
+    
+    def test_deregistration_needs_a_logged_in_user(self):
         resp = self._doDeregistration(nologin=True)
-        self.assertEquals(resp.status_code, 403)
+        self.assertEqual(resp.status_code, 403)
         self.assertEqual('{"errors": ["not logged in"]}', self.getResponseText(resp))
 
     def _doDeregisterDoit(self, client, csrf=None, secret=None, nologin=None):
@@ -57,50 +57,50 @@ class DeregisterIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         resp = client.post(config.BASE_URL + '/v1/deregister_doit', data=self.data)
         return resp
 
-    @test
-    def you_need_csrf_token_and_secret_for_deregister_doit(self):
+    
+    def test_you_need_csrf_token_and_secret_for_deregister_doit(self):
         self._doDeregistration()
         with app.test_client() as client:
             resp = self._doDeregisterDoit(client)
-            self.assertEquals(resp.status_code, 200)
+            self.assertEqual(resp.status_code, 200)
             self.assertEqual('{"message": "you are deregistered"}', self.getResponseText(resp))
 
-    @test
-    def you_need_secret_for_deregister_doit(self):
+    
+    def test_you_need_secret_for_deregister_doit(self):
         self._doDeregistration()
         with app.test_client() as client:
             resp = self._doDeregisterDoit(client,secret=False)
-            self.assertEquals(resp.status_code, 400)
+            self.assertEqual(resp.status_code, 400)
             self.assertEqual('{"errors": ["deregister_secret: Field must be at least 8 characters long.", "deregister_secret: secret should contain lowercase", "deregister_secret: secret should contain digit"]}', self.getResponseText(resp))
 
-    @test
-    def you_need_valid_csrf_token_for_deregister_doit(self):
+    
+    def test_you_need_valid_csrf_token_for_deregister_doit(self):
         self._doDeregistration()
         with app.test_client() as client:
             resp = self._doDeregisterDoit(client, csrf= "invalid")
-            self.assertEquals(resp.status_code, 400)
+            self.assertEqual(resp.status_code, 400)
             self.assertEqual('{"errors": ["csrf_token: csrf validation error"]}', self.getResponseText(resp))
 
-    @test
-    def deregistration_doit_needs_a_logged_in_user(self):
+    
+    def test_deregistration_doit_needs_a_logged_in_user(self):
         self._doDeregistration()
         with app.test_client() as client:
             resp = self._doDeregisterDoit(client, nologin=True)
-            self.assertEquals(resp.status_code, 403)
+            self.assertEqual(resp.status_code, 403)
             self.assertEqual('{"errors": ["not logged in"]}', self.getResponseText(resp))
 
-    @test
-    def you_need_deregister_secret_for_deregister_doit(self):
+    
+    def test_you_need_deregister_secret_for_deregister_doit(self):
         self._doDeregistration()
         with app.test_client() as client:
             resp = self._doDeregisterDoit(client, secret=False)
-            self.assertEquals(resp.status_code, 400)
+            self.assertEqual(resp.status_code, 400)
             self.assertEqual('{"errors": ["deregister_secret: Field must be at least 8 characters long.", "deregister_secret: secret should contain lowercase", "deregister_secret: secret should contain digit"]}', self.getResponseText(resp))
 
-    @test
-    def you_need_valid_deregister_secret_for_deregister_doit(self):
+    
+    def test_you_need_valid_deregister_secret_for_deregister_doit(self):
         self._doDeregistration()
         with app.test_client() as client:
             resp = self._doDeregisterDoit(client, secret=uuid4())
-            self.assertEquals(resp.status_code, 400)
+            self.assertEqual(resp.status_code, 400)
             self.assertEqual('{"errors": ["bad deregistration secret"]}', self.getResponseText(resp))

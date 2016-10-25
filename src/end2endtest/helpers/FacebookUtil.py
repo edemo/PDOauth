@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from end2endtest import config
 from pdoauth.models.AppMap import AppMap
 import time
+import pdb
 
 class FacebookUtil(object):
     def fillInFbPopUp(self, user=None):
@@ -40,6 +41,7 @@ class FacebookUtil(object):
 
     def handleFbRegistration(self, user=None, useEmail=True):
         self.switchToTab('register')
+        time.sleep(6)
         self.click("registration-form-method-selector-fb")
         self.handleFbLoginPage(user)
         self.waitLoginPage()

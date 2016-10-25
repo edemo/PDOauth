@@ -5,8 +5,7 @@ import end2endtest.helpers.TestEnvironment as TE
 import sys
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import StaleElementReferenceException
-import time
-import unittest
+from selenium.webdriver.firefox.webdriver import WebDriver as FIREFOXDRIVER
 
 class element_to_be_useable(object):
     def __init__(self, locator):
@@ -16,7 +15,7 @@ class element_to_be_useable(object):
         try:
             element = driver.find_element(*self.locator)
         except:
-            print sys.exc_info()
+            print(sys.exc_info())
             element = None
         if element:
             try:
@@ -96,9 +95,10 @@ class SimpleActions(object):
     def tickCheckbox(self, elementId):
         self.logAction('<tickCheckbox fieldid="{0}">'.format(elementId))
         element = TE.driver.find_element_by_id(elementId)
-        print element
-        print elementId
-        element.click()
+        if type(TE.driver) == FIREFOXDRIVER:
+            element.send_keys(Keys.SPACE)
+        else:
+            element.click()
         self.assertTrue(element.is_selected())
             
 
@@ -106,7 +106,6 @@ class SimpleActions(object):
     def click(self, fieldId):
         self.logAction('<click fieldid="{0}">'.format(fieldId))
         element = self.waitUntilElementEnabled(fieldId)
-        print element, element.tag_name.encode("utf-8"), element.id.encode("utf-8"), element.text.encode("utf-8")
         TE.driver.execute_script("""
             window.scrollTo(
                 0,

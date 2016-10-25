@@ -41,7 +41,10 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
         return self.get_authorization_code(**params)
 
     def get_authorization_code(self, response_type, client_id, redirect_uri, **params):
-        scope = params.get('scope', '')
+        client_id=client_id[0]
+        response_type=response_type[0]
+        redirect_uri=redirect_uri[0]
+        scope = params.get('scope', [''])[0]
         self.validateGetAuthorizationCodeParameters(response_type, client_id, redirect_uri, params, scope)
 
         code = self.generateToken()
@@ -57,7 +60,6 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
         self.ensureClientAuthParams(form)
         if form.scope.data is None:
             form.scope.data = ''
-
         if form.grant_type.data == "refresh_token":
             return self.refresh_token(form)
 
@@ -192,5 +194,5 @@ class AuthProvider(WebInterface, Responses, CryptoUtils):
             raise ReportedError(invalidScope, errorCode, uri=uri)
 
     def validate_access(self, uri):
-        if not self.getCurrentUser().is_authenticated():
+        if not self.getCurrentUser().is_authenticated:
             raise ReportedError(accessDenied, 302, uri=self.app.config.get('LOGIN_URL'))

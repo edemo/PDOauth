@@ -19,5 +19,5 @@ class PDUnitTest(Fixture):
         with self.assertRaises(ReportedError) as context:
             funct(*args)
         self.assertEqual(descriptor, context.exception.descriptor)
-        self.assertEquals(context.exception.status, status)
+        self.assertEqual(context.exception.status, status)
 

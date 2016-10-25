@@ -42,7 +42,7 @@ class CryptoTestUtil(object):
 
     def createHash(self):
         self.setupRandom()
-        return SHA512Hash(self.randString).hexdigest()
+        return SHA512Hash(bytes(self.randString,'UTF-8')).hexdigest()
 
     def sslLoginWithCert(self, cert):
         environ = dict(SSL_CLIENT_CERT=cert)
@@ -52,27 +52,20 @@ class CryptoTestUtil(object):
 
     def createUserAndLoginWithCert(self):
         certAttrs = self.getCertAttributes()
-        self.identifier = certAttrs.identifier
         cred = self.createUserWithCredentials()
-        secret = certAttrs.digest
-        Credential.new(cred.user, "certificate", self.identifier, secret)
+        Credential.new(cred.user, "certificate", certAttrs.identifier, certAttrs.digest)
         resp = self.sslLoginWithCert(certAttrs.cert)
         return resp
 
     def removeCertUser(self):
-        cred = Credential.get('certificate', TEST_USER_IDENTIFIER)
+        certAttrs = self.getCertAttributes()
+        cred = Credential.get('certificate', certAttrs.identifier)
         if cred:
             cred.rm()
             cred.user.rm()
 
-    def addCertCredential(self, email, user):
-        data = dict(email=email, pubkey=SPKAC)
-        self.controller.doKeygen(FakeForm(data))
-        cred = Credential.getByUser(user, 'certificate')
-        return cred
-
     def getCertFromResponse(self, resp):
-        certtext = self.getResponseText(resp)
+        certtext = self.getResponseBytes(resp)
         cert = crypto.load_certificate(crypto.FILETYPE_ASN1, certtext)
         return cert
 

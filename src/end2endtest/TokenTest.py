@@ -1,10 +1,10 @@
-from twatson.unittest_annotations import Fixture, test
+from twatson.unittest_annotations import Fixture
 import json
 from helpers.BrowsingUtil import BrowsingUtil, TE
-import urllib2
-import urllib
 from pdoauth.models.User import User
 from pdoauth.models.AppMap import AppMap
+from pdoauth.WebInterface import WebInterface
+import urllib
 
 class TokenTest(Fixture,BrowsingUtil):
 
@@ -14,9 +14,8 @@ class TokenTest(Fixture,BrowsingUtil):
             client_id=app.appid, 
             client_secret=app.secret, 
             redirect_uri=app.redirect_uri)
-        url = TE.backendUrl + "/v1/oauth2/token"
-        req = urllib2.urlopen(url, urllib.urlencode(fields))
-        resp = req.read()
+        url = WebInterface.parametrizeUri(TE.backendUrl + "/v1/oauth2/token", fields)
+        resp = urllib.urlopen(url).read()
         answer = json.loads(resp)
         return answer
 
@@ -29,16 +28,16 @@ class TokenTest(Fixture,BrowsingUtil):
         answer = self.getOauthToken(app)
         return answer
 
-    @test
-    def the_server_can_get_your_access_tokens_using_your_authorization_code(self):
+    
+    def test_the_server_can_get_your_access_tokens_using_your_authorization_code(self):
         answer = self.obtainAccessToken()
         self.assertEqual(answer['token_type'], "Bearer")
         self.assertEqual(answer['expires_in'], 3600)
         self.accessToken = answer['access_token']
         self.refreshToken = answer['refresh_token']
 
-    @test
-    def the_server_can_get_your_user_info_with_your_access_token(self):
+    
+    def test_the_server_can_get_your_user_info_with_your_access_token(self):
         accessToken = self.obtainAccessToken()['access_token']
         req = urllib2.Request(TE.backendUrl + "/v1/users/me")
         req.add_header('Authorization', 'Bearer {0}'.format(accessToken))

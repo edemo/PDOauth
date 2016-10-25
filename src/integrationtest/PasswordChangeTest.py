@@ -29,46 +29,46 @@ class PasswordChangeTest(IntegrationTest, UserTesting, CSRFMixin):
         resp = client.post(config.BASE_URL + "/v1/users/me/change_password", data=data)
         return resp
 
-    @test
-    def change_password_returns_200_and_a_success_message(self):
+    
+    def test_change_password_returns_200_and_a_success_message(self):
         with app.test_client() as client:
             self._preparePasswordChangeTest(client)
             resp = self._doPasswordChange(client)
-            self.assertEquals(resp.status_code, 200)
+            self.assertEqual(resp.status_code, 200)
             respdata = self.fromJson(resp)
             self.assertEqual(respdata['message'], 'password changed succesfully')
 
-    @test
-    def change_password_does_change_password(self):
+    
+    def test_change_password_does_change_password(self):
         with app.test_client() as client:
             self._preparePasswordChangeTest(client)
             self._doPasswordChange(client)
             cred = Credential.get('password', self.userCreationUserid)
-            self.assertEquals(cred.secret, CredentialManager.protect_secret(self.newPassword))
+            self.assertEqual(cred.secret, CredentialManager.protect_secret(self.newPassword))
 
-    @test
-    def change_password_needs_csrf(self):
+    
+    def test_change_password_needs_csrf(self):
         with app.test_client() as client:
             self._preparePasswordChangeTest(client)
             resp = self._doPasswordChange(client,csrf="badcsrf")
-            self.assertEquals(resp.status_code, 400)
+            self.assertEqual(resp.status_code, 400)
             respdata = self.fromJson(resp)
             self.assertEqual(respdata['errors'], [u'csrf_token: csrf validation error'])
 
-    @test
-    def change_password_for_self_needs_old_password(self):
+    
+    def test_change_password_for_self_needs_old_password(self):
         with app.test_client() as client:
             self._preparePasswordChangeTest(client)
             resp = self._doPasswordChange(client, oldPassword='skip')
-            self.assertEquals(resp.status_code, 400)
+            self.assertEqual(resp.status_code, 400)
             respdata = self.fromJson(resp)
             self.assertTrue(u'oldPassword: ' in respdata['errors'][0])
 
-    @test
-    def old_password_for_self_should_be_correct(self):
+    
+    def test_old_password_for_self_should_be_correct(self):
         with app.test_client() as client:
             self._preparePasswordChangeTest(client)
             resp = self._doPasswordChange(client, oldPassword=self.mkRandomPassword())
-            self.assertEquals(resp.status_code, 400)
+            self.assertEqual(resp.status_code, 400)
             respdata = self.fromJson(resp)
             self.assertEqual(respdata['errors'], ["old password does not match"])

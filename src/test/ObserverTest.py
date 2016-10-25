@@ -12,12 +12,12 @@ class TestObserver(object):
 
 class ObserverTest(PDUnitTest):
 
-    @test
-    def observer_functions_can_be_subscribed_for_an_event(self):
+    
+    def test_observer_functions_can_be_subscribed_for_an_event(self):
         TestObservable.subscribe(TestObserver.eventHandler,"event")
 
-    @test
-    def when_an_observable_emits_an_event_the_observer_gets_fired(self):
+    
+    def test_when_an_observable_emits_an_event_the_observer_gets_fired(self):
         TestObservable.subscribe(TestObserver.eventHandler, "event")
         observable = TestObservable()
         observable.notify("event")
