@@ -1,5 +1,5 @@
-from twatson.unittest_annotations import Fixture, test  # @UnusedImport
 from pdoauth import main  # @UnusedImport
+from unittest.case import TestCase
 
-class IntegrationTest(Fixture):
+class IntegrationTest(TestCase):
     pass

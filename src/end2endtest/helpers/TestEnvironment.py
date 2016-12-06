@@ -8,20 +8,27 @@ from pdoauth.models import User
 from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Assurance import Assurance
 from end2endtest import config
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-print "setting up test environment"
+print("setting up test environment")
 
 def getDriver():
     if os.environ.get("WEBDRIVER", None) == "chrome":
         os.environ['PATH'] += ":/usr/lib/chromium-browser"
         options = Options()
         options.add_argument("--no-sandbox")
-        theDriver = webdriver.Chrome(chrome_options = options)
+        d = DesiredCapabilities.CHROME
+        d['loggingPrefs'] = { 'browser':'ALL' }
+        theDriver = webdriver.Chrome(chrome_options = options, desired_capabilities=d)
     else:
+        d = DesiredCapabilities.FIREFOX
+        d['marionette'] = True
+        d['loggingPrefs'] = { 'browser':'ALL' }
         profile_directory = os.path.join(os.path.dirname(__file__),"..", "firefox-client-nossl-profile")
         profile = FirefoxProfile(profile_directory)
+        profile.set_preference('webdriver.log.file', '/tmp/firefox_console')
         profile.set_preference("security.default_personal_cert", "Select Automatically")
-        theDriver = webdriver.Firefox(firefox_profile=profile)
+        theDriver = webdriver.Firefox(firefox_profile=profile, capabilities=d)
     return theDriver
 
 def getApplication():
@@ -44,14 +51,15 @@ def getAssurerUser():
     user.userName=userName
     return user
         
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 baseUrl = config.Config.BASE_URL
 backendPath = config.Config.BACKEND_PATH
 backendUrl = baseUrl + backendPath
 sslBaseUrl = config.Config.SSL_LOGIN_BASE_URL
-loginPagePath = "/static/login.html"
+loginPagePath = "/static/fiokom.html"
 loginSSLUrl = sslBaseUrl + loginPagePath
 loginUrl = baseUrl + loginPagePath
+testUrl = baseUrl + "/static/test/test.html"
 driver = getDriver()
 app = getApplication()
 assurerUser = getAssurerUser()

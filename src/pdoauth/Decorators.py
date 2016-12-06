@@ -1,7 +1,10 @@
 from pdoauth.ReportedError import ReportedError
 from pdoauth.WebInterface import WebInterface
-import logging
 from pdoauth.Responses import Responses
+import sys
+from pdoauth.app import app
+import pdb
+import traceback
 
 class Decorators(WebInterface, Responses):
     def __init__(self, app, interface):
@@ -22,17 +25,25 @@ class Decorators(WebInterface, Responses):
             resp = func(*args, **kwargs)
         except ReportedError as e:
             resp = self.errorReport(e)
-        if not getattr(resp,"headers",False):
+        if "noheaders" == getattr(resp,"headers","noheaders"):
             resp = self.make_response(resp, 200)
         resp.headers['Cache-Control'] = "no-cache, no-store, must-revalidate"
         resp.headers['Pragma'] = "no-cache"
         resp.headers['Expires'] = "0"
         return resp
 
+    @staticmethod
+    def getRaisePoint():
+        exc_type, exc_value, exc_traceback = sys.exc_info() # @UnusedVariable
+        l = traceback.extract_tb(exc_traceback)[-1]
+        raisedAt = traceback.format_list([l])[0]
+        return raisedAt
+
     def errorReport(self, e):
-        logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))
+        raisedAt = self.getRaisePoint()
+        app.logger.info("status={0}, descriptor={1}, raised at={2}".format(e.status, e.descriptor, raisedAt))
         if e.status == 302:
-            response = self.make_response(e.descriptor, e.status)
+            response = self.makeJsonResponse(dict(errors=e.descriptor), e.status)
             response.headers['Location'] = '{0}?errors={1}'.format(e.uri,e.descriptor)
             return response
         resp = self.error_response(e.descriptor, e.status)
@@ -43,7 +54,7 @@ class Decorators(WebInterface, Responses):
         def DECORATOR(func):
             def validated(*args, **kwargs):
                 return self.runInterfaceFunc(func, args, kwargs, formClass, status, checkLoginFunction)
-            validated.func_name = func.func_name
+            validated.__name__ = func.__name__
             endpoint = options.pop('endpoint', None)
             self.app.add_url_rule(rule, endpoint, validated, **options)
             return validated

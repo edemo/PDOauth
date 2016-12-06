@@ -5,31 +5,38 @@
 		<script type='text/javascript' src="qunit-1.18.0.js"></script>
 		<script type='text/javascript' src="qunit-reporter-junit.js"></script>
 		<script type='text/javascript' src="blanket.min.js"></script>
-		<script type='text/javascript' src="debug.js"></script>
-		<script type='text/javascript' src="../js/script.js" data-cover></script>
-		<script type='text/javascript' src="../js/fb.js"></script>
+		<script type='text/javascript' src="test-framework.js"></script>
 		<link rel="stylesheet" href="qunit-1.18.0.css">
 		<link rel="stylesheet" href="main.css">
 		<style>
 #qunit-tests pre {
     word-break: break-word;
 }
+#qunit-tests li li.fail {
+    white-space: pre-wrap;
+}
 		</style>		
 	</head>
 
-	<body onload="test.main()" style="overflow: hidden;">
-		<header style="position:absolute; top:0; left:0; width:350px;">
+	<body onload="tfrwrk.main()" style="overflow: hidden;">
+		<header style="position:absolute; top:0; left:0; width:400px;">
 			<section>
-				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">index.html</button>
-				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">fiokom.html</button>
-				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">login.html</button>
-				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">user_howto.html</button>
-				<button onclick="document.getElementById('testarea').src='../'+this.innerHTML">about_us.html</button>
+				<button id="e2e" onclick="tfrwrk.loadTest(this.innerHTML)">e2e</button>
+				<button id="old-login" onclick="tfrwrk.loadTest(this.innerHTML)">old-login-utest</button>
+				<button id="login-utest" onclick="tfrwrk.loadTest(this.innerHTML)">login-utest</button>
+				<button id="index_html" onclick="tfrwrk.loadPage(this.innerHTML)">index.html</button>
+				<button id="fiokom_html" onclick="tfrwrk.loadPage(this.innerHTML)">fiokom.html</button>
+				<button id="login_html" onclick="tfrwrk.loadPage(this.innerHTML)">login.html</button>
+				<button id="user_howto_html" onclick="tfrwrk.loadPage(this.innerHTML)">user_howto.html</button>
+				<button id="about_us_html" onclick="tfrwrk.loadPage(this.innerHTML)">about_us.html</button>
 			</section>
+		</header>
+		<section style="position:absolute; top:80; width:400px; overflow:scroll; bottom:0;">
 			<div id="qunit"></div>
 			<div id="qunit-fixture"></div>
-		</header>
-		<section style="position:absolute; left:353; right:0; padding: 5px; bottom:0; top:0">
+			<div id="qunit-xml"></div>
+		</section>
+		<section style="position:absolute; left:403; right:0; padding: 5px; bottom:0; top:0">
 			<iframe name="testarea" id="testarea" style="width:100%;height:100%"></iframe>
 		</section>
 	</body>

@@ -8,7 +8,7 @@ class ComplexProcedures(Procedures):
         emailAddress = TE.assurerUser.email  # @UndefinedVariable
         self.initiatePasswordReset(emailAddress)
         cred = Credential.getByUser(TE.assurerUser, "email_for_password_reset")
-        passwordResetLink = TE.loginUrl + "?secret=" + cred.secret
+        passwordResetLink = TE.loginUrl + "?section=pwreset&secret=" + cred.secret
         self.clickPasswordResetLink(password, passwordResetLink)
 
     def registerFreshUser(self):

@@ -11,7 +11,6 @@ from pdoauth.EmailHandling import EmailHandling
 from pdoauth.LoginHandling import LoginHandling
 from pdoauth.CertificateHandling import CertificateHandling
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
-from urllib import urlencode
 from pdoauth.Responses import Responses
 from pdoauth.models.Application import Application
 from pdoauth.models.AppMap import AppMap
@@ -27,6 +26,7 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     emailVerifiedOK, invalidEmailAdress, passwordResetSent, theSecretHasExpired,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
     credentialRemoved, sameHash, verificationEmailSent
+import uritools
 
 class Controller(
         WebInterface, Responses, EmailHandling,
@@ -39,7 +39,7 @@ class Controller(
     def authenticateUserOrBearer(self):
         authHeader = self.getHeader('Authorization')
         current_user = self.getCurrentUser()
-        if current_user.is_authenticated():
+        if current_user.is_authenticated:
             self.setAuthUser(current_user.userid, current_user.userid)
         elif authHeader:
             headerSplit = authHeader.split(" ")
@@ -54,16 +54,16 @@ class Controller(
             raise ReportedError([noAuthorization], status=403)
 
     def redirectIfNotLoggedIn(self):
-        if not self.getCurrentUser().is_authenticated():
+        if not self.getCurrentUser().is_authenticated:
             resp = self.error_response([authenticationNeeded], 302)
             startUrl = self.app.config.get("LOGIN_URL")
-            nextArg = {"next":self.getRequest().url}
-            uri = "{1}?{0}".format(urlencode(nextArg), startUrl)
+            requestUrl = self.getRequest().url
+            uri = "{0}?next={1}".format(startUrl, uritools.uriencode(requestUrl).decode('utf-8'))
             resp.headers['Location'] = uri
             return resp
 
     def jsonErrorIfNotLoggedIn(self):
-        if not self.getCurrentUser().is_authenticated():
+        if not self.getCurrentUser().is_authenticated:
             raise ReportedError([notLoggedIn], status=403)
 
     def doLogin(self,form):
@@ -115,12 +115,13 @@ class Controller(
         self.removeUser(user)
         return self.simple_response(youAreDeregistered)
 
-    def isAnyoneHandAssurredOf(self, anotherUsers):
+    def getHandAssurredOf(self, anotherUsers):
+        who = list()
         for anotherUser in anotherUsers:
             for assurance in Assurance.getByUser(anotherUser):
                 if assurance not in [emailVerification]:
-                    return True
-        return False
+                    who.append(anotherUser)
+        return who
 
 
 
@@ -138,9 +139,12 @@ class Controller(
             return
         anotherUsers = User.getByDigest(digest)
         if anotherUsers:
-            if self.isAnyoneHandAssurredOf(anotherUsers):
+            anotherusers = self.getHandAssurredOf(anotherUsers)
+            if len(anotherusers):
+                for assuredUser in anotherusers:
+                    self.sendHashCollisionMail(assuredUser)
                 self.removeUser(user)
-                raise ReportedError([anotherUserUsingYourHash], 400)
+                raise ReportedError([anotherUserUsingYourHash])
             additionalInfo["message"] = anotherUserUsingYourHash
 
     def checkAndUpdateHash(self, form, user):
@@ -191,7 +195,7 @@ class Controller(
     def doGetByEmail(self, email):
         current_user = self.getCurrentUser()
         assurances = Assurance.getByUser(current_user)
-        if assurances.has_key('assurer'):
+        if 'assurer' in assurances:
             user = User.getByEmail(email)
             if user is None:
                 raise ReportedError([noSuchUser], status=404)
@@ -230,8 +234,8 @@ class Controller(
 
     def isAssuredToAddAssurance(self, assurances, neededAssurance):
         assurerAssurance = "assurer.{0}".format(neededAssurance)
-        isAssurer = assurances.has_key('assurer')
-        return isAssurer and assurances.has_key(assurerAssurance)
+        isAssurer = 'assurer' in assurances
+        return isAssurer and assurerAssurance in assurances
 
     def assureUserHaveTheGivingAssurancesFor(self, neededAssurance):
         assurances = Assurance.getByUser(self.getCurrentUser())
@@ -304,7 +308,7 @@ class Controller(
             return self.shownDataForUser(user)
         if self.doesUserAskForOthersData(authuser, authenticator):
             assurances = Assurance.getByUser(authuser)
-            if assurances.has_key('assurer'):
+            if 'assurer' in assurances:
                 return self.shownDataForAssurer(user)
             else:
                 raise ReportedError([noShowAuthorization], status=403)
@@ -315,8 +319,7 @@ class Controller(
         if userid == 'me':
             userid = authuser.userid
         data = self.getDataOfUserForAuthenticator(userid, authuser, authenticator)
-        ret = json.dumps(data)
-        return self.make_response(ret,200)
+        return self.makeJsonResponse(data)
 
     def checkEmailverifyCredential(self, cred):
         if cred is None:
@@ -405,5 +408,4 @@ class Controller(
             ANCHOR_URL = self.getConfig('ANCHOR_URL'),
             FACEBOOK_APP_ID = self.getConfig('FACEBOOK_APP_ID'),
         )
-        ret = json.dumps(data)
-        return self.make_response(ret,200)
+        return self.makeJsonResponse(data,200)

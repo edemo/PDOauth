@@ -1,11 +1,18 @@
+all:
+	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
+
 install: static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-junit.js static/blanket.min.js bootstrap-3 jquery
 
-checkall: install alltests xmldoc
+checkall: install tests integrationtests end2endtest xmldoc
+
+checkmanual: install alltests xmldoc
+
+alltests: tests integrationtests end2endtest
 
 realclean:
 	rm -rf PDAnchor; git clean -fdx
 testenv:
-	docker run -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master
+	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master
 
 static/qunit-1.18.0.js:
 	curl http://code.jquery.com/qunit/qunit-1.18.0.js -o static/qunit-1.18.0.js
@@ -28,9 +35,8 @@ jquery:
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
-alltests: tests integrationtests 
 
-onlyend2endtest: install testsetup runanchor runserver runemail testsetup waitbeforebegin firefoxtest
+onlyend2endtest: install testsetup runanchor runserver runemail waitbeforebegin chrometest firefoxtest
 
 waitbeforebegin:
 	sleep 10
@@ -42,10 +48,10 @@ runanchor: PDAnchor
 	make -C PDAnchor runserver
 
 firefoxtest:
-	PYTHONPATH=src python -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
+	PYTHONPATH=src python3 -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
 
 chrometest:
-	PYTHONPATH=src WEBDRIVER=chrome python -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
+	PYTHONPATH=src WEBDRIVER=chrome python3 -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
 
 end2endtest: onlyend2endtest killall
 
@@ -62,19 +68,21 @@ killemail:
 	ps ax |grep DebuggingServer |grep -v grep |awk '{print $$1}' |xargs kill
 
 integrationtests: testsetup
-	PYTHONPATH=src python-coverage run -m unittest discover -v -f -s src/integrationtest -p "*.py"
+	PYTHONPATH=src python3-coverage run -m unittest discover -v -f -s src/integrationtest -p "*.py"
 
 tests: testsetup
-	PYTHONPATH=src python-coverage run -m unittest discover -v -f -s src/test -p "*.py"
+	PYTHONPATH=src python3-coverage run -m unittest discover -v -f -s src/test -p "*.py"
 
 testsetup:
-	rm -f /tmp/pdoauth.db; touch /tmp/pdoauth.db; make dbupgrade ; mkdir -p doc/screenshots
+	psql -d template1 -c "drop database root"
+	sudo -u postgres psql -d template1 -c "create database root owner root"
+	make dbupgrade ; mkdir -p doc/screenshots
 
 dbmigrate:
-	PYTHONPATH=src:src/test python src/manage.py db migrate
+	PYTHONPATH=src:src/test python3 src/manage.py db migrate
 
 dbupgrade:
-	PYTHONPATH=src:src/test python src/manage.py db upgrade
+	PYTHONPATH=src:src/test python3 src/manage.py db upgrade
 
 handtest: testsetup runemail runserver
 
@@ -89,7 +97,7 @@ killanchor:
 xmldoc: doc/html/commitlog.html doc/xml/doc.xml doc/html/documentation.html doc/html/coverage
 
 doc/xml/doc.xml: doc/xml/commitlog.xml doc/xml/buildinfo.xml doc/xml
-	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
+	PYTHONPATH=src:src/test:src/doc pydoctor src --html-writer=MyWriter.MyWriter --html-output=doc/xml
 
 doc/xml/commitlog.xml: doc/xml
 	(echo "<commitlog>";git log --pretty=format:'<commit id="%h" author="%an" date="%ad">%f</commit>'|cat;echo "</commitlog>")|sed 's/-/ /g' >doc/xml/commitlog.xml
@@ -122,7 +130,7 @@ doc/html/documentation.docbook: lib/saxon9he.jar doc/xml/intermediate.xml doc/ht
 	java -jar lib/saxon9he.jar -xsl:src/doc/todocbook.xsl -s:doc/xml/intermediate.xml >doc/html/documentation.docbook
 
 doc/html/coverage:
-	python-coverage html -d doc/html/coverage src/pdoauth/*.py src/pdoauth/*/*.py
+	python3-coverage html -d doc/html/coverage src/pdoauth/*.py src/pdoauth/*/*.py
 
 doc/static/docbook.css: static/docbook.css
 	mkdir -p doc/static; cp static/docbook.css doc/static/docbook.css

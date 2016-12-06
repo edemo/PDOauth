@@ -47,11 +47,14 @@
 					break;
 				default:
 			}
+		window.traces.push("main end")
 	}
 	
 	PageScript.prototype.initialise = function(text) {
 		var keygenform = document.getElementById("registration-keygenform")
-		keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+		keygenform = document.getElementById("add-ssl-credential-keygenform")
+		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
 
 		// waiting for gettext loads po files
 		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
@@ -272,9 +275,17 @@
 	    self.ajaxpost("/v1/users/me/update_hash", data, self.changeHashCallback)
 	}	
 	
-	PageScript.prototype.changeHashCallback = function(text) {
-		self.get_me()
-		self.viewChangeHashContainer()
+	PageScript.prototype.changeHashCallback = function(status,text,xml) {
+		if (status==200) { 
+			self.get_me()
+			self.viewChangeHashContainer()
+		}
+		else {
+			var data = JSON.parse(text);
+			var errs = self.processErrors(data);
+			self.displayMsg(errs);	
+		}
+
 	}
 	
 	PageScript.prototype.viewChangeHashForm = function() {
@@ -296,20 +307,23 @@
 	PageScript.prototype.parseSettings = function(data) {
 
 		var sslForm='\
-		<form target="ssl" id="add-ssl-credential-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">\
+		<form target="ssl" id="add-ssl-credential-keygenform" method="post" action="'+self.QueryString.uris.BACKEND_PATH+'/v1/keygen" enctype="application/x-x509-user-cert">\
 			<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>\
-			<input id="add-ssl-credential_createuser_input" type="checkbox" name="createUser" value="true" style="display: none">\
+			<input id="add-ssl-credential_createuser_input" type="checkbox" name="createUser" value="false" style="display: none">\
 			<input type="text" id="add-ssl-credential_email_input"  name="email" value="'+data.email+'" style="display: none">\
 		</form>'
 				
 		var result = '\
 		<table>\
-			<trid="change-email-form_container>\
+			<tr id="change-email-form_container">\
 				<td nowrap><b>'+_('Email address:')+'</b></td>\
 				<td id="email-change">\
-					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off">\
+					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" onkeyup="javascript:pageScript.emailChangeInput_onkeyup()">\
 				</td>\
-				<td class="button-container"><a onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a></td>\
+				<td class="button-container">\
+					<a onclick="javascript:pageScript.emailChangeEditButton_onclick()" class="btn btn_ fa fa-edit"></a>\
+					<a id="changeEmil_saveButton" onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save inactive" title="'+_("save")+'"></a>\
+				</td>\
 			</tr>\
 			<tr id="change-hash-form_hash-container">\
 				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
@@ -317,7 +331,8 @@
 					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
 				</td>\
 				<td class="button-container">\
-					<a onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
+					<a id="viewChangeHashForm" onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
+					<a onclick="javascript:pageScript.deleteHash()" class="btn btn_ fa fa-trash"></a>\
 				</td>\
 			</tr>\
 			<tr id="change-hash-form_hash-changer" style="display: none;">\
@@ -325,9 +340,9 @@
 				<td>\
 					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
 					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
-					<button class="button" type="button" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
+					<button class="button" type="button" id="create_hash_here" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
 					<a href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
-						<button class="button" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
+						<button class="button" id="create_hash_myself" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
 					</a>\
 					<div id="change-hash-form_code-generation-input" class="form">\
 						<div class="bordered">\
@@ -335,13 +350,13 @@
 							<input type="text" placeholder="" id="change-hash-form_predigest_input" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
 							<label for="mothername">'+_("Mother's name")+':</label>\
 							<input type="text" placeholder="" id="change-hash-form_predigest_mothername" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
-							<button type="button" onclick="pageScript.digestGetter(\'change-hash-form\').getDigest()">'+_("Generate")+'</button>\
+							<button type="button" id="change-hash-form_getDigestButton" onclick="pageScript.digestGetter(\'change-hash-form\').getDigest()">'+_("Generate")+'</button>\
 							<div class="monitor" id="change-hash-form_predigest_monitor"></div>\
 						</div>\
 					</div>\
 				</td>\
 				<td class="button-container">\
-					<a onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a id="changeHash" onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
 					<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
 				</td>\
 			</tr>\
@@ -498,5 +513,23 @@
 		self.displayMsg(self.processErrors(JSON.parse(text)))
 	}
 	
+	PageScript.prototype.deleteHash = function() {
+		document.getElementById("change-hash-form_digest_input").value=""
+		self.changeHash();
+	}
+	
+	PageScript.prototype.emailChangeEditButton_onclick = function() {
+		document.getElementById("ChangeEmailAddressForm_email_input").value=""
+		document.getElementById("ChangeEmailAddressForm_email_input").placeholder=_("Type your new email address here")
+	}
+	
+	PageScript.prototype.emailChangeInput_onkeyup = function(){
+		rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
+		var inputField = document.getElementById("ChangeEmailAddressForm_email_input")
+		if (rgx_email.exec(inputField.value)) {
+			self.activateButton("changeEmil_saveButton", self.changeEmailAddress)
+		}
+		else self.deactivateButton("changeEmil_saveButton")
+	}
 }()
 )

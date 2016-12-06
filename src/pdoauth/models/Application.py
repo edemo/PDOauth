@@ -38,7 +38,7 @@ class Application(db.Model, ModelUtils):
         return ret
 
     def __init__(self, name, secret, redirect_uri):
-        self.appid=unicode(uuid.uuid4())
+        self.appid=uuid.uuid4().hex
         self.name = name
         self.secret = secret
         if not redirect_uri.startswith("https://"):

@@ -1,26 +1,8 @@
-  window.fbAsyncInit = function() {
-	  FB.init({
-	    appId      : '517253418423328',
-	    cookie     : true,  // enable cookies to allow the server to access 
-	                        // the session
-	    xfbml      : true,  // parse social plugins on this page
-	    version    : 'v2.2' // use version 2.2
-	  });
-  };
-
-  // Load the SDK asynchronously
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-
 function FaceBook(pageScript) {
 	this.pageScript = pageScript;
 	this.doc = document;
 	this.loggedIn = false;
+	window.traces.push("fb constructor")
 }
 
   function statusChangeCallback(response) {
@@ -50,6 +32,33 @@ function FaceBook(pageScript) {
     });
   }
 
+	console.log("fbinit_")
+  	FaceBook.prototype.fbinit = function() {
+		var appID
+		if (appID=this.pageScript.QueryString.uris.FACEBOOK_APP_ID) {
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId      : appID,
+					cookie     : true,  // enable cookies to allow the server to access 
+								// the session
+					xfbml      : true,  // parse social plugins on this page
+					version    : 'v2.2' // use version 2.2
+				});
+				window.traces.push("fbAsyncInit")
+			};
+
+  // Load the SDK asynchronously
+			(function(d, s, id) {
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) return;
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/en_US/sdk.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+		}
+		window.traces.push("fbinit")
+	}
+		console.log("fbinit__")
   
 	FaceBook.prototype.credentialCallBack = function(response) {
   		var self = this;
@@ -135,6 +144,7 @@ function FaceBook(pageScript) {
 	}
 	
 	FaceBook.prototype.registerCallBack = function(response) {
+		window.traces.push("registerCallBack begin")
 		var self = this;
 		if (response.status === 'connected') {
 			FB.api('/me', function(response2) {
@@ -142,15 +152,18 @@ function FaceBook(pageScript) {
 				document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
 				if (response2.email) document.getElementById("registration-form_email_input").value=response2.email;
 				else document.getElementById("registration-form_email_input").placeholder="Add meg az emailcímed!";
+				window.traces.push("registerCallBack callback")
 		    });
 		} else {
 		  self.pageScript.displayMsg({ title:_("Facebook error"), error:_('Can not login with your Facebook account') })
 		} 
+		window.traces.push("registerCallBack end")
 	}
 	
 	FaceBook.prototype.fbregister = function() {
 		var self = this;
 		self.getFbUser(self.registerCallBack);
+		window.traces.push("fbRegister")
 	}
 
 facebook = new FaceBook(pageScript)

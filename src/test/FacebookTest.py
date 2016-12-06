@@ -1,8 +1,9 @@
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.ReportedError import ReportedError
 from test.helpers.FakeInterFace import FakeForm
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.UserUtil import UserUtil
+import urllib
 
 class FacebookTest(PDUnitTest, UserUtil):
 
@@ -24,13 +25,13 @@ class FacebookTest(PDUnitTest, UserUtil):
     def tearDown(self):
         PDUnitTest.tearDown(self)
 
-    @test
-    def facebook_login_needs_facebook_id_and_access_token(self):
+    
+    def test_facebook_login_needs_facebook_id_and_access_token(self):
         resp = self.controller.doLogin(self.form)
         self.assertEqual(resp.status_code, 200)
 
-    @test
-    def facebook_login_needs_facebook_id_as_username(self):
+    
+    def test_facebook_login_needs_facebook_id_as_username(self):
         form = self.form
         form.set('identifier','badid')
         with self.assertRaises(ReportedError) as e:
@@ -38,25 +39,27 @@ class FacebookTest(PDUnitTest, UserUtil):
         self.assertEqual(e.exception.status, 403)
         self.assertEqual(e.exception.descriptor,["bad facebook id"])
 
-    @test
-    def facebook_login_needs_correct_access_token_as_password(self):
+    
+    def test_facebook_login_needs_correct_access_token_as_password(self):
         self.form.set('password',self.mkRandomPassword())
         with self.assertRaises(ReportedError) as e:
             self.controller.doLogin(self.form)
         self.assertEqual(e.exception.status, 403)
-        self.assertEqual(e.exception.descriptor, ["Cannot login to facebook"])
+        self.assertTrue("Cannot login to facebook" in e.exception.descriptor)
 
-    @test
-    def facebook_login_needs_facebook_credentials_as_registered(self):
+    
+    def test_facebook_login_needs_facebook_credentials_as_registered(self):
         self.cred.rm()
         with self.assertRaises(ReportedError) as e:
             self.controller.doLogin(self.form)
         self.assertEqual(e.exception.status, 403)
         self.assertEqual(e.exception.descriptor,["You have to register first"])
 
-    @test
-    def facebookMe_reaches_facebook(self):
-        resp = FlaskInterface().facebookMe("code")
-        self.assertEqual(400, resp.status)
-        self.assertTrue(resp.headers.has_key('x-fb-rev'))
-        self.assertTrue('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190' in resp.data)
+    
+    def test_facebookMe_reaches_facebook(self):
+        try:
+            FlaskInterface().facebookMe("code")
+        except urllib.error.HTTPError as err:
+            self.assertEqual(400, err.code)
+            self.assertTrue('x-fb-rev' in err.headers)
+            self.assertTrue('{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190' in str(err.read()))
