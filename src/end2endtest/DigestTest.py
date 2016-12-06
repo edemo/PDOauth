@@ -1,9 +1,8 @@
-from twatson.unittest_annotations import Fixture
 from end2endtest.helpers.BrowsingUtil import BrowsingUtil
 from test.helpers.CryptoTestUtil import CryptoTestUtil
-from pdoauth.app import mail
+from unittest.case import TestCase
 
-class DigestTest(Fixture, BrowsingUtil, CryptoTestUtil):
+class DigestTest(TestCase, BrowsingUtil, CryptoTestUtil):
 
     
     def test_you_can_add_a_digest_as_a_logged_in_user(self):

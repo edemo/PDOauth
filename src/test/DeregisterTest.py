@@ -1,7 +1,7 @@
 from pdoauth.models.User import User
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.FakeInterFace import FakeForm
 import time
 from uuid import uuid4

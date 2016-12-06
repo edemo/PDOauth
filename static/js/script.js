@@ -1,3 +1,5 @@
+window.traces = new Array();
+
 function PageScript(test) {
 	var self = this
 	test=test || { debug: false, uribase: "" }
@@ -73,6 +75,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		// filling hrefs of anchors
 		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
 		self.initialise()
+		window.traces.push('initialized')
 	}
 	
 	PageScript.prototype.ajaxBase = function(callback) {
@@ -645,7 +648,8 @@ console.log("logoutCallback")
 	    	digest: digest
 	    }
 		data.password=secret;
-		
+		window.traces.push(data)
+		window.traces.push("register")
 	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
 	}
 	

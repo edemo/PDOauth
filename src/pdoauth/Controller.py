@@ -57,9 +57,8 @@ class Controller(
         if not self.getCurrentUser().is_authenticated:
             resp = self.error_response([authenticationNeeded], 302)
             startUrl = self.app.config.get("LOGIN_URL")
-            nextUrl = self.getRequest().url
-            nextArg = {"next":nextUrl}
-            uri = WebInterface.parametrizeUri(startUrl, nextArg)
+            requestUrl = self.getRequest().url
+            uri = "{0}?next={1}".format(startUrl, uritools.uriencode(requestUrl).decode('utf-8'))
             resp.headers['Location'] = uri
             return resp
 

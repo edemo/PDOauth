@@ -1,4 +1,4 @@
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from pdoauth.app import app
 from integrationtest import config
 from pdoauth.models.User import User

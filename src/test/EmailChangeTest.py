@@ -1,4 +1,4 @@
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from pdoauth.models import Credential
 from test.helpers.EmailUtil import EmailUtil
 import time

@@ -1,12 +1,11 @@
-from twatson.unittest_annotations import Fixture, test
-
 from pdoauth.Authorisation import Authorisation, OnlyEmptyScopeIsAllowed
 import time
 from pdoauth.app import app
+from unittest.case import TestCase
 
 EXPIRY = app.config.get('AUTHCODE_EXPIRY')
 
-class AuthorisatonTest(Fixture):
+class AuthorisatonTest(TestCase):
 
     def setUp(self):
         self.authorisation_can_be_created_with_client_id__code_and_scope()

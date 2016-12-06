@@ -1,5 +1,6 @@
 # encoding: utf-8
 import os
+import logging
 
 def absolutePathForEnd2EndResource(fileName):
     return os.path.join(os.path.dirname(__file__), "..", "end2endtest", fileName)
@@ -8,6 +9,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = False
+    LOGLEVEL = logging.DEBUG
     SECRET_KEY = 'test secret'
     SQLALCHEMY_DATABASE_URI = "postgres:///root"
     AUTHCODE_EXPIRY = 60

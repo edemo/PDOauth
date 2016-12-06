@@ -1,12 +1,12 @@
 #pylint: disable=no-member
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.Application import Application,\
     NotUnique, NonHttpsRedirectUri
 from pdoauth.app import db
 from pdoauth.models.AppAssurance import AppAssurance
 from pdoauth.models.AppMap import AppMap
+from unittest.case import TestCase
 
-class ApplicationTest(Fixture):
+class ApplicationTest(TestCase):
 
     def setUp(self):
         AppMap.query.delete() #@UndefinedVariable

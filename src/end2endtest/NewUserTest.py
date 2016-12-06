@@ -1,7 +1,7 @@
-from twatson.unittest_annotations import Fixture
 from end2endtest.helpers.BrowsingUtil import BrowsingUtil
+from unittest.case import TestCase
 
-class NewUserTest(BrowsingUtil, Fixture):
+class NewUserTest(BrowsingUtil, TestCase):
 
     def setUp(self):
         self.setupRandom()

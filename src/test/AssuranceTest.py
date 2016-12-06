@@ -1,5 +1,5 @@
 #pylint: disable=line-too-long
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.UserUtil import UserUtil
 from pdoauth.models.Assurance import Assurance
 from test.helpers.FakeInterFace import FakeForm

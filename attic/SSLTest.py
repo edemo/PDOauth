@@ -1,10 +1,9 @@
-from twatson.unittest_annotations import Fixture, test
 from helpers.BrowsingUtil import BrowsingUtil,TE
 import time
 from selenium.webdriver.common.by import By
 import sys
 
-class SSLTest(Fixture,BrowsingUtil):
+class SSLTest(TestCase,BrowsingUtil):
 
     def registerWithSSL(self):
         self.goToLoginPage()

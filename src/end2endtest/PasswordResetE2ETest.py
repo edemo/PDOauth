@@ -1,8 +1,8 @@
-from twatson.unittest_annotations import Fixture, test
 from end2endtest.helpers.BrowsingUtil import BrowsingUtil, TE
+from unittest.case import TestCase
 
 
-class PasswordResetE2ETest(Fixture,BrowsingUtil):
+class PasswordResetE2ETest(TestCase,BrowsingUtil):
 
     def test_password_can_be_reset_using_the_reset_link(self):
         password = "Ez3gyJelsz0"

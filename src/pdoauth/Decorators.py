@@ -1,7 +1,10 @@
 from pdoauth.ReportedError import ReportedError
 from pdoauth.WebInterface import WebInterface
-import logging
 from pdoauth.Responses import Responses
+import sys
+from pdoauth.app import app
+import pdb
+import traceback
 
 class Decorators(WebInterface, Responses):
     def __init__(self, app, interface):
@@ -29,8 +32,16 @@ class Decorators(WebInterface, Responses):
         resp.headers['Expires'] = "0"
         return resp
 
+    @staticmethod
+    def getRaisePoint():
+        exc_type, exc_value, exc_traceback = sys.exc_info() # @UnusedVariable
+        l = traceback.extract_tb(exc_traceback)[-1]
+        raisedAt = traceback.format_list([l])[0]
+        return raisedAt
+
     def errorReport(self, e):
-        logging.log(logging.INFO, "status={0}, descriptor={1}".format(e.status, e.descriptor))
+        raisedAt = self.getRaisePoint()
+        app.logger.info("status={0}, descriptor={1}, raised at={2}".format(e.status, e.descriptor, raisedAt))
         if e.status == 302:
             response = self.makeJsonResponse(dict(errors=e.descriptor), e.status)
             response.headers['Location'] = '{0}?errors={1}'.format(e.uri,e.descriptor)

@@ -7,7 +7,6 @@ from pdoauth.app import db, app
 from pdoauth.FlaskInterface import FlaskInterface
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest import config
-from pdoauth.WebInterface import WebInterface
 import uritools
 
 class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
@@ -45,23 +44,18 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
 
     
     def test_auth_interface_redirects_to_redirect_uri(self):
-        params = {
-            "response_type": "code",
-            "client_id": self.app.name,
-            "redirectUri": self.app.redirect_uri
-        }
         baseUrl = app.config.get('BASE_URL')
         uriBase = "/v1/oauth2/auth"
-        uri=WebInterface.parametrizeUri(baseUrl + uriBase, params)
-        queryString=uri.split('?')[1].replace("%20"," ")
+        uri="{0}{1}?redirectUri={2}&response_type=code&client_id={3}".format(
+            baseUrl,
+            uriBase,
+            uritools.uriencode(self.app.redirect_uri).decode('utf-8'),
+            self.app.name,
+            )
+        targetUri = "{0}?next={1}".format(app.config.get('LOGIN_URL'), uritools.uriencode(uri).decode('utf-8'))
+        queryString=uri.split('?')[1]
         with app.test_client() as client:
             resp = client.get(
                     uriBase, query_string=queryString, base_url=baseUrl)
-            targetUri = WebInterface.parametrizeUri(
-                app.config.get('LOGIN_URL'),
-                {"next": uri}
-            )
-        targetUri = targetUri.replace("https://test.app/", "https:%252F%252Ftest.app%252F")
-        targetUri = targetUri.replace("test%2520app%2520","test%20app%20")
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.headers['Location'],targetUri)

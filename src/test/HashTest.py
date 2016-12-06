@@ -1,4 +1,4 @@
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.UserUtil import UserUtil
 from test.helpers.FakeInterFace import FakeForm, FakeMail, FakeApp
 from test.helpers.CryptoTestUtil import CryptoTestUtil

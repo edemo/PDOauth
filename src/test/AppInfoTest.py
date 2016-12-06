@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from test.helpers.PDUnitTest import test
 from pdoauth.models.AppMap import AppMap
 from pdoauth.models.Application import Application
 from test.helpers.AppInfoUtil import AppInfoUtil

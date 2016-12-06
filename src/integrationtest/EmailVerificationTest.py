@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User

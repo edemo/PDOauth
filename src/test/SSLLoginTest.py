@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long
 from pdoauth.models.Credential import Credential
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 
 from test.config import Config
 from test.helpers.FakeInterFace import FakeMail

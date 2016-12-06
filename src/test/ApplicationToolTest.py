@@ -1,13 +1,13 @@
 #pylint: disable=no-member
-from twatson.unittest_annotations import Fixture, test
 from test.helpers.RandomUtil import RandomUtil
 from pdoauth.models.Application import Application
 from pdoauth.models.AppAssurance import AppAssurance
 import applicationtool
 import sys
 import io
+from unittest.case import TestCase
 
-class ApplicationToolTest(Fixture, RandomUtil):
+class ApplicationToolTest(TestCase, RandomUtil):
 
     def runApplicationToolWithParameters(self,parameters):
         out=io.StringIO()

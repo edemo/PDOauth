@@ -11,7 +11,6 @@ from end2endtest.helpers.FacebookUtil import FacebookUtil
 from end2endtest.helpers.Assertions import Assertions
 from end2endtest.helpers.ComplexProcedures import ComplexProcedures
 from end2endtest.helpers.SimpleActions import SimpleActions
-import pdb
 
 class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexProcedures):
 
@@ -21,17 +20,15 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
                     "client_id":TE.app.appid, 
                     "redirect_uri":TE.app.redirect_uri})
         TE.driver.get(oauthUri)
-        pdb.set_trace()
         self.waitContentProviderLoginPage()
-        uri = "{0}/static/login.html?{1}".format(TE.baseUrl, urlencode({"next":oauthUri}))
-        self.assertEqual(uri, TE.driver.current_url)
 
     def waitForWindow(self):
         timeCount = 1;
         while (len(TE.driver.window_handles) == 1 ):
             timeCount += 1
+            TE.driver.execute_script("return window.traces")
             time.sleep(1)
-            if ( timeCount > 5 ): 
+            if ( timeCount > 40 ): 
                 raise TimeoutException()
         
     def swithToPopUp(self):

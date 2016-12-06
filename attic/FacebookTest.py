@@ -1,9 +1,10 @@
 # coding: UTF-8
-from twatson.unittest_annotations import Fixture
 from end2endtest.helpers.BrowsingUtil import BrowsingUtil
 import config
+from unittest.case import TestCase
+import pdb
 
-class FacebookTest(Fixture, BrowsingUtil):
+class FacebookTest(TestCase, BrowsingUtil):
 
     
     def test_it_is_possible_to_register_with_facebook(self):

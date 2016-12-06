@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long
 # encoding: utf-8
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from pdoauth.models.Credential import Credential
 from pdoauth.models import User
 from pdoauth.ReportedError import ReportedError

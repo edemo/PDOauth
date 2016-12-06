@@ -1,4 +1,4 @@
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.FakeInterFace import FakeForm
 from Crypto.Hash.SHA256 import SHA256Hash
 from pdoauth.models.Credential import Credential

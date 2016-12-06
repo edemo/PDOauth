@@ -1,4 +1,4 @@
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from pdoauth.Decorators import Decorators
 from test.helpers.FakeInterFace import FakeApp, FakeInterface
 from pdoauth.ReportedError import ReportedError

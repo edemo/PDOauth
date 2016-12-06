@@ -1,9 +1,9 @@
-from twatson.unittest_annotations import Fixture
 from pdoauth.models.TokenInfoByAccessKey import TokenInfoByAccessKey
 import time
 from pdoauth.models.KeyData import KeyData
+from unittest.case import TestCase
 
-class TokenInfoByAccessKeyTest(Fixture):
+class TokenInfoByAccessKeyTest(TestCase):
 
     def setUp(self):
         TokenInfoByAccessKey.query.delete()  # @UndefinedVariable

@@ -2,7 +2,7 @@ from pdoauth.app import app
 from flask_login import logout_user
 from integrationtest import config
 from integrationtest.helpers.UserTesting import UserTesting
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 
 class RegistrationIntegrationTest(IntegrationTest, UserTesting):
 

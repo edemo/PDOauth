@@ -1,7 +1,7 @@
-from twatson.unittest_annotations import Fixture, test
 from pdoauth.models.KeyData import KeyData
+from unittest.case import TestCase
 
-class KeyDataTest(Fixture):
+class KeyDataTest(TestCase):
 
     def setUp(self):
         KeyData('client_id2', 'user_id2', 'access_key2', 'refresh_key2', 'authorization_code2')

@@ -3,7 +3,7 @@ from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
 from integrationtest.helpers.UserTesting import UserTesting
 from pdoauth.CertificateAuthority import CertificateAuthority
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 
 pkcs10 = """
 -----BEGIN CERTIFICATE REQUEST-----

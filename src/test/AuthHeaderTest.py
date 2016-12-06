@@ -1,4 +1,4 @@
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.UserUtil import UserUtil
 from test.helpers.AuthProviderUtil import AuthProviderUtil
 from pdoauth.ReportedError import ReportedError

@@ -1,5 +1,4 @@
 #coding=UTF-8
-from twatson.unittest_annotations import Fixture, test
 from end2endtest.helpers.BrowsingUtil import BrowsingUtil, TE
 import config
 from selenium.webdriver.common.by import By
@@ -7,8 +6,9 @@ import time
 from pdoauth.models import Assurance
 from test.helpers.UserUtil import UserUtil
 from test.helpers.CryptoTestUtil import CryptoTestUtil
+from unittest.case import TestCase
 
-class HashTest(Fixture,BrowsingUtil, UserUtil, CryptoTestUtil):
+class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
 
     def giveHash(self):
         self.goToLoginPage()

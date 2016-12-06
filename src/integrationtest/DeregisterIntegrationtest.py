@@ -1,4 +1,4 @@
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from pdoauth.app import app, mail
 from integrationtest import config
 from integrationtest.helpers.UserTesting import UserTesting

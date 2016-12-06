@@ -42,8 +42,9 @@ class Responses(object):
     def getParamsOfUri(self, url):
         parts = uritools.urisplit(url)
         return parts.getquerydict()
-        
-    def build_url(self, base, additional_params=None):
+    
+    @staticmethod
+    def build_url(base, additional_params=None):
         url = uritools.urisplit(base)
         query_params = url.getquerydict()
         if additional_params is not None:

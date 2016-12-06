@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from pdoauth.CredentialManager import CredentialManager
 from test.helpers.UserUtil import UserUtil
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from pdoauth.models.User import User
 from test.helpers.CryptoTestUtil import CryptoTestUtil
 from pdoauth.ReportedError import ReportedError

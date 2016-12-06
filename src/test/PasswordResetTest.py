@@ -1,5 +1,5 @@
 #pylint: disable=no-member
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 import re
 from pdoauth.models.Credential import Credential
 import time

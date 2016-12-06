@@ -1,11 +1,11 @@
 #pylint: disable=unused-import, star-args
-from twatson.unittest_annotations import Fixture, test  # @UnusedImport
 from pdoauth.Controller import Controller
 from pdoauth.ReportedError import ReportedError
 from test.helpers.FakeInterFace import FakeInterface, FakeApp, FakeMail
 from pdoauth import main  # @UnusedImport
+from unittest.case import TestCase
 
-class PDUnitTest(Fixture):
+class PDUnitTest(TestCase):
     def setUp(self):
         self.setUpController()
 

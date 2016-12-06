@@ -51,7 +51,7 @@ def getAssurerUser():
     user.userName=userName
     return user
         
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 baseUrl = config.Config.BASE_URL
 backendPath = config.Config.BACKEND_PATH
 backendUrl = baseUrl + backendPath

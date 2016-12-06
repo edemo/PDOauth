@@ -1,9 +1,9 @@
 # pylint: disable=line-too-long
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.FakeInterFace import FakeForm
 from pdoauth.models.Credential import Credential
 from Crypto.Hash.SHA256 import SHA256Hash
-from test.helpers.CryptoTestUtil import CryptoTestUtil, SPKAC
+from test.helpers.CryptoTestUtil import CryptoTestUtil
 from pdoauth.models.Assurance import Assurance
 from pdoauth.models.User import User
 import time

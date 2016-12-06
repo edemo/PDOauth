@@ -3,7 +3,7 @@ from test import config
 from pdoauth.app import app
 from pdoauth.models.Credential import Credential
 from pdoauth.models.User import User
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest.helpers.CSRFMixin import CSRFMixin
 

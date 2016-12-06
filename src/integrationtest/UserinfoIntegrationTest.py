@@ -1,4 +1,4 @@
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from integrationtest.helpers.UserTesting import UserTesting, app
 import json
 from pdoauth.models.Application import Application

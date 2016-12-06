@@ -47,6 +47,7 @@
 					break;
 				default:
 			}
+		window.traces.push("main end")
 	}
 	
 	PageScript.prototype.initialise = function(text) {
@@ -314,7 +315,7 @@
 				
 		var result = '\
 		<table>\
-			<trid="change-email-form_container>\
+			<tr id="change-email-form_container">\
 				<td nowrap><b>'+_('Email address:')+'</b></td>\
 				<td id="email-change">\
 					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" onkeyup="javascript:pageScript.emailChangeInput_onkeyup()">\

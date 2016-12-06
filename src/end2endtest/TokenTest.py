@@ -1,12 +1,11 @@
-from twatson.unittest_annotations import Fixture
-import json
 from helpers.BrowsingUtil import BrowsingUtil, TE
 from pdoauth.models.User import User
 from pdoauth.models.AppMap import AppMap
 from pdoauth.WebInterface import WebInterface
-import urllib
+from unittest.case import TestCase
+import requests
 
-class TokenTest(Fixture,BrowsingUtil):
+class TokenTest(TestCase,BrowsingUtil):
 
     def getOauthToken(self, app):
         code = TE.driver.current_url.split('=')[1]
@@ -15,8 +14,10 @@ class TokenTest(Fixture,BrowsingUtil):
             client_secret=app.secret, 
             redirect_uri=app.redirect_uri)
         url = WebInterface.parametrizeUri(TE.backendUrl + "/v1/oauth2/token", fields)
-        resp = urllib.urlopen(url).read()
-        answer = json.loads(resp)
+        print(url)
+        resp = requests.post(url, fields, verify=False)
+        print(resp.text)
+        answer = resp.json()
         return answer
 
     def obtainAccessToken(self):
@@ -39,10 +40,10 @@ class TokenTest(Fixture,BrowsingUtil):
     
     def test_the_server_can_get_your_user_info_with_your_access_token(self):
         accessToken = self.obtainAccessToken()['access_token']
-        req = urllib2.Request(TE.backendUrl + "/v1/users/me")
-        req.add_header('Authorization', 'Bearer {0}'.format(accessToken))
-        resp = urllib2.urlopen(req).read()
-        answer = json.loads(resp)
+        url = TE.backendUrl + "/v1/users/me"
+        headers = {'Authorization': 'Bearer {0}'.format(accessToken)}
+        resp = requests.get(url, headers=headers, verify=False)
+        answer = resp.json()
         user = User.getByEmail(self.userCreationEmail)
         appMapEntry = AppMap.get(TE.app, user)
         self.assertEqual(answer['email'], appMapEntry.getEmail())

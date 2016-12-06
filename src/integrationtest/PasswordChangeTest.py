@@ -5,7 +5,7 @@ from integrationtest import config
 
 from integrationtest.helpers.CSRFMixin import CSRFMixin
 from integrationtest.helpers.UserTesting import UserTesting
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 
 class PasswordChangeTest(IntegrationTest, UserTesting, CSRFMixin):
 

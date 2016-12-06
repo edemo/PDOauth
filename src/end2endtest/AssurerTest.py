@@ -1,9 +1,8 @@
-from twatson.unittest_annotations import Fixture, test
 from helpers.BrowsingUtil import BrowsingUtil, TE
 from test.helpers.CryptoTestUtil import CryptoTestUtil
-import pdb
+from unittest.case import TestCase
 
-class AssurerTest(Fixture,BrowsingUtil,CryptoTestUtil):
+class AssurerTest(TestCase,BrowsingUtil,CryptoTestUtil):
         
     
     def test_an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(self):

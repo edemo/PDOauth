@@ -97,7 +97,7 @@ killanchor:
 xmldoc: doc/html/commitlog.html doc/xml/doc.xml doc/html/documentation.html doc/html/coverage
 
 doc/xml/doc.xml: doc/xml/commitlog.xml doc/xml/buildinfo.xml doc/xml
-	PYTHONPATH=src:src/test pydoctor src --html-writer=doc.MyWriter.MyWriter --html-output=doc/xml
+	PYTHONPATH=src:src/test:src/doc pydoctor src --html-writer=MyWriter.MyWriter --html-output=doc/xml
 
 doc/xml/commitlog.xml: doc/xml
 	(echo "<commitlog>";git log --pretty=format:'<commit id="%h" author="%an" date="%ad">%f</commit>'|cat;echo "</commitlog>")|sed 's/-/ /g' >doc/xml/commitlog.xml

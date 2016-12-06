@@ -11,4 +11,4 @@ pyoauth2-shift
 selenium
 pyOpenSSL
 uritools
-
+psycopg2
