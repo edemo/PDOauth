@@ -1,5 +1,5 @@
 from test.helpers.EmailUtil import EmailUtil
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from integrationtest.helpers.UserTesting import UserTesting
 from pdoauth.app import app
 from integrationtest.helpers.CSRFMixin import CSRFMixin
@@ -11,14 +11,14 @@ from pdoauth.models.User import User
 
 class EmailChangeIntegrationTest(IntegrationTest, UserTesting, EmailUtil, CSRFMixin):
 
-    @test
-    def logged_in_user_can_initiate_changing_email_address(self):
+    
+    def test_logged_in_user_can_initiate_changing_email_address(self):
         with app.test_client() as client:
             resp = self.initiateEmailChange(client)
             self.assertEmailChangeIsInitiated(resp)
 
-    @test
-    def email_change_can_be_confirmed(self):
+    
+    def test_email_change_can_be_confirmed(self):
         with app.test_client() as client:
             resp = self.initiateEmailChange(client)
             self.assertEmailChangeIsInitiated(resp)

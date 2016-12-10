@@ -1,7 +1,7 @@
-from flask_wtf.form import Form
+from flask_wtf import FlaskForm
 from wtforms.fields.simple import TextField
 from pdoauth.forms import csrfValidator
 
-class CSRFForm(Form):
+class CSRFForm(FlaskForm):
     csrf_token = TextField('csrf_token', validators = csrfValidator)
 

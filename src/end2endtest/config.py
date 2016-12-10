@@ -1,5 +1,6 @@
 # encoding: utf-8
 import os
+import logging
 
 def absolutePathForEnd2EndResource(fileName):
     return os.path.join(os.path.dirname(__file__), "..", "end2endtest", fileName)
@@ -8,11 +9,14 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = False
+    LOGLEVEL = logging.DEBUG
     SECRET_KEY = 'test secret'
     SQLALCHEMY_DATABASE_URI = "postgres:///root"
     AUTHCODE_EXPIRY = 60
     WTF_CSRF_ENABLED = False
     MAIL_PORT = 1025
+    MAIL_SERVER = "127.0.0.1"
+    MAIL_DEBUG = True
     SERVER_EMAIL_ADDRESS = "test@edemokraciagep.org"
     BASE_URL = "https://local.sso.edemokraciagep.org:8888"
     BACKEND_PATH = "/ada"

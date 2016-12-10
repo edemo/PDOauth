@@ -11,7 +11,7 @@ credentialTypes = ['password', 'facebook', 'certificate']
 credErr = '"{0}: {1}: {2}."'.format(credentialTypeString,credErrString, ", ".join(credentialTypes))
 
 def csrfCheck(self, field):
-    if not session.has_key('csrf_token'):
+    if 'csrf_token' not in session:
         raise ValidationError('csrf validation error')
     sessionid = session['csrf_token']
     if not sessionid == field.data:

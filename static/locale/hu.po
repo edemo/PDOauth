@@ -314,7 +314,7 @@ msgid "magyar"
 msgstr "magyar igazolás"
 
 msgid "emailverification"
-msgstr "ellenőrzött email-cím igazolás"
+msgstr "ellenőrzött email-cím"
 
 msgid "assurer"
 msgstr "Tanusító"

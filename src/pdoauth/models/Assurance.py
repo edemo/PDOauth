@@ -46,7 +46,7 @@ class Assurance(db.Model, ModelUtils):
         assurances = cls.listByUser(user)
         r = {}
         for ass in assurances:
-            if not r.has_key(ass.name):
+            if not ass.name in r:
                 r[ass.name] = []
             r[ass.name].append(ass.as_dict())
         return r

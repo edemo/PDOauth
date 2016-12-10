@@ -5,6 +5,8 @@ import end2endtest.helpers.TestEnvironment as TE
 import sys
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.firefox.webdriver import WebDriver as FIREFOXDRIVER
+import time
 
 class element_to_be_useable(object):
     def __init__(self, locator):
@@ -14,7 +16,7 @@ class element_to_be_useable(object):
         try:
             element = driver.find_element(*self.locator)
         except:
-            print sys.exc_info()
+            print(sys.exc_info())
             element = None
         if element:
             try:
@@ -61,6 +63,7 @@ class SimpleActions(object):
     currentProcess = list()
 
     def logAction(self,element):
+        print(element)
         TE.logfile.write(element)
         TE.logfile.write("\n")
     
@@ -93,13 +96,16 @@ class SimpleActions(object):
 
     def tickCheckbox(self, elementId):
         self.logAction('<tickCheckbox fieldid="{0}">'.format(elementId))
-        return TE.driver.find_element_by_id(elementId).send_keys(Keys.SPACE)
-
+        element = TE.driver.find_element_by_id(elementId)
+        if type(TE.driver) == FIREFOXDRIVER:
+            element.send_keys(Keys.SPACE)
+        else:
+            element.click()
+        self.assertTrue(element.is_selected())
 
     def click(self, fieldId):
         self.logAction('<click fieldid="{0}">'.format(fieldId))
         element = self.waitUntilElementEnabled(fieldId)
-        print element, element.tag_name.encode("utf-8"), element.id.encode("utf-8"), element.text.encode("utf-8")
         TE.driver.execute_script("""
             window.scrollTo(
                 0,
@@ -147,7 +153,19 @@ class SimpleActions(object):
     def waitForMessage2(self):
         return  WebDriverWait(TE.driver, 10).until(element_to_be_useable((By.ID,"myModal")))
 
-    def waitLoginPage(self):
+    def waitLoginPage(self, maxCount=40):
+        count = 0
+        traces = self.getTraces()
+        while (traces is None) or (not ( 
+                ("initialized" in traces) and
+                ("main end" in traces) and
+                ("fbAsyncInit" in traces))):
+            if count > maxCount:
+                TE.driver.save_screenshot("shippable/pageTimeout.png")
+                self.assertFalse("timeout waiting for javascript state")
+            time.sleep(1)
+            traces = self.getTraces()
+            count += 1
         return self.waitUntilElementEnabled("nav-bar-aboutus")
 
     def waitContentProviderLoginPage(self):
@@ -177,3 +195,8 @@ class SimpleActions(object):
     def goToSSLLoginPage(self):
         TE.driver.get(TE.loginSSLUrl)
         self.waitLoginPage()
+
+    def getTraces(self):
+        traces = TE.driver.execute_script("return window.traces")
+        print(traces)
+        return traces

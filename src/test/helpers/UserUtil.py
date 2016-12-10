@@ -40,7 +40,7 @@ class UserUtil(ResponseInfo, RandomUtil):
         self.setupRandom()
         self.cred = self.createUserWithCredentials()
         self.cred.user.authenticated = True
-        self.controller.loginInFramework(self.cred)
+        self.assertTrue(self.controller.loginInFramework(self.cred))
         return self.cred
 
     def deleteUser(self, user):
@@ -49,11 +49,11 @@ class UserUtil(ResponseInfo, RandomUtil):
         user.rm()
 
     def assertUserResponse(self, resp):
-        self.assertEquals(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
         data = self.fromJson(resp)
         self.assertTrue(len(data['assurances'].keys()) < 2)
         self.assertTrue("@example.com" in data['email'])
-        self.assertTrue(data.has_key('userid'))
+        self.assertTrue('userid' in data)
         return data
 
     def showUserByCurrentUser(self, ouserid):

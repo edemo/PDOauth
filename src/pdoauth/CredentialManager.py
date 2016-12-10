@@ -11,7 +11,7 @@ class CredentialManager(object):
 
     @classmethod
     def protect_secret(cls, secret):
-        protected = SHA256Hash(secret).hexdigest()
+        protected = SHA256Hash(bytes(secret,'UTF-8')).hexdigest()
         return protected
 
     @classmethod
@@ -29,9 +29,9 @@ class CredentialManager(object):
 
     @staticmethod
     def createTemporaryCredential(user, credentialType, expiry=fourDaysInSeconds, additionalInfo=None):
-        secret = unicode(uuid4())
+        secret = uuid4().hex
         expiry = time.time() + expiry
-        Credential.new(user, credentialType, unicode(expiry)+":"+unicode(additionalInfo), secret)
+        Credential.new(user, credentialType, str(expiry)+":"+str(additionalInfo), secret)
         return secret, expiry
 
 

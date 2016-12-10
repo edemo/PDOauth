@@ -1,4 +1,4 @@
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from pdoauth.app import app
 from integrationtest import config
 from pdoauth.models.User import User
@@ -9,8 +9,8 @@ from integrationtest.helpers.UserTesting import UserTesting
 
 class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
 
-    @test
-    def a_logged_in_user_can_record_its_hash(self):
+    
+    def test_a_logged_in_user_can_record_its_hash(self):
         with app.test_client() as client:
             resp = self.login(client)
             csrf = self.getCSRF(client)
@@ -24,8 +24,8 @@ class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             self.assertEqual(200,resp.status_code)
             self.assertEqual('{"message": "new hash registered"}', self.getResponseText(resp))
 
-    @test
-    def the_users_hash_is_changed_to_the_new_one(self):
+    
+    def test_the_users_hash_is_changed_to_the_new_one(self):
         with app.test_client() as client:
             resp = self.login(client)
             self.assertUserResponse(resp)
@@ -43,8 +43,8 @@ class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             userAfter = User.getByEmail(self.userCreationEmail)
             self.assertEqual(userAfter.hash, digest)
 
-    @test
-    def if_the_user_had_a_hash_before__it_is_overwritten(self):
+    
+    def test_if_the_user_had_a_hash_before__it_is_overwritten(self):
         with app.test_client() as client:
             resp = self.login(client)
             self.assertUserResponse(resp)
@@ -66,17 +66,17 @@ class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             userAfter = User.getByEmail(self.userCreationEmail)
             self.assertEqual(userAfter.hash, digest)
 
-    @test
-    def it_is_possible_to_delete_the_hash_by_not_giving_a_digest_in_the_request(self):
+    
+    def test_it_is_possible_to_delete_the_hash_by_not_giving_a_digest_in_the_request(self):
         with app.test_client() as client:
             self.updateHashForUser(client,addDigest=False)
             self.assertEqual(self.userAfter.hash, None)
 
-    @test
-    def when_hash_is_deleted_no_hashgiven_assurance_remains(self):
+    
+    def test_when_hash_is_deleted_no_hashgiven_assurance_remains(self):
         with app.test_client() as client:
             assurances=self.updateHashForUser(client,addDigest=False)
-            self.assertEqual(assurances.keys(), [])
+            self.assertEqual(set(assurances.keys()), set())
 
 
     def doUpdateHashForUser(self, client, assurance="test", addDigest=True, digest=None):
@@ -108,13 +108,13 @@ class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         assurances = Assurance.getByUser(self.userAfter)
         return assurances
 
-    @test
-    def the_assurances_are_overwritten_on_hash_update(self):
+    
+    def test_the_assurances_are_overwritten_on_hash_update(self):
         with app.test_client() as client:
             assurances = self.updateHashForUser(client)
             self.assertEqual(len(assurances), 1)
-    @test
-    def error_message_on_hash_collision(self):
+    
+    def test_error_message_on_hash_collision(self):
         anotheruser = self.createUserWithCredentials().user
         digest = self.createHash()
         anotheruser.hash = digest
@@ -124,22 +124,22 @@ class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
         with app.test_client() as client:
             resp = self.doUpdateHashForUser(client, digest=digest)
             self.assertEqual(400, resp.status_code)
-            self.assertEqual('{"errors": ["another user is using your hash"]}', resp.data)
+            self.assertEqual('{"errors": ["another user is using your hash"]}', resp.data.decode('utf-8'))
 
     def a_hashgiven_assurance_is_created_when_a_hash_is_given(self):
         with app.test_client() as client:
             assurances = self.updateHashForUser(client)
             self.assertEqual(assurances.keys(), ["hashgiven"])
 
-    @test
-    def emailverification_assurance_is_an_exception_from_overwriting(self):
+    
+    def test_emailverification_assurance_is_an_exception_from_overwriting(self):
         with app.test_client() as client:
             assurances = self.updateHashForUser(client,emailVerification)
             self.assertEqual(len(assurances), 2)
             self.assertTrue("emailverification" in assurances.keys())
 
-    @test
-    def without_login_it_is_not_possible_to_update_the_hash(self):
+    
+    def test_without_login_it_is_not_possible_to_update_the_hash(self):
         self.setupRandom()
         with app.test_client() as client:
             csrf = self.getCSRF(client)
@@ -150,8 +150,8 @@ class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             resp = client.post(config.BASE_URL+'/v1/users/me/update_hash', data=data)
             self.assertEqual(403,resp.status_code)
 
-    @test
-    def the_hash_update_request_should_contain_csrf_token(self):
+    
+    def test_the_hash_update_request_should_contain_csrf_token(self):
         with app.test_client() as client:
             resp = self.login(client)
             self.assertUserResponse(resp)
@@ -166,8 +166,8 @@ class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
                 ,self.getResponseText(resp)
             )
 
-    @test
-    def if_a_hash_is_given_it_should_be_valid(self):
+    
+    def test_if_a_hash_is_given_it_should_be_valid(self):
         with app.test_client() as client:
             resp = self.login(client)
             self.assertUserResponse(resp)
@@ -184,8 +184,8 @@ class HashIntegrationTest(IntegrationTest, UserTesting, CSRFMixin):
             )
 
 
-    @test
-    def hash_should_not_be_whitespace(self):
+    
+    def test_hash_should_not_be_whitespace(self):
         with app.test_client() as client:
             resp = self.login(client)
             self.assertUserResponse(resp)

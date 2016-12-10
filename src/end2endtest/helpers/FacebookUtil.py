@@ -11,6 +11,7 @@ class FacebookUtil(object):
         if user is None:
             user = config.facebookUser2
         self.wait_on_element(By.ID,"pass")
+        self.wait_on_element(By.ID,"forgot-password-link")
         self.fillInField("pass",user.password)
         self.fillInField("email",user.email)
         self.click("u_0_2")
@@ -40,7 +41,9 @@ class FacebookUtil(object):
 
     def handleFbRegistration(self, user=None, useEmail=True):
         self.switchToTab('register')
-        self.click("registration-form-method-selector-fb")
+        while "complete" != TE.driver.execute_script("return document.readyState"):
+            print("waiting for page ready")
+        self.pushFbButtonWhenready()
         self.handleFbLoginPage(user)
         self.waitLoginPage()
         if useEmail:
@@ -52,13 +55,15 @@ class FacebookUtil(object):
 
     def handleFbRegistrationAppLogin(self, user=None, useEmail=True):
         self.click("register")
-        self.click("registration-form-method-selector-fb")
+        self.pushFbButtonWhenready()
         self.handleFbLoginPage(user)
+        self.waitForJsState('registerCallBack callback')
         if useEmail:
             if user is None:
                 user = config.facebookUser2
             self.fillInField("registration-form_email_input",user.email)
         self.tickCheckbox("registration-form_confirmField")
+        self.getTraces()
         self.click("registration-form_submitButton")
 
     def logoutFromFacebook(self):
@@ -69,3 +74,16 @@ class FacebookUtil(object):
         if user is None:
             user = config.facebookUser2
         self.assertElementMatchesRe("1","Adataim")
+
+    def waitForJsState(self, state, maxCount=40):
+        count = 0
+        while not (state in self.getTraces()):
+            if count > maxCount:
+                TE.driver.save_screenshot("shippable/jsTimeout.png")
+                self.assertFalse("timeout waiting for javascript state")
+            count += 1
+            time.sleep(1)
+
+    def pushFbButtonWhenready(self):
+        self.waitForJsState('fbAsyncInit')
+        return self.click("registration-form-method-selector-fb")
