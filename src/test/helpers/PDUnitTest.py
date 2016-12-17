@@ -1,11 +1,11 @@
 #pylint: disable=unused-import, star-args
-from twatson.unittest_annotations import Fixture, test  # @UnusedImport
 from pdoauth.Controller import Controller
 from pdoauth.ReportedError import ReportedError
 from test.helpers.FakeInterFace import FakeInterface, FakeApp, FakeMail
 from pdoauth import main  # @UnusedImport
+from unittest.case import TestCase
 
-class PDUnitTest(Fixture):
+class PDUnitTest(TestCase):
     def setUp(self):
         self.setUpController()
 
@@ -19,5 +19,5 @@ class PDUnitTest(Fixture):
         with self.assertRaises(ReportedError) as context:
             funct(*args)
         self.assertEqual(descriptor, context.exception.descriptor)
-        self.assertEquals(context.exception.status, status)
+        self.assertEqual(context.exception.status, status)
 

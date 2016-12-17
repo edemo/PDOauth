@@ -6,7 +6,7 @@ from flask_login import current_user
 from integrationtest import config
 from integrationtest.helpers.CSRFMixin import CSRFMixin
 from integrationtest.helpers.UserTesting import UserTesting
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 
 class AssuranceIntegrationTest(IntegrationTest, CSRFMixin, UserTesting):
 
@@ -20,7 +20,7 @@ class AssuranceIntegrationTest(IntegrationTest, CSRFMixin, UserTesting):
     def _setupTestWithoutAssurance(self, client):
         self.login(client)
         target = self._createUserWithHash()
-        self.assertTrue(Assurance.getByUser(target).has_key('test') is False)
+        self.assertTrue('test' not in Assurance.getByUser(target))
         return target
 
     def _setupTest(self, client):
@@ -30,8 +30,8 @@ class AssuranceIntegrationTest(IntegrationTest, CSRFMixin, UserTesting):
         return target
 
 
-    @test
-    def assurance_form_needs_csrf(self):
+    
+    def test_assurance_form_needs_csrf(self):
         with app.test_client() as client:
             self.login(client)
             data = dict(
@@ -40,11 +40,11 @@ class AssuranceIntegrationTest(IntegrationTest, CSRFMixin, UserTesting):
                 email = "invalid@email.com",
                 csrf_token = "")
             resp = client.post(config.BASE_URL + '/v1/add_assurance', data = data)
-            self.assertEquals(400, resp.status_code)
-            self.assertEquals(self.getResponseText(resp),'{"errors": ["csrf_token: csrf validation error"]}')
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual(self.getResponseText(resp),'{"errors": ["csrf_token: csrf validation error"]}')
 
-    @test
-    def assurers_with_appropriate_credential_can_add_assurance_to_user_using_hash(self):
+    
+    def test_assurers_with_appropriate_credential_can_add_assurance_to_user_using_hash(self):
         """
         the appropriate credential is an assurance in the form "assurer.<assurance_name>"
         where assurance_name is the assurance to be added
@@ -57,14 +57,14 @@ class AssuranceIntegrationTest(IntegrationTest, CSRFMixin, UserTesting):
                 email = target.email,
                 csrf_token = self.getCSRF(client))
             resp = client.post(config.BASE_URL + '/v1/add_assurance', data = data)
-            self.assertEquals(200, resp.status_code)
-            self.assertEquals(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
+            self.assertEqual(200, resp.status_code)
+            self.assertEqual(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
 
-    @test
-    def no_madeup_csrf_cookie(self):
+    
+    def test_no_madeup_csrf_cookie(self):
         with app.test_client() as client:
             target = self._setupTest(client)
-            false_cookie=unicode(uuid4())
+            false_cookie=uuid4().hex
             data = dict(
                 digest = target.hash,
                 assurance = "test",
@@ -72,5 +72,5 @@ class AssuranceIntegrationTest(IntegrationTest, CSRFMixin, UserTesting):
                 csrf_token = false_cookie)
             client.set_cookie("localhost.localdomain","csrf",false_cookie)
             resp = client.post(config.BASE_URL + '/v1/add_assurance', data = data)
-            self.assertEquals(400, resp.status_code)
-            self.assertEquals('{"errors": ["csrf_token: csrf validation error"]}',self.getResponseText(resp))
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual('{"errors": ["csrf_token: csrf validation error"]}',self.getResponseText(resp))

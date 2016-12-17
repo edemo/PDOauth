@@ -123,6 +123,7 @@ function PageScript(test) {
 		this.msg = self.processErrors(data)
 		this.msg.callback = self.get_me;
 		self.displayMsg(this.msg);
+		window.traces.push("myCallback")
 	}
 
 	PageScript.prototype.doRedirect = function(href){ 
@@ -308,6 +309,7 @@ function PageScript(test) {
 	    	email: email
 	    }
 	    this.ajaxpost("/v1/register", text, this.myCallback)
+		window.traces.push("register_with_facebook")
 	}
 	
 	PageScript.prototype.getCookie = function(cname) {

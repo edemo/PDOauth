@@ -10,7 +10,7 @@ from pdoauth.models.Assurance import Assurance
 from end2endtest import config
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-print "setting up test environment"
+print("setting up test environment")
 
 def getDriver():
     if os.environ.get("WEBDRIVER", None) == "chrome":
@@ -22,6 +22,7 @@ def getDriver():
         theDriver = webdriver.Chrome(chrome_options = options, desired_capabilities=d)
     else:
         d = DesiredCapabilities.FIREFOX
+        d['marionette'] = True
         d['loggingPrefs'] = { 'browser':'ALL' }
         profile_directory = os.path.join(os.path.dirname(__file__),"..", "firefox-client-nossl-profile")
         profile = FirefoxProfile(profile_directory)
@@ -50,7 +51,7 @@ def getAssurerUser():
     user.userName=userName
     return user
         
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 baseUrl = config.Config.BASE_URL
 backendPath = config.Config.BACKEND_PATH
 backendUrl = baseUrl + backendPath

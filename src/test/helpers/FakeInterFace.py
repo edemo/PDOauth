@@ -2,6 +2,8 @@
 from flask import json
 from test import config
 from flask_login import AnonymousUserMixin
+import urllib
+from _io import StringIO
 
 class FakeMail(object):
     def __init__(self):
@@ -67,12 +69,18 @@ class FakeSession(dict):
 
 class FakeResponse(object):
     def __init__(self, message, status):
-        self.response = message
+        if type(message)== str:
+            message = [bytes(message.encode('utf-8'))]
+        self._response = message
         self.data = message
         self.status_code = status
         self.status = status
         self.cookies = dict()
         self.headers = dict()
+
+    @property
+    def response(self):
+        return self._response
 
     def set_cookie(self,name,value,path="/", domain = None):
         domainpart = ""
@@ -89,6 +97,7 @@ class FakeInterface(object):
     def __init__(self):
         self.request = FakeRequest()
         self.session = FakeSession()
+        self.current_user = None
         self.urlSet = False
         self.logOut()
 
@@ -151,7 +160,12 @@ class FakeInterface(object):
     def facebookMe(self, code):
         if self.accessToken == code:
             data = dict(id=self.facebook_id)
-            return FakeResponse(json.dumps(data), 200)
+            return bytes(json.dumps(data).encode('utf-8'))
         #pylint: disable=line-too-long
-        errMsg = '{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}'
-        return FakeResponse(errMsg, 400)
+        msg = '{"error":{"message":"Invalid OAuth access token.","type":"OAuthException","code":190}}'
+        raise urllib.error.HTTPError(
+                code=400,
+                msg=msg,
+                hdrs=list(),
+                url="https://graph.facebook.com/v2.2/me",
+                fp=StringIO(msg))

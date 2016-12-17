@@ -1,8 +1,9 @@
-import urllib3
 import flask
 from flask.globals import session, request
 from flask_login import login_user, current_user, logout_user
 from pdoauth.Responses import Responses
+import urllib
+from pdoauth.WebInterface import WebInterface
 
 class FlaskInterface(Responses):
     def getRequest(self):
@@ -27,6 +28,7 @@ class FlaskInterface(Responses):
         args = {"access_token":code, 
             "format":"json", 
             "method":"get"}
-        http = urllib3.PoolManager()
-        resp = http.request('GET', "https://graph.facebook.com/v2.2/me", args)
+        baseUri = "https://graph.facebook.com/v2.2/me"
+        uri = WebInterface.parametrizeUri(baseUri, args)
+        resp = urllib.request.urlopen(uri).read()
         return resp

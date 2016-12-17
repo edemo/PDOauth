@@ -54,10 +54,6 @@ def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
     return AUTHPROVIDER.auth_interface()
 
-@DECORATOR.interfaceFunc("/v1/keygen", methods=["POST"], formClass=KeygenForm)
-def keygen(form):
-    return CONTROLLER.doKeygen(form)
-
 @DECORATOR.interfaceFunc("/v1/ca/signreq", methods=["POST"], formClass=KeygenForm)
 def signreq(form):
     return CONTROLLER.signRequest(form)

@@ -1,4 +1,4 @@
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.FakeInterFace import FakeForm
 from Crypto.Hash.SHA256 import SHA256Hash
 from pdoauth.models.Credential import Credential
@@ -12,29 +12,29 @@ class CredentialTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.cred=Credential.get('password', self.userCreationUserid)
         PDUnitTest.setUp(self)
 
-    @test
-    def credential_representation_is_readable(self):
-        secretdigest=SHA256Hash(self.usercreationPassword).hexdigest()
+    
+    def test_credential_representation_is_readable(self):
+        secretdigest=SHA256Hash(self.usercreationPassword.encode('utf-8')).hexdigest()
         representation = "Credential(user={0},credentialType=password,identifier={2},secret={1})".format(
             self.userCreationEmail,
             secretdigest,
             self.userCreationUserid)
-        self.assertEquals("{0}".format(self.cred),representation)
+        self.assertEqual("{0}".format(self.cred),representation)
 
-    @test
-    def a_logged_in_user_can_add_credential(self):
+    
+    def test_a_logged_in_user_can_add_credential(self):
         resp = self._createPasswordCredential()
         self.assertEqual(resp.status_code, 200)
 
-    @test
-    def when_a_credential_is_added_the_response_contains_user_data_which_contains_her_credentials(self):
+    
+    def test_when_a_credential_is_added_the_response_contains_user_data_which_contains_her_credentials(self):
         resp = self._createPasswordCredential()
         self.assertEqual(resp.status_code, 200)
         text = self.getResponseText(resp)
         self.assertTrue(self.userCreationUserid in text)
 
-    @test
-    def the_credential_is_actually_added(self):
+    
+    def test_the_credential_is_actually_added(self):
         myUserid = self.createRandomUserId()
         credBefore = Credential.get("password", myUserid)
         self.assertTrue(credBefore is None)
@@ -43,8 +43,8 @@ class CredentialTest(PDUnitTest, UserUtil, CryptoTestUtil):
         credAfter = Credential.get("password", myUserid)
         self.assertTrue(credAfter is not None)
 
-    @test
-    def a_credential_can_be_deleted(self):
+    
+    def test_a_credential_can_be_deleted(self):
         myUserid = self.createRandomUserId()
         resp = self._removeACredential(myUserid)
         self.assertEqual(200, resp.status_code)
@@ -60,12 +60,12 @@ class CredentialTest(PDUnitTest, UserUtil, CryptoTestUtil):
         resp = self.controller.doRemoveCredential(FakeForm(data))
         return resp
 
-    @test
-    def password_is_stored_using_sha256_hash(self):
+    
+    def test_password_is_stored_using_sha256_hash(self):
         resp = self._createPasswordCredential()
         self.assertEqual(resp.status_code, 200)
         cred = Credential.get('password', self.userCreationUserid)
-        self.assertEqual(cred.secret, SHA256Hash(self.usercreationPassword).hexdigest())
+        self.assertEqual(cred.secret, SHA256Hash(self.usercreationPassword.encode('utf-8')).hexdigest())
 
 
     def _createPasswordCredential(self, userid=None):
@@ -77,15 +77,15 @@ class CredentialTest(PDUnitTest, UserUtil, CryptoTestUtil):
         resp = self.controller.doAddCredential(form)
         return resp
 
-    @test
-    def an_already_existing_credential_cannot_be_addedd(self):
+    
+    def test_an_already_existing_credential_cannot_be_addedd(self):
         self.createUserWithCredentials(userid="existinguser")
         self.assertReportedError(self.createUserWithCredentials, ['password', 'existinguser'], 400, 'Already existing credential')
         cred = Credential.get("password", "existinguser")
         cred.rm()
 
-    @test
-    def the_credential_used_for_login_cannot_be_cleared(self):
+    
+    def test_the_credential_used_for_login_cannot_be_cleared(self):
         credential = self.createUserWithCredentials()
         self.controller.loginInFramework(credential)
         self.assertTrue(Credential.get("password", self.userCreationUserid))
@@ -95,27 +95,3 @@ class CredentialTest(PDUnitTest, UserUtil, CryptoTestUtil):
         })
         self.assertReportedError(self.controller.doRemoveCredential,[form], 400, ["You cannot delete the login you are using"])
         self.assertTrue(Credential.get("password", self.userCreationUserid))
-
-    def _loginAndAddCertCredential(self, email):
-        self.controller.loginInFramework(self.cred)
-        user = self.cred.user
-        cred = self.addCertCredential(email, user)
-        return cred
-
-    @test
-    def certificate_credential_can_be_added_by_a_logged_in_user_without_email(self):
-        cred = self._loginAndAddCertCredential(None)
-        self.assertEquals(cred.user, self.cred.user)
-
-    @test
-    def certificate_credential_can_be_added_by_a_logged_in_user_with_email(self):
-        cred = self._loginAndAddCertCredential(self.userCreationEmail)
-        self.assertEquals(cred.user, self.cred.user)
-
-    @test
-    def certificate_credential_can_removed(self):
-        cred = self._loginAndAddCertCredential(self.userCreationEmail)
-        form = FakeForm(dict(credentialType=cred.credentialType, identifier=cred.identifier))
-        self.assertTrue(Credential.getByUser(self.cred.user, 'certificate'))
-        self.controller.doRemoveCredential(form)
-        self.assertFalse(Credential.getByUser(self.cred.user, 'certificate'))

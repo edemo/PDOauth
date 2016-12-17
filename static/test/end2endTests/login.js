@@ -12,7 +12,6 @@
 			assert.equal( t.document.title,"ADA - fiókom", "loaded page should be fiokom.html" )
 			done()
 		}  												// ha el tudjuk kapni a callback-et, akkor beletesszük az assert-eket
-//		setTimeout(function() {	done()	},1000 ); 		// ha nem, akkor marad az időzítés
 		tfrwrk.loadPage("fiokom.html",callback);
 	});
 
