@@ -1,0 +1,566 @@
+ <!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+    <!-- Basic Page Needs
+    ================================================== -->
+        <meta charset="utf-8">
+        <title>ADA - hogyan működik</title>
+        <meta name="description" content="">
+        <!-- Mobile Specific Metas
+    ================================================== -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+         <!-- CSS
+         ================================================== -->
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="css/bootstrap.min.css"/>
+        <!-- FontAwesome -->
+        <link rel="stylesheet" href="css/font-awesome.min.css"/>
+        <!-- Animation -->
+        <link rel="stylesheet" href="css/animate.css" />
+        <!-- Owl Carousel -->
+        <link rel="stylesheet" href="css/owl.carousel.css"/>
+        <link rel="stylesheet" href="css/owl.theme.css"/>
+        <!-- Pretty Photo -->
+        <link rel="stylesheet" href="css/prettyPhoto.css"/>
+        <!-- Bx slider -->
+        <link rel="stylesheet" href="css/jquery.bxslider.css"/>
+       
+        <!-- Template styles-->
+        <link rel="stylesheet" href="css/custom.css" />
+         <!-- color style -->
+        <link rel="stylesheet" href="css/red.css"/>
+        <!-- Responsive  -->
+        <link rel="stylesheet" href="css/responsive.css" />
+        <link rel="stylesheet" href="css/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+		
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+        <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
+			<style>
+*, *:after, *:before {
+    box-sizing: inherit;
+}
+html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+}
+body {
+    color: #606c76;
+    font-family: "Roboto","Helvetica Neue","Helvetica","Arial",sans-serif;
+    font-size: 1.6em;
+    font-weight: 300;
+    letter-spacing: .01em;
+    line-height: 1.6;
+}
+pre, xmp, plaintext, listing {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0px 1em;
+}
+pre {
+    background: #f4f5f6;
+    border-left: .3rem solid #4D7ACA;
+    font-family: "Menlo","Consolas","Bitstream Vera Sans Mono","DejaVu Sans Mono","Monaco",monospace;
+}
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 2.5rem;
+}
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 2.5rem;
+}
+input, textarea, select, fieldset {
+    margin-bottom: 1.5rem;
+}
+fieldset {
+    border-width: 0;
+    padding: 0;
+}
+label, legend {
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: .5rem;
+}
+input[type='email'], input[type='number'], input[type='password'], input[type='search'], input[type='tel'], input[type='text'], input[type='url'], textarea, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: .1rem solid #d1d1d1;
+    border-radius: .4rem;
+    box-shadow: none;
+    height: 3.8rem;
+    padding: .6rem 1rem;
+    width: 100%;
+}
+.button, button, input[type='button'], input[type='reset'], input[type='submit'] {
+    background-color: #4D7ACA;
+    border: .1rem solid #4D7ACA;
+    border-radius: .4rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    height: 3.8rem;
+    letter-spacing: .1rem;
+    line-height: 3.8rem;
+    padding: 0 3rem;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.button:hover, button:hover, input[type='button']:hover, input[type='reset']:hover, input[type='submit']:hover {
+    background-color: #606c76;
+    border-color: #606c76;
+    color: #fff;
+    outline: 0;
+}
+.button:active, button:active, input[type='button']:active, input[type='reset']:active, input[type='submit']:active {
+    background-color: #707c76;
+    border-color: #606c76;
+    color: #fff;
+    outline: 0;
+	padding-top:1px
+}
+.wrapper {
+	position: relative;
+	display: block;
+	width: 100%;
+	overflow: hidden;
+}
+.container {
+    margin: 0 auto;
+    max-width: 112rem;
+    padding: 0 2rem;
+    position: relative;
+    width: 100%;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	margin-bottom: 0;
+}
+.form {
+	max-width: 50.0rem;
+}		
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    margin-bottom: 2rem;
+    margin-top: 0;
+}
+h1 {
+    font-size: 4rem;
+    letter-spacing: -0.1rem;
+    line-height: 1.2;
+}
+h3 {
+    font-size: 3rem;
+    letter-spacing: -0.1rem;
+    line-height: 1.3;
+}
+p {
+    margin-top: 0;
+}
+.label-inline {
+    font-weight: normal;
+    display: inline-block;
+    margin-left: .5rem;
+}
+pre {
+ min-height:5rem;
+     line-height: 100%;
+    word-wrap: break-word;
+    white-space: pre-line;
+ }
+.waiting {
+    background-image: url("waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
+.monitor {
+    min-width: 100px;
+    background-color: #F9F6E9;
+    border-radius: 5px;
+    display: inline-block;
+    float: right;
+    padding: 10px 15px;
+    font-size: small;
+}
+#message{
+display:none;
+width: 100%;
+height: 5rem;
+border-radius:5px;
+border: 1px solid red;
+padding:1rem;
+color: red;
+font-weight:700;
+margin-top:2rem;
+text-align: center;
+}
+@media (min-width: 40rem){
+h1 {
+    font-size: 5rem;
+}
+h3 {
+    font-size: 3.6rem;
+}}
+#heading {
+margin-top: 100px;
+}
+ul.disced {
+    list-style-type: disc;
+	margin-left: 50px;
+}
+
+.feature_title {
+    font-size: 30px;
+	width: 63%;
+}
+
+@media (max-width: 767px){
+.feature_title {
+    width: 75%;
+    font-size: 22px;
+}
+.blog-desc {
+    margin-top: 0px;
+}}
+.blog-desc p {
+    font-size: 16px;
+}
+		</style>
+    </head>
+
+ <body data-spy="scroll" data-target=".navbar-fixed-top" onload="pageScript.main()">
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <header id="section_header" class="navbar-fixed-top main-nav" role="banner">
+    	<div class="container">
+    		<!-- <div class="row"> -->
+                 <div class="navbar-header ">
+                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                       </button>
+                        <a class="navbar-brand" href="#">
+                            <img src="images/logo/adalogo_379x143.png" alt="">
+                        </a>
+                 </div><!--Navbar header End-->
+                 	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
+                        <ul class="nav navbar-nav navbar-right ">
+                           	<li><a href="./index.html" class="">Home </a></li>
+                            <li><a href="./user_howto.html" class="active">Hogyan működik?</a> </li>
+                            <li><a href="./about_us.html" class="">Rólunk</a> </li>
+<!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
+							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
+							<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
+							<li id="nav-bar-my_account"><a href="./fiokom.html">Fiókom</a></li>
+							<li id="nav-bar-logout"><a href="javascript:void (0)" onclick="javascipt:pageScript.logout()">Kijelentkezés</a></li>
+                        </ul>
+                     </nav>
+                </div><!-- /.container-fluid -->
+</header>
+ 
+<!-- Portfolio works Start -->
+
+<!-- Heading -->
+		<section id="heading" class="container">
+			<h1>Hogyan működik?</h1>
+		</section>
+<!-- Heading end -->
+	
+    <section id="blog-single wrapper">
+        <div class="container">
+                <!-- Portfolio item slider start -->
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                 <div class="blog-desc">
+					<div id="regisztracio">
+						<h3  class="feature_title">Regisztráció</h3>
+						<p>
+ A regisztráció során egyedül az email címed megadása és annak visszaigazolása a kötelező. 
+ Ez követően egy anonim digitális azonosító készül számodra, 
+ melyből nem lehet még az email címedre sem következtetni. 						</p>
+						<p>
+Egyes ADA-t használó alkalmazások kérhetik, hogy készíts magadnak egy 
+Titkos Kódot is mert az anonimitásod mellett szeretnének biztosak 
+lenni abban, hogy magyar állampolgár vagy.
+						</p>
+						<p>
+Többfajta módon regisztrálhatsz, és később is megváltoztathatod, hogyan használod a rendszert. 
+						</p>
+					</div>
+					<div id="titkos_kod">
+						<h3 class="feature_title">TITKOS KÓD</h3>
+						<p>
+A Titkos Kód egyértelműen tudja bizonyítani a személyazonosságodat. 
+A Titkos Kód két, a lakcímkártyádon megtalálható, személyes adatodból("Személyi azonosító és Anyja neve")
+egyirányú titkosítással előállított nem visszafejthető karaktersorozat.  
+						</p>
+						<p>
+ A Titkos Kódot te is előállíthatod.  
+						</p>
+						<p>
+A Titkos Kód a te tulajdonod lesz, feltéve hogy saját személyes adataidból állítottad elő. Erre vigyáznod kell, 
+tehát csak olyan weboldalnak személynek add meg, amiben/akiben megbízol.
+						</p>
+						<p>
+A Titkos Kód segítségével  bármikor bizonyítani tudod, hogy ADA  regisztrációd valóban a tiéd, 
+ugyanis a <a class="digest_self_made_button">Tikos Kód Géppel</a> bármikor előállíthatod újra.
+						</p>
+						<p>
+A személyes adataidat, amelyekből a Titkos Kódodat előállítottad, nem tároljuk. 
+Ebből senki, még mi sem tudjuk előállítani a személyes adataidat. Ezt az egyirányú titkosítás biztosítja.
+						</p>
+					</div>
+					<div id="igazolasok">
+						<h3 class="feature_title">Igazolások</h3>
+						<p>
+A regisztrációt követően a FIÓKOM menü pont alatt megtalálod azokat az igazolásokat, melyeket az ADA elkészített számodra.
+						</p>
+						<p>Ezek a következők lehetnek:</p>
+						<ul class="disced">
+							<li>“ellenőrzött e-mail cím” igazolás,</li>
+							<li>“van Titkos Kód” igazolás,</li>
+							<li>„magyar” Igazolás</li>
+							<li>egyéb Alkalmazás specifikus igazolások</li>
+						</ul>
+						<p>
+Az igazolások kiadása nem automatikus, mert pl. az “ellenőrzött e-mail cím” igazoláshoz az is szükséges, 
+hogy visszaigazold az email fiókod. A “van Titkos Kód” igazoláshoz el kell készítened a Titkos Kódodat. 
+Egyes igazolások megszerzéséhez (pl a „magyar” igazolás esetében) szükséges egy személyes azonosításon ( Tanúsítás) is átesned.						
+						</p>
+					</div>
+					<div id="tanusitas">
+						<h3 class="feature_title">Tanúsítás</h3>
+						<p>
+		A TANÚSÍTÁS NEM JELENTI AZ ANONIMITÁSOD FELADÁSÁT!
+						</p>	
+						<p>
+ A   tanúsítás az a folyamat, melynek során a felhasználók valódiságát egy személyes találkozót igénylő eljárással igazoljuk.  
+ A tanúsítás teljes  folyamatának  leírását  a <a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanúsítási Szabályzatban</a> találod meg. 						
+						</p>
+						<p>
+A Tanúsítónak  joga van az személyes adataid megtekintésére, azonban nincs joga azok bármilyen formában történő rögzítésére. 
+A Tanúsító  a Tikos Kód Gép segítségével azt vizsgálja, hogy a rendszerben általad elmentett Titkos Kódot elő lehet-e 
+állítani az igazolványaidban szereplő személyes adataidból. Amennyiben igen (ezt a rendszer hasonlítja össze, 
+mert elég hosszú véletlenszerű karakter sorozatról van szó), akkor kiadja számodra a „magyar” (vagy esetleg egyéb) igazolást.						
+						</p>
+						<p>
+A tanúsítást követően valamennyi általad használt alkalmazás gazdája biztos lehet abban, hogy te egy magyar állampolgár vagy, 
+de ennél a ténynél többet ezen túl sem fog tudni rólad.						
+						</p>
+					</div>
+					<div id="alkalmazasok">
+						<h3 class="feature_title">Alkalmazások</h3>
+						<p>
+Az ADA regisztráció és az igazolások megszerzése azt a célt szolgálja, hogy a partner webes alkalmazásokat 
+(mobil applikációkat) anonim módon tudd használni. 
+						</p>
+						<p>
+Az ADA regisztráció hasonló lehetőséget biztosít számodra a web világában mint a hivatalos 
+<a href="https://ugyfelkapu.magyarorszag.hu/regisztracio">ügyfélkapu regisztráció</a> 
+az államigazgatásban. Van azonban egy nagy különbség.  Az ADA  tulajdonképpen egy anonim “ügyfélkapu”, 
+vagyis a partner alkalmazások csak annyi tudnak rólad, hogy valódi személy vagy és magyar állampolgár. 
+Azt nem fogják tudni, hogy pontosan ki vagy. A hivatalos ügyfélkapu ezzel szemben minden alkalmazásnak 
+( ezek pl. NAV , TB,  stb.) “elárulja”, hogy te  ki vagy. Az állami hivatalok esetében ez érthető. 
+A web szélesebb világában azonban ez már nem annyira  praktikus. Sok esetben szeretnéd, 
+hogy pontosan ne tudják  ki vagy, mert nem az a lényeg. Egy titkos szavazás vagy választás esetében
+pl. a kiíró számára nem az a fontos, hogy te ki vagy,hanem az, hogy valódi személy vagy. 
+						</p>
+						<p>
+Egyes online alkalmazásokat  és  mobil applikációkat üzemeltető szolgáltatók  ügyfeleiknek saját speciális 
+ADA igazolásokat is adhatnak.Ilyen lehet pl  egy szervezeti tagságot vagy valamilyen jogosultságot  bizonyító igazolás. 
+						</p>
+					</div>
+					<div id="adatkezeles">
+						<h3 class="feature_title">Az adataid kezelése</h3>
+						<p>
+Az alkalmazások (applikációk) az ADA rendszerében rólad őrzött információkból 
+szigorúan csak az általad előzetesen jóváhagyott  adatokat kapják meg. 
+<b>(FONTOS: a személyes adataidat az ADA sem tárolja, tehát még ha akarnánk 
+vagy kényszerítenének minket akkor sem tudnánk azokat senkinek sem megadni.)</b> 
+						</p>
+						<p>
+A regisztráció során megadott <b>email címedet</b> senkinek sem adjuk át. A regisztrációhoz nyugodtan használhatsz olyan
+email címet is, melyet csak erre a célra hoztál létre. Ezzel növeled a biztonságodat.
+Azok az alkalmazások, amelyek szeretnének neked email üzenetet küldeni meghatározott feltételek teljesítése 
+esetén kaphatnak tőlünk egy proxy (helyettesítő) email címet melyre (csak az ADA-n keresztül) küldhetnek üzeneteket. 
+Valamennyi alkalmazás esetében azonban ez esetben is csak akkor, ha te azt előzetesen engedélyezted. 
+Az engedélyedet bármikor vissza is vonhatod.
+						</p>
+						<p>
+Az ADA rendszere  tárolja hogy milyen <b>alkalmazásokat</b> használtál az ADA digitális azonosítójával. 
+Erről senkinek sem adunk át információt. Vagyis egy alkalmazás nem tudhatja, hogy melyik másik alkalmazás használója vagy. 
+Az ADA rendszeréből bármikor törölheted  egy adott alkalmazás használatát és ezzel azt a lehetőséget, 
+hogy az alkalmazás rólad bárminemű információt kapjon a jövőben.
+						</p>
+						<p>
+Olvasd el az <a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatónkat</a> is!
+						</p>
+					</div>
+                </div>
+                <hr>
+                <div class="clearfix"></div>
+
+			</div>  <!-- blog footer end -->
+           
+    <!-- left blog part end -->
+
+    <!-- Right Blog part row start -->
+            <div class="row">
+                <!-- sidebar start -->
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="blog-sidebar">
+						<div id="side-bar-nav">
+							<h4>Szabályzatok</h4>
+							<ul>
+								<li class="active">
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételek</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztató</a>
+								</li>
+								<li>
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanúsítási Szabályzat</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/utmutato-alkalmazasok-szamara/content/">Útmutató Alkalmazások számára</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/felhasznalasi-feltetelek-applikaciok-szamara/content/">Felhasználási Feltételek Applikációk számára</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-iranyito-testulet-ugyrendje/content/">Irányító Testület ügyrendje</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/adamintadokumentumok/content/">ADA mintadokumentumok</a>
+								</li>									
+							</ul>
+							<h4>Kirakat</h4>
+							<ul>
+								<li >
+									<a href="index.html#counter_area">Statisztikák</a>
+								</li>
+							</ul>
+						</div>
+                        
+                    </div> <!-- blog sidebar end -->
+                </div>
+            </div>
+            <!-- sidebar end -->
+
+            </div><!-- Portfolio item row end -->
+        </div><!-- Portfolio item container end -->
+</section>  <!-- Portfolio Section End -->
+
+<!-- Footer Area Start -->
+
+<section id="footer">
+    <div class="footer_top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Szabályzatok</h3>
+                    <div class="footer_menu">
+                        <ul>
+                            <li><a target="_blank" href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételek</a></li>
+                            <li><a target="_blank" href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Irányelvek</a></li>
+                         </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Kapcsolat</h3>
+                    <div class="footer_menu_contact">
+                        <ul>
+                            <li><i class="fa fa-envelope"></i> Email: <a href="mailto:info@adatom.hu">info@adatom.hu</a></li>
+                            <li><i class="fa fa-phone"></i> Telefon: </li>
+                            <li><i class="fa fa-home"></i> KDE Alapítvány levelezési cím:</li>
+                            <li>2071 Páty, Burgondia u. 5.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <h3 class="menu_head">Hasznos linkek</h3>
+                    <div class="footer_menu">
+                        <ul>
+                            <li><i class="fa fa-anchor"></i> <a target="_blank" class="digest_self_made_button">Titkos Kód Gép</a></li>
+                            <li><i class="fa fa-github"></i> <a target="_blank" href="https://www.gitbook.com/@edemo">Gitbook</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="footer_b">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="footer_bottom">
+						<p class="text-block">
+							<a href="http://e.demokracia.rulez.org">KDE Alapítvány</a> ADA - Anonim Digitális Azonosító szolgáltatása 
+							<a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Nevezd meg! - Így add tovább! 4.0 Nemzetközi Licenc</a> alatt van.
+						</p>
+						<p>
+ 						<a href="http://creativecommons.org/licenses/by-sa/4.0/">
+							<img alt="Creative Commons Licenc" src="https://camo.githubusercontent.com/e170e276291254896665fa8f612b99fe5b7dd005/68747470733a2f2f692e6372656174697665636f6d6d6f6e732e6f72672f6c2f62792d73612f342e302f38387833312e706e67" data-canonical-src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" style="max-width:100%;">
+						</a>
+						</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="footer_mid pull-right">
+
+                        <ul class="social-contact list-inline">
+                            <li> <a target="_blank" href="https://www.facebook.com/adatom.hu"><i class="fa fa-facebook"></i></a></li>
+                            <li> <a target="_blank" href="https://github.com/edemo/"><i class="fa fa-github"></i></a></li>
+<!-- temporaly hidden
+
+                            <li> <a href="#"><i class="fa fa-rss"></i></a></li>
+                            <li> <a href="#"><i class="fa fa-google-plus"></i> </a></li>
+                            <li><a href="#"> <i class="fa fa-linkedin"></i></a></li>
+                            <li><a href="#"> <i class="fa fa-pinterest"></i></a></li>
+-->
+						</ul>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Footer Area End -->
+
+<!-- Back To Top Button -->
+    <div id="back-top">
+        <a href="#banner" class="scroll" data-scroll>
+            <button class="btn btn-primary" title="Back to Top"><i class="fa fa-angle-up"></i></button>
+        </a>
+    </div>
+    <!-- End Back To Top Button -->
+		<!-- initialize jQuery Library -->
+        <!-- Main jquery -->
+		<script type="text/javascript" src="js/jquery.js"></script>
+        <!-- Bootstrap jQuery -->
+		<script src="js/bootstrap.min.js"></script>
+		<!-- pagescript -->
+		<script src="js/script.js"></script>
+		<!-- pagescript extension-->
+		<script src="js/index.js"></script>
+	</body>
+</html>

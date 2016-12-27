@@ -1,0 +1,953 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PDOauth\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-30 21:33+0200\n"
+"PO-Revision-Date: 2016-03-10 23:30+0100\n"
+"Last-Translator: mag <mag@magwas.rulez.org>\n"
+"Language-Team: Hungarian\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/pdoauth/Messages.py:4 src/pdoauth/Messages.py:5
+msgid "There is already a user with that email"
+msgstr "Ezzel az email-el már van felhasználó"
+
+#: src/pdoauth/Messages.py:5 src/pdoauth/Messages.py:6
+msgid "There is already a user with that username"
+msgstr "A  Felhasználó név már foglalt"
+
+#: src/pdoauth/Messages.py:6 src/pdoauth/Messages.py:7
+msgid "password should contain lowercase"
+msgstr "A jelszónak tartalmaznia kell kisbetűket"
+
+#: src/pdoauth/Messages.py:7 src/pdoauth/Messages.py:8
+msgid "password should contain uppercase"
+msgstr "A jelszónak tartalmaznia kell nagybetűket"
+
+#: src/pdoauth/Messages.py:8 src/pdoauth/Messages.py:9
+msgid "password should contain digit"
+msgstr "A jelszónak tartalmaznia kell számokat"
+
+#: src/pdoauth/Messages.py:9 src/pdoauth/Messages.py:10
+msgid "secret should contain lowercase"
+msgstr "A jelszónak tartalmaznia kell kisbetűket"
+
+#: src/pdoauth/Messages.py:10 src/pdoauth/Messages.py:11
+msgid "secret should contain digit"
+msgstr "A jelszónak tartalmaznia kell számokat"
+
+#: src/pdoauth/Messages.py:11 src/pdoauth/Messages.py:12
+msgid "credentialType: Invalid value, must be one of:"
+msgstr "érvénytelen hitelesítés típus"
+
+#: src/pdoauth/Messages.py:12 src/pdoauth/Messages.py:13
+#: src/pdoauth/Messages.py:14
+msgid "Missing parameter redirect_uri in URL query"
+msgstr "hiányzó paraméter: redrect_uri"
+
+#: src/pdoauth/Messages.py:13 src/pdoauth/Messages.py:14
+#: src/pdoauth/Messages.py:15
+msgid "Missing parameter response_type in URL query"
+msgstr "hiányzó paraméter: response_type"
+
+#: src/pdoauth/Messages.py:14 src/pdoauth/Messages.py:15
+#: src/pdoauth/Messages.py:16
+msgid "Missing parameter client_id in URL query"
+msgstr "hiányzó paraméter: client_id"
+
+#: src/pdoauth/Messages.py:15 src/pdoauth/Messages.py:16
+#: src/pdoauth/Messages.py:17
+msgid "unsupported_grant_type"
+msgstr "nem támogatott grant típus"
+
+#: src/pdoauth/Messages.py:16 src/pdoauth/Messages.py:17
+#: src/pdoauth/Messages.py:18
+msgid "invalid_client"
+msgstr "érvénytelen  kliens"
+
+#: src/pdoauth/Messages.py:17 src/pdoauth/Messages.py:18
+#: src/pdoauth/Messages.py:19
+msgid "unsupported_response_type"
+msgstr "nem támogatott választípus"
+
+#: src/pdoauth/Messages.py:18 src/pdoauth/Messages.py:19
+#: src/pdoauth/Messages.py:20
+msgid "unauthorized_client"
+msgstr "a kliensnek nincs jogosultsága"
+
+#: src/pdoauth/Messages.py:19 src/pdoauth/Messages.py:20
+#: src/pdoauth/Messages.py:21
+msgid "invalid_scope"
+msgstr "hibás kód"
+
+#: src/pdoauth/Messages.py:20 src/pdoauth/Messages.py:21
+#: src/pdoauth/Messages.py:22
+msgid "Invalid request"
+msgstr "Érvénytelen kérés"
+
+#: src/pdoauth/Messages.py:21 src/pdoauth/Messages.py:22
+#: src/pdoauth/Messages.py:23
+msgid "access_denied"
+msgstr "Ehhez nincs hozzáférésed"
+
+#: src/pdoauth/Messages.py:22 src/pdoauth/Messages.py:23
+#: src/pdoauth/Messages.py:24
+msgid "invalid_grant"
+msgstr "hibás grant"
+
+#: src/pdoauth/Messages.py:24 src/pdoauth/Messages.py:59
+#: src/pdoauth/Messages.py:25 src/pdoauth/Messages.py:60
+#: src/pdoauth/Messages.py:61 src/pdoauth/Messages.py:26
+#: src/pdoauth/Messages.py:62 src/pdoauth/Messages.py:63
+msgid "You have to register first"
+msgstr "Ehhez először regisztrálnod kell"
+
+#: src/pdoauth/Messages.py:25 src/pdoauth/Messages.py:26
+#: src/pdoauth/Messages.py:27
+msgid "No certificate given"
+msgstr "Nincs SSL kulcs"
+
+#: src/pdoauth/Messages.py:26 src/pdoauth/Messages.py:27
+#: src/pdoauth/Messages.py:28
+msgid "another user is using your hash"
+msgstr ""
+"Egy másik Felhasználó is megadta ezt a Titkos kódot. Amennyiben nem a saját "
+"adataidat használtad töröld ezt a Titkos Kódot. Ha a Titkos Kód a te "
+"adataidból készült, akkor haladéktalanul kezdeményezd a tanúsításodat.Ezzel "
+"megakadályozod, hogy  visszaéljenek az adataiddal."
+
+#: src/pdoauth/Messages.py:27 src/pdoauth/Messages.py:28
+#: src/pdoauth/Messages.py:29 src/pdoauth/Messages.py:30
+#, fuzzy
+msgid "More users with the same hash; specify both hash and email"
+msgstr ""
+"Ehhez a Titkos Kódhoz több Felhasználó is tartozik, add meg a Felhasználó "
+"email címét is"
+
+#: src/pdoauth/Messages.py:28 src/pdoauth/Messages.py:29
+#: src/pdoauth/Messages.py:30 src/pdoauth/Messages.py:31
+msgid "no authorization to show other users"
+msgstr "Nincs jogod más felhasználók adatait megnézni"
+
+#: src/pdoauth/Messages.py:29 src/pdoauth/Messages.py:30
+#: src/pdoauth/Messages.py:31 src/pdoauth/Messages.py:32
+msgid "Password reset email has been successfully sent."
+msgstr "A jelszó megváltoztatásához szükséges emailt elküldtük neked"
+
+#: src/pdoauth/Messages.py:30 src/pdoauth/Messages.py:31
+#: src/pdoauth/Messages.py:32 src/pdoauth/Messages.py:33
+msgid "You cannot delete the login you are using"
+msgstr "Ezt a bejelentkezési módot nem törölheted, mert éppen ezt használod"
+
+#: src/pdoauth/Messages.py:31 src/pdoauth/Messages.py:32
+#: src/pdoauth/Messages.py:33 src/pdoauth/Messages.py:34
+msgid "No such user"
+msgstr "Nincs ilyen Felhasználó"
+
+#: src/pdoauth/Messages.py:32 src/pdoauth/Messages.py:33
+#: src/pdoauth/Messages.py:34 src/pdoauth/Messages.py:35
+msgid "bad Authorization header"
+msgstr "Hibás hitelesítő fejléc"
+
+#: src/pdoauth/Messages.py:33 src/pdoauth/Messages.py:34
+#: src/pdoauth/Messages.py:35 src/pdoauth/Messages.py:36
+msgid "no authorization"
+msgstr "Nincs jogod hozzá"
+
+#: src/pdoauth/Messages.py:34 src/pdoauth/Messages.py:35
+#: src/pdoauth/Messages.py:36 src/pdoauth/Messages.py:37
+msgid "authentication needed"
+msgstr "Be kell jelentkezned"
+
+#: src/pdoauth/Messages.py:35 src/pdoauth/Messages.py:36
+#: src/pdoauth/Messages.py:37 src/pdoauth/Messages.py:38
+msgid "logged out"
+msgstr "Kijelentkezve"
+
+#: src/pdoauth/Messages.py:36 src/pdoauth/Messages.py:37
+#: src/pdoauth/Messages.py:38 src/pdoauth/Messages.py:39
+msgid "deregistration email has been sent"
+msgstr "A fiók törléséhez szükséges email elküldtük"
+
+#: src/pdoauth/Messages.py:37 src/pdoauth/Messages.py:38
+#: src/pdoauth/Messages.py:39 src/pdoauth/Messages.py:40
+msgid "secret is needed for deregistration_doit"
+msgstr "A fiókod törléséhez add meg a jelszavad!"
+
+#: src/pdoauth/Messages.py:38 src/pdoauth/Messages.py:39
+#: src/pdoauth/Messages.py:40 src/pdoauth/Messages.py:41
+msgid "not logged in"
+msgstr "Nem vagy bejelentkezve"
+
+#: src/pdoauth/Messages.py:39 src/pdoauth/Messages.py:40
+#: src/pdoauth/Messages.py:41 src/pdoauth/Messages.py:42
+msgid "bad deregistration secret"
+msgstr ""
+"A fiók törlő kulcs érvényessége lejárt. Kezdeményezd újból a fióktörlés "
+"'fiókom' oldalon."
+
+#: src/pdoauth/Messages.py:40 src/pdoauth/Messages.py:41
+#: src/pdoauth/Messages.py:42 src/pdoauth/Messages.py:43
+msgid "you are deregistered"
+msgstr "A fiókodat töröltük"
+
+#: src/pdoauth/Messages.py:41 src/pdoauth/Messages.py:42
+#: src/pdoauth/Messages.py:43 src/pdoauth/Messages.py:44
+msgid "new hash registered"
+msgstr "A Titkos Kódot lecseréltük"
+
+#: src/pdoauth/Messages.py:42 src/pdoauth/Messages.py:43
+#: src/pdoauth/Messages.py:44 src/pdoauth/Messages.py:45
+msgid "old password does not match"
+msgstr "A régi jelszó hibás"
+
+#: src/pdoauth/Messages.py:43 src/pdoauth/Messages.py:44
+#: src/pdoauth/Messages.py:45 src/pdoauth/Messages.py:46
+msgid "password changed succesfully"
+msgstr "A jelszavad sikeresen megváltoztattad"
+
+#: src/pdoauth/Messages.py:44 src/pdoauth/Messages.py:45
+#: src/pdoauth/Messages.py:46 src/pdoauth/Messages.py:47
+msgid "This user does not have that digest"
+msgstr "A Felhasználónak nincs Titkos Kódja"
+
+#: src/pdoauth/Messages.py:45 src/pdoauth/Messages.py:46
+#: src/pdoauth/Messages.py:47 src/pdoauth/Messages.py:48
+msgid "No user with this hash"
+msgstr "Ehhez a Titkos Kódhoz nincs Felhasználó"
+
+#: src/pdoauth/Messages.py:46 src/pdoauth/Messages.py:47
+#: src/pdoauth/Messages.py:48 src/pdoauth/Messages.py:49
+msgid "unknown token"
+msgstr "ismeretlen token"
+
+#: src/pdoauth/Messages.py:47 src/pdoauth/Messages.py:48
+#: src/pdoauth/Messages.py:49 src/pdoauth/Messages.py:50
+msgid "email verified OK"
+msgstr "Az email-cím rendben"
+
+#: src/pdoauth/Messages.py:48 src/pdoauth/Messages.py:49
+#: src/pdoauth/Messages.py:50 src/pdoauth/Messages.py:51
+#: src/pdoauth/Messages.py:52
+msgid "Invalid email address"
+msgstr "Nem jó az email-cím"
+
+#: src/pdoauth/Messages.py:49 src/pdoauth/Messages.py:50
+#: src/pdoauth/Messages.py:51 src/pdoauth/Messages.py:52
+#: src/pdoauth/Messages.py:53
+msgid "expired token"
+msgstr "lejárt token"
+
+#: src/pdoauth/Messages.py:50 src/pdoauth/Messages.py:51
+#: src/pdoauth/Messages.py:52 src/pdoauth/Messages.py:53
+#: src/pdoauth/Messages.py:54
+msgid "Password successfully changed"
+msgstr "A jelszavadat sikeresen megváltoztattad"
+
+#: src/pdoauth/Messages.py:51 src/pdoauth/Messages.py:52
+#: src/pdoauth/Messages.py:53 src/pdoauth/Messages.py:54
+#: src/pdoauth/Messages.py:55
+msgid "The secret has expired"
+msgstr "Lejárt a módosításra  rendelkezésre álló idő"
+
+#: src/pdoauth/Messages.py:52 src/pdoauth/Messages.py:53
+#: src/pdoauth/Messages.py:54 src/pdoauth/Messages.py:55
+#: src/pdoauth/Messages.py:56
+msgid "No such credential"
+msgstr "Nincs ilyen hitelesítésed"
+
+#: src/pdoauth/Messages.py:53 src/pdoauth/Messages.py:54
+#: src/pdoauth/Messages.py:55 src/pdoauth/Messages.py:56
+#: src/pdoauth/Messages.py:57
+msgid "credential removed"
+msgstr "A hitelesítési mód törölve"
+
+#: src/pdoauth/Messages.py:55 src/pdoauth/Messages.py:56
+#: src/pdoauth/Messages.py:57 src/pdoauth/Messages.py:58
+#: src/pdoauth/Messages.py:59
+msgid "error in cert"
+msgstr "Hibás SSL tanúsítvány"
+
+#: src/pdoauth/Messages.py:56 src/pdoauth/Messages.py:57
+#: src/pdoauth/Messages.py:58 src/pdoauth/Messages.py:59
+#: src/pdoauth/Messages.py:60
+msgid "Inactive or disabled user"
+msgstr "Nem aktív vagy felfüggesztett felhasználó "
+
+#: src/pdoauth/Messages.py:57 src/pdoauth/Messages.py:58
+#: src/pdoauth/Messages.py:59 src/pdoauth/Messages.py:60
+#: src/pdoauth/Messages.py:61
+msgid "Bad username or password"
+msgstr "Hibás felhasználó név vagy jelszó"
+
+#: src/pdoauth/Messages.py:58 src/pdoauth/Messages.py:59
+#: src/pdoauth/Messages.py:60 src/pdoauth/Messages.py:61
+#: src/pdoauth/Messages.py:62
+msgid "Cannot login to facebook"
+msgstr "Nem lehet a Facebook fiókot elérni"
+
+#: src/pdoauth/Messages.py:60 src/pdoauth/Messages.py:61
+#: src/pdoauth/Messages.py:62 src/pdoauth/Messages.py:63
+#: src/pdoauth/Messages.py:64
+msgid "Unknown application"
+msgstr "ismeretlen alkalmazás"
+
+#: src/pdoauth/Messages.py:61 src/pdoauth/Messages.py:62
+#: src/pdoauth/Messages.py:63 src/pdoauth/Messages.py:64
+#: src/pdoauth/Messages.py:65
+#, fuzzy
+msgid "No hash given"
+msgstr "Nincs megadva Titkos Kód"
+
+#: src/pdoauth/Messages.py:63 src/pdoauth/Messages.py:64
+#, python-brace-format
+msgid "Nem sikerült elküldeni a levelet: {0}"
+msgstr "Nem sikerült ide {0} elküldeni a levelet "
+
+msgid "magyar"
+msgstr "magyar igazolás"
+
+msgid "emailverification"
+msgstr "ellenőrzött email-cím"
+
+msgid "assurer"
+msgstr "Tanusító"
+
+msgid "assurer.magyar"
+msgstr "'magyar'Tanúsító"
+
+msgid "assurer.assurer"
+msgstr "Kinevezhet Tanúsítót "
+
+msgid "assurer.vizsgazott"
+msgstr "Vizsgabiztos"
+
+msgid "assurer.{0}"
+msgstr "{0} Tanúsító"
+
+#: static/js/account.js:115 static/js/account.js:140 static/js/account.js:155
+msgid "Your email validation was succesfull."
+msgstr "Az email címed igazolása sikerült."
+
+#: static/js/account.js:119 static/js/account.js:144 static/js/account.js:159
+msgid "Your email validation <b>failed</b>.<br/>The servers response: "
+msgstr "Az email címed igazolása <b>nem</b> sikerült.<br/>A szerver üzenete: "
+
+#: static/js/account.js:159 static/js/script.js:591 static/js/script.js:603
+msgid "email address and/or username / password"
+msgstr "email-cím és/vagy felhasználónév és jelszó"
+
+#: static/js/account.js:164 static/js/script.js:599 static/js/script.js:611
+msgid "my facebook account"
+msgstr "facebook fiókom"
+
+#: static/js/account.js:175
+#, fuzzy
+msgid "Registration with {0}"
+msgstr "Regisztráció %s használatával"
+
+#: static/js/account.js:211 static/js/account.js:230 static/js/script.js:739
+#: static/js/base.js:40 static/js/script.js:39
+msgid "Server error occured"
+msgstr "Szerver hiba"
+
+#: static/js/account.js:237 static/js/account.js:263 static/js/script.js:668
+#: static/js/script.js:680
+#, fuzzy
+msgid "Acceptance is missing"
+msgstr "Hiányzik a beleegyezésed"
+
+#: static/js/account.js:237
+msgid "Text for missing accaptance of term of use"
+msgstr "A Felhasználási Feltételek elfogadása"
+
+#: static/js/account.js:280 static/js/account.js:310 static/js/script.js:501
+#: static/js/script.js:513
+#, fuzzy
+msgid "The Secret Hash is given for assuring"
+msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
+
+#: static/js/account.js:285 static/js/script.js:97 static/js/script.js:568
+#: static/js/script.js:582 static/js/script.js:588 static/js/account.js:319
+#: static/js/script.js:98 static/js/script.js:554 static/js/script.js:560
+#: static/js/script.js:112 static/js/script.js:416 static/js/script.js:422
+#: static/js/script.js:518 static/js/script.js:652 static/js/script.js:141
+#: static/js/script.js:428 static/js/script.js:434 static/js/script.js:530
+#: static/js/script.js:664
+msgid "Error message"
+msgstr "Hibaüzenet"
+
+#: static/js/account.js:289 static/js/account.js:323 static/js/script.js:522
+#: static/js/script.js:534
+#, fuzzy
+msgid "The Secret Hash isn't given yet"
+msgstr "Még nincs Titkos Kód "
+
+#: static/js/account.js:316 static/js/account.js:320 static/js/script.js:368
+#: static/js/account.js:350 static/js/account.js:354 static/js/script.js:369
+#: static/js/script.js:275 static/js/script.js:566 static/js/script.js:570
+#: static/js/script.js:297 static/js/script.js:578 static/js/script.js:582
+msgid "Missing data"
+msgstr "Hiányzó adat"
+
+#: static/js/account.js:316 static/js/account.js:350 static/js/script.js:566
+#: static/js/script.js:578
+msgid "Personal identifier is missing"
+msgstr "A személyi azonosító nincs megadva"
+
+#: static/js/account.js:320 static/js/account.js:354 static/js/script.js:570
+#: static/js/script.js:582
+msgid "Mother's name is missing"
+msgstr "Anyja neve nincs megadva"
+
+#: static/js/account.js:421 static/js/account.js:486 static/js/account.js:293
+#: static/js/account.js:308
+msgid "Email address:"
+msgstr "E-mail cím:"
+
+#: static/js/account.js:428 static/js/account.js:437 static/js/account.js:493
+#: static/js/account.js:502
+#, fuzzy
+msgid "The Secret Hash:"
+msgstr "Titkos Kódom:"
+
+#: static/js/account.js:439 static/js/account.js:504 static/js/account.js:311
+#: static/js/account.js:326
+msgid "If you change your Secret Hash, all of your assurences will be deleted!"
+msgstr ""
+"Ha megváltoztatod a Titkos Kódodat, az összes eddigi igazolásod elvész!"
+
+#: static/js/account.js:441 static/js/account.js:506 static/js/account.js:313
+#: static/js/account.js:328
+msgid "Let's make it here"
+msgstr "Készítsük el itt"
+
+#: static/js/account.js:443 static/js/account.js:508 static/js/account.js:315
+#: static/js/account.js:330
+msgid "I make it myself"
+msgstr "Elkészítem magam"
+
+#: static/js/account.js:447 static/js/account.js:512 static/js/account.js:319
+#: static/js/account.js:334
+msgid "Personal identifier"
+msgstr "Személyi azonosító"
+
+#: static/js/account.js:449 static/js/account.js:514 static/js/account.js:321
+#: static/js/account.js:336
+msgid "Mother's name"
+msgstr "Anyja neve"
+
+#: static/js/account.js:451 static/js/account.js:516 static/js/account.js:323
+#: static/js/account.js:338
+msgid "Generate"
+msgstr "A kód előállítása"
+
+#: static/js/account.js:457 static/js/account.js:490 static/js/account.js:522
+#: static/js/account.js:551 static/js/account.js:297 static/js/account.js:329
+#: static/js/account.js:358 static/js/account.js:312 static/js/account.js:344
+#: static/js/account.js:373
+msgid "save"
+msgstr "mentés"
+
+#: static/js/account.js:458 static/js/account.js:523 static/js/account.js:552
+#: static/js/account.js:330 static/js/account.js:359 static/js/account.js:345
+#: static/js/account.js:374
+msgid "cancel"
+msgstr "mégse"
+
+#: static/js/account.js:462 static/js/account.js:527 static/js/account.js:334
+#: static/js/account.js:349
+msgid "My credentials"
+msgstr "Hitelesítési módjaim"
+
+#: static/js/account.js:464 static/js/account.js:529 static/js/account.js:336
+#: static/js/account.js:351
+msgid "Password"
+msgstr "Jelszavas"
+
+#: static/js/gettext.js:409
+#, javascript-format
+msgid ""
+"Parsed: %d msgids, %d msgids-plurals, %d msgstrs, %d obsoletes, %d contexts, "
+"%d references, %d flags, %d previous untranslateds, %d previous untranslated-"
+"plurals"
+msgstr ""
+"Parsed: %d msgids, %d msgids-plurals, %d msgstrs, %d obsoletes, %d contexts, "
+"%d references, %d flags, %d previous untranslateds, %d previous untranslated-"
+"plurals"
+
+#: static/js/script.js:89 static/js/script.js:90 static/js/script.js:104
+#: static/js/script.js:133
+msgid "Server message"
+msgstr "Szerverüzenet"
+
+#: static/js/script.js:93 static/js/script.js:94 static/js/script.js:108
+#: static/js/script.js:137
+msgid "User informations"
+msgstr "A felhasználó adatai"
+
+#: static/js/script.js:119 static/js/script.js:120 static/js/account.js:424
+#: static/js/account.js:440
+msgid "Application"
+msgstr "Alkalmazás"
+
+#: static/js/script.js:120 static/js/script.js:121 static/js/account.js:425
+#: static/js/account.js:441
+msgid "Domain"
+msgstr "Hivatkozás"
+
+#: static/js/script.js:121 static/js/script.js:160 static/js/script.js:122
+#: static/js/script.js:161 static/js/account.js:426 static/js/script.js:142
+#: static/js/account.js:442 static/js/script.js:171
+msgid "User identifier"
+msgstr "Felhasználó azonosító"
+
+#: static/js/script.js:122 static/js/script.js:123 static/js/account.js:427
+#: static/js/account.js:443
+msgid "Emailing"
+msgstr "Levelezés"
+
+#: static/js/script.js:123 static/js/script.js:124 static/js/account.js:428
+#: static/js/account.js:444
+msgid "Allow emailing"
+msgstr "Kaphatok levelet"
+
+#: static/js/script.js:164 static/js/script.js:165 static/js/script.js:146
+#: static/js/script.js:175
+msgid "Assurances"
+msgstr "Igazolások"
+
+#: static/js/script.js:168 static/js/script.js:169 static/js/script.js:150
+#: static/js/script.js:179
+msgid "Name"
+msgstr "Megnevezés"
+
+#: static/js/script.js:169 static/js/script.js:170 static/js/script.js:151
+#: static/js/script.js:180
+msgid "Assurer"
+msgstr "Kiállító"
+
+#: static/js/script.js:170 static/js/script.js:171 static/js/script.js:152
+#: static/js/script.js:181
+msgid "Date of assurance"
+msgstr "Kiállítás dátuma"
+
+#: static/js/script.js:171 static/js/script.js:172 static/js/script.js:153
+#: static/js/script.js:182
+msgid "Valid until"
+msgstr "Érvényesség"
+
+#: static/js/script.js:183 static/js/script.js:184 static/js/script.js:165
+#: static/js/script.js:194
+msgid "unlimited"
+msgstr "korlátlan"
+
+#: static/js/script.js:360 static/js/script.js:361 static/js/script.js:267
+#: static/js/script.js:289
+msgid "User name is missing. "
+msgstr "Hiányzik a felhasználónév. "
+
+#: static/js/script.js:365 static/js/script.js:366 static/js/script.js:272
+#: static/js/script.js:294
+msgid "Password is missing. "
+msgstr "Nem adtál meg jelszót. "
+
+#: static/js/script.js:444 static/js/script.js:483 static/js/script.js:524
+#: static/js/script.js:528 static/js/script.js:532 static/js/script.js:546
+#: static/js/script.js:550 static/js/script.js:554 static/js/script.js:443
+#: static/js/script.js:471 static/js/script.js:512 static/js/script.js:516
+#: static/js/script.js:520 static/js/script.js:534 static/js/script.js:538
+#: static/js/script.js:542 static/js/script.js:337 static/js/script.js:354
+#: static/js/script.js:374 static/js/script.js:378 static/js/script.js:382
+#: static/js/script.js:396 static/js/script.js:400 static/js/script.js:404
+#: static/js/script.js:386 static/js/script.js:390 static/js/script.js:394
+#: static/js/script.js:408 static/js/script.js:412 static/js/script.js:416
+msgid "Under construction"
+msgstr "Keményen dolgozunk,"
+
+#: static/js/script.js:444 static/js/script.js:483 static/js/script.js:524
+#: static/js/script.js:528 static/js/script.js:532 static/js/script.js:546
+#: static/js/script.js:550 static/js/script.js:554 static/js/script.js:443
+#: static/js/script.js:471 static/js/script.js:512 static/js/script.js:516
+#: static/js/script.js:520 static/js/script.js:534 static/js/script.js:538
+#: static/js/script.js:542 static/js/script.js:337 static/js/script.js:354
+#: static/js/script.js:374 static/js/script.js:378 static/js/script.js:382
+#: static/js/script.js:396 static/js/script.js:400 static/js/script.js:404
+#: static/js/script.js:386 static/js/script.js:390 static/js/script.js:394
+#: static/js/script.js:408 static/js/script.js:412 static/js/script.js:416
+msgid "This function is not working yet."
+msgstr "Ez a funkció sajnos még nem működik."
+
+#: static/js/script.js:450 static/js/script.js:206 static/js/script.js:235
+msgid "Congratulation!"
+msgstr "Gratulálunk!"
+
+#: static/js/script.js:450
+#, fuzzy
+msgid "The Secret Hash has been constructed successfully."
+msgstr "A Titkos Kód elkészült."
+
+#: static/js/script.js:583 static/js/script.js:555 static/js/script.js:417
+#: static/js/script.js:429
+msgid "The secret is missing"
+msgstr "Hiányzik a hitelesítő eszköz"
+
+#: static/js/script.js:589
+msgid "Plase accept the consequences with checking the checkbox"
+msgstr "A jelölőnégyzetbe kattintva el kell fogadnod a következményeket. "
+
+#: static/js/account.js:170 static/js/account.js:465 static/js/account.js:530
+#: static/js/account.js:337 static/js/script.js:606 static/js/account.js:352
+#: static/js/script.js:618
+msgid "SSL certificate"
+msgstr "SSL hitelesítéssel"
+
+#: wtforms/validators.py:55
+#, fuzzy, python-format
+msgid "Invalid field name '%s'."
+msgstr "Hibás mező név '%s'."
+
+#: wtforms/validators.py:63
+#, python-format
+msgid "Field must be equal to %(other_name)s."
+msgstr "A mezőnek egyenlőnek kell lenni  %(other_name)s."
+
+#: wtforms/validators.py:96
+#, python-format
+msgid "Field must be at least %(min)d character long."
+msgid_plural "Field must be at least %(min)d characters long."
+msgstr[0] "A mezőnek legalább  %(min)d karakterből kell állnia."
+msgstr[1] "A mezőnek legalább  %(min)d karakterből kell állnia."
+
+#: wtforms/validators.py:99
+#, python-format
+msgid "Field cannot be longer than %(max)d character."
+msgid_plural "Field cannot be longer than %(max)d characters."
+msgstr[0] "A mező nem lehet hosszabb mint %(max)d karakter."
+msgstr[1] "A mező nem lehet hosszabb mint %(max)d karakter."
+
+#: wtforms/validators.py:102
+#, python-format
+msgid "Field must be between %(min)d and %(max)d characters long."
+msgstr "A mező minimum  %(min)d, maximum %(max)d karakter hosszú lehet"
+
+#: wtforms/validators.py:138
+#, python-format
+msgid "Number must be at least %(min)s."
+msgstr "A szám legalább %(min)s"
+
+#: wtforms/validators.py:140
+#, python-format
+msgid "Number must be at most %(max)s."
+msgstr "A szám maximum %(max)s lehet. "
+
+#: wtforms/validators.py:142
+#, python-format
+msgid "Number must be between %(min)s and %(max)s."
+msgstr "A szám minimum  %(min)s, maximum %(max)s lehet"
+
+#: wtforms/validators.py:198 wtforms/validators.py:233
+msgid "This field is required."
+msgstr "Kötelező kitölteni"
+
+#: wtforms/validators.py:264
+#, fuzzy
+msgid "Invalid input."
+msgstr "Érvénytelen kérés"
+
+#: wtforms/validators.py:286
+#, fuzzy
+msgid "Invalid email address."
+msgstr "Nem jó az email-cím"
+
+#: wtforms/validators.py:318
+#, fuzzy
+msgid "Invalid IP address."
+msgstr "Nem jó az email-cím"
+
+#: wtforms/validators.py:367
+#, fuzzy
+msgid "Invalid Mac address."
+msgstr "Nem jó az email-cím"
+
+#: wtforms/validators.py:393
+msgid "Invalid URL."
+msgstr "Érvénytelen URL hivatkozás"
+
+#: wtforms/validators.py:412
+msgid "Invalid UUID."
+msgstr "Ervénytelen UUID."
+
+#: wtforms/validators.py:440
+#, fuzzy, python-format
+msgid "Invalid value, must be one of: %(values)s."
+msgstr "érvénytelen hitelesítés típus"
+
+#: wtforms/validators.py:472
+#, python-format
+msgid "Invalid value, can't be any of: %(values)s."
+msgstr "hibás érték, nem lehet: %(values)s."
+
+#: wtforms/csrf/core.py:83 wtforms/ext/csrf/form.py:47
+msgid "Invalid CSRF Token"
+msgstr "Érvénytelen CSRF Token"
+
+#: wtforms/csrf/session.py:61 wtforms/ext/csrf/session.py:58
+msgid "CSRF token missing"
+msgstr "Hiányzó CSRF Token"
+
+#: wtforms/csrf/session.py:69 wtforms/ext/csrf/session.py:66
+msgid "CSRF failed"
+msgstr "CSRFhiba "
+
+#: wtforms/csrf/session.py:74 wtforms/ext/csrf/session.py:71
+msgid "CSRF token expired"
+msgstr "A CSRF Token lejárt"
+
+#: wtforms/ext/appengine/fields.py:87 wtforms/ext/appengine/fields.py:164
+#: wtforms/ext/appengine/fields.py:166 wtforms/ext/django/fields.py:96
+#: wtforms/ext/sqlalchemy/fields.py:125 wtforms/ext/sqlalchemy/fields.py:127
+#: wtforms/ext/sqlalchemy/fields.py:177 wtforms/ext/sqlalchemy/fields.py:182
+#: wtforms/fields/core.py:456
+msgid "Not a valid choice"
+msgstr "Nem választható"
+
+#: wtforms/ext/appengine/fields.py:185
+msgid "Not a valid list"
+msgstr "Érvénytelen lista"
+
+#: wtforms/ext/appengine/fields.py:204
+msgid "Not a valid integer list"
+msgstr "Érvénytelen integer lista"
+
+#: wtforms/ext/dateutil/fields.py:63
+msgid "Please input a date/time value"
+msgstr "Adj meg dátumot és időt"
+
+#: wtforms/ext/dateutil/fields.py:75 wtforms/ext/dateutil/fields.py:83
+msgid "Invalid date/time input"
+msgstr "Érvénytelen dátum/idő"
+
+#: wtforms/ext/sqlalchemy/validators.py:34
+msgid "Already exists."
+msgstr "Már létezik"
+
+#: wtforms/fields/core.py:449
+msgid "Invalid Choice: could not coerce"
+msgstr "Érvénytelen választás"
+
+#: wtforms/fields/core.py:482
+msgid "Invalid choice(s): one or more data inputs could not be coerced"
+msgstr "Érvénytelen választás, egy vagy több adat hibás"
+
+#: wtforms/fields/core.py:489
+#, python-format
+msgid "'%(value)s' is not a valid choice for this field"
+msgstr "'%(value)s' nem lehetséges itt"
+
+#: wtforms/fields/core.py:572
+msgid "Not a valid integer value"
+msgstr "Érvénytelen integer érték"
+
+#: wtforms/fields/core.py:638
+msgid "Not a valid decimal value"
+msgstr "Nem érvényes tizedes jegy "
+
+#: wtforms/fields/core.py:665
+msgid "Not a valid float value"
+msgstr "Nem érvényes érték "
+
+#: wtforms/fields/core.py:724
+msgid "Not a valid datetime value"
+msgstr "Nem érvényes időpont"
+
+#: wtforms/fields/core.py:741
+msgid "Not a valid date value"
+msgstr "Nem érvényes dátum"
+
+#: src/pdoauth/Messages.py:28
+msgid "you already have this hash: nothing is done"
+msgstr "Ez a Titkos Kód már elmentve"
+
+#: static/js/account.js:175 static/js/script.js:612 static/js/script.js:624
+#, javascript-format
+msgid "Registration with %s "
+msgstr "Regisztráció %s használatával"
+
+#: static/js/account.js:213 static/js/account.js:447 static/js/account.js:254
+#: static/js/script.js:681 static/js/script.js:693
+msgid "Server failure"
+msgstr "Szerverhiba"
+
+#: static/js/account.js:263 static/js/script.js:668 static/js/script.js:680
+msgid ""
+"For the registration you have to accept the terms of use. To accept the "
+"terms of use please mark the checkbox!"
+msgstr ""
+"A regisztrácóhoz el kell fogadnod a Felhasználási Feltételeket. Az "
+"elfogadáshoz kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
+
+#: static/js/fb.js:96 static/js/fb.js:132 static/js/fb.js:145
+#: static/js/fb.js:97 static/js/fb.js:133 static/js/fb.js:147
+msgid "Facebook error"
+msgstr "Facebook hiba"
+
+#: static/js/fb.js:96 static/js/fb.js:145 static/js/fb.js:97
+#: static/js/fb.js:147
+msgid "Can not login with your Facebook account"
+msgstr "Nem sikerült adatot kapni a Facebook-tól"
+
+#: static/js/login.js:56
+msgid "application needs to sign in with your ADA account"
+msgstr "alkalmazás használatához jelentkezz be ADA fiókoddal!"
+
+#: static/js/script.js:561 static/js/script.js:423 static/js/script.js:435
+msgid "To accept the terms please mark the checkbox!"
+msgstr ""
+"Ha fiók törlésével kapcsolatos figyelmeztetést tudomásul vétted, kattints a "
+"jelölőnégyzetbe!"
+
+msgid "hashgiven"
+msgstr "van Titkos Kód"
+
+msgid "false"
+msgstr "nincs"
+
+msgid "true"
+msgstr "igen"
+
+msgid "pubkey"
+msgstr "Publikus kulcs"
+
+msgid "email"
+msgstr "E-mail cím"
+
+msgid "secret"
+msgstr "titokmező"
+
+msgid "password"
+msgstr "Jelszó"
+
+msgid "identifier"
+msgstr "Felhasználó azonosító"
+
+msgid "digest"
+msgstr "Titkos Kód"
+
+msgid "application will get the data below:"
+msgstr "alkalmazás az alábbi adatokat fogja megkapni:"
+
+msgid "The %s application needs to sign in with your ADA account"
+msgstr "A %s alkalmazás használatához ADA bejelentkezés szükséges"
+
+msgid "The %s application will get the data below:"
+msgstr "A %s alkalmazás az alábbi adatokat fogja megkapni:"
+
+msgid "The %s application needs you have the assurances below"
+msgstr ""
+"A %s alkalmazás használatának feltétele, hogy rendelkezz az alábbi "
+"igazolásokkal:"
+
+#: static/js/script.js:652 static/js/script.js:664
+msgid "The passwords are not identical"
+msgstr "A jelszavak nem egyeznek meg"
+
+#: static/js/script.js:735 static/js/script.js:747
+msgid "Passwords are not equal."
+msgstr "A jelszavak nem egyeznek meg."
+
+#: static/js/script.js:734 static/js/script.js:746
+msgid "OK."
+msgstr "Rendben."
+
+#: static/js/script.js:719 static/js/script.js:731
+msgid "Strong!"
+msgstr "Erős"
+
+#: static/js/script.js:722 static/js/script.js:734
+msgid "Medium!"
+msgstr "Közepes"
+
+#: static/js/script.js:725 static/js/script.js:737
+msgid "Weak!"
+msgstr "Gyenge"
+
+#: static/js/script.js:716 static/js/script.js:728
+msgid "More Characters"
+msgstr "Több karakter kell"
+
+#: static/js/script.js:713 static/js/script.js:725
+msgid "Type Password"
+msgstr "Írd be a jelszavad"
+
+#: src/pdoauth/Messages.py:12
+#, fuzzy
+msgid "credentialType"
+msgstr "Hitelesítési módjaim"
+
+#: src/pdoauth/Messages.py:13
+#, fuzzy
+msgid "Invalid value, must be one of"
+msgstr "érvénytelen hitelesítés típus"
+
+#: src/pdoauth/Messages.py:29
+#, fuzzy
+msgid "you already have this hash,so nothing is done"
+msgstr "Ez a Titkos Kód már elmentve"
+
+#: src/pdoauth/Messages.py:65 src/pdoauth/Messages.py:66
+#, fuzzy
+msgid "Nem sikerült elküldeni a levelet"
+msgstr "Nem sikerült ide {0} elküldeni a levelet "
+
+#: static/js/account.js:300 static/js/account.js:309 static/js/account.js:315
+#: static/js/account.js:324
+msgid "My Secret Hash:"
+msgstr "Titkos Kódom:"
+
+#: src/pdoauth/Messages.py:51
+#, fuzzy
+msgid "verification email sent"
+msgstr ""
+"Az emailcím cseréhez szükséges levelet elküldtük. Az új email címed "
+"aktíválásához kattints a levélben található linkre."
+
+#: src/pdoauth/Messages.py:67
+msgid "bad secret for email change"
+msgstr "Az email csere hivatkozás érvénytelen"
+
+#: src/pdoauth/Messages.py:68
+msgid "email change email sent"
+msgstr ""
+"Az emailcím cseréhez szükséges levelet elküldtük. Az új email címed "
+"aktíválásához kattints a levélben található linkre."
+
+#: src/pdoauth/Messages.py:69
+#, fuzzy
+msgid "email address changed"
+msgstr "E-mail cím cseréje megtörtént"
+
+#: static/js/script.js:236
+msgid ""
+"You have succesfully registered and logged in. </br> Please click the link "
+"inside the email we sent you to validate your email address, otherwise your "
+"account will be destroyed in one week."
+msgstr ""
+"A regisztrációd sikerült, amiről email-ben is értesítettünk. </br> Az "
+"emailben  megadott linkre kell kattintanod, hogy igazold az email címed "
+"valódiságát. Ha ez nem történik meg egy héten belül, a fiókodat "
+"automatikusan töröljük"
+
+#: src/pdoauth/Messages.py:70
+#, fuzzy
+msgid "email address change is cancelled"
+msgstr "E-mail cím csere nem történt meg"
+
+msgid "Type your new email address here"
+msgstr "Add meg az új email címed"

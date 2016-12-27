@@ -1,13 +1,13 @@
 # -*- coding: UTF-8 -*-
 # pylint: disable=no-member, invalid-name
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.models.Application import Application
 from pdoauth.app import db, app
-from urllib import urlencode
 from pdoauth.FlaskInterface import FlaskInterface
 from integrationtest.helpers.UserTesting import UserTesting
 from integrationtest import config
+import uritools
 
 class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
 
@@ -29,8 +29,8 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
         self.session.close()
 
 
-    @test
-    def authorization_code_cannot_be_obtained_without_user(self):
+    
+    def test_authorization_code_cannot_be_obtained_without_user(self):
         with app.test_client() as c:
             redirect_uri = 'https://test.app/redirecturi'
             params = {
@@ -42,23 +42,20 @@ class AuthProviderIntegrationTest(IntegrationTest, UserTesting):
             denyUri = config.BASE_URL
             self.assertTrue(resp.headers['Location'].startswith(denyUri))
 
-    @test
-    def auth_interface_redirects_to_redirect_uri(self):
-        params = {
-            "response_type": "code",
-            "client_id": self.app.name,
-            "redirectUri": self.app.redirect_uri
-        }
+    
+    def test_auth_interface_redirects_to_redirect_uri(self):
         baseUrl = app.config.get('BASE_URL')
         uriBase = "/v1/oauth2/auth"
-        queryString = urlencode(params)
+        uri="{0}{1}?redirectUri={2}&response_type=code&client_id={3}".format(
+            baseUrl,
+            uriBase,
+            uritools.uriencode(self.app.redirect_uri).decode('utf-8'),
+            self.app.name,
+            )
+        targetUri = "{0}?next={1}".format(app.config.get('LOGIN_URL'), uritools.uriencode(uri).decode('utf-8'))
+        queryString=uri.split('?')[1]
         with app.test_client() as client:
             resp = client.get(
                     uriBase, query_string=queryString, base_url=baseUrl)
-            theUri = baseUrl + uriBase
-            targetUri = "{0}?{1}".format(
-                app.config.get('START_URL'),
-                urlencode({"next": "{0}?{1}".format(theUri, queryString)})
-            )
-        self.assertEquals(resp.status_code, 302)
-        self.assertEquals(resp.headers['Location'],targetUri)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.headers['Location'],targetUri)

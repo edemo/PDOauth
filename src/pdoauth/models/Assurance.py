@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from pdoauth.models.User import User
 import time
 from pdoauth.ModelUtils import ModelUtils
+from sqlalchemy.sql.functions import func
 
 emailVerification = "emailverification"
 
@@ -34,7 +35,9 @@ class Assurance(db.Model, ModelUtils):
         
 
     @classmethod
-    def listByUser(cls, user):
+    def listByUser(cls, user, assurance=None):
+        if assurance is not None:
+            return Assurance.query.filter_by(user=user, name=assurance).all()
         assurances = Assurance.query.filter_by(user=user).all()
         return assurances
 
@@ -43,7 +46,7 @@ class Assurance(db.Model, ModelUtils):
         assurances = cls.listByUser(user)
         r = {}
         for ass in assurances:
-            if not r.has_key(ass.name):
+            if not ass.name in r:
                 r[ass.name] = []
             r[ass.name].append(ass.as_dict())
         return r
@@ -64,5 +67,16 @@ class Assurance(db.Model, ModelUtils):
         instances = cls.query.filter_by(user=user).all()
         for instance in instances:
             instance.rm()
+            
+    @classmethod
+    def getStats(klass):
+        assuranceStats = dict()
+        assurances = klass.query.with_entities(Assurance.name).add_column(func.count(klass.name)).group_by(klass.name).all()
+        for name, value in assurances:
+            assuranceStats[name] = value
+        
+        return assuranceStats
+
+
 
 User.subscribe(Assurance.removeAllForUser, "pre_rm")

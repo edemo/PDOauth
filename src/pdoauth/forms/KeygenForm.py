@@ -1,9 +1,9 @@
 
-from flask_wtf.form import Form
 from wtforms.fields.simple import TextField, BooleanField
-from pdoauth.forms import emailValidator, passwordValidator
+from pdoauth.forms import emailValidator, secretValidator
+from pdoauth.forms.DigestForm import DigestForm
     
-class KeygenForm(Form):
-    pubkey = TextField('pubkey', passwordValidator)
+class KeygenForm(DigestForm):
+    pubkey = TextField('pubkey', secretValidator)
     email = TextField('email', emailValidator)
     createUser = BooleanField('createUser')

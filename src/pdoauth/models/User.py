@@ -4,6 +4,7 @@ from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String, BOOLEAN, Integer
 import uuid
 from pdoauth.ReportedError import ReportedError
+from pdoauth.Messages import noHashGiven, thereIsAlreadyAUserWithThatEmail
 
 class AlreadyExistingUser(Exception):
     pass
@@ -26,7 +27,7 @@ class User(db.Model, ModelUtils):
     def new(cls, email, digest=None):
         u = cls.getByEmail(email)
         if u is not None:
-            raise ReportedError(["there is already a user with this email"])
+            raise ReportedError([thereIsAlreadyAUserWithThatEmail])
         user = cls( email,digest)
         user.save()
         return user
@@ -36,7 +37,7 @@ class User(db.Model, ModelUtils):
         if digest is not None:
             self.hash = digest
 
-        self.userid=unicode(uuid.uuid4())
+        self.userid=uuid.uuid4().hex
         self.active = False
         self.authenticated = False
 
@@ -50,6 +51,7 @@ class User(db.Model, ModelUtils):
     def is_active(self):
         return self.active
 
+    @property
     def is_authenticated(self):
         return self.authenticated
     
@@ -66,9 +68,8 @@ class User(db.Model, ModelUtils):
         user = User.query.filter_by(userid=userid).first()
         return user
 
-    
     @classmethod
     def getByDigest(cls, digest):
         if digest == '' or digest is None:
-            raise ValueError()
+            raise ReportedError(noHashGiven)
         return cls.query.filter_by(hash=digest).all()

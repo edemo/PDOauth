@@ -1,12 +1,13 @@
 # pylint: disable=line-too-long
 from pdoauth.models.Credential import Credential
-from urllib import urlencode
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 
 from test.config import Config
 from test.helpers.FakeInterFace import FakeMail
 from test.helpers.CryptoTestUtil import CryptoTestUtil, TEST_USER_IDENTIFIER
 from test.helpers.UserUtil import UserUtil
+from pdoauth.Messages import errorInCert
+import uritools
 
 CREDENTIAL_REPRESENTATION = '{{"credentialType": "certificate", "identifier": "{0}"}}'.format(TEST_USER_IDENTIFIER)
 
@@ -16,97 +17,97 @@ class SslLoginTest(PDUnitTest, CryptoTestUtil, UserUtil):
         PDUnitTest.tearDown(self)
         self.removeCertUser()
 
-    @test
-    def there_is_a_SSL_LOGIN_BASE_URL_config_option_containing_the_base_url_of_the_site_with_the_optional_no_ca_config(self):
+    
+    def test_there_is_a_SSL_LOGIN_BASE_URL_config_option_containing_the_base_url_of_the_site_with_the_optional_no_ca_config(self):
         self.assertTrue(Config.SSL_LOGIN_BASE_URL is not None)
 
-    @test
-    def there_is_a_BASE_URL_config_option_containing_the_plain_ssl_base_url(self):
+    
+    def test_there_is_a_BASE_URL_config_option_containing_the_plain_ssl_base_url(self):
         "where no certificate is asked"
         self.assertTrue(Config.BASE_URL is not None)
 
-    @test
-    def there_is_a_SSL_LOGOUT_URL_config_option_pointing_to_a_location_which_is_set_up_with_SSLVerifyClient_require_and_SSLVerifyDepth_0_within_SSL_LOGIN_BASE_URL(self):
+    
+    def test_there_is_a_SSL_LOGOUT_URL_config_option_pointing_to_a_location_which_is_set_up_with_SSLVerifyClient_require_and_SSLVerifyDepth_0_within_SSL_LOGIN_BASE_URL(self):
         self.assertTrue(Config.SSL_LOGIN_BASE_URL in Config.SSL_LOGOUT_URL)
 
-    @test
-    def there_is_a_START_URL_config_option_which_contains_the_starting_point_useable_for_unregistered_and_or_not_logged_in_user(self):
+    
+    def test_there_is_a_START_URL_config_option_which_contains_the_starting_point_useable_for_unregistered_and_or_not_logged_in_user(self):
         self.assertTrue(Config.BASE_URL in Config.START_URL)
 
-    @test
-    def you_can_login_using_a_registered_ssl_cert(self):
+    
+    def test_you_can_login_using_a_registered_ssl_cert(self):
         resp = self.createUserAndLoginWithCert()
-        self.assertEquals(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
         self.assertTrue(CREDENTIAL_REPRESENTATION in
             self.getResponseText(resp))
 
-    @test
-    def ssl_login_sets_csrf_cookie(self):
+    
+    def test_ssl_login_sets_csrf_cookie(self):
         resp = self.createUserAndLoginWithCert()
         cookieParts = self.getCookieParts(resp)
-        self.assertTrue(cookieParts.has_key('csrf'))
+        self.assertTrue('csrf' in cookieParts)
 
-    @test
-    def login_cookie_have_path_set_to_root(self):
+    
+    def test_login_cookie_have_path_set_to_root(self):
         resp = self.createUserAndLoginWithCert()
         cookieParts = self.getCookieParts(resp)
-        self.assertEquals(cookieParts['Path'], '/')
+        self.assertEqual(cookieParts['Path'], '/')
 
-    @test
-    def login_cookie_have_domain_set_to_COOKIE_DOMAIN(self):
+    
+    def test_login_cookie_have_domain_set_to_COOKIE_DOMAIN(self):
         resp = self.createUserAndLoginWithCert()
         cookieParts = self.getCookieParts(resp)
         cookieDomain = self.controller.app.config.get('COOKIE_DOMAIN')
-        self.assertEquals(cookieParts['Domain'], cookieDomain)
+        self.assertEqual(cookieParts['Domain'], cookieDomain)
 
-    @test
-    def with_cert_login_you_get_actually_logged_in(self):
+    def test_with_cert_login_you_get_actually_logged_in(self):
         resp = self.createUserAndLoginWithCert()
-        self.assertEquals(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
         body = self.getResponseText(resp)
-        self.assertTrue(CREDENTIAL_REPRESENTATION in
+        self.assertIn(CREDENTIAL_REPRESENTATION,
             body)
         resp = self.showUserByCurrentUser('me')
         self.assertEqual(200, resp.status_code)
 
-    @test
-    def you_cannot_login_using_an_unregistered_ssl_cert_without_email(self):
+    
+    def test_you_cannot_login_using_an_unregistered_ssl_cert_without_email(self):
         certAttr = self.getCertAttributes()
         self.assertReportedError(
             self.sslLoginWithCert, [certAttr.cert], 403, ["You have to register first"])
 
-    @test
-    def you_cannot_login_without_a_cert(self):
+    
+    def test_you_cannot_login_without_a_cert(self):
         self.assertReportedError(
-            self.controller.doSslLogin, [], 403, ["No certificate given"])
+            self.controller.doSslLogin, [], 400, errorInCert)
 
-    @test
-    def empty_certstring_gives_error(self):
+    
+    def test_empty_certstring_gives_error(self):
         self.assertReportedError(
-            self.sslLoginWithCert, [''], 403, ["No certificate given"])
+            self.sslLoginWithCert, [''], 400, errorInCert)
 
-    @test
-    def junk_certstring_gives_error(self):
+    
+    def test_junk_certstring_gives_error(self):
         self.assertReportedError(
-            self.sslLoginWithCert, ['junk'], 400, ["error in cert", "junk"])
+            self.sslLoginWithCert, ['junk'], 400, errorInCert)
 
-    @test
-    def ssl_login_is_cors_enabled(self):
+    
+    def test_ssl_login_is_cors_enabled(self):
         resp = self.createUserAndLoginWithCert()
-        self.assertEquals(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.headers['Access-Control-Allow-Origin'], "*")
 
-    @test
-    def you_can_register_and_login_using_an_unregistered_ssl_cert_with_email(self):
+    
+    def test_you_can_register_and_login_using_an_unregistered_ssl_cert_with_email(self):
         certAttr = self.getCertAttributes()
         params=dict(email="certuser@example.com")
-        url = Config.BASE_URL + "?" + urlencode(params)
+        parts = uritools.urisplit(Config.BASE_URL)
+        url = uritools.uricompose(parts.scheme, parts.host, parts.path, params)
         self.controller.interface.set_request_context(url)
         self.controller.mail = FakeMail()
         resp = self.sslLoginWithCert(certAttr.cert)
         cred = Credential.get("certificate", certAttr.identifier)
         self.deleteUser(cred.user)
-        self.assertEquals(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
         responseText = self.getResponseText(resp)
         self.assertTrue(CREDENTIAL_REPRESENTATION in
             responseText)

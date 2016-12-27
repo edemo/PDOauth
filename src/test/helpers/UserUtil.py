@@ -4,7 +4,7 @@ from pdoauth.models.Credential import Credential
 from test.helpers.ResponseInfo import ResponseInfo
 from test.helpers.RandomUtil import RandomUtil
 from test.helpers.FakeInterFace import FakeForm
-from bs4 import BeautifulSoup
+import time
 
 class UserUtil(ResponseInfo, RandomUtil):
 
@@ -40,7 +40,7 @@ class UserUtil(ResponseInfo, RandomUtil):
         self.setupRandom()
         self.cred = self.createUserWithCredentials()
         self.cred.user.authenticated = True
-        self.controller.loginInFramework(self.cred)
+        self.assertTrue(self.controller.loginInFramework(self.cred))
         return self.cred
 
     def deleteUser(self, user):
@@ -49,11 +49,11 @@ class UserUtil(ResponseInfo, RandomUtil):
         user.rm()
 
     def assertUserResponse(self, resp):
-        self.assertEquals(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
         data = self.fromJson(resp)
         self.assertTrue(len(data['assurances'].keys()) < 2)
         self.assertTrue("@example.com" in data['email'])
-        self.assertTrue(data.has_key('userid'))
+        self.assertTrue('userid' in data)
         return data
 
     def showUserByCurrentUser(self, ouserid):
@@ -68,27 +68,18 @@ class UserUtil(ResponseInfo, RandomUtil):
             cred.user.active=False
         self.data = dict(credentialType='password',
             identifier=None,
-            secret=None)
+            password=None)
         self.addDataBasedOnOptionValue('identifier', identifier, self.userCreationUserid)
-        self.addDataBasedOnOptionValue('secret', secret, self.usercreationPassword)
+        self.addDataBasedOnOptionValue('password', secret, self.usercreationPassword)
         form = FakeForm(self.data)
         return form
 
-    def _sendPasswordResetEmail(self, email=None):
-        self.createUserWithCredentials()
-        if email is None:
-            email = self.userCreationEmail
-        resp = self.controller.doSendPasswordResetEmail(email)
-        self.data = self.fromJson(resp)
-        self.outbox = self.controller.mail.outbox
-        return resp.status_code
-
-    def the_reset_link_is_in_the_reset_email(self):
-        self._sendPasswordResetEmail()
-        text = self.outbox[0]['body']
-        soup = BeautifulSoup(text)
-        passwordResetLink = soup.find("a")['href']
-        self.secret = passwordResetLink.split('?secret=')[1]
-        self.tempcred = Credential.get('email_for_password_reset',self.secret)
-        return passwordResetLink
+    def countExpiredCreds(self, credentialType = 'email_for_password_reset'):
+        expiredcreds = []
+        now = time.time()
+        creds = Credential.query.filter_by(credentialType=credentialType) # @UndefinedVariable
+        for client in creds:
+            if client.getExpirationTime() < now:
+                expiredcreds.append(client)
+        return len(expiredcreds)
 

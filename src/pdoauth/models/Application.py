@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Boolean
 from pdoauth.app import db
 from pdoauth.ModelUtils import ModelUtils
 import uuid
@@ -17,6 +17,7 @@ class Application(db.Model, ModelUtils):
     name = Column(String, unique=True)
     secret = Column(String)
     redirect_uri = Column(String)
+    can_email = Column(Boolean)
 
     @classmethod
     def get(klass, client_id):
@@ -37,9 +38,17 @@ class Application(db.Model, ModelUtils):
         return ret
 
     def __init__(self, name, secret, redirect_uri):
-        self.appid=unicode(uuid.uuid4())
+        self.appid=uuid.uuid4().hex
         self.name = name
         self.secret = secret
         if not redirect_uri.startswith("https://"):
             raise NonHttpsRedirectUri(redirect_uri)
         self.redirect_uri = redirect_uri
+        self.can_email = False
+
+    
+    @classmethod
+    def all(cls):
+        return cls.query.all()
+    
+    

@@ -1,6 +1,6 @@
 #pylint: disable=invalid-name, no-member, too-many-arguments
 from sqlalchemy.sql.schema import Column, ForeignKey
-from sqlalchemy.sql.sqltypes import Integer, String
+from sqlalchemy.sql.sqltypes import Integer, String, Boolean
 from pdoauth.app import db
 from pdoauth.app import app as theApplication
 from pdoauth.ModelUtils import ModelUtils
@@ -18,11 +18,16 @@ class AppMap(db.Model, ModelUtils, CryptoUtils):
     app_id = Column(Integer, ForeignKey('application.id'))
     app = relationship(Application, foreign_keys=[app_id])
     userid = Column(String)
+    can_email = Column(Boolean)
 
     def __init__(self, app, user):
         self.app = app
         self.user = user
-        self.userid = SHA512Hash(app.appid + user.userid).hexdigest()[:16]
+        self.userid = self.generateProxyId()
+        self.can_email = False
+
+    def generateProxyId(self):
+        return CryptoUtils.randomAsciiString(14)
 
     def getEmail(self):
         return "{0}.{1}@{2}".format(
@@ -30,9 +35,30 @@ class AppMap(db.Model, ModelUtils, CryptoUtils):
                         self.app.name,
                         theApplication.config.get('EMAIL_DOMAIN'))
     @classmethod
-    def get(cls, app, user):
+    def find(cls, app, user):
         appMapEntry = AppMap.query.filter_by(app=app, user=user).first()
+        return appMapEntry
+
+    @classmethod
+    def get(cls, app, user):
+        appMapEntry = cls.find(app, user)
         if appMapEntry is None:
             appMapEntry = AppMap(app,user)
             appMapEntry.save()
         return appMapEntry
+
+    
+    @classmethod
+    def getForUser(cls, user):
+        return cls.query.filter_by(user=user).all()
+
+    
+    @classmethod
+    def new(cls, app, user):
+        r = cls(app,user)
+        r.save()
+        return r
+    
+    
+    
+    

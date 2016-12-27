@@ -1,0 +1,535 @@
+(function(){	
+	var self
+	PageScript.prototype.page = "account";
+	PageScript.prototype.main = function() {
+		self=this.getThis()
+		xxxx=self
+		this.ajaxget("/adauris", self.callback(self.commonInit))
+		var section = self.QueryString.section
+		console.log("section:"+section)
+			switch (section) {
+				case "all" :
+				[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
+					break;
+				case "registration" :
+					self.QueryString.section="register"
+					self.unhideSection(self.QueryString.section+"_section")
+					break;
+				case "account" :
+					self.QueryString.section="my_account"
+					self.unhideSection(self.QueryString.section+"_section")
+					break;
+				case "pwreset" :
+					self.QueryString.section="password_reset"
+					self.unhideSection(self.QueryString.section+"_section")
+					if (self.QueryString.secret) {
+						document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
+					}
+					break;
+				case "deregistration" :
+					self.QueryString.section="deregistration"
+					self.unhideSection(self.QueryString.section+"_section")
+					break;
+				case "emailcheck" :
+					self.QueryString.section="email_verification"
+					self.unhideSection(self.QueryString.section+"_section")
+					break;
+				case "cancelemailchange" :
+					self.QueryString.section="cancelemailchange"
+					self.unhideSection(self.QueryString.section+"_section")
+					break;
+				case "emailchange" :
+					self.QueryString.section="emailchange"
+					self.unhideSection(self.QueryString.section+"_section")
+					break;
+				case "login" :
+					self.unhideSection(section+"_section")
+					break;
+				default:
+			}
+		window.traces.push("main end")
+	}
+	
+	PageScript.prototype.initialise = function(text) {
+		var keygenform = document.getElementById("registration-keygenform")
+		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+		keygenform = document.getElementById("add-ssl-credential-keygenform")
+		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
+
+		// waiting for gettext loads po files
+		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
+		else self.init_()
+	}
+	
+	PageScript.prototype.userNotLoggedIn = function(status, text) {
+		var data = JSON.parse(text);
+		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		self.refreshTheNavbar()
+		if (self.QueryString.section) {
+			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+			else return;
+		}
+		else self.displayTheSection();
+	}
+	
+	PageScript.prototype.userIsLoggedIn = function(text) {
+		var data = JSON.parse(text);
+		self.isLoggedIn=true
+		self.ajaxget('/v1/getmyapps',self.myappsCallback)
+		if (data.assurances) {
+			document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
+			document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
+			document.getElementById("assurance-giving_assurance_selector").innerHTML=self.parseAssurances(data);
+			if (!(data.assurances.assurer)) self.isAssurer=false;
+			else {
+				self.isAssurer=true;
+			}
+		}
+		self.refreshTheNavbar()
+		if (self.QueryString.section) {
+			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
+			else return;
+		}
+		else self.displayTheSection();
+	}
+
+	
+	PageScript.prototype.modNavbarItem=function(){
+		document.getElementById("")
+	}
+	PageScript.prototype.hideAllSection=function(){
+		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
+	}
+	
+	PageScript.prototype.unhideSection=function(section) {
+		document.getElementById(section).style.display="block";
+	}
+
+	PageScript.prototype.displayMsg = function( msg ) {
+		if (!(msg.title || msg.error || msg.message || msg.success)) return
+		$("#myModal").modal();
+		if (!msg.callback) msg.callback="";
+		this.msgCallback=msg.callback; //only for testing
+		document.getElementById("PopupWindow_CloseButton1").onclick = function() {self.closePopup(msg.callback)}
+		document.getElementById("PopupWindow_CloseButton2").onclick = function() {self.closePopup(msg.callback)}
+		document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
+		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
+		document.getElementById("PopupWindow_MessageDiv").innerHTML = "";
+		document.getElementById("PopupWindow_SuccessDiv").innerHTML = ""		
+		if (msg.title) document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
+		if (msg.error) document.getElementById("PopupWindow_ErrorDiv").innerHTML     = "<p class='warning'>"+msg.error+"</p>";
+		if (msg.message) document.getElementById("PopupWindow_MessageDiv").innerHTML = "<p class='message'>"+msg.message+"</p>";
+		if (msg.success)document.getElementById("PopupWindow_SuccessDiv").innerHTML  = "<p class='success'>"+msg.success+"</p>";
+	}
+
+	PageScript.prototype.closePopup = function(popupCallback) {
+		this.popupCallback=popupCallback //only for testing
+		document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
+		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
+		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
+		document.getElementById("PopupWindow_SuccessDiv").innerHTML = "";
+		if (popupCallback) popupCallback();
+		return "closePopup";
+	}
+
+	PageScript.prototype.init_=function(){
+		console.log("init_")
+		if (self.QueryString.section){
+			switch (self.QueryString.section) {
+				case "email_verification":
+					if (self.QueryString.secret) self.verifyEmail()
+					break;
+				case "emailchange":
+					if (self.QueryString.email) {
+						document.getElementById("emailchange_email").innerHTML=self.QueryString.email
+					}
+					break;
+				case "cancelemailchange":
+					if (self.QueryString.secret) self.cancelEmailChange()
+					break;
+			}
+		}
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
+	}
+	
+	PageScript.prototype.verifyEmail=function() {
+		var target   = document.getElementById("email_verification_message").innerHTML
+		this.success = function(text){
+			target=_("Your email validation was succesfull.")
+		}
+		this.error   = function(status,text){
+			var data=JSON.parse(text);
+			target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
+		}
+		self.ajaxget( "/v1/verify_email/" + self.QueryString.secret, self.callback(this.succes,this.error) )
+	}
+
+	PageScript.prototype.changeEmail=function(confirm) {
+		var data={
+			confirm: confirm,
+			secret: self.QueryString.secret
+		}
+		this.success=function(text){self.displayMsg({title:"Üzi",error:text})}
+		self.ajaxpost( "/v1/confirmemailchange", data, self.callback(this.success) )
+	}	
+	
+	PageScript.prototype.navigateToTheSection=function(section) {
+		if (self.QueryString.section) self.doRedirect(self.QueryString.uris.BASE_URL+"/fiokom.html");
+		else self.displayTheSection(section)
+	}
+	
+	PageScript.prototype.displayTheSection=function(section) {
+		self.hideAllSection();
+		var lis=document.getElementsByClassName("navbar-nav")[0].getElementsByTagName("li");
+		[].forEach.call( lis, function (e) { e.className=""; } );
+		if (!section){
+			if (self.isLoggedIn){
+				self.unhideSection("my_account_section")
+				document.getElementById("nav-bar-my_account").className="active"
+				if (self.isAssurer) self.unhideSection("assurer_section")
+			}
+			else {
+				self.unhideSection("login_section")
+				document.getElementById("nav-bar-login").className="active"
+			}
+		}
+		else { 
+			if (self.isLoggedIn && (section=="registration")) {
+				self.unhideSection("my_account_section")
+			}
+			else {
+				self.unhideSection(section+"_section")
+			}
+			var navbar=document.getElementById("nav-bar-"+section)
+			if (navbar) navbar.className="active";
+		}
+	}
+	
+	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
+		var offset = this.offsetHeight - this.clientHeight;
+		var resizeTextarea = function(el) {
+			jQuery(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+		};
+		jQuery(this).on('keyup input', function() { resizeTextarea(this); }).removeAttr('data-autoresize');
+	});
+	
+// assuring functions
+
+	PageScript.prototype.byEmail = function() {
+	    var email = document.getElementById("ByEmailForm_email_input").value;
+		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
+		else {
+			email = encodeURIComponent(email)
+			self.ajaxget("/v1/user_by_email/"+email, self.callback(self.myCallback))
+		}
+	}
+	
+	PageScript.prototype.addAssurance = function() {
+	    digest = document.getElementById("assurancing_digest_input").value;
+	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
+	    email = document.getElementById("ByEmailForm_email_input").value;
+	    csrf_token = self.getCookie('csrf');
+	    data= {
+	    	digest: digest,
+	    	assurance: assurance,
+	    	email: email,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost("/v1/add_assurance", data, self.callback(self.myCallback))
+	}
+
+/*
+********************************
+**    Adding credencials      **
+********************************
+*/	
+
+	PageScript.prototype.addCredential = function(credentialType, identifier, secret) {
+		console.log("addCredential:"+credentialType)
+		var data = {
+			credentialType: credentialType,
+			identifier: identifier,
+			password: secret
+		}
+		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me))
+	}
+	
+	PageScript.prototype.addSslCredential = function(data) {
+		document.getElementById("SSL").onload=self.addSslCredentialCallback;
+		document.getElementById('add-ssl-credential-keygenform').submit();
+	}
+	
+/*
+********************************
+**      Change settings       **
+********************************
+*/
+
+	PageScript.prototype.changeHash = function() {
+	    digest = document.getElementById("change-hash-form_digest_input").value;
+	    csrf_token = self.getCookie('csrf');
+	    data= {
+	    	digest: digest,
+	    	csrf_token: csrf_token
+	    }
+	    self.ajaxpost("/v1/users/me/update_hash", data, self.changeHashCallback)
+	}	
+	
+	PageScript.prototype.changeHashCallback = function(status,text,xml) {
+		if (status==200) { 
+			self.get_me()
+			self.viewChangeHashContainer()
+		}
+		else {
+			var data = JSON.parse(text);
+			var errs = self.processErrors(data);
+			self.displayMsg(errs);	
+		}
+
+	}
+	
+	PageScript.prototype.viewChangeHashForm = function() {
+		document.getElementById("change-hash-form_hash-changer").style.display="table-row";
+		document.getElementById("change-hash-form_hash-container").style.display="none";
+	}
+	
+	PageScript.prototype.viewChangeHashContainer = function() {
+		document.getElementById("change-hash-form_hash-changer").style.display="none";
+		document.getElementById("change-hash-form_hash-container").style.display="table-row";
+	}
+	
+/*
+********************************
+** My account section content **
+********************************
+
+/***** Settings tab *****/
+	PageScript.prototype.parseSettings = function(data) {
+
+		var sslForm='\
+		<form target="ssl" id="add-ssl-credential-keygenform" method="post" action="'+self.QueryString.uris.BACKEND_PATH+'/v1/keygen" enctype="application/x-x509-user-cert">\
+			<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>\
+			<input id="add-ssl-credential_createuser_input" type="checkbox" name="createUser" value="false" style="display: none">\
+			<input type="text" id="add-ssl-credential_email_input"  name="email" value="'+data.email+'" style="display: none">\
+		</form>'
+				
+		var result = '\
+		<table>\
+			<tr id="change-email-form_container">\
+				<td nowrap><b>'+_('Email address:')+'</b></td>\
+				<td id="email-change">\
+					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" onkeyup="javascript:pageScript.emailChangeInput_onkeyup()">\
+				</td>\
+				<td class="button-container">\
+					<a onclick="javascript:pageScript.emailChangeEditButton_onclick()" class="btn btn_ fa fa-edit"></a>\
+					<a id="changeEmil_saveButton" onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save inactive" title="'+_("save")+'"></a>\
+				</td>\
+			</tr>\
+			<tr id="change-hash-form_hash-container">\
+				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
+				<td>\
+					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
+				</td>\
+				<td class="button-container">\
+					<a id="viewChangeHashForm" onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
+					<a onclick="javascript:pageScript.deleteHash()" class="btn btn_ fa fa-trash"></a>\
+				</td>\
+			</tr>\
+			<tr id="change-hash-form_hash-changer" style="display: none;">\
+				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
+				<td>\
+					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
+					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
+					<button class="button" type="button" id="create_hash_here" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
+					<a href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
+						<button class="button" id="create_hash_myself" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
+					</a>\
+					<div id="change-hash-form_code-generation-input" class="form">\
+						<div class="bordered">\
+							<label for="input">'+_("Personal identifier")+':</label>\
+							<input type="text" placeholder="" id="change-hash-form_predigest_input" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
+							<label for="mothername">'+_("Mother's name")+':</label>\
+							<input type="text" placeholder="" id="change-hash-form_predigest_mothername" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
+							<button type="button" id="change-hash-form_getDigestButton" onclick="pageScript.digestGetter(\'change-hash-form\').getDigest()">'+_("Generate")+'</button>\
+							<div class="monitor" id="change-hash-form_predigest_monitor"></div>\
+						</div>\
+					</div>\
+				</td>\
+				<td class="button-container">\
+					<a id="changeHash" onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
+				</td>\
+			</tr>\
+		</table>\
+		<h4><b>'+_("My credentials")+'</b></h4>\
+		<table class="multiheader">';
+		var c={	pw:[_("Password"),"password","document.getElementById('change-email_form').style.display='table-row'",true],
+				ssl:[_("SSL certificate"),"certificate","pageScript.addSslCredential()",true],
+				fb:["Facebook","facebook","facebook.add_fb_credential()",false],
+				git:["Github","github","pageScript.addGithubCredential()",false],
+				tw:["Twitter","twitter","pageScript.addTwitterCredential()",false],
+				go:["Google+","google","pageScript.addGoogleCredential()",false]
+				};
+		var credential_list = ""
+		for( var i in c) {
+			credential_list=(i=='pw')?'\
+			<tr id="change-email_form">\
+				<td>\
+					<div class="form-level">\
+					<input class="input-block" name="username" type="text" autocapitalize="off" placeholder="Felhasználónév" id="AddPasswordCredentialForm_username_input">\
+					<span class="form-icon_"><i class="fa fa-envelope-o"></i>/<i class="fa fa-user"></i></span>\
+					</div>\
+					<div class="form-level">\
+					<input class="input-block" type="password" placeholder="Jelszó" id="AddPasswordCredentialForm_password_input">\
+					<span class="form-icon_"><i class=" fa fa-lock"></i></span>\
+					</div>\
+				</td>\
+				<td class="button-container">\
+					<a onclick="javascript:pageScript.addPasswordCredential()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a onclick="javascript:document.getElementById(\'change-email_form\').style.display=\'none\'" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
+				</td>\
+			</tr>\
+			':"";
+			for(var j=0; j<data.credentials.length; j++) {
+				if (data.credentials[j].credentialType==c[i][1]) {
+				credential_list += '\
+			<tr>\
+				<td><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
+				<td class="button-container">\
+					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\''+c[i][1]+'\')" class="btn btn_ fa fa-trash"></a>\
+				</td>\
+			</tr>'
+				}
+			}
+			credential_header='\
+			<tr id="'+i+'-credential-list">\
+				<th>'+c[i][0]+'</th>\
+				<th>'
+			if (c[i][3] || credential_list==''  ) {
+				credential_header +='\
+					<a onclick="javascript:'+c[i][2]+'" class="btn fa fa-plus"></a>';
+			}
+			credential_header +='\
+				</th>\
+			</tr>'
+			result+=credential_header+credential_list
+		}
+		result +='\
+		</table>'+sslForm
+		return result;		
+	}	
+/*
+******************************************
+** Cryptographic for ssl authentication **
+******************************************
+
+/***** Settings tab *****/	
+	PageScript.prototype.createAndSaveAKeyPair=function() {
+		return window.crypto.subtle.generateKey(
+			{
+				name: "RSASSA-PKCS1-v1_5",
+				modulusLength: 2048,
+				publicExponent: new Uint8Array([1, 0, 1]), // 24 bit representation of 65537
+				hash: {name: "SHA-256"}
+			},
+			false, // can extract it later if we want
+			["sign", "verify"]).then(
+				function(key) {
+					keyPair = key;
+					console.log(key);
+					return key;
+				}).catch(function(a){console.log(a)});
+	}
+
+	PageScript.prototype.callSetAppCanEmailMe=function(app){
+		var value=document.getElementById("application-allow-email-me-"+app).checked
+		self.setAppCanEmailMe(app,value,self.myCallback)
+	}
+	
+	PageScript.prototype.myappsCallback = function(status,text){
+		if (status!=200) return;
+		self.aps=JSON.parse(text)
+		var applist='\
+		<table>\
+			<tr>\
+				<th>'+_("Application")+'</th>\
+				<th>'+_("Domain")+'</th>\
+				<th>'+_("User identifier")+'</th>\
+				<th>'+_("Emailing")+'</th>\
+				<th>'+_("Allow emailing")+'</th>\
+			</tr>'
+		for(app in self.aps){ 
+		if (self.aps[app].username) { 
+			applist+='\
+			<tr>\
+				<td>'+self.aps[app].name+'</td>\
+				<td><a href="//'+self.aps[app].hostname+'">'+self.aps[app].hostname+'</a></td>\
+				<td>'+self.aps[app].username+'</td>\
+				<td>'+_(self.aps[app].can_email.toString())+'</td>\
+				<td>\
+					<input type="checkbox" id="application-allow-email-me-'+app+'"\
+					'+((self.aps[app].email_enabled)?'checked':'')+'\
+					onclick="javascript: pageScript.callSetAppCanEmailMe('+app+')">\
+				</td>\
+			</tr>'
+			}	
+		}
+		applist +='\
+		</table>';
+		document.getElementById("me_Applications").innerHTML=applist;
+	}
+
+	PageScript.prototype.parseAssurances = function(data) {
+		var selector = ''
+		var text
+		for(ass in data.assurances) {
+			var pos
+			if ( pos=ass.indexOf(".")+1 ) {
+				text=ass.slice(pos)
+				selector += '\
+				<option value="'+text+'">\
+				'+_(text)+'\
+				</option>\
+				';
+			}
+		}
+		return selector;		
+	}
+	
+	PageScript.prototype.changeEmailAddress = function() {
+	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
+		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
+		else {
+			var csrf_token = self.getCookie('csrf');
+			var data= {
+				newemail: email,
+				csrf_token: csrf_token
+			}
+			self.ajaxpost('/v1/emailchange',data, self.callback(self.changeEmailCallback) )
+		}	
+	}
+	
+	PageScript.prototype.changeEmailCallback = function(text) {
+		self.displayMsg(self.processErrors(JSON.parse(text)))
+	}
+	
+	PageScript.prototype.deleteHash = function() {
+		document.getElementById("change-hash-form_digest_input").value=""
+		self.changeHash();
+	}
+	
+	PageScript.prototype.emailChangeEditButton_onclick = function() {
+		document.getElementById("ChangeEmailAddressForm_email_input").value=""
+		document.getElementById("ChangeEmailAddressForm_email_input").placeholder=_("Type your new email address here")
+	}
+	
+	PageScript.prototype.emailChangeInput_onkeyup = function(){
+		rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
+		var inputField = document.getElementById("ChangeEmailAddressForm_email_input")
+		if (rgx_email.exec(inputField.value)) {
+			self.activateButton("changeEmil_saveButton", self.changeEmailAddress)
+		}
+		else self.deactivateButton("changeEmil_saveButton")
+	}
+}()
+)

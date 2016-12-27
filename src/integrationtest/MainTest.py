@@ -3,17 +3,33 @@
 from pdoauth.app import app
 from integrationtest import config
 from integrationtest.helpers.UserTesting import UserTesting
-from integrationtest.helpers.IntegrationTest import IntegrationTest, test
+from integrationtest.helpers.IntegrationTest import IntegrationTest
+import json
+from pdoauth.models.Application import Application
 
 class MainTest(IntegrationTest, UserTesting):
 
-    @test
-    def root_uri_have_no_function(self):
+    
+    def test_root_uri_have_no_function(self):
         resp = app.test_client().get("/")
-        self.assertEquals(resp.status_code, 404,)
+        self.assertEqual(resp.status_code, 404,)
 
-    @test
-    def static_files_are_served(self):
+    
+    def test_static_files_are_served(self):
         with app.test_client() as client:
             resp = client.get(config.BASE_URL + "/static/login.html")
             self.assertEqual(resp.status_code,200)
+
+    
+    def test_stats_are_available(self):
+        with app.test_client() as client:
+            resp = client.get(config.BASE_URL + "/v1/statistics")
+            self.assertEqual(resp.status_code,200)
+
+    
+    def test_getstatsAsJson_gives_the_statistics_in_json(self):
+        applicationCount = Application.getStats()
+        with app.test_client() as client:
+            resp = client.get(config.BASE_URL + "/v1/statistics")
+        self.stats=json.loads(resp.data.decode('utf-8'))
+        self.assertEqual(self.stats['applications'],applicationCount)

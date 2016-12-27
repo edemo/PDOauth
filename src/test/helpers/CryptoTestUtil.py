@@ -6,7 +6,7 @@ from pdoauth.models.Credential import Credential
 from test.helpers.FakeInterFace import FakeForm
 
 TEST_USER_IDENTIFIER = \
-    "06:11:50:AC:71:A4:CE:43:0F:62:DC:D2:B4:F0:2A:1C:31:4B:AB:E2/CI Test User"
+    "CI Test User/9A:20:5F:1E:9A:2A:E2:4E:F2:FA:FA:7E:CA:49:F2:9F:61:AE:BE:61:5A:70:D3:55:1B:A1:AE:BC:99:4A:26:C2:63:E2:05:B5:07:39:E9:9A:E7:3D:E5:DE:51:79:BE:B0:B0:22:33:4A:31:3B:6F:2F:2C:FB:AE:CB:98:E8:D5:01"
 
 SPKAC = """MIICSTCCATEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDt66ujL7Qi
 gKPRoJzI7cdMFgxoNE7u5aKhAMLC7EE9Npn7Ig1Y6G5NIfjdWZy+Ryrw3/HdYRsS
@@ -37,14 +37,12 @@ class CryptoTestUtil(object):
         certFile.close()
         x509 = crypto.load_certificate(crypto.FILETYPE_PEM, ret.cert)
         ret.digest = x509.digest('sha1')
-        commonName = x509.get_subject().commonName
-        ret.identifier = "{0}/{1}".format(ret.digest,
-            commonName)
+        ret.identifier = self.controller.getIdentifier(x509)
         return ret
 
     def createHash(self):
         self.setupRandom()
-        return SHA512Hash(self.randString).hexdigest()
+        return SHA512Hash(bytes(self.randString,'UTF-8')).hexdigest()
 
     def sslLoginWithCert(self, cert):
         environ = dict(SSL_CLIENT_CERT=cert)
@@ -54,21 +52,20 @@ class CryptoTestUtil(object):
 
     def createUserAndLoginWithCert(self):
         certAttrs = self.getCertAttributes()
-        self.identifier = certAttrs.identifier
         cred = self.createUserWithCredentials()
-        secret = certAttrs.digest
-        Credential.new(cred.user, "certificate", self.identifier, secret)
+        Credential.new(cred.user, "certificate", certAttrs.identifier, certAttrs.digest)
         resp = self.sslLoginWithCert(certAttrs.cert)
         return resp
 
     def removeCertUser(self):
-        cred = Credential.get('certificate', TEST_USER_IDENTIFIER)
+        certAttrs = self.getCertAttributes()
+        cred = Credential.get('certificate', certAttrs.identifier)
         if cred:
             cred.rm()
             cred.user.rm()
 
-    def addCertCredential(self, email, user):
-        data = dict(email=email, pubkey=SPKAC)
-        self.controller.doKeygen(FakeForm(data))
-        cred = Credential.getByUser(user, 'certificate')
-        return cred
+    def getCertFromResponse(self, resp):
+        certtext = self.getResponseBytes(resp)
+        cert = crypto.load_certificate(crypto.FILETYPE_ASN1, certtext)
+        return cert
+

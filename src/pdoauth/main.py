@@ -13,11 +13,15 @@ from pdoauth.forms.DigestUpdateForm import DigestUpdateForm
 from pdoauth.forms.PasswordResetForm import PasswordResetForm
 from pdoauth.forms.RegistrationForm import RegistrationForm
 from pdoauth.forms.AssuranceForm import AssuranceForm
+from pdoauth.forms.EmailChangeForm import EmailChangeForm
+from pdoauth.forms.ConfirmEmailChangeForm import ConfirmEmailChangeForm
 from pdoauth.forms.CredentialForm import CredentialForm
 from pdoauth.forms.CredentialIdentifierForm import CredentialIdentifierForm
 from pdoauth.forms.DeregisterDoitForm import DeregisterDoitForm
 from pdoauth.FlaskInterface import FlaskInterface
 from pdoauth.forms.TokenInterfaceForm import TokenInterfaceForm
+from pdoauth.AppHandler import AppHandler
+from pdoauth.forms.AppCanEmailForm import AppCanEmailForm
 
 webInterface = FlaskInterface() # pylint: disable=invalid-name
 CONTROLLER = Controller(webInterface)
@@ -25,6 +29,7 @@ CONTROLLER.mail = mail
 CONTROLLER.app = app
 DECORATOR = Decorators(app, webInterface)
 AUTHPROVIDER = AuthProvider(webInterface)
+APPHANDLER = AppHandler(webInterface)
 
 def getStaticPath():
     staticDirectory = os.path.join(os.path.dirname(__file__),"..", "..", "static")
@@ -36,11 +41,11 @@ STATIC_PATH=getStaticPath()
 def getUser(userid):
     return User.get(userid)
 
-@DECORATOR.interfaceFunc("/login", methods=["POST"], formClass= LoginForm, status=403)
+@DECORATOR.interfaceFunc("/v1/login", methods=["POST"], formClass= LoginForm, status=403)
 def login(form):
     return CONTROLLER.doLogin(form)
 
-@DECORATOR.interfaceFunc("/ssl_login", methods=["GET"])
+@DECORATOR.interfaceFunc("/v1/ssl_login", methods=["GET"])
 def ssl_login():
     return CONTROLLER.doSslLogin()
 
@@ -49,19 +54,19 @@ def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
     return AUTHPROVIDER.auth_interface()
 
-@DECORATOR.interfaceFunc("/keygen", methods=["POST"], formClass=KeygenForm)
-def keygen(form):
-    return CONTROLLER.doKeygen(form)
+@DECORATOR.interfaceFunc("/v1/ca/signreq", methods=["POST"], formClass=KeygenForm)
+def signreq(form):
+    return CONTROLLER.signRequest(form)
 
-@DECORATOR.interfaceFunc("/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister(form):
     return CONTROLLER.doDeregister(form)
 
-@DECORATOR.interfaceFunc("/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/deregister_doit", methods=["POST"], formClass=DeregisterDoitForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister_doit(form):
     return CONTROLLER.doDeregistrationDoit(form)
 
-@DECORATOR.interfaceFunc("/logout", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+@DECORATOR.interfaceFunc("/v1/logout", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def logout():
     return CONTROLLER.doLogout()
 
@@ -102,10 +107,24 @@ def register(form):
 def verifyEmail(emailToken):
     return CONTROLLER.doverifyEmail(emailToken)
 
+@DECORATOR.interfaceFunc("/v1/send_verify_email", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def sendVerifyEmail():
+    return CONTROLLER.sendVerifyEmail()
+
 @DECORATOR.interfaceFunc("/v1/user_by_email/<email>", methods=["GET"],
     checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def get_by_email(email):
     return CONTROLLER.doGetByEmail(email)
+
+@DECORATOR.interfaceFunc("/v1/emailchange", methods=["POST"],
+    formClass=EmailChangeForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def email_change(form):
+    return CONTROLLER.changeEmail(form)
+
+@DECORATOR.interfaceFunc("/v1/confirmemailchange", methods=["POST"],
+    formClass=ConfirmEmailChangeForm)
+def confirm_email_change(form):
+    return CONTROLLER.confirmEmailChange(form)
 
 @DECORATOR.interfaceFunc("/v1/add_assurance", methods=["POST"],
     formClass=AssuranceForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
@@ -117,14 +136,27 @@ def add_assurance(form):
 def add_credential(form):
     return CONTROLLER.doAddCredential(form)
 
+@DECORATOR.interfaceFunc("/v1/getmyapps", methods=["GET"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
+def get_my_apps():
+    return APPHANDLER.getApplistInterFace()
+
+@DECORATOR.interfaceFunc("/v1/setappcanemail", methods=["POST"], checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn,
+    formClass = AppCanEmailForm)
+def set_app_can_email(form):
+    return APPHANDLER.setAppCanEmail(form)
+
 @DECORATOR.interfaceFunc("/v1/remove_credential", methods=["POST"],
     formClass=CredentialIdentifierForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def remove_credential(form):
     return CONTROLLER.doRemoveCredential(form)
 
-@DECORATOR.interfaceFunc("/uris", methods=["GET"])
+@DECORATOR.interfaceFunc("/v1/uris", methods=["GET"])
 def uriservice():
     return CONTROLLER.doUris()
+
+@DECORATOR.interfaceFunc("/v1/statistics", methods=["GET"])
+def statisticsService():
+    return CONTROLLER.getStatsAsJson()
 
 @DECORATOR.interfaceFunc("/static/<path:path>", methods=["GET"])
 def send_static(path):

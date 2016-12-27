@@ -4,21 +4,25 @@ from test.helpers.CryptoTestUtil import CryptoTestUtil
 from test.helpers.RandomUtil import RandomUtil
 from test.helpers.UserUtil import UserUtil
 from test import config
+from pdoauth.forms import credErr
 
 app.extensions["mail"].suppress = True
 
 class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
 
-    def login(self, client):
-        self.setupRandom()
-        user = self.createUserWithCredentials().user
-        self.userid = user.userid
+    def login(self, client, user = None):
+        if user is None:
+            self.setupRandom()
+            user = self.createUserWithCredentials().user
+            self.userid = user.userid
+            user.username = self.userCreationUserid
+            user.password = self.usercreationPassword
         data = {
                 'credentialType': 'password',
-                'identifier': self.userCreationUserid,
-                'secret': self.usercreationPassword
+                'identifier': user.username,
+                'password': user.password
         }
-        resp = client.post(config.BASE_URL+'/login', data=data)
+        resp = client.post(config.BASE_URL+'/v1/login', data=data)
         return resp
 
     def prepareAuthInterfaceData(self, email=None):
@@ -28,7 +32,7 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
         self.registeredPassword = "password_{0}".format(self.mkRandomPassword())
         data = {'credentialType':'password',
             'identifier':"id_{0}".format(self.randString),
-            'secret':self.registeredPassword,
+            'password':self.registeredPassword,
             'email':email,
             'digest':self.createHash()}
         return data
@@ -43,8 +47,8 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
     def prepareTokenInterfaceParameters(self, paramupdates, code):
         self.tokenParams['code'] = code
         self.tokenParams.update(paramupdates)
-        for key, value in self.tokenParams.items():
-            if value is None:
+        for key in list(self.tokenParams.keys()):
+            if self.tokenParams[key] is None:
                 del self.tokenParams[key]
 
     def callTokenInterface(self, paramupdates, code):
@@ -52,3 +56,7 @@ class UserTesting(UserUtil, CryptoTestUtil, RandomUtil):
         with app.test_client() as client:
             resp = client.post("/v1/oauth2/token", data=self.tokenParams)
         return resp
+
+    def assertCredentialErrorresponse(self, resp):
+        return self.assertEqual('{{"errors": [{0}]}}'.format(credErr), self.getResponseText(resp))
+

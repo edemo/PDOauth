@@ -1,9 +1,16 @@
 #pylint: disable=no-member
 from uuid import uuid4
+import uritools
 class WebInterface(object):
 
     def __init__(self, interfaceInstance):
         self.setInterface(interfaceInstance)
+
+    @staticmethod
+    def parametrizeUri(baseUri, params):
+        parts = uritools.urisplit(baseUri)
+        uri = uritools.uricompose(parts.scheme, parts.host, parts.path, params, port=parts.port)
+        return uri
 
     def setInterface(self, interfaceInstance):
         self.interface = interfaceInstance
@@ -45,7 +52,7 @@ class WebInterface(object):
     def loginInFramework(self, credential):
         user = credential.user
         user.set_authenticated()
-        token = unicode(uuid4())
+        token = uuid4().hex
         session = self.getSession()
         session['csrf_token'] = token
         session['login_credential'] = \

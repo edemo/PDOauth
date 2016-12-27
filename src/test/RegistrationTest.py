@@ -1,19 +1,22 @@
 # pylint: disable=line-too-long
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from test.helpers.FakeInterFace import FakeForm
-from test.helpers.UserUtil import UserUtil
 from pdoauth.models.Credential import Credential
 from Crypto.Hash.SHA256 import SHA256Hash
-from test.helpers.CryptoTestUtil import CryptoTestUtil, SPKAC
+from test.helpers.CryptoTestUtil import CryptoTestUtil
 from pdoauth.models.Assurance import Assurance
+from pdoauth.models.User import User
+import time
+from uuid import uuid4
+from test.helpers.EmailUtil import EmailUtil
 
-class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
+class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
 
     def prepareLoginForm(self, digest =None, email=None):
         self.setupUserCreationData()
         self.data = dict(credentialType='password',
                 identifier=self.userCreationUserid,
-                secret=self.usercreationPassword,
+                password=self.usercreationPassword,
                 email=None,
                 digest=None)
         self.addDataBasedOnOptionValue('email', email, self.userCreationEmail)
@@ -21,24 +24,33 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
         form = FakeForm(self.data)
         return form
 
-    @test
-    def password_is_stored_hashed_in_registration(self):
+    
+    def test_password_is_stored_hashed_in_registration(self):
         form = self.prepareLoginForm()
         self.controller.doRegistration(form)
         cred = Credential.get('password', self.userCreationUserid)
-        theSecret = SHA256Hash(self.usercreationPassword).hexdigest()
+        theSecret = SHA256Hash(self.usercreationPassword.encode('utf-8')).hexdigest()
         self.assertEqual(cred.secret, theSecret)
 
-    @test
-    def on_registration_a_temporary_email_verification_credential_is_registered(self):
+    
+    def test_on_registration_a_temporary_email_verification_credential_is_registered(self):
         form = self.prepareLoginForm()
         self.controller.doRegistration(form)
         current_user = self.controller.getCurrentUser()
         cred = Credential.getByUser(current_user, 'emailcheck')
         self.assertTrue(cred)
 
-    @test
-    def the_emailcheck_secret_is_not_shown_in_the_registration_answer(self):
+    
+    def test_timed_out_emailcheck_credentials_are_cleared_in_registration(self):
+        for someone in User.query.all()[:5]:  # @UndefinedVariable
+            Credential.new(someone, 'emailcheck', str(time.time()-1)+":"+uuid4().hex, uuid4().hex)
+        self.assertTrue(self.countExpiredCreds('emailcheck')>=5)
+        form = self.prepareLoginForm()
+        self.controller.doRegistration(form)
+        self.assertTrue(self.countExpiredCreds('emailcheck')==0)
+
+    
+    def test_the_emailcheck_secret_is_not_shown_in_the_registration_answer(self):
         form = self.prepareLoginForm()
         resp = self.controller.doRegistration(form)
         text = self.getResponseText(resp)
@@ -46,14 +58,14 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
         cred = Credential.getByUser(current_user, 'emailcheck')
         self.assertTrue(not cred.secret in text)
 
-    @test
-    def you_can_register_without_hash(self):
+    
+    def test_you_can_register_without_hash(self):
         form = self.prepareLoginForm(digest=False)
         self.controller.doRegistration(form)
         self.assertEqual(self.controller.getCurrentUser().hash, None)
 
-    @test
-    def you_are_logged_in_in_registration(self):
+    
+    def test_you_are_logged_in_in_registration(self):
         form = self.prepareLoginForm()
         self.controller.doRegistration(form)
         self.assertEqual(self.controller.getCurrentUser().email,
@@ -62,26 +74,26 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
     def _registerAndGetEmail(self):
         form = self.prepareLoginForm()
         self.controller.doRegistration(form)
-        msg = self.controller.mail.outbox[0]['body']
+        msg = self.controller.mail.outbox[0]
         return msg
 
-    @test
-    def registration_sends_registration_email(self):
+    
+    def test_registration_sends_registration_email(self):
         msg = self._registerAndGetEmail()
         self.assertTrue(msg)
 
-    @test
-    def registration_email_contains_registration_uri_with_secret(self):
+    
+    def test_registration_email_contains_registration_uri_with_secret(self):
         msg = self._registerAndGetEmail()
         self.assertTrue(msg)
         current_user = self.controller.getCurrentUser()
         cred = Credential.getByUser(current_user, 'emailcheck')
         base_url = self.controller.getConfig('BASE_URL')
         uri = "{0}/v1/verify_email/{1}".format(base_url,cred.secret)
-        self.assertTrue(uri in msg)
+        self.assertEmailContains(uri, msg)
 
-    @test
-    def user_cannot_register_twice_with_same_email_address(self):
+    
+    def test_user_cannot_register_twice_with_same_email_address(self):
         self.setupRandom()
         email = "k-{0}@example.com".format(self.randString)
         form = self.prepareLoginForm(email=email)
@@ -91,10 +103,10 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
             self.controller.doRegistration,
             [form],
             400,
-            ["there is already a user with this email"])
+            ["There is already a user with that email"])
 
-    @test
-    def when_a_hash_is_registered_which_is_already_used_by_another_user___the_user_is_notified_about_the_fact(self):
+    
+    def test_when_a_hash_is_registered_which_is_already_used_by_another_user___the_user_is_notified_about_the_fact(self):
         theHash = self.createHash()
         form = self.prepareLoginForm(digest=theHash)
         anotherUser = self.createUserWithCredentials().user
@@ -104,8 +116,8 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
         data = self.fromJson(resp)
         self.assertEqual(data['message'],"another user is using your hash")
 
-    @test
-    def when_a_hash_is_registered_which_is_already_used_by_another_assured_user___the_user_is_notified_about_the_fact_and_registration_fails(self):
+    
+    def test_when_a_hash_is_registered_which_is_already_used_by_another_assured_user___the_user_is_notified_about_the_fact_and_registration_fails(self):
         anotherUser = self.createUserWithCredentials().user
         Assurance.new(anotherUser, "test", anotherUser)
         theHash = self.createHash()
@@ -115,9 +127,10 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
             [form],
             400,
             ['another user is using your hash'])
+        self.assertEqual(None, User.getByEmail(self.userCreationEmail))
 
-    @test
-    def the_emailverification_assurance_does_not_count_in_hash_collision(self):
+    
+    def test_the_emailverification_assurance_does_not_count_in_hash_collision(self):
         anotherUser = self.createUserWithCredentials().user
         Assurance.new(anotherUser, "emailverification", anotherUser)
         theHash = self.createHash()
@@ -128,24 +141,7 @@ class RegistrationTest(PDUnitTest, UserUtil, CryptoTestUtil):
         data = self.fromJson(resp)
         self.assertEqual(data['message'],"another user is using your hash")
 
-    def _sslRegister(self):
-        self.setupUserCreationData()
-        data = dict(email=self.userCreationEmail, pubkey=SPKAC)
-        resp = self.controller.doKeygen(FakeForm(data))
-        return resp
-
-    @test
-    def you_can_register_with_a_generated_certificate_via_keygen(self):
-        self._sslRegister()
-        self.assertTrue(self.controller.getCurrentUser().email, self.userCreationEmail)
-
-    @test
-    def registration_sets_the_csrf_cookie(self):
+    def test_registration_sets_the_csrf_cookie(self):
         form = self.prepareLoginForm()
         resp = self.controller.doRegistration(form)
-        self.assertTrue("csrf=" in unicode(resp.headers['Set-Cookie']))
-
-    @test
-    def ssl_registration_sets_the_csrf_cookie(self):
-        resp = self._sslRegister()
-        self.assertTrue("csrf=" in unicode(resp.headers['Set-Cookie']))
+        self.assertTrue("csrf=" in resp.headers['Set-Cookie'])

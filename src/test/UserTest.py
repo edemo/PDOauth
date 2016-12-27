@@ -1,79 +1,82 @@
 # -*- coding: UTF-8 -*-
 from pdoauth.CredentialManager import CredentialManager
 from test.helpers.UserUtil import UserUtil
-from test.helpers.PDUnitTest import PDUnitTest, test
+from test.helpers.PDUnitTest import PDUnitTest
 from pdoauth.models.User import User
 from test.helpers.CryptoTestUtil import CryptoTestUtil
+from pdoauth.ReportedError import ReportedError
+from pdoauth.Messages import noHashGiven
 
 class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
     def setUp(self):
         self.User_can_be_created()
+        PDUnitTest.setUp(self)
 
     def User_can_be_created(self):
         self.setupRandom()
         self.user = User.new("testemail-{0}@example.com".format(self.randString))
 
-    @test
-    def User_id_is_returned_by_get_id(self):
+    
+    def test_User_id_is_returned_by_get_id(self):
         theid = self.user.userid
-        self.assertEquals(theid, self.user.get_id())
+        self.assertEqual(theid, self.user.get_id())
 
-    @test
-    def User_email_with_plus_sign_is_stored_correctly(self):
+    
+    def test_User_email_with_plus_sign_is_stored_correctly(self):
         email = "test+{0}@example.com".format(self.randString)
         user = User.new(email, None)
         user2 = User.getByEmail(email)
-        self.assertEquals(user2.email, email)
+        self.assertEqual(user2.email, email)
         self.assertTrue("+" in user2.email)
         user.rm()
         
-    @test
-    def User_is_created_as_inactive(self):
+    
+    def test_User_is_created_as_inactive(self):
         self.assertEqual(False, self.user.is_active())
         
-    @test
-    def User_is_created_as_unauthenticated(self):
-        self.assertEqual(False, self.user.is_authenticated())
+    
+    def test_User_is_created_as_unauthenticated(self):
+        self.assertEqual(False, self.user.is_authenticated)
 
-    @test
-    def Inactive_user_is_loaded_as_inactive(self):
+    
+    def test_Inactive_user_is_loaded_as_inactive(self):
         self.assertEqual(False, User.get(self.user.userid).is_active())
         
-    @test
-    def Unauthenticated_user_is_loaded_as_unauthenticated(self):
-        self.assertEqual(False, User.get(self.user.userid).is_authenticated())
+    
+    def test_Unauthenticated_user_is_loaded_as_unauthenticated(self):
+        self.assertEqual(False, User.get(self.user.userid).is_authenticated)
 
-    @test
-    def User_can_be_activated(self):
+    
+    def test_User_can_be_activated(self):
         self.user.activate()
         self.assertEqual(True, self.user.is_active())
         
-    @test
-    def User_can_be_set_as_authenticated(self):
+    
+    def test_User_can_be_set_as_authenticated(self):
         self.user.set_authenticated()
-        self.assertEqual(True, self.user.is_authenticated())
+        self.assertEqual(True, self.user.is_authenticated)
 
-    @test
-    def User_can_be_created_with_credentials(self):
+    
+    def test_User_can_be_created_with_credentials(self):
         self.createUserWithCredentials()
     
-    @test
-    def User_can_be_retrieved_by_id(self):
+    
+    def test_User_can_be_retrieved_by_id(self):
         self.assertEqual(self.user, User.get(self.user.userid))
     
-    @test
-    def User_email_is_be_stored(self):
+    
+    def test_User_email_is_be_stored(self):
         self.setupUserCreationData()
         cred = CredentialManager.create_user_with_creds(
             'password',
             self.userCreationUserid,
             self.usercreationPassword,
             self.userCreationEmail)
-        self.assertEquals(cred.user.email, self.userCreationEmail)
+        self.assertEqual(cred.user.email, self.userCreationEmail)
 
-    @test
-    def User_with_credential_can_be_deleted(self):
+    
+    def test_User_with_credential_can_be_deleted(self):
         self.setupUserCreationData()
         cred = CredentialManager.create_user_with_creds(
             'password',
@@ -82,8 +85,8 @@ class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
             self.userCreationEmail)
         cred.user.rm()
         
-    @test
-    def User_hash_can_be_stored(self):
+    
+    def test_User_hash_can_be_stored(self):
         self.setupUserCreationData()
         digest = self.createHash()
         cred = CredentialManager.create_user_with_creds(
@@ -92,17 +95,21 @@ class UserTest(PDUnitTest, UserUtil, CryptoTestUtil):
             self.usercreationPassword,
             self.userCreationEmail,
             digest)
-        self.assertEquals(cred.user.hash, digest)
+        self.assertEqual(cred.user.hash, digest)
 
-    @test
-    def cannot_create_user_with_already_existing_email(self):
+    
+    def test_cannot_create_user_with_already_existing_email(self):
         self.createUserWithCredentials()
-        self.assertReportedError(User.new, [self.userCreationEmail], 400, ['there is already a user with this email'])
+        self.assertReportedError(User.new, [self.userCreationEmail], 400, ['There is already a user with that email'])
 
-    @test
-    def getByDigest_does_not_allow_empty_digest(self):
-        self.assertRaises(ValueError, User.getByDigest,'')
+    
+    def test_getByDigest_does_not_allow_empty_digest(self):
+        with self.assertRaises(ReportedError) as context:
+            User.getByDigest('')
+        self.assertEqual(noHashGiven,context.exception.descriptor)
 
-    @test
-    def getByDigest_does_not_allow_null_digest(self):
-        self.assertRaises(ValueError, User.getByDigest,None)
+    
+    def test_getByDigest_does_not_allow_null_digest(self):
+        with self.assertRaises(ReportedError) as context:
+            User.getByDigest(None)
+        self.assertEqual(noHashGiven,context.exception.descriptor)
