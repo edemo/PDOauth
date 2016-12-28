@@ -9,7 +9,7 @@
 			<link rel="gettext" lang="hu" href="locale/hu.po" />
 		<style>
 
-div.func, #popup, #login_digest-input, #SSL, section.input_form, .hidden {
+div.func, #popup, #login_digest-input, section.input_form, .hidden {
 display:none;
 }
 .wrapper {
@@ -140,7 +140,7 @@ div.checkbox {
 					<button class="social" title="Facebook bejelentkezés" type="button" onclick="facebook.fblogin()">
 						<i class="fa fa-facebook"></i>
 					</button>
-					<button class="social inactive" title="Google+ bejlentkezés" type="button" onclick="">
+<!--					<button class="social inactive" title="Google+ bejlentkezés" type="button" onclick="">
 						<i class="fa fa-google-plus"></i>
 					</button>
 					<button class="social inactive" title="Twitter bejlentkezés" type="button" onclick="">
@@ -149,7 +149,7 @@ div.checkbox {
 					<button class="social inactive" title="Pinterest bejlentkezés" type="button" onclick="">
 						<i class="fa fa-github"></i>
 					</button>
-					<button class="social ssl" title="Bejlentkezés SSL kulccsal" type="button" onclick="javascript:pageScript.sslLogin()">SSL</button>
+-->
 					<p></p>
 					<form id="loginform" action="" method="post" name="login">
 						<fieldset>
@@ -280,7 +280,7 @@ div.checkbox {
 					<button id="registration-form-method-selector-fb" class="social" title="Facebook fiókkal" type="button" onclick="javascript:pageScript.setRegistrationMethode('fb')">
 						<i class="fa fa-facebook"></i>
 					</button>
-					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button" onclick="">
+<!--					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button" onclick="">
 						<i class="fa fa-google-plus"></i>
 					</button>
 					<button id="registration-form-method-selector-tw" class="social inactive" title="Twitter fiókkal" type="button" onclick="">
@@ -289,13 +289,9 @@ div.checkbox {
 					<button id="registration-form-method-selector-git" class="social inactive" title="Github fiókkal" type="button" onclick="">
 						<i class="fa fa-github"></i>
 					</button>
-					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
-				</p>
-				<form target="SSL" id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
-					<fieldset>
+-->
+					</p>
 						<p id="registration-form-method-heading" class="center"><b>Regisztráció felhasználónév és jelszó segítségével</b></p>
-						<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
-						<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked>
 						<div id="registration-form-email-container" class="form-level">
 							<input class="input-block" name="email" type="text" placeholder="Email cím" id="registration-form_email_input">
 							<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
@@ -312,7 +308,6 @@ div.checkbox {
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 							<div class="input-block center" id="registration-form_pw-equal"></div>
 						</div>
-
 
 					<div class="hidden" id="registration-form-getdigest_input">
 						<h4 class="center">Elkészítem a Titkos Kódom</h4>
@@ -344,8 +339,6 @@ div.checkbox {
 							<textarea data-autoresize class="digest" name="digest" type="text" id="registration-form_digest_input" onkeyup="pageScript.textareaOnKeyup(this)"></textarea>
 						</div>
 					</div>
-					</fieldset>
-				</form>
 				
 					<p class="justify">Az alkalmazás az alábbi adataimat fogja megkapni:
 					</p>
@@ -374,13 +367,10 @@ div.checkbox {
 		</div>
 <!-- End registration section -->
 
-		<iframe id="SSL" name="SSL"></iframe>
-		
-		
-			<script type="text/javascript" src="js/jquery.js"></script>
-			<script type="text/javascript" src="js/gettext.js"></script>
-			<script type='text/javascript' src="js/script.js"></script>
-			<script type='text/javascript' src="js/login.js"></script>
-			<script type='text/javascript' src="js/fb.js"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/gettext.js"></script>
+		<script type='text/javascript' src="js/script.js"></script>
+		<script type='text/javascript' src="js/login.js"></script>
+		<script type='text/javascript' src="js/fb.js"></script>
 	</body>
 </html>

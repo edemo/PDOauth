@@ -29,10 +29,6 @@
 		// redirect to official account page if callback uri is missing
 		if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
 
-		// initialising keygenform submit url
-		var keygenform=document.getElementById("registration-keygenform")
-		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
-
 		// waiting for gettext loads po files
 		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_);
 		else self.init_()

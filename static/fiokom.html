@@ -179,11 +179,6 @@ button.social {
 }
 button.social:active {
 	padding-top:0}
-button.ssl{
-    font-weight: 700;
-    font-size: 2rem;
-    vertical-align: top;
-}
 
 div.func{
 	display:none;
@@ -317,9 +312,7 @@ td.button-container, td.button-container {
     background-position: center;
 	min-height: 150px;
 	}
-#registration-ssltext-container {
-	display: none;
-}
+
 button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a.inactive:hover{
 	cursor: default;
 	background-color: #E8E4E3;
@@ -403,6 +396,7 @@ button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a
 				<button id="Facebook_registration_button" class="social" title="Facebook bejelentkezés" type="button" onclick="facebook.fblogin()">
 					<i class="fa fa-facebook"></i>
 				</button>
+<!--
 				<button class="social inactive" title="Google+ bejlentkezés" type="button" onclick="">
 					<i class="fa fa-google-plus"></i>
 				</button>
@@ -412,7 +406,8 @@ button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a
                 <button class="social inactive" title="Pinterest bejlentkezés" type="button" onclick="">
 					<i class="fa fa-github"></i>
 				</button>
-                <button class="social ssl" title="Bejlentkezés SSL kulccsal" type="button" onclick="javascript:pageScript.sslLogin()">SSL</button>
+-->
+
 				<p></p>
 				<form id="loginform" action="" method="post" name="login">
 					<fieldset>
@@ -459,7 +454,7 @@ button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a
 					<button id="registration-form-method-selector-fb" class="social" title="Facebook fiókkal" type="button" onclick="javascript:pageScript.setRegistrationMethode('fb')">
 						<i class="fa fa-facebook"></i>
 					</button>
-					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button" onclick="">
+<!--					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button" onclick="">
 						<i class="fa fa-google-plus"></i>
 					</button>
 					<button id="registration-form-method-selector-tw" class="social inactive" title="Twitter fiókkal" type="button" onclick="">
@@ -468,17 +463,10 @@ button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a
 					<button id="registration-form-method-selector-git" class="social inactive" title="Github fiókkal" type="button" onclick="">
 						<i class="fa fa-github"></i>
 					</button>
-					<button id="registration-form-method-selector-ssl" class="social ssl" title="Regisztráció SSL kulccsal" type="button" onclick="javascript:pageScript.setRegistrationMethode('ssl')">SSL</button>
+-->
 				</div>
 				<h4 id="registration-form-method-heading" >Regisztráció email cím és/vagy felhasználónév és jelszó segítségével</h4>
-				<p id="registration-ssltext-container">
-					<b>Ha a certificate mentése után nem jelenne meg a "fiókom" felület, töltsd újra az oldalt!!</b>
-				</p>
-				<form target="ssl" id="registration-keygenform" method="post" action="/ada/v1/keygen" enctype="application/x-x509-user-cert">
 					<div class="form">
-						<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>
-						<input id="KeygenForm_createuser_input" type="checkbox" name="createUser" value="true" style="display: none" checked>
-
 						<div id="registration-form-email-container" class="form-level">
 							<input class="input-block" name="email" type="email" placeholder="Email cím" id="registration-form_email_input">
 							<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
@@ -530,7 +518,6 @@ button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a
 						<label for="digest">Titkos Kód:</label>
 						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-form_digest_input"></textarea>
 						</div>
-					</form>
 					<input type="checkbox" id="registration-form_confirmField" name="accept" value="accept">
 					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az 
 					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
@@ -865,7 +852,6 @@ button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a
 		<script src="js/bootstrap.min.js"></script>
         <!-- SmoothScroll -->
 					<!-- gettext -->
-		<!--script type="text/javascript" src="js/prototype.js"></script-->
 		<script type="text/javascript" src="js/gettext.js"></script>
         <script type="text/javascript" src="js/smooth-scroll.js"></script>
 		<script type='text/javascript' src="test/debug.js"></script>
@@ -877,11 +863,6 @@ button.inactive, .main-tab-content .c-tab a.inactive, .main-tab-content .c-tab a
 		<script src="js/account.js"></script>
 		<!-- facebook stuff -->
 		<script type='text/javascript' src="js/fb.js"></script>
-		<script type="text/javascript" src="./js/pkcs/common.js"></script>
-    <script type="text/javascript" src="./js/pkcs/asn1.js"></script>
-    <script type="text/javascript" src="./js/pkcs/x509_schema.js"></script>
-		    <script type="text/javascript" src="./js/pkcs/x509_simpl.js"></script>
 
-		<iframe id="SSL" name="ssl" ></iframe>
 	</body>
 </html>

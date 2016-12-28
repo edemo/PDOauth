@@ -324,17 +324,11 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 
 	PageScript.prototype.logoutCallback = function(status, text) {
-console.log("logoutCallback")
 		data=JSON.parse(text)
 		if (data.error)	self.displayError();
 		else {
-			var loc = '' +win.location
-			var newloc = loc.replace(self.QueryString.uris.SSL_LOGIN_BASE_URL, self.QueryString.uris.BASE_URL)
-			if (newloc!=loc) self.doRedirect( newloc );
-			else {
-				self.isLoggedIn=false
-				self.doRedirect( self.QueryString.uris.START_URL)
-			}
+			self.isLoggedIn=false
+			self.doRedirect( self.QueryString.uris.START_URL)
 		}
 	}
 	
@@ -476,15 +470,6 @@ console.log("logoutCallback")
 		}
 	}
 
-	PageScript.prototype.sslLogin = function() {
-		console.log("sslLogin")
-		var t=document.getElementById("SSL")
-		if (t) {
-			t.onload=function(){window.location.reload()}
-			t.src=self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login'
-		}
-	}
-
 //Getdigest functions	
 	PageScript.prototype.normalizeString = function(val) {
 		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
@@ -623,11 +608,6 @@ console.log("logoutCallback")
 				document.getElementById("registration-form-username-container").style.display="none";
 				facebook.fbregister()
 			break;
-			case "ssl":
-				heading=_("SSL certificate")
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
-			break;
 		}
 		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
 	}
@@ -652,15 +632,6 @@ console.log("logoutCallback")
 		window.traces.push("register")
 	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
 	}
-	
-	PageScript.prototype.onSslRegister= function(){
-		console.log('ssl_onSslRegister')
-		if (self.sslCallback()) self.sslLogin();
-	}
-
-	PageScript.prototype.addSslCredentialCallback= function(){
-		if (self.sslCallback()) self.get_me();
-	}
 
 	PageScript.prototype.doRegister=function() {
 		if ( document.getElementById("registration-form_confirmField").checked ) {
@@ -677,35 +648,9 @@ console.log("logoutCallback")
 					console.log('fb')
 					self.register("facebook")
 					break;
-				case "ssl":
-					console.log('ssl_register')
-					document.getElementById("SSL").onload=self.onSslRegister;
-					document.getElementById('registration-keygenform').submit();
-					console.log("after submit")
-//					self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
-					break;
 			}
 		}
 		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
-	}
-	
-	PageScript.prototype.sslCallback=function() {
-		console.log("sslCallback")
-		response=document.getElementById("SSL").contentDocument.body.innerHTML
-		console.log(response)
-		if (response!="")  {
-			var msg
-			if (data=JSON.parse(response)) {
-				msg=self.processErrors(data)
-			}
-			else {
-				msg.title=_("Server failure")
-				msg.error=response
-			}
-			self.displayMsg(msg)
-			return false
-		}
-		else return true
 	}
 	
 	PageScript.prototype.deactivateButton = function(buttonId) {
@@ -756,181 +701,6 @@ console.log("logoutCallback")
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
 
-    PageScript.prototype.create_PKCS10 = function (formName) {
-		
-		function formatPEM(pem_string)
-        {
-            /// <summary>Format string in order to have each line with length equal to 63</summary>
-            /// <param name="pem_string" type="String">String to format</param>
-
-            var string_length = pem_string.length;
-            var result_string = "";
-
-            for(var i = 0, count = 0; i < string_length; i++, count++)
-            {
-                if(count > 63)
-                {
-                    result_string = result_string + "\r\n";
-                    count = 0;
-                }
-
-                result_string = result_string + pem_string[i];
-            }
-
-            return result_string;
-        }
-        //*********************************************************************************
-        function arrayBufferToString(buffer)
-        {
-            /// <summary>Create a string from ArrayBuffer</summary>
-            /// <param name="buffer" type="ArrayBuffer">ArrayBuffer to create a string from</param>
-
-            var result_string = "";
-            var view = new Uint8Array(buffer);
-
-            for(var i = 0; i < view.length; i++)
-                result_string = result_string + String.fromCharCode(view[i]);
-
-            return result_string;
-        }
-        //*********************************************************************************
-        function stringToArrayBuffer(str)
-        {
-            /// <summary>Create an ArrayBuffer from string</summary>
-            /// <param name="str" type="String">String to create ArrayBuffer from</param>
-
-            var stringLength = str.length;
-
-            var resultBuffer = new ArrayBuffer(stringLength);
-            var resultView = new Uint8Array(resultBuffer);
-
-            for(var i = 0; i < stringLength; i++)
-                resultView[i] = str.charCodeAt(i);
-
-            return resultBuffer;
-        }
-		
-            // #region Initial variables 
-            var sequence = Promise.resolve();
-            var pkcs10_simpl = new org.pkijs.simpl.PKCS10();
-            var publicKey;
-            var privateKey;
-            var hash_algorithm = "sha-512";
-            var signature_algorithm_name = "ECDSA"
-            // #endregion 
-
-            // #region Get a "crypto" extension 
-            var crypto = org.pkijs.getCrypto();
-            if(typeof crypto == "undefined")
-            {
-                self.displayMsg({title:_("Error"), error:_("No WebCrypto extension found")});
-                return;
-            }
-            // #endregion 
-
-            // #region Put a static values 
-            pkcs10_simpl.version = 0;
-            pkcs10_simpl.subject.types_and_values.push(new org.pkijs.simpl.ATTR_TYPE_AND_VALUE({ type: "2.5.4.6", value: new org.pkijs.asn1.PRINTABLESTRING({ value: "RU" }) }));
-            pkcs10_simpl.subject.types_and_values.push(new org.pkijs.simpl.ATTR_TYPE_AND_VALUE({ type: "2.5.4.3", value: new org.pkijs.asn1.UTF8STRING({ value: "Simple test (простой тест)" }) }));
-            pkcs10_simpl.attributes = new Array();
-            // #endregion 
-
-            // #region Create a new key pair 
-            sequence = sequence.then(
-                function()
-                {
-                    // #region Get default algorithm parameters for key generation 
-                    var algorithm = org.pkijs.getAlgorithmParameters(signature_algorithm_name, "generatekey");
-                    if("hash" in algorithm.algorithm)
-                        algorithm.algorithm.hash.name = hash_algorithm;
-                    // #endregion 
-                    return crypto.generateKey(algorithm.algorithm, true, algorithm.usages);
-                }
-                );
-            // #endregion 
-
-            // #region Store new key in an interim variables
-            sequence = sequence.then(
-                function(keyPair)
-                {
-                    publicKey = keyPair.publicKey;
-                    privateKey = keyPair.privateKey;
-					console.log(privateKey)
-//					crypto.importKey("jwk", keyPair, "RSA-OAEP", false, ["sign","verify"]);
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error during key generation: ") + _(error)}); 
-                }
-                );
-            // #endregion 
-
-            // #region Exporting public key into "subjectPublicKeyInfo" value of PKCS#10 
-            sequence = sequence.then(
-                function()
-                {
-                    return pkcs10_simpl.subjectPublicKeyInfo.importKey(publicKey);
-                }
-                );
-            // #endregion 
-
-            // #region SubjectKeyIdentifier 
-            sequence = sequence.then(
-                function(result)
-                {
-                    return crypto.digest({ name: "SHA-1" }, pkcs10_simpl.subjectPublicKeyInfo.subjectPublicKey.value_block.value_hex);
-                }
-                ).then(
-                function(result)
-                {
-                    pkcs10_simpl.attributes.push(new org.pkijs.simpl.ATTRIBUTE({
-                        type: "1.2.840.113549.1.9.14", // pkcs-9-at-extensionRequest
-                        values: [(new org.pkijs.simpl.EXTENSIONS({
-                            extensions_array: [
-                                new org.pkijs.simpl.EXTENSION({
-                                    extnID: "2.5.29.14",
-                                    critical: false,
-                                    extnValue: (new org.pkijs.asn1.OCTETSTRING({ value_hex: result })).toBER(false)
-                                })
-                            ]
-                        })).toSchema()]
-                    }));
-                }
-                );
-            // #endregion 
-
-            // #region Signing final PKCS#10 request 
-            sequence = sequence.then(
-                function()
-                {
-                    return pkcs10_simpl.sign(privateKey, hash_algorithm);
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error during exporting public key: ")+ _(error)});
-                }
-                );
-            // #endregion 
-
-            sequence.then(
-                function(result)
-                {
-                    var pkcs10_schema = pkcs10_simpl.toSchema();
-                    var pkcs10_encoded = pkcs10_schema.toBER(false);
-
-                    var result_string = "-----BEGIN CERTIFICATE REQUEST-----\r\n";
-                    result_string = result_string + formatPEM(window.btoa(arrayBufferToString(pkcs10_encoded)));
-                    result_string = result_string + "\r\n-----END CERTIFICATE REQUEST-----\r\n";
-
-                    document.getElementById(formName+"_pubkey").value = result_string;
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error signing PKCS#10: ")+ _(error)});
-                }
-                );
-        }
-	
 }
 	
 pageScript = new PageScript();

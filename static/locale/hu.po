@@ -215,7 +215,7 @@ msgstr "A jelszavad sikeresen megváltoztattad"
 #: src/pdoauth/Messages.py:44 src/pdoauth/Messages.py:45
 #: src/pdoauth/Messages.py:46 src/pdoauth/Messages.py:47
 msgid "This user does not have that digest"
-msgstr "A Felhasználónak nincs Titkos Kódja"
+msgstr "A Felhasználónak nem egyezik a Titkos Kódja"
 
 #: src/pdoauth/Messages.py:45 src/pdoauth/Messages.py:46
 #: src/pdoauth/Messages.py:47 src/pdoauth/Messages.py:48
