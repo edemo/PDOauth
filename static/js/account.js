@@ -50,6 +50,36 @@
 		window.traces.push("main end")
 	}
 	
+	PageScript.prototype.fillAssurersTable = function(txt, xml){
+		try { 
+			self.assurers=JSON.parse(txt) 
+		}
+		catch(err) { 
+			console.log(err.message)
+			return
+		}
+		[].forEach.call( self.assurers.assurers, function(assurer) {
+			// the record will not be displayed if availability is false
+			if (assurer.availability){
+				var row=$('<tr></tr>')
+				$(row).append( $('<td>'+assurer.name+'</td>') )
+				var districts=$('<ul></ul>');
+				[].forEach.call( assurer.districts, function(district) {
+					$(districts).append('<li>'+district+'</li>')
+				} )
+				$(row).append( $('<td></td>').append( $(districts) ) )
+				var assurances=$('<ul></ul>');
+				[].forEach.call( assurer.assurances, function(assurance) {
+					console.log(assurance)
+					$(assurances).append('<li>'+_(assurance.assurance)+'</li>')
+				} )
+				$(row).append( $('<td></td>').append( $(assurances) ) )
+				$(row).append( $('<td></td>').append( $('<a href="mailto:'+assurer.email+'"></a>').append( $('<button class="social"></button>').append('<i class="fa fa-envelope"></i>') ) ) )
+				$("#assurers_table tbody").append(row)
+			}
+		} ) 
+	}
+	
 	PageScript.prototype.initialise = function(text) {
 		var keygenform = document.getElementById("registration-keygenform")
 		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
@@ -75,7 +105,9 @@
 	PageScript.prototype.userIsLoggedIn = function(text) {
 		var data = JSON.parse(text);
 		self.isLoggedIn=true
-		self.ajaxget('/v1/getmyapps',self.myappsCallback)
+		self.refreshTheNavbar()
+		self.ajaxget('/v1/getmyapps', self.myappsCallback)
+		self.ajaxget("assurers.json", self.callback(self.fillAssurersTable), true)
 		if (data.assurances) {
 			document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
 			document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
@@ -85,7 +117,7 @@
 				self.isAssurer=true;
 			}
 		}
-		self.refreshTheNavbar()
+
 		if (self.QueryString.section) {
 			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
 			else return;
