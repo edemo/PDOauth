@@ -4,7 +4,6 @@ from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance, emailVerification
 from pdoauth.CredentialManager import CredentialManager
 import time
-from flask import json
 from pdoauth.ReportedError import ReportedError
 from pdoauth.WebInterface import WebInterface
 from pdoauth.EmailHandling import EmailHandling
@@ -27,6 +26,7 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
     credentialRemoved, sameHash, verificationEmailSent
 import uritools
+import pdb
 
 class Controller(
         WebInterface, Responses, EmailHandling,
@@ -139,11 +139,10 @@ class Controller(
             return
         anotherUsers = User.getByDigest(digest)
         if anotherUsers:
-            anotherusers = self.getHandAssurredOf(anotherUsers)
-            if len(anotherusers):
-                for assuredUser in anotherusers:
-                    self.sendHashCollisionMail(assuredUser)
-                self.removeUser(user)
+            for aUser in anotherUsers:
+                self.sendHashCollisionMail(aUser)
+            assuredUsers = self.getHandAssurredOf(anotherUsers)
+            if len(assuredUsers):
                 raise ReportedError([anotherUserUsingYourHash])
             additionalInfo["message"] = anotherUserUsingYourHash
 

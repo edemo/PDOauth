@@ -123,11 +123,12 @@ class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
         theHash = self.createHash()
         anotherUser.hash = theHash
         form = self.prepareLoginForm(digest=theHash)
+        email = self.userCreationEmail
         self.assertReportedError(self.controller.doRegistration,
             [form],
             400,
             ['another user is using your hash'])
-        self.assertEqual(None, User.getByEmail(self.userCreationEmail))
+        self.assertEqual(email, User.getByEmail(email).email)
 
     
     def test_the_emailverification_assurance_does_not_count_in_hash_collision(self):
