@@ -27,9 +27,6 @@ pre {
 pre, blockquote, dl, figure, table, p, ul, ol, form {
     margin-bottom: 2.5rem;
 }
-pre, blockquote, dl, figure, table, p, ul, ol, form {
-    margin-bottom: 2.5rem;
-}
 input, textarea, select, fieldset {
     margin-bottom: 1.5rem;
 }
@@ -44,9 +41,6 @@ label, legend {
     margin-bottom: .5rem;
 }
 input[type='email'], input[type='number'], input[type='password'], input[type='search'], input[type='tel'], input[type='text'], input[type='url'], textarea, select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
     background-color: transparent;
     border: .1rem solid #d1d1d1;
     border-radius: .4rem;
@@ -56,8 +50,8 @@ input[type='email'], input[type='number'], input[type='password'], input[type='s
     width: 100%;
 }
 .button, button, input[type='button'], input[type='reset'], input[type='submit'] {
-    background-color: #4D7ACA;
-    border: .1rem solid #4D7ACA;
+    background-color: #EE3B24;
+    border: .1rem solid #EE3B24;
     border-radius: .4rem;
     color: #fff;
     cursor: pointer;
@@ -87,6 +81,7 @@ input[type='email'], input[type='number'], input[type='password'], input[type='s
 	padding-top:1px
 }
 .wrapper {
+	top: 50px;
 	position: relative;
 	display: block;
 	width: 100%;
@@ -116,6 +111,7 @@ h1 {
     font-size: 4rem;
     letter-spacing: -0.1rem;
     line-height: 1.2;
+	text-align: center;
 }
 h3 {
     font-size: 3rem;
@@ -179,7 +175,7 @@ ul.disced {
 }
 
 .feature_title {
-	width: 55%;
+	width: 60%;
 }
 
 @media (max-width: 767px){
