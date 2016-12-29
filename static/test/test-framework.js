@@ -61,11 +61,11 @@ function TFRWRK(test) {
 	}
 
 	TFRWRK.prototype.loadPage = function(page, testScript){
-		console.log("loadpage")
-		var testFrame=document.getElementById('testarea')
-		testFrame.onload=function(){
-				testScript(testFrame);
-				}
+		var testFrame = document.getElementById('testarea'),
+			testScript = testScript || function() {return}
+		testFrame.onload = function(){
+			testScript(testFrame);
+		}
 		testFrame.src='../'+page
 	}
 	
@@ -91,7 +91,7 @@ function TFRWRK(test) {
 					tWin.QUnit=QUnit
 					tWin.console=console
 					sContainer.setAttribute("type","text/javascript");
-					sContainer.innerHTML=mock+uTest;
+					sContainer.innerHTML = mock+uTest;
 					QUnit.XmlContainer = document.getElementById("qunit-xml")
 					tWin.document.getElementsByTagName("body")[0].appendChild(sContainer);
 				}
