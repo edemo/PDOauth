@@ -123,40 +123,6 @@ TFRWRK.prototype.QueryStringFunc = function (search) { //http://stackoverflow.co
 		xmlhttp.send();
 	}
 
-	TFRWRK.prototype.processErrors = function(data) {
-			var msg = {};
-			var translateError =function(e){
-				console.log(e)
-				var a=e.split(': ');
-				for(var i=0; i<a.length; i++){
-					a[i]=_(a[i])
-				}
-				return a.join(': ')
-			}
-			if (data.message) {
-				msg.title=_("Server message");
-				msg.message="<p>"+_(data.message)+"</p>";
-			}
-			if (data.assurances) {
-				msg.title=_("User informations");
-				msg.success=self.parseUserdata(data);
-			}
-			if (data.errors) {
-				msg.title = _("Error message")
-				msg.error = '<ul class="disced">';
-				errs = data.errors;
-				console.log(errs)
-				if (typeof(errs)!='string') {
-					[].forEach.call(errs, function(e) {
-						msg.error += "<li>"+ translateError(e) +"</li>" ;})
-				}
-				else {
-					msg.error += "<li>"+ translateError(errs) +"</li>";
-				}
-				msg.error += "</ul>";
-			}
-			return msg;
-	}
 	
 	TFRWRK.prototype.setAppCanEmailMe=function(app, value, callback){
 		var csrf_token = self.getCookie('csrf');
@@ -756,6 +722,7 @@ console.log("logoutCallback")
 	
 	TFRWRK.prototype.loadTest = function(test){
 		var loadTestCallback = function(js){
+			console.log("loadtestcallback")
 			sessionStorage.clear();
 			document.getElementById("qunit").innerHTML=""
 			QUnit.init()
@@ -766,12 +733,48 @@ console.log("logoutCallback")
 	}
 	
 	TFRWRK.prototype.loadPage = function(page, test){
+		console.log("loadpage")
 		var testFrame=document.getElementById('testarea')
 		testFrame.onload=function(){
 				test(testFrame);
 				}
 		testFrame.src='../'+page
 	}
+	
+	TFRWRK.prototype.loadTest = function(test){
+		var loadTestCallback = function(js){
+			console.log("loadtestcallback")
+			sessionStorage.clear();
+			document.getElementById("qunit").innerHTML=""
+			QUnit.init()
+			QUnit.load()
+			eval(js);
+		}
+		self.ajaxget(test+".js", self.callback(loadTestCallback))
+	}	
+	
+	TFRWRK.prototype.doTest = function(url, test) {
+		var loadMockCallback = function(mock){
+			var loadUtestCallback = function(uTest){
+				var tFrame=document.getElementById('testarea')
+				tFrame.onload=function(){
+					var tWin=tFrame.contentWindow,
+						sContainer=tWin.document.createElement('script')
+					tWin.QUnit=QUnit
+					tWin.console=console
+					tScript=mock+uTest
+					sContainer.setAttribute("type","text/javascript");
+					sContainer.innerHTML=mock+uTest;
+					QUnit.XmlContainer = document.getElementById("qunit-xml")
+					tWin.document.getElementsByTagName("body")[0].appendChild(sContainer);
+				}
+				tFrame.src='../'+url
+			}
+			self.ajaxget("unitTests/"+test+".tst.js", self.callback(loadUtestCallback))
+		}
+		self.ajaxget("unitTests/_mock.js", self.callback(loadMockCallback))		
+	}
+	
 }
 	
 tfrwrk = new TFRWRK();
