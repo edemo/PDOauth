@@ -4,46 +4,34 @@
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
     <head>
-    <!-- Basic Page Needs
-    ================================================== -->
+      <!-- Basic Page Needs-->
         <meta charset="utf-8">
         <title>ADA - hogyan működik</title>
         <meta name="description" content="">
-        <!-- Mobile Specific Metas
-    ================================================== -->
+        
+		<!-- Mobile Specific Metas -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-         <!-- CSS
-         ================================================== -->
+       <!-- CSS-->
         <!-- Bootstrap -->
         <link rel="stylesheet" href="css/bootstrap.min.css"/>
         <!-- FontAwesome -->
         <link rel="stylesheet" href="css/font-awesome.min.css"/>
-        <!-- Animation -->
-        <link rel="stylesheet" href="css/animate.css" />
-        <!-- Owl Carousel -->
-        <link rel="stylesheet" href="css/owl.carousel.css"/>
-        <link rel="stylesheet" href="css/owl.theme.css"/>
-        <!-- Pretty Photo -->
-        <link rel="stylesheet" href="css/prettyPhoto.css"/>
-        <!-- Bx slider -->
-        <link rel="stylesheet" href="css/jquery.bxslider.css"/>
-       
         <!-- Template styles-->
         <link rel="stylesheet" href="css/custom.css" />
          <!-- color style -->
         <link rel="stylesheet" href="css/red.css"/>
         <!-- Responsive  -->
         <link rel="stylesheet" href="css/responsive.css" />
-        <link rel="stylesheet" href="css/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
-		
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
 		<!-- Ada common -->
 		<link rel="stylesheet" href="css/ada.css">
 		<link rel="stylesheet" href="css/ada_blog.css">
+		
+	  <!-- Fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic" rel="stylesheet" >
         <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
+		<link rel="preload" href="ada/v1/statistics">
     </head>
 
  <body data-spy="scroll" data-target=".navbar-fixed-top" onload="pageScript.main()">
@@ -65,7 +53,7 @@
                         <ul class="nav navbar-nav navbar-right ">
                            	<li><a href="./index.html" class="">Home </a></li>
                             <li><a href="./user_howto.html" class="active">Hogyan működik?</a> </li>
-                            <li><a href="./about_us.html" class="">Rólunk</a> </li>
+                            <li id="nav-bar-aboutus"><a href="./about_us.html" class="">Rólunk</a> </li>
 <!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
 							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
 							<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
@@ -349,7 +337,7 @@ Olvasd el az <a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-s
 <!-- Footer Area End -->
 
 <!-- Back To Top Button -->
-    <div id="back-top">
+    <div id="back-top" style="display:none;">
         <a href="#banner" class="scroll" data-scroll>
             <button class="btn btn-primary" title="Back to Top"><i class="fa fa-angle-up"></i></button>
         </a>

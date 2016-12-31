@@ -459,14 +459,12 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			document.getElementById("nav-bar-register").style.display="none";
 			document.getElementById("nav-bar-my_account").style.display="block";
 			document.getElementById("nav-bar-logout").style.display="block";
-			document.getElementById("nav-bar-aboutus").style.display="block";
 		}
 		else {
 			document.getElementById("nav-bar-my_account").style.display="none";
 			document.getElementById("nav-bar-logout").style.display="none";
 			document.getElementById("nav-bar-login").style.display="block";
 			document.getElementById("nav-bar-register").style.display="block";
-			document.getElementById("nav-bar-aboutus").style.display="block";
 		}
 	}
 
