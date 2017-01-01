@@ -437,6 +437,7 @@ jsGettext.prototype = {
 	gettext: function() {
 		if (!arguments || arguments.length < 1 || !RegExp) return;
 		var str      = arguments[0];
+        console.log(str);
 		arguments[0] = null;
 		arguments    = $A(arguments).compact();
 		

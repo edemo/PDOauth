@@ -15,7 +15,7 @@ alltests: tests integrationtests end2endtest
 realclean:
 	rm -rf PDAnchor; git clean -fdx
 testenv:
-	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master
+	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -w /PDOauth -it magwas/edemotest:master
 
 static/qunit-1.18.0.js:
 	curl http://code.jquery.com/qunit/qunit-1.18.0.js -o static/qunit-1.18.0.js

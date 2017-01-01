@@ -63,9 +63,12 @@ class EmailHandling(object):
         secret, expiry = CredentialManager.createTemporaryCredential(user, 'deregister')
         self.sendEmail(user, secret, expiry, "DEREGISTRATION")
 
-    def sendHashCollisionMail(self, user: User, assured: bool) -> None:
+    def sendHashCollisionMail(self, user: User, assured: bool, inAssurance: bool) -> None:
         if assured:
-            tag = "HASHCOLLISION_ASSURED"
+            if inAssurance:
+                tag = "HASHCOLLISION_INASSURANCE"
+            else:
+                tag = "HASHCOLLISION_ASSURED"
         else:
             tag = "HASHCOLLISION_UNASSURED"
         self.sendEmail(user, None, None, tag)

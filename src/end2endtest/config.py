@@ -6,6 +6,7 @@ def absolutePathForEnd2EndResource(fileName):
     return os.path.join(os.path.dirname(__file__), "..", "end2endtest", fileName)
 
 class Config(object):
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = False

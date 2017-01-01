@@ -7,7 +7,7 @@ from pdoauth.ReportedError import ReportedError
 from pdoauth.models.User import User
 from pdoauth.models.AppMap import AppMap
 from pdoauth.models.Application import Application
-from pdoauth.Messages import sameHash
+from pdoauth.Messages import sameHash, anotherUserUsingYourHash
 from test import config
 from pdoauth.EmailHandling import EmailData
 
@@ -95,7 +95,7 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         
     def test_in_assured_hash_collision_an_error_message_states_what_happened(self):
         self.assuredCollision()
-        self.assertEqual(["another user is using your hash"], self.exception.descriptor)
+        self.assertEqual([anotherUserUsingYourHash], self.exception.descriptor)
         
     def test_in_assured_hash_collision_the_operation_fails(self):
         self.assuredCollision()
@@ -117,7 +117,7 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         
     def test_in_unassured_hash_collision_a_warning_message_states_what_happened(self):
         self.unAssuredCollision()
-        self.assertEqual("another user is using your hash", self.additionalInfo['message'])
+        self.assertEqual(anotherUserUsingYourHash, self.additionalInfo['message'])
 
     def test_in_unassured_hash_collision_the_operation_succeeds(self):
         self.unAssuredCollision()
