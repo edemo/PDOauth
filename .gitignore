@@ -1,5 +1,7 @@
 *.pyc
 *~
+*.json
+*.pot
 doc/html
 doc/xml
 doc/screenshots
