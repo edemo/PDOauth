@@ -53,7 +53,7 @@ firefoxtest:
 chrometest:
 	PYTHONPATH=src WEBDRIVER=chrome python3 -m unittest discover -v -f -s src/end2endtest -p "*Test.py"
 
-end2endtest: onlyend2endtest killall
+end2endtest: recording onlyend2endtest killall stoprecording
 
 runserver:
 	mkdir -p tmp; apache2 -X -f $$(pwd)/src/end2endtest/apache2.conf&
@@ -146,4 +146,10 @@ messages.pot: always
 
 static/locale/hu.po: messages.pot
 	msgmerge -U static/locale/hu.po messages.pot
+
+recording:
+	start-stop-daemon --start --background --oknodo --name flvrec --make-pidfile --pidfile /tmp/flvrec.pid --startas /usr/bin/python -- /usr/local/bin/flvrec.py -o /tmp/record.flv :0
+
+stoprecording:
+	-start-stop-daemon --stop --pidfile /tmp/flvrec.pid
 
