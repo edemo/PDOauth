@@ -6,7 +6,6 @@
 		xxxx=self
 		this.ajaxget("/adauris", self.callback(self.commonInit))
 		var section = self.QueryString.section
-		console.log("section:"+section)
 			switch (section) {
 				case "all" :
 				[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
@@ -50,15 +49,37 @@
 		window.traces.push("main end")
 	}
 	
+	PageScript.prototype.fillAssurersTable = function(txt, xml){
+		try { 
+			self.assurers=JSON.parse(txt) 
+		}
+		catch(err) { 
+			console.log(err.message)
+			return
+		}
+		[].forEach.call( self.assurers.assurers, function(assurer) {
+			// the record will not be displayed if availability is false
+			if (assurer.availability){
+				var row=$('<tr></tr>')
+				$(row).append( $('<td>'+assurer.name+'</td>') )
+				var districts=$('<ul></ul>');
+				[].forEach.call( assurer.districts, function(district) {
+					$(districts).append('<li>'+district+'</li>')
+				} )
+				$(row).append( $('<td></td>').append( $(districts) ) )
+				var assurances=$('<ul></ul>');
+				[].forEach.call( assurer.assurances, function(assurance) {
+					$(assurances).append('<li>'+_(assurance.assurance)+'</li>')
+				} )
+				$(row).append( $('<td></td>').append( $(assurances) ) )
+				$(row).append( $('<td></td>').append( $('<a href="mailto:'+assurer.email+'"></a>').append( $('<button class="social"></button>').append('<i class="fa fa-envelope"></i>') ) ) )
+				$("#assurers_table tbody").append(row)
+			}
+		} ) 
+	}
+	
 	PageScript.prototype.initialise = function(text) {
-		var keygenform = document.getElementById("registration-keygenform")
-		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
-		keygenform = document.getElementById("add-ssl-credential-keygenform")
-		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
-
-		// waiting for gettext loads po files
-		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
-		else self.init_()
+		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
 	}
 	
 	PageScript.prototype.userNotLoggedIn = function(status, text) {
@@ -75,7 +96,9 @@
 	PageScript.prototype.userIsLoggedIn = function(text) {
 		var data = JSON.parse(text);
 		self.isLoggedIn=true
-		self.ajaxget('/v1/getmyapps',self.myappsCallback)
+		self.refreshTheNavbar()
+		self.ajaxget('/v1/getmyapps', self.myappsCallback)
+		self.ajaxget("assurers.json", self.callback(self.fillAssurersTable), true)
 		if (data.assurances) {
 			document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
 			document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
@@ -85,7 +108,7 @@
 				self.isAssurer=true;
 			}
 		}
-		self.refreshTheNavbar()
+
 		if (self.QueryString.section) {
 			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
 			else return;
@@ -133,7 +156,6 @@
 	}
 
 	PageScript.prototype.init_=function(){
-		console.log("init_")
 		if (self.QueryString.section){
 			switch (self.QueryString.section) {
 				case "email_verification":
@@ -225,6 +247,7 @@
 	}
 	
 	PageScript.prototype.addAssurance = function() {
+		if ( $("#assurance-giving_submit-button").hasClass("inactive") ) return;
 	    digest = document.getElementById("assurancing_digest_input").value;
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
@@ -252,11 +275,6 @@
 			password: secret
 		}
 		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me))
-	}
-	
-	PageScript.prototype.addSslCredential = function(data) {
-		document.getElementById("SSL").onload=self.addSslCredentialCallback;
-		document.getElementById('add-ssl-credential-keygenform').submit();
 	}
 	
 /*
@@ -305,13 +323,6 @@
 
 /***** Settings tab *****/
 	PageScript.prototype.parseSettings = function(data) {
-
-		var sslForm='\
-		<form target="ssl" id="add-ssl-credential-keygenform" method="post" action="'+self.QueryString.uris.BACKEND_PATH+'/v1/keygen" enctype="application/x-x509-user-cert">\
-			<keygen name="pubkey" challenge="123456789" keytype="RSA" style="display: none"></keygen>\
-			<input id="add-ssl-credential_createuser_input" type="checkbox" name="createUser" value="false" style="display: none">\
-			<input type="text" id="add-ssl-credential_email_input"  name="email" value="'+data.email+'" style="display: none">\
-		</form>'
 				
 		var result = '\
 		<table>\
@@ -364,12 +375,12 @@
 		<h4><b>'+_("My credentials")+'</b></h4>\
 		<table class="multiheader">';
 		var c={	pw:[_("Password"),"password","document.getElementById('change-email_form').style.display='table-row'",true],
-				ssl:[_("SSL certificate"),"certificate","pageScript.addSslCredential()",true],
-				fb:["Facebook","facebook","facebook.add_fb_credential()",false],
+				fb:["Facebook","facebook","facebook.add_fb_credential()",false]}
+/*				,
 				git:["Github","github","pageScript.addGithubCredential()",false],
 				tw:["Twitter","twitter","pageScript.addTwitterCredential()",false],
 				go:["Google+","google","pageScript.addGoogleCredential()",false]
-				};
+				};*/
 		var credential_list = ""
 		for( var i in c) {
 			credential_list=(i=='pw')?'\
@@ -415,31 +426,9 @@
 			result+=credential_header+credential_list
 		}
 		result +='\
-		</table>'+sslForm
+		</table>'
 		return result;		
 	}	
-/*
-******************************************
-** Cryptographic for ssl authentication **
-******************************************
-
-/***** Settings tab *****/	
-	PageScript.prototype.createAndSaveAKeyPair=function() {
-		return window.crypto.subtle.generateKey(
-			{
-				name: "RSASSA-PKCS1-v1_5",
-				modulusLength: 2048,
-				publicExponent: new Uint8Array([1, 0, 1]), // 24 bit representation of 65537
-				hash: {name: "SHA-256"}
-			},
-			false, // can extract it later if we want
-			["sign", "verify"]).then(
-				function(key) {
-					keyPair = key;
-					console.log(key);
-					return key;
-				}).catch(function(a){console.log(a)});
-	}
 
 	PageScript.prototype.callSetAppCanEmailMe=function(app){
 		var value=document.getElementById("application-allow-email-me-"+app).checked

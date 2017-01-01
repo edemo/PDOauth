@@ -444,7 +444,7 @@ jsGettext.prototype = {
 		if (arguments.length == 1 && typeof arguments[0] == 'object') {
 			arguments = $A(arguments[0]);
 		}
-		hasTokens = str.match('%','g');
+		hasTokens = str.match(/%\D/g);
 		if (hasTokens && hasTokens.length != arguments.length) {
 			Gettext.log('Gettext error: Arguments count ('+ arguments.length +') does not match replacement token count ('+ str.match('%','g').length +').');
 			return;
@@ -559,6 +559,7 @@ jsGettext.prototype = {
 						curMsgid++;
 						if(typeof output.msgid[curMsgid] == 'undefined') output.msgid[curMsgid] = [];
 						output.msgid[curMsgid].push(clean(po[x]));
+						console.log(output.msgid[curMsgid])
 						output.obsoletes.push(curMsgid);
 					}
 					else if (po[x].substring(3,10) == 'msgstr ') {
