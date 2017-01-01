@@ -9,6 +9,7 @@ export PATH=/firefox:/chromedriver:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr
 set +e
 service postgresql start; ret=1 ; while [ $ret != 0 ] ; do psql -c "select count(*) from pg_user;" ; ret=$?; done
 set -e
+pip3 install enforce polib
 ./tools/setupdoc
 cp /etc/hosts /tmp
 echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts
