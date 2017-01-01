@@ -10,6 +10,7 @@ from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance
 from pdoauth.models import User
+from enforce.decorators import runtime_validation
 
 class EmailData(object):
     def __init__(self, name, secret, expiry, addfields):
@@ -21,6 +22,7 @@ class EmailData(object):
             setattr(self,key,addfields[key])
     
     
+@runtime_validation
 class EmailHandling(object):
     passwordResetCredentialType = 'email_for_password_reset'
 
@@ -61,8 +63,12 @@ class EmailHandling(object):
         secret, expiry = CredentialManager.createTemporaryCredential(user, 'deregister')
         self.sendEmail(user, secret, expiry, "DEREGISTRATION")
 
-    def sendHashCollisionMail(self, user):
-        self.sendEmail(user, None, None, "HASHCOLLISION")
+    def sendHashCollisionMail(self, user: User, assured: bool) -> None:
+        if assured:
+            tag = "HASHCOLLISION_ASSURED"
+        else:
+            tag = "HASHCOLLISION_UNASSURED"
+        self.sendEmail(user, None, None, tag)
 
     def changeEmail(self, form):
         user = self.getCurrentUser()

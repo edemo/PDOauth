@@ -1,5 +1,5 @@
 #pylint: disable=no-member
-from pdoauth.models.User import User
+from pdoauth.models.User import User, Digest
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance, emailVerification
 from pdoauth.CredentialManager import CredentialManager
@@ -26,8 +26,9 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
     credentialRemoved, sameHash, verificationEmailSent
 import uritools
-import pdb
+from enforce.decorators import runtime_validation
 
+@runtime_validation
 class Controller(
         WebInterface, Responses, EmailHandling,
         LoginHandling,  CertificateHandling,
@@ -115,16 +116,6 @@ class Controller(
         self.removeUser(user)
         return self.simple_response(youAreDeregistered)
 
-    def getHandAssurredOf(self, anotherUsers):
-        who = list()
-        for anotherUser in anotherUsers:
-            for assurance in Assurance.getByUser(anotherUser):
-                if assurance not in [emailVerification]:
-                    who.append(anotherUser)
-        return who
-
-
-
     def updateHashAndAssurances(self, user, digest):
         user.hash = digest
         assurances = Assurance.listByUser(user)
@@ -132,17 +123,26 @@ class Controller(
         if digest is not None:
             Assurance.new(user, "hashgiven", user)
         user.save()
+        
+    def handAssured(self, anotherUser: User) -> bool:
+        for assurance in Assurance.getByUser(anotherUser):
+            if assurance not in [emailVerification]:
+                return True
+        return False
 
-
-    def checkHashInOtherUsers(self, user, additionalInfo, digest):
+    def checkHashInOtherUsers(self, user: User, additionalInfo: dict, digest: Digest) -> None:
         if digest is None:
             return
         anotherUsers = User.getByDigest(digest)
+        assuredCollision = False
         if anotherUsers:
             for aUser in anotherUsers:
-                self.sendHashCollisionMail(aUser)
-            assuredUsers = self.getHandAssurredOf(anotherUsers)
-            if len(assuredUsers):
+                if self.handAssured(aUser):
+                    self.sendHashCollisionMail(aUser, assured=True)
+                    assuredCollision = True
+                else:
+                    self.sendHashCollisionMail(aUser, assured=False)
+            if assuredCollision:
                 raise ReportedError([anotherUserUsingYourHash])
             additionalInfo["message"] = anotherUserUsingYourHash
 

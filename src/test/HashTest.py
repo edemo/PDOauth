@@ -85,14 +85,13 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
             self.controller.checkHashInOtherUsers(user,additionalInfo,digest)
         self.assertEqual(email, User.getByEmail(email).email)
 
-    def test_in_assured_hash_collision_an_email_is_sent_to_the_other_user(self):
+    def test_in_assured_hash_collision_an_email_is_sent_to_the_other_user_with_HASHCOLLISION_ASSURED_config(self):
         anotheruser=self.assuredCollision()
         message = self.controller.mail.outbox[0]
         ed = EmailData(anotheruser.email, None, None, [])
-        self.assertEqual(message.body,config.Config.HASHCOLLISION_EMAIL_BODY_TEXT.format(ed))
-        self.assertEqual(message.html,config.Config.HASHCOLLISION_EMAIL_BODY_HTML.format(ed))
+        self.assertEqual(message.body,config.Config.HASHCOLLISION_ASSURED_EMAIL_BODY_TEXT.format(ed))
+        self.assertEqual(message.html,config.Config.HASHCOLLISION_ASSURED_EMAIL_BODY_HTML.format(ed))
         self.assertEqual(message.recipients,[anotheruser.email])
-        self.fail("different emails")
         
     def test_in_assured_hash_collision_an_error_message_states_what_happened(self):
         self.assuredCollision()
@@ -108,14 +107,13 @@ class HashTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.assertEqual(email, User.getByEmail(email).email)
         self.assertEqual(anotheruser.email, User.getByEmail(anotheruser.email).email)
         
-    def test_in_unassured_hash_collision_an_email_is_sent_to_the_other_user(self):
+    def test_in_unassured_hash_collision_an_email_is_sent_to_the_other_user_with_HASHCOLLISION_UNASSURED_config(self):
         anotheruser=self.unAssuredCollision()
         message = self.controller.mail.outbox[0]
         ed = EmailData(anotheruser.email, None, None, [])
-        self.assertEqual(message.body,config.Config.HASHCOLLISION_EMAIL_BODY_TEXT.format(ed))
-        self.assertEqual(message.html,config.Config.HASHCOLLISION_EMAIL_BODY_HTML.format(ed))
+        self.assertEqual(message.body,config.Config.HASHCOLLISION_UNASSURED_EMAIL_BODY_TEXT.format(ed))
+        self.assertEqual(message.html,config.Config.HASHCOLLISION_UNASSURED_EMAIL_BODY_HTML.format(ed))
         self.assertEqual(message.recipients,[anotheruser.email])
-        self.fail("different emails")
         
     def test_in_unassured_hash_collision_a_warning_message_states_what_happened(self):
         self.unAssuredCollision()

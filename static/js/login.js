@@ -34,8 +34,13 @@
 		if (keygenform) keygenform.action=self.QueryString.uris.BACKEND_PATH+"/v1/keygen";
 
 		// waiting for gettext loads po files
-		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_);
-		else self.init_()
+		if (!Gettext.isAllPoLoaded) {
+			window.traces.push("init after po")
+			Gettext.outerStuff.push(self.init_)
+		} else {
+			window.traces.push("init now")			
+			self.init_()
+		}
 	}
 	
 	PageScript.prototype.init_=function(){
@@ -50,6 +55,7 @@
 			self.greating("The %s application needs to sign in with your ADA account")
 			self.unhideSection("login_section")
 		}
+		window.traces.push('loginpage')
 	}
 	
 	PageScript.prototype.userIsLoggedIn = function(text) {
@@ -77,6 +83,7 @@
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
+		window.traces.push('userIsLoggedIn')
 	}
 	
 	PageScript.prototype.finishRegistration = function (text) {
@@ -105,6 +112,7 @@
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
+		window.traces.push("myApps")
 	}
 	
 	PageScript.prototype.unhideAssuranceSection= function(assurance,given) {
