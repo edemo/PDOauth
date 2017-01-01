@@ -54,6 +54,7 @@ class Responses(object):
                     query_params.pop(k)
         return uritools.uricompose(scheme=url.scheme,
                                     host=url.host,
+                                    port=url.port,
                                     path=url.path,
                                     query=query_params,
                                     fragment=url.fragment)
