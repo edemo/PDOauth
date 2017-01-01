@@ -162,7 +162,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		if (message[0]) {
 			switch (message[0]) {
 				case "added assurance":
-					return _("The assurance '%1' is added to user %2").replace("%1",_(message[1])).replace("%2",message[2]); //%1=assurnce; %2=email
+					var collisionText=(message[3]==0)?"":_("%d hash collisions are deleted")
+					return _("The assurance '%1' is added to user %2. ").replace("%1",_(message[1])).replace("%2",message[2])+collisionText; //%1=assurance; %2=email
 					break;
 				default:
 					return data;
