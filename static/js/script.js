@@ -126,6 +126,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 
 	PageScript.prototype.processErrors = function(data) {
+			console.log(data)
 			var msg = {},
 			translateError =function(e){
 				console.log(e)
@@ -137,7 +138,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			}
 			if (data.message) {
 				msg.title=_("Server message");
-				msg.message="<p>"+_(data.message)+"</p>";
+				msg.message="<p>"+self.parseMessage(data.message)+"</p>";
 			}
 			if (data.assurances) {
 				msg.title=_("User informations");
@@ -158,6 +159,22 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				msg.error += "</ul>";
 			}
 			return msg;
+	}
+	
+	PageScript.prototype.parseMessage = function(data)  {
+		try { var message=JSON.parse(data) }
+		catch(e) {return _(data);} 
+		console.log(message)
+		if (message[0]) {
+			switch (message[0]) {
+				case "added assurance":
+					return _("The assurance '%1' is added to user %2").replace("%1",_(message[1])).replace("%2",message[2]); //%1=assurnce; %2=email
+					break;
+				default:
+					return data;
+			}
+		}
+		else return data;
 	}
 	
 	PageScript.prototype.setAppCanEmailMe=function(app, value, callback){
