@@ -58,7 +58,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			}
 		}
 		function defaultErrorHandler(status,text,xml){
-			console.log(text)
 			data=JSON.parse(text)
 			self.displayMsg(self.processErrors(data))
 		}
@@ -70,7 +69,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		self.QueryString.uris = JSON.parse(text);
 		self.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
-		if ( typeof Gettext == "undefined" ) _=function(x){return x};
+//		if ( typeof Gettext == "undefined" ) _=function(x){return x};
 
 		// filling hrefs of anchors
 		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
@@ -108,8 +107,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		l = []
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		var dataString = l.join("&")
-		console.log(uri)
-		console.log(JSON.stringify(data))
 		xmlhttp.send( dataString );
 	}
 
@@ -120,13 +117,11 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		} else {
 			theUri = self.uribase + uri;
 		}
-		console.log(theUri)
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
 
 	PageScript.prototype.processErrors = function(data) {
-			console.log(data)
 			var msg = {},
 			translateError =function(e){
 				console.log(e)
@@ -148,7 +143,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				msg.title = _("Error message")
 				msg.error = '<ul class="disced">';
 				errs = data.errors;
-				console.log(errs)
 				if (typeof(errs)!='string') {
 					[].forEach.call(errs, function(e) {
 						msg.error += "<li>"+ translateError(e) +"</li>" ;})
@@ -177,11 +171,11 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		else return data;
 	}
 	
-	PageScript.prototype.setAppCanEmailMe=function(app, value, callback){
+	PageScript.prototype.setAppCanEmailMe=function(appId, value, callback){
 		var csrf_token = self.getCookie('csrf');
 	    data= {
 			canemail: value,
-	    	appname: self.myApps[self.currentAppId].name,
+	    	appname: self.aps[appId].name,
 	    	csrf_token: csrf_token
 	    }
 	    self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
@@ -715,7 +709,80 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
+	
+PageScript.prototype.initGettext = function(text) {
+		// waiting for gettext loads po files
+		try {
+			self.dictionary=JSON.parse(text)
+			_=function() { return self.gettext.apply( this, arguments ) } 
+		}
+		catch (e) {
+			_=function(str) {return str;}
+		}
+		self.init_()
+	}
+	
+	PageScript.prototype.gettext = function() {
 
+		if (!arguments || arguments.length < 1 || !RegExp) return; // called without arguments
+		arguments=$.map(arguments, function(value, index){return [value]})
+		var str = arguments.shift();
+		
+		if (arguments.length == 1 && typeof arguments[0] == 'object') {
+			arguments=$.map(arguments[0], function(value, index){return [value]})
+		}
+		
+		// Try to find translated string
+		str = self.dictionary[str] || str
+
+		// Check needed attrubutes given for tokens
+		hasTokens = str.match(/%\D/g);
+		if (hasTokens && hasTokens.length != arguments.length) {
+			console.log('Gettext error: Arguments count ('+ arguments.length +') does not match replacement token count ('+ str.match(/%\D/g).length +').');
+			return str;
+		}
+		
+		// replace tokens with the given arguments
+		var re  = /([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X)(.*)/; //'
+		var a   = b = [], i = 0, numMatches = 0;		
+		while (a = re.exec(str)) {
+			var leftpart   = a[1], 
+				pPad  = a[2], 
+				pJustify  = a[3], 
+				pMinLength = a[4],
+				pPrecision = a[5], 
+				pType = a[6], 
+				rightPart = a[7];
+			numMatches++;
+			if (pType == '%') subst = '%';
+			else {
+				var param = arguments[i],
+					pad   = '',
+					justifyRight = true,
+					minLength = -1,
+					precision = -1,
+					subst = param;
+				if (pPad && pPad.substr(0,1) == "'") pad = leftpart.substr(1,1);
+				else if (pPad) pad = pPad;
+				if (pJustify && pJustify === "-") justifyRight = false;
+				if (pMinLength) minLength = parseInt(pMinLength);
+				if (pPrecision && pType == 'f') precision = parseInt(pPrecision.substring(1));
+				if (pType == 'b')      subst = parseInt(param).toString(2);
+				else if (pType == 'c') subst = String.fromCharCode(parseInt(param));
+				else if (pType == 'd') subst = parseInt(param) ? parseInt(param) : 0;
+				else if (pType == 'u') subst = Math.abs(param);
+				else if (pType == 'f') subst = (precision > -1) ? Math.round(parseFloat(param) * Math.pow(10, precision)) / Math.pow(10, precision): parseFloat(param);
+				else if (pType == 'o') subst = parseInt(param).toString(8);
+				else if (pType == 's') subst = param;
+				else if (pType == 'x') subst = ('' + parseInt(param).toString(16)).toLowerCase();
+				else if (pType == 'X') subst = ('' + parseInt(param).toString(16)).toUpperCase();
+			}
+			str = leftpart + subst + rightPart;
+			i++;
+		}
+		return str;
+	}
+	
 }
 	
 pageScript = new PageScript();

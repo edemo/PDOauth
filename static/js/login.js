@@ -28,10 +28,7 @@
 	PageScript.prototype.initialise = function() {
 		// redirect to official account page if callback uri is missing
 		if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
-
-		// waiting for gettext loads po files
-		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_);
-		else self.init_()
+		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
 	}
 	
 	PageScript.prototype.init_=function(){
@@ -85,11 +82,11 @@
 	
 	PageScript.prototype.myappsCallback= function (text) {
 		console.log('myappsCallback')
-		self.myApps=JSON.parse(text)
-		for (i=0; i<self.myApps.length; i++){
-			if (self.myApps[i].hostname==self.appDomain) {
+		self.aps=JSON.parse(text)
+		for (i=0; i<self.aps.length; i++){
+			if (self.aps[i].hostname==self.appDomain) {
 				self.currentAppId=i
-				if (self.myApps[i].username) self.dataGivingAccepted=true
+				if (self.aps[i].username) self.dataGivingAccepted=true
 			}
 		}
 		if ( !self.dataGivingAccepted ){

@@ -6,7 +6,6 @@
 		xxxx=self
 		this.ajaxget("/adauris", self.callback(self.commonInit))
 		var section = self.QueryString.section
-		console.log("section:"+section)
 			switch (section) {
 				case "all" :
 				[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
@@ -70,7 +69,6 @@
 				$(row).append( $('<td></td>').append( $(districts) ) )
 				var assurances=$('<ul></ul>');
 				[].forEach.call( assurer.assurances, function(assurance) {
-					console.log(assurance)
 					$(assurances).append('<li>'+_(assurance.assurance)+'</li>')
 				} )
 				$(row).append( $('<td></td>').append( $(assurances) ) )
@@ -81,9 +79,7 @@
 	}
 	
 	PageScript.prototype.initialise = function(text) {
-		// waiting for gettext loads po files
-		if (!Gettext.isAllPoLoaded) Gettext.outerStuff.push(self.init_)
-		else self.init_()
+		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
 	}
 	
 	PageScript.prototype.userNotLoggedIn = function(status, text) {
@@ -160,7 +156,6 @@
 	}
 
 	PageScript.prototype.init_=function(){
-		console.log("init_")
 		if (self.QueryString.section){
 			switch (self.QueryString.section) {
 				case "email_verification":
@@ -252,6 +247,7 @@
 	}
 	
 	PageScript.prototype.addAssurance = function() {
+		if ( $("#assurance-giving_submit-button").hasClass("inactive") ) return;
 	    digest = document.getElementById("assurancing_digest_input").value;
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
