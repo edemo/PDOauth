@@ -28,6 +28,7 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
 import uritools
 from enforce.decorators import runtime_validation
 from pdoauth.forms.AssuranceForm import AssuranceForm
+from typing import Union
 
 @runtime_validation
 class Controller(
@@ -231,7 +232,7 @@ class Controller(
         if digest is None or user.hash != digest:
             raise ReportedError([thisUserDoesNotHaveThatDigest], 400)
 
-    def getUserForEmailAndOrHash(self, digest: Digest, email: str):
+    def getUserForEmailAndOrHash(self, digest: Digest, email: Union[str,None]):
         if email:
             user = User.getByEmail(email)
             self.checkUserAgainsDigest(digest, user)
@@ -250,7 +251,7 @@ class Controller(
         if not self.isAssuredToAddAssurance(assurances, neededAssurance):
             raise ReportedError([noAuthorization], 403)
 
-    def doAddAssurance(self, form: AssuranceForm):
+    def doAddAssurance(self, form):
         neededAssurance = form.assurance.data
         self.assureUserHaveTheGivingAssurancesFor(neededAssurance)
         user = self.getUserForEmailAndOrHash(
