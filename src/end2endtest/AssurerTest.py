@@ -13,7 +13,7 @@ class AssurerTest(TestCase,BrowsingUtil,CryptoTestUtil):
         self.logOut()
         self.loginWithPasswordAs(TE.assurerUser)
         self.assignAssurance(self.userCreationEmail, personalId, motherName)
-        expectedText = u'["added assurance","test","{0}"]'.format(self.userCreationEmail)
+        expectedText = u'["Added assurance test to {0}. 0 colliding hashes found and deleted."]'.format(self.userCreationEmail)
         self.waitForMessage2()
         self.assertPopupTextIs(expectedText)
 
