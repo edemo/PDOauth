@@ -1,5 +1,7 @@
 #!/bin/bash
 set -xe
+apt -y install python-pip
+pip install vnc2flv
 chown postgres /var/run/postgresql/
 export DISPLAY=:0
 Xvnc -SecurityTypes=None :0&

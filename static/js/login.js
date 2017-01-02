@@ -43,6 +43,7 @@
 			self.greating("The %s application needs to sign in with your ADA account")
 			self.unhideSection("login_section")
 		}
+		window.traces.push('loginpage')
 	}
 	
 	PageScript.prototype.userIsLoggedIn = function(text) {
@@ -70,6 +71,7 @@
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
+		window.traces.push('userIsLoggedIn')
 	}
 	
 	PageScript.prototype.finishRegistration = function (text) {
@@ -98,6 +100,7 @@
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
+		window.traces.push("myApps")
 	}
 	
 	PageScript.prototype.unhideAssuranceSection= function(assurance,given) {

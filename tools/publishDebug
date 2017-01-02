@@ -1,0 +1,4 @@
+#!/bin/bash
+make stoprecording
+mv /tmp/record.flv shippable
+rsync -e "ssh -p 22022" -ar shippable/ shippable@demokracia.rulez.org:/var/www/adadocs/PDOauth/$BUILD_NUMBER

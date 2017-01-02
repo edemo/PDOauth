@@ -58,6 +58,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			}
 		}
 		function defaultErrorHandler(status,text,xml){
+            console.log(text)
 			data=JSON.parse(text)
 			self.displayMsg(self.processErrors(data))
 		}
@@ -737,6 +738,8 @@ PageScript.prototype.initGettext = function(text) {
 		str = self.dictionary[str] || str
 
 		// Check needed attrubutes given for tokens
+        console.log(arguments)
+        console.log(str)
 		hasTokens = str.match(/%\D/g);
 		if (hasTokens && hasTokens.length != arguments.length) {
 			console.log('Gettext error: Arguments count ('+ arguments.length +') does not match replacement token count ('+ str.match(/%\D/g).length +').');

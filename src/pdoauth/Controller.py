@@ -1,10 +1,9 @@
 #pylint: disable=no-member
-from pdoauth.models.User import User
+from pdoauth.models.User import User, Digest
 from pdoauth.models.Credential import Credential
 from pdoauth.models.Assurance import Assurance, emailVerification
 from pdoauth.CredentialManager import CredentialManager
 import time
-from flask import json
 from pdoauth.ReportedError import ReportedError
 from pdoauth.WebInterface import WebInterface
 from pdoauth.EmailHandling import EmailHandling
@@ -25,9 +24,13 @@ from pdoauth.Messages import badAuthHeader, noAuthorization,\
     addedAssurance, noShowAuthorization, unknownToken, expiredToken,\
     emailVerifiedOK, invalidEmailAdress, passwordResetSent, theSecretHasExpired,\
     passwordSuccessfullyChanged, cannotDeleteLoginCred, noSuchCredential,\
-    credentialRemoved, sameHash, verificationEmailSent
+    credentialRemoved, sameHash, verificationEmailSent, otherUsersWithYourHash
 import uritools
+from enforce.decorators import runtime_validation
+from pdoauth.forms.AssuranceForm import AssuranceForm
+from typing import Union
 
+@runtime_validation
 class Controller(
         WebInterface, Responses, EmailHandling,
         LoginHandling,  CertificateHandling,
@@ -115,16 +118,6 @@ class Controller(
         self.removeUser(user)
         return self.simple_response(youAreDeregistered)
 
-    def getHandAssurredOf(self, anotherUsers):
-        who = list()
-        for anotherUser in anotherUsers:
-            for assurance in Assurance.getByUser(anotherUser):
-                if assurance not in [emailVerification]:
-                    who.append(anotherUser)
-        return who
-
-
-
     def updateHashAndAssurances(self, user, digest):
         user.hash = digest
         assurances = Assurance.listByUser(user)
@@ -132,18 +125,26 @@ class Controller(
         if digest is not None:
             Assurance.new(user, "hashgiven", user)
         user.save()
+        
+    def handAssured(self, anotherUser: User) -> bool:
+        for assurance in Assurance.getByUser(anotherUser):
+            if assurance not in [emailVerification]:
+                return True
+        return False
 
-
-    def checkHashInOtherUsers(self, user, additionalInfo, digest):
+    def checkHashInOtherUsers(self, user: User, additionalInfo: dict, digest: Digest) -> None:
         if digest is None:
             return
         anotherUsers = User.getByDigest(digest)
+        assuredCollision = False
         if anotherUsers:
-            anotherusers = self.getHandAssurredOf(anotherUsers)
-            if len(anotherusers):
-                for assuredUser in anotherusers:
-                    self.sendHashCollisionMail(assuredUser)
-                self.removeUser(user)
+            for aUser in anotherUsers:
+                if self.handAssured(aUser):
+                    self.sendHashCollisionMail(aUser, assured=True, inAssurance=False)
+                    assuredCollision = True
+                else:
+                    self.sendHashCollisionMail(aUser, assured=False, inAssurance=False)
+            if assuredCollision:
                 raise ReportedError([anotherUserUsingYourHash])
             additionalInfo["message"] = anotherUserUsingYourHash
 
@@ -202,13 +203,24 @@ class Controller(
             return self.as_dict(user)
         raise ReportedError([noAuthorization], status=403)
 
-    def deleteDigestFromOtherUsers(self, user, digest):
+    def deleteDigestFromOtherUsers(self, user: User) -> int:
+        digest = user.hash
+        numOfOthers = 0
+        assuredCollision = False
         if digest:
             users = User.getByDigest(digest)
             for anotherUser in users:
                 if anotherUser.email != user.email:
                     anotherUser.hash = None
                     anotherUser.save()
+                    numOfOthers += 1
+                    if self.handAssured(anotherUser):
+                        self.sendHashCollisionMail(anotherUser, assured=True, inAssurance=True)
+                        assuredCollision = True
+        if assuredCollision:
+            message = [otherUsersWithYourHash, numOfOthers]
+            raise ReportedError(message)
+        return numOfOthers
 
     def assureExactlyOneUserInList(self, users):
         if len(users) == 0:
@@ -216,21 +228,18 @@ class Controller(
         if len(users) > 1:
             raise ReportedError([moreUsersWarning], 400)
 
-
-    def checkUserAgainsDigest(self, digest, user):
-        if digest is not None and user.hash != digest:
+    def checkUserAgainsDigest(self, digest: Digest, user: User) -> None:
+        if digest is None or user.hash != digest:
             raise ReportedError([thisUserDoesNotHaveThatDigest], 400)
 
-    def getUserForEmailAndOrHash(self, digest, email):
+    def getUserForEmailAndOrHash(self, digest: Digest, email: Union[str,None]):
         if email:
             user = User.getByEmail(email)
-            self.deleteDigestFromOtherUsers(user, digest)
             self.checkUserAgainsDigest(digest, user)
             return user
         users = User.getByDigest(digest)
         self.assureExactlyOneUserInList(users)
         return users[0]
-
 
     def isAssuredToAddAssurance(self, assurances, neededAssurance):
         assurerAssurance = "assurer.{0}".format(neededAssurance)
@@ -247,10 +256,10 @@ class Controller(
         self.assureUserHaveTheGivingAssurancesFor(neededAssurance)
         user = self.getUserForEmailAndOrHash(
                 form.digest.data, form.email.data)
+        numOfOthers = self.deleteDigestFromOtherUsers(user)
         Assurance.new(user, neededAssurance, self.getCurrentUser())
-        msg = '["{2}","{0}","{1}"]'.format(neededAssurance, user.email,addedAssurance)
+        msg = [addedAssurance,neededAssurance, user.email, str(numOfOthers)]
         return self.simple_response(msg)
-
 
     def getAuthenticatedUser(self):
         authid, authenticator = self.getSession()['auth_user']

@@ -4,12 +4,18 @@ from flask_login import login_user, current_user, logout_user
 from pdoauth.Responses import Responses
 import urllib
 from pdoauth.WebInterface import WebInterface
+from pdoauth.models.User import UserOrAnonymous
+from werkzeug.local import LocalProxy
+from enforce.decorators import runtime_validation
 
+@runtime_validation
 class FlaskInterface(Responses):
     def getRequest(self):
         return request
 
-    def getCurrentUser(self):
+    def getCurrentUser(self) -> UserOrAnonymous:
+        if isinstance(current_user, LocalProxy):
+            return current_user._get_current_object()
         return current_user
 
     def logOut(self):

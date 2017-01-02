@@ -6,5 +6,6 @@ po=polib.pofile(sys.argv[1])
 outdict=dict()
 for entry in po:
     outdict[str(entry.msgid)]=str(entry.msgstr)
-print(json.dumps(outdict, ensure_ascii=False))
+jsonString = json.dumps(outdict, ensure_ascii=False)
+sys.stdout.buffer.write(bytes(jsonString,"utf-8"))
 
