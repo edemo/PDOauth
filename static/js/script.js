@@ -124,22 +124,27 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
 	PageScript.prototype.processErrors = function(data) {
 			var msg = {},
-			translateError =function(e){
-				console.log(e)
-				var a=e.split(': ');
-				for(var i=0; i<a.length; i++){
-					a[i]=_(a[i])
-				}
-				return a.join(': ')
-			}
+				translateError = function(e){
+					console.log(e)
+					var a=e.split(': ');
+					for(var i=0; i<a.length; i++){
+						a[i]=_(a[i])
+					}
+					return a.join(': ')
+				};
+				
 			if (data.message) {
 				msg.title=_("Server message");
-				msg.message="<p>"+self.parseMessage(data.message)+"</p>";
+				msg.message=self.parseMessage(data.message)
+				if (typeof msg.message=="string") msg.message="<p>"+msg.message+"</p>";
+				else msg.message="<ul>"+msg.message.map(function(value){["<li>"+value+"</li>"]}).join("\n")+"</ul>"
 			}
+			
 			if (data.assurances) {
 				msg.title=_("User informations");
 				msg.success=self.parseUserdata(data);
 			}
+			
 			if (data.errors) {
 				msg.title = _("Error message")
 				msg.error = '<ul class="disced">';
@@ -153,24 +158,27 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				}
 				msg.error += "</ul>";
 			}
+			
 			return msg;
 	}
 	
-	PageScript.prototype.parseMessage = function(data)  {
-		try { var message=JSON.parse(data) }
-		catch(e) {return _(data);} 
-		console.log(message)
-		if (message[0]) {
-			switch (message[0]) {
-				case "added assurance":
-					var collisionText=(message[3]==0)?"":_("%d hash collisions are deleted")
-					return _("The assurance '%1' is added to user %2. ").replace("%1",_(message[1])).replace("%2",message[2])+collisionText; //%1=assurance; %2=email
-					break;
-				default:
-					return data;
+	PageScript.prototype.parseMessage = function(value,key,arr)  {
+		if (typeof value == "string"){
+			if (key==undefined || key!=0) return _(value)
+			else {
+				var pars=arr;
+				pars.shift();
+				return _(value, pars.map(function(v,k){return _(v)}))
 			}
 		}
-		else return data;
+		if (typeof value[0]!="string") {
+			var a=[];
+			value.forEach( function(v,k,arr){a.push(self.parseMessage(v,k,arr))})
+			return a
+		}
+		else {
+			return self.parseMessage(value[0],0,value)
+		}
 	}
 	
 	PageScript.prototype.setAppCanEmailMe=function(appId, value, callback){
@@ -738,14 +746,14 @@ PageScript.prototype.initGettext = function(text) {
 		str = self.dictionary[str] || str
 
 		// Check needed attrubutes given for tokens
-        console.log(arguments)
-        console.log(str)
 		hasTokens = str.match(/%\D/g);
-		if (hasTokens && hasTokens.length != arguments.length) {
+		hasPhytonTokens = str.match(/{\d}/g)
+		if ( (hasTokens && hasTokens.length != arguments.length) || (hasPhytonTokens && hasPhytonTokens.length != arguments.length)) {
 			console.log('Gettext error: Arguments count ('+ arguments.length +') does not match replacement token count ('+ str.match(/%\D/g).length +').');
 			return str;
 		}
 		
+		if (hasTokens) {
 		// replace tokens with the given arguments
 		var re  = /([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X)(.*)/; //'
 		var a   = b = [], i = 0, numMatches = 0;		
@@ -783,6 +791,10 @@ PageScript.prototype.initGettext = function(text) {
 			}
 			str = leftpart + subst + rightPart;
 			i++;
+		}
+		}
+		if (hasPhytonTokens){
+			arguments.forEach( function(value,key){ str=str.replace("{"+key+"}",value)} )
 		}
 		return str;
 	}
