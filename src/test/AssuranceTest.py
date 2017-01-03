@@ -62,6 +62,13 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
         self.controller.doAddAssurance(form)
         self.assertEqual(Assurance.listByUser(self.targetUser)[0].name, 'test')
 
+    def test_adding_assurance_results_a_message_with_users_email_and_the_assurance_added(self):
+        form = self.prepareLoginForm()
+        resp=self.controller.doAddAssurance(form)
+        data = self.fromJson(resp)
+        self.assertEqual(data["message"][0][0], addedAssurance)
+        self.assertEqual(data["message"][0][1], "test")
+        self.assertEqual(data["message"][0][2], self.targetUser.email)
     
     def test_adding_assurance_is_possible_using_the_hash_only(self):
         form = self.prepareLoginForm(email = False)
@@ -148,8 +155,11 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
     def test_in_unassured_collision_a_warning_message_is_shown(self):
         resp = self.doHashCollision(assuredTarget=False)
         data = self.fromJson(resp)
-        self.assertEqual(addedAssurance, data["message"][0])
-        self.assertEqual("1", data["message"][3])
+        self.assertEqual(data["message"][0][0], addedAssurance)
+        self.assertEqual(data["message"][0][1], "test")
+        self.assertEqual(data["message"][0][2], self.targetUser.email)
+        self.assertEqual(data["message"][1][0], otherUsersWithYourHash)
+        self.assertEqual(data["message"][1][1], "1")
 
     def test_in_unassured_collision_the_operation_succeeds(self):
         self.doHashCollision(assuredTarget=False)

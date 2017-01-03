@@ -4,7 +4,7 @@ all:
 %.json: %.po
 	./tools/po2json $< >$@
 
-install: static/locale/hu.json static/qunit-1.18.0.js static/qunit-1.18.0.css static/qunit-reporter-junit.js static/blanket.min.js bootstrap-3 jquery
+install: static/locale/hu.json
 
 checkall: install tests integrationtests end2endtest xmldoc
 
@@ -17,24 +17,6 @@ realclean:
 testenv:
 	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -w /PDOauth -it magwas/edemotest:master
 
-static/qunit-1.18.0.js:
-	curl http://code.jquery.com/qunit/qunit-1.18.0.js -o static/qunit-1.18.0.js
-
-static/qunit-1.18.0.css:
-	curl http://code.jquery.com/qunit/qunit-1.18.0.css -o static/qunit-1.18.0.css
-
-static/qunit-reporter-junit.js:
-	curl https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/qunit-reporter-junit.js -o static/qunit-reporter-junit.js
-
-static/blanket.min.js:
-	curl https://raw.githubusercontent.com/alex-seville/blanket/89266afe70ea733592f5d51f213657d98e19fc0a/dist/qunit/blanket.js -o static/blanket.min.js
-
-bootstrap-3:
-	curl https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css -o static/bootstrap.min.css; curl https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js -o static/bootstrap.min.js
-
-jquery:
-	curl https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js -o static/jquery.min.js
-	
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
