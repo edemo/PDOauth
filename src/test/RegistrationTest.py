@@ -9,6 +9,7 @@ from pdoauth.models.User import User
 import time
 from uuid import uuid4
 from test.helpers.EmailUtil import EmailUtil
+from pdoauth.Messages import anotherUserUsingYourHash
 
 class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
 
@@ -114,7 +115,7 @@ class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
         resp = self.controller.doRegistration(form)
         self.assertEqual(200, resp.status_code)
         data = self.fromJson(resp)
-        self.assertEqual(data['message'],"another user is using your hash")
+        self.assertEqual(data['message'],anotherUserUsingYourHash)
 
     
     def test_when_a_hash_is_registered_which_is_already_used_by_another_assured_user___the_user_is_notified_about_the_fact_and_registration_fails(self):
@@ -123,11 +124,12 @@ class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
         theHash = self.createHash()
         anotherUser.hash = theHash
         form = self.prepareLoginForm(digest=theHash)
+        email = self.userCreationEmail
         self.assertReportedError(self.controller.doRegistration,
             [form],
             400,
-            ['another user is using your hash'])
-        self.assertEqual(None, User.getByEmail(self.userCreationEmail))
+            [anotherUserUsingYourHash])
+        self.assertEqual(email, User.getByEmail(email).email)
 
     
     def test_the_emailverification_assurance_does_not_count_in_hash_collision(self):
@@ -139,7 +141,7 @@ class RegistrationTest(PDUnitTest, EmailUtil, CryptoTestUtil):
         resp = self.controller.doRegistration(form)
         self.assertEqual(200, resp.status_code)
         data = self.fromJson(resp)
-        self.assertEqual(data['message'],"another user is using your hash")
+        self.assertEqual(data['message'],anotherUserUsingYourHash)
 
     def test_registration_sets_the_csrf_cookie(self):
         form = self.prepareLoginForm()

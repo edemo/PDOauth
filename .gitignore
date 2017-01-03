@@ -1,5 +1,6 @@
 *.pyc
 *~
+*.json
 doc/html
 doc/xml
 doc/screenshots
@@ -16,3 +17,5 @@ static/jquery.min.js
 static/bootstrap.min.css
 static/bootstrap.min.js
 /PDAnchor
+/static/assurers.json
+/static/mailbox
