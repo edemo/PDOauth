@@ -748,10 +748,17 @@ PageScript.prototype.initGettext = function(text) {
 
 		if (!arguments || arguments.length < 1 || !RegExp) return; // called without arguments
 		arguments=$.map(arguments, function(value, index){return [value]})
+        console.log(arguments)
+        if (typeof arguments[0] != "string") {
+                arguments=arguments[0]
+                var str=arguments.shift()
+                return self.gettext(str,arguments.map(function(value, index){return self.gettext(value)}))
+        }
 		var str = arguments.shift();
+
 		
 		if (arguments.length == 1 && typeof arguments[0] == 'object') {
-			arguments=$.map(arguments[0], function(value, index){return [value]})
+			arguments=arguments[0].map(function(value, index){return [value]})
 		}
 		
 		// Try to find translated string

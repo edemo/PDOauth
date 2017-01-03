@@ -154,6 +154,7 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
     def test_in_unassured_collision_a_warning_message_is_shown(self):
         resp = self.doHashCollision(assuredTarget=False)
+        print(resp.response)
         data = self.fromJson(resp)
         self.assertEqual(data["message"][0][0], addedAssurance)
         self.assertEqual(data["message"][0][1], "test")
