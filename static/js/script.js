@@ -136,8 +136,19 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			if (data.message) {
 				msg.title=_("Server message");
 				msg.message=self.parseMessage(data.message)
-				if (typeof msg.message=="string") msg.message="<p>"+msg.message+"</p>";
-				else msg.message="<ul>"+msg.message.map(function(value){["<li>"+value+"</li>"]}).join("\n")+"</ul>"
+				if (typeof msg.message=="string") {
+                    msg.message="<p>"+msg.message+"</p>";
+				} else {
+                    a="<ul>"
+		            for(value in msg.message) {
+                        m = msg.message[value];
+                        console.log(m);
+                        a += "<li>"+m+"</li>";
+                    }
+                    a+="</ul>";
+                    msg.message=a;
+                }
+                console.log("message out: %o", msg.message)
 			}
 			
 			if (data.assurances) {
@@ -163,6 +174,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.parseMessage = function(value,key,arr)  {
+        console.log(value)
 		if (typeof value == "string"){
 			if (key==undefined || key!=0) return _(value)
 			else {

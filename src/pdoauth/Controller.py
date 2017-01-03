@@ -258,7 +258,9 @@ class Controller(
                 form.digest.data, form.email.data)
         numOfOthers = self.deleteDigestFromOtherUsers(user)
         Assurance.new(user, neededAssurance, self.getCurrentUser())
-        msg = [addedAssurance,neededAssurance, user.email, str(numOfOthers)]
+        msg = [[addedAssurance, neededAssurance, user.email]]
+        if numOfOthers:
+            msg.append([otherUsersWithYourHash, str(numOfOthers)])
         return self.simple_response(msg)
 
     def getAuthenticatedUser(self):

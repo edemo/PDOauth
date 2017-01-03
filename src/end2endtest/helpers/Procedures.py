@@ -1,6 +1,5 @@
 import end2endtest.helpers.TestEnvironment as TE
 from selenium.webdriver.common.by import By
-import pdb
 
 class Procedures(object):
 
@@ -30,7 +29,6 @@ class Procedures(object):
         self.fillInField("ByEmailForm_email_input",clientEmail)
         self.selectOptionValue("assurance-giving_assurance_selector", 'test')
         self.click("assurance-giving_submit-button")
-        pdb.set_trace()
         self.endProcess("assign assurance to customer")
 
     def getCustomerInfo(self, customerEmail):
