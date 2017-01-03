@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-03 22:08+0100\n"
+"POT-Creation-Date: 2017-01-03 22:25+0000\n"
 "PO-Revision-Date: 2016-03-10 23:30+0100\n"
 "Last-Translator: mag <mag@magwas.rulez.org>\n"
 "Language-Team: Hungarian\n"
@@ -342,12 +342,12 @@ msgid "Your email validation <b>failed</b>.<br/>The servers response: "
 msgstr "Az email címed igazolása <b>nem</b> sikerült.<br/>A szerver üzenete: "
 
 #: static/js/account.js:159 static/js/script.js:591 static/js/script.js:603
-#: static/js/script.js:614 static/js/script.js:630
+#: static/js/script.js:614 static/js/script.js:630 static/js/script.js:623
 msgid "email address and/or username / password"
 msgstr "email-cím és/vagy felhasználónév és jelszó"
 
 #: static/js/account.js:164 static/js/script.js:599 static/js/script.js:611
-#: static/js/script.js:621 static/js/script.js:637
+#: static/js/script.js:621 static/js/script.js:637 static/js/script.js:630
 msgid "my facebook account"
 msgstr "facebook fiókom"
 
@@ -363,6 +363,7 @@ msgstr "Szerver hiba"
 
 #: static/js/account.js:237 static/js/account.js:263 static/js/script.js:668
 #: static/js/script.js:680 static/js/script.js:689 static/js/script.js:684
+#: static/js/script.js:677
 #, fuzzy
 msgid "Acceptance is missing"
 msgstr "Hiányzik a beleegyezésed"
@@ -373,6 +374,7 @@ msgstr "A Felhasználási Feltételek elfogadása"
 
 #: static/js/account.js:280 static/js/account.js:310 static/js/script.js:501
 #: static/js/script.js:513 static/js/script.js:524 static/js/script.js:540
+#: static/js/script.js:533
 #, fuzzy
 msgid "The Secret Hash is given for assuring"
 msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
@@ -386,12 +388,14 @@ msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
 #: static/js/script.js:664 static/js/script.js:147 static/js/script.js:440
 #: static/js/script.js:541 static/js/script.js:673 static/js/script.js:160
 #: static/js/script.js:461 static/js/script.js:467 static/js/script.js:557
-#: static/js/script.js:675
+#: static/js/script.js:675 static/js/script.js:454 static/js/script.js:460
+#: static/js/script.js:550 static/js/script.js:668
 msgid "Error message"
 msgstr "Hibaüzenet"
 
 #: static/js/account.js:289 static/js/account.js:323 static/js/script.js:522
 #: static/js/script.js:534 static/js/script.js:545 static/js/script.js:561
+#: static/js/script.js:554
 #, fuzzy
 msgid "The Secret Hash isn't given yet"
 msgstr "Még nincs Titkos Kód "
@@ -402,16 +406,19 @@ msgstr "Még nincs Titkos Kód "
 #: static/js/script.js:297 static/js/script.js:578 static/js/script.js:582
 #: static/js/script.js:303 static/js/script.js:589 static/js/script.js:593
 #: static/js/script.js:336 static/js/script.js:605 static/js/script.js:609
+#: static/js/script.js:329 static/js/script.js:598 static/js/script.js:602
 msgid "Missing data"
 msgstr "Hiányzó adat"
 
 #: static/js/account.js:316 static/js/account.js:350 static/js/script.js:566
 #: static/js/script.js:578 static/js/script.js:589 static/js/script.js:605
+#: static/js/script.js:598
 msgid "Personal identifier is missing"
 msgstr "A személyi azonosító nincs megadva"
 
 #: static/js/account.js:320 static/js/account.js:354 static/js/script.js:570
 #: static/js/script.js:582 static/js/script.js:593 static/js/script.js:609
+#: static/js/script.js:602
 msgid "Mother's name is missing"
 msgstr "Anyja neve nincs megadva"
 
@@ -518,6 +525,7 @@ msgstr "Hivatkozás"
 #: static/js/script.js:161 static/js/account.js:426 static/js/script.js:142
 #: static/js/account.js:442 static/js/script.js:171 static/js/account.js:457
 #: static/js/script.js:177 static/js/account.js:446 static/js/script.js:210
+#: static/js/script.js:203
 msgid "User identifier"
 msgstr "Felhasználó azonosító"
 
@@ -533,41 +541,49 @@ msgstr "Kaphatok levelet"
 
 #: static/js/script.js:164 static/js/script.js:165 static/js/script.js:146
 #: static/js/script.js:175 static/js/script.js:181 static/js/script.js:214
+#: static/js/script.js:207
 msgid "Assurances"
 msgstr "Igazolások"
 
 #: static/js/script.js:168 static/js/script.js:169 static/js/script.js:150
 #: static/js/script.js:179 static/js/script.js:185 static/js/script.js:218
+#: static/js/script.js:211
 msgid "Name"
 msgstr "Megnevezés"
 
 #: static/js/script.js:169 static/js/script.js:170 static/js/script.js:151
 #: static/js/script.js:180 static/js/script.js:186 static/js/script.js:219
+#: static/js/script.js:212
 msgid "Assurer"
 msgstr "Kiállító"
 
 #: static/js/script.js:170 static/js/script.js:171 static/js/script.js:152
 #: static/js/script.js:181 static/js/script.js:187 static/js/script.js:220
+#: static/js/script.js:213
 msgid "Date of assurance"
 msgstr "Kiállítás dátuma"
 
 #: static/js/script.js:171 static/js/script.js:172 static/js/script.js:153
 #: static/js/script.js:182 static/js/script.js:188 static/js/script.js:221
+#: static/js/script.js:214
 msgid "Valid until"
 msgstr "Érvényesség"
 
 #: static/js/script.js:183 static/js/script.js:184 static/js/script.js:165
 #: static/js/script.js:194 static/js/script.js:200 static/js/script.js:233
+#: static/js/script.js:226
 msgid "unlimited"
 msgstr "korlátlan"
 
 #: static/js/script.js:360 static/js/script.js:361 static/js/script.js:267
 #: static/js/script.js:289 static/js/script.js:295 static/js/script.js:328
+#: static/js/script.js:321
 msgid "User name is missing. "
 msgstr "Hiányzik a felhasználónév. "
 
 #: static/js/script.js:365 static/js/script.js:366 static/js/script.js:272
 #: static/js/script.js:294 static/js/script.js:300 static/js/script.js:333
+#: static/js/script.js:326
 msgid "Password is missing. "
 msgstr "Nem adtál meg jelszót. "
 
@@ -585,6 +601,8 @@ msgstr "Nem adtál meg jelszót. "
 #: static/js/script.js:418 static/js/script.js:422 static/js/script.js:387
 #: static/js/script.js:419 static/js/script.js:423 static/js/script.js:427
 #: static/js/script.js:441 static/js/script.js:445 static/js/script.js:449
+#: static/js/script.js:380 static/js/script.js:420 static/js/script.js:434
+#: static/js/script.js:438 static/js/script.js:442
 msgid "Under construction"
 msgstr "Keményen dolgozunk,"
 
@@ -602,11 +620,13 @@ msgstr "Keményen dolgozunk,"
 #: static/js/script.js:418 static/js/script.js:422 static/js/script.js:387
 #: static/js/script.js:419 static/js/script.js:423 static/js/script.js:427
 #: static/js/script.js:441 static/js/script.js:445 static/js/script.js:449
+#: static/js/script.js:380 static/js/script.js:420 static/js/script.js:434
+#: static/js/script.js:438 static/js/script.js:442
 msgid "This function is not working yet."
 msgstr "Ez a funkció sajnos még nem működik."
 
 #: static/js/script.js:450 static/js/script.js:206 static/js/script.js:235
-#: static/js/script.js:241 static/js/script.js:274
+#: static/js/script.js:241 static/js/script.js:274 static/js/script.js:267
 msgid "Congratulation!"
 msgstr "Gratulálunk!"
 
@@ -617,6 +637,7 @@ msgstr "A Titkos Kód elkészült."
 
 #: static/js/script.js:583 static/js/script.js:555 static/js/script.js:417
 #: static/js/script.js:429 static/js/script.js:435 static/js/script.js:462
+#: static/js/script.js:455
 msgid "The secret is missing"
 msgstr "Hiányzik a hitelesítő eszköz"
 
@@ -798,7 +819,7 @@ msgid "you already have this hash: nothing is done"
 msgstr "Ez a Titkos Kód már elmentve"
 
 #: static/js/account.js:175 static/js/script.js:612 static/js/script.js:624
-#: static/js/script.js:632 static/js/script.js:643
+#: static/js/script.js:632 static/js/script.js:643 static/js/script.js:636
 #, javascript-format
 msgid "Registration with %s "
 msgstr "Regisztráció %s használatával"
@@ -809,7 +830,7 @@ msgid "Server failure"
 msgstr "Szerverhiba"
 
 #: static/js/account.js:263 static/js/script.js:668 static/js/script.js:680
-#: static/js/script.js:689 static/js/script.js:684
+#: static/js/script.js:689 static/js/script.js:684 static/js/script.js:677
 msgid ""
 "For the registration you have to accept the terms of use. To accept the "
 "terms of use please mark the checkbox!"
@@ -835,7 +856,7 @@ msgid "application needs to sign in with your ADA account"
 msgstr "alkalmazás használatához jelentkezz be ADA fiókoddal!"
 
 #: static/js/script.js:561 static/js/script.js:423 static/js/script.js:435
-#: static/js/script.js:441 static/js/script.js:468
+#: static/js/script.js:441 static/js/script.js:468 static/js/script.js:461
 msgid "To accept the terms please mark the checkbox!"
 msgstr ""
 "Ha fiók törlésével kapcsolatos figyelmeztetést tudomásul vétted, kattints a "
@@ -883,42 +904,42 @@ msgstr ""
 "igazolásokkal:"
 
 #: static/js/script.js:652 static/js/script.js:664 static/js/script.js:673
-#: static/js/script.js:675
+#: static/js/script.js:675 static/js/script.js:668
 msgid "The passwords are not identical"
 msgstr "A jelszavak nem egyeznek meg"
 
 #: static/js/script.js:735 static/js/script.js:747 static/js/script.js:756
-#: static/js/script.js:732
+#: static/js/script.js:732 static/js/script.js:725
 msgid "Passwords are not equal."
 msgstr "A jelszavak nem egyeznek meg."
 
 #: static/js/script.js:734 static/js/script.js:746 static/js/script.js:755
-#: static/js/script.js:731
+#: static/js/script.js:731 static/js/script.js:724
 msgid "OK."
 msgstr "Rendben."
 
 #: static/js/script.js:719 static/js/script.js:731 static/js/script.js:740
-#: static/js/script.js:716
+#: static/js/script.js:716 static/js/script.js:709
 msgid "Strong!"
 msgstr "Erős"
 
 #: static/js/script.js:722 static/js/script.js:734 static/js/script.js:743
-#: static/js/script.js:719
+#: static/js/script.js:719 static/js/script.js:712
 msgid "Medium!"
 msgstr "Közepes"
 
 #: static/js/script.js:725 static/js/script.js:737 static/js/script.js:746
-#: static/js/script.js:722
+#: static/js/script.js:722 static/js/script.js:715
 msgid "Weak!"
 msgstr "Gyenge"
 
 #: static/js/script.js:716 static/js/script.js:728 static/js/script.js:737
-#: static/js/script.js:713
+#: static/js/script.js:713 static/js/script.js:706
 msgid "More Characters"
 msgstr "Több karakter kell"
 
 #: static/js/script.js:713 static/js/script.js:725 static/js/script.js:734
-#: static/js/script.js:710
+#: static/js/script.js:710 static/js/script.js:703
 msgid "Type Password"
 msgstr "Írd be a jelszavad"
 
@@ -971,6 +992,7 @@ msgid "email address changed"
 msgstr "E-mail cím cseréje megtörtént"
 
 #: static/js/script.js:236 static/js/script.js:242 static/js/script.js:275
+#: static/js/script.js:268
 msgid ""
 "You have succesfully registered and logged in. </br> Please click the link "
 "inside the email we sent you to validate your email address, otherwise your "

@@ -21,7 +21,8 @@ clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
 
-onlyend2endtest: install testsetup runanchor runserver runemail waitbeforebegin chrometest firefoxtest
+onlyend2endtest: install testsetup runanchor runserver runemail waitbeforebegin firefoxtest
+#chrometest is not running now
 
 waitbeforebegin:
 	sleep 10
