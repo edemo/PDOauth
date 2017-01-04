@@ -290,20 +290,16 @@
 	    	digest: digest,
 	    	csrf_token: csrf_token
 	    }
-	    self.ajaxpost("/v1/users/me/update_hash", data, self.changeHashCallback)
+	    self.ajaxpost("/v1/users/me/update_hash", data, self.callback(self.changeHashCallback))
 	}	
 	
-	PageScript.prototype.changeHashCallback = function(status,text,xml) {
-		if (status==200) { 
+	PageScript.prototype.changeHashCallback = function(text) {
+		var msg=self.processErrors(JSON.parse(text))
+		msg.callback=function(){
 			self.get_me()
 			self.viewChangeHashContainer()
-		}
-		else {
-			var data = JSON.parse(text);
-			var errs = self.processErrors(data);
-			self.displayMsg(errs);	
-		}
-
+			}
+		self.displayMsg(msg)
 	}
 	
 	PageScript.prototype.viewChangeHashForm = function() {

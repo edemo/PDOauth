@@ -535,6 +535,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 						document.getElementById("assurance-giving_submit-button").className=""
 						break;
 					case "login":
+					case "change-hash-form":
 						self.changeHash()
 						break;
 					case "registration-form":
