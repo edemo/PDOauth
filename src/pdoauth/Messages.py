@@ -55,7 +55,7 @@ passwordSuccessfullyChanged = _('Password successfully changed')
 theSecretHasExpired = _('The secret has expired')
 noSuchCredential = _('No such credential')
 credentialRemoved = _('credential removed')
-addedAssurance = 'added assurance'
+addedAssurance = 'Added assurance {0} to user {1}.'
 errorInCert = _("error in cert")
 inactiveOrDisabledUser = _("Inactive or disabled user")
 badUserNameOrPassword = _("Bad username or password")
@@ -68,4 +68,5 @@ badChangeEmailSecret = _("bad secret for email change")
 emailChangeEmailSent = _("email change email sent")
 emailChanged = _("email address changed")
 emailChangeIsCancelled = _("email address change is cancelled")
+otherUsersWithYourHash = _("{0} other users found with your hash. Those hashes are deleted")
 
