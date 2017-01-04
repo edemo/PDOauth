@@ -13,7 +13,7 @@ class AssurerTest(TestCase,BrowsingUtil,CryptoTestUtil):
         self.logOut()
         self.loginWithPasswordAs(TE.assurerUser)
         self.assignAssurance(self.userCreationEmail, personalId, motherName)
-        expectedText = u'A teszt igazolást a {0} felhasználó számára kiadtuk.'.format(self.userCreationEmail)
+        expectedText = u'A test igazolást a {0} felhasználó számára kiadtuk.'.format(self.userCreationEmail)
         self.waitForMessage2()
         self.assertPopupTextIs(expectedText)
 
