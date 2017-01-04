@@ -1,6 +1,10 @@
 #pylint: disable=no-member
 from uuid import uuid4
 import uritools
+from pdoauth.models.User import UserOrAnonymous
+from enforce.decorators import runtime_validation
+
+@runtime_validation
 class WebInterface(object):
 
     def __init__(self, interfaceInstance):
@@ -21,7 +25,7 @@ class WebInterface(object):
     def getHeader(self, header):
         return self.getRequest().headers.get(header)
 
-    def getCurrentUser(self):
+    def getCurrentUser(self) -> UserOrAnonymous:
         return self.interface.getCurrentUser()
 
     def getEnvironmentVariable(self, variableName):

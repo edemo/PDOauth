@@ -58,7 +58,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			}
 		}
 		function defaultErrorHandler(status,text,xml){
-			console.log(text)
+            console.log(text)
 			data=JSON.parse(text)
 			self.displayMsg(self.processErrors(data))
 		}
@@ -70,7 +70,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		self.QueryString.uris = JSON.parse(text);
 		self.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
-		if ( typeof Gettext == "undefined" ) _=function(x){return x};
+//		if ( typeof Gettext == "undefined" ) _=function(x){return x};
 
 		// filling hrefs of anchors
 		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
@@ -108,8 +108,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		l = []
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		var dataString = l.join("&")
-		console.log(uri)
-		console.log(JSON.stringify(data))
 		xmlhttp.send( dataString );
 	}
 
@@ -120,34 +118,48 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		} else {
 			theUri = self.uribase + uri;
 		}
-		console.log(theUri)
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
 
 	PageScript.prototype.processErrors = function(data) {
 			var msg = {},
-			translateError =function(e){
-				console.log(e)
-				var a=e.split(': ');
-				for(var i=0; i<a.length; i++){
-					a[i]=_(a[i])
-				}
-				return a.join(': ')
-			}
+				translateError = function(e){
+					console.log(e)
+					var a=e.split(': ');
+					for(var i=0; i<a.length; i++){
+						a[i]=_(a[i])
+					}
+					return a.join(': ')
+				};
+				
 			if (data.message) {
 				msg.title=_("Server message");
-				msg.message="<p>"+_(data.message)+"</p>";
+				msg.message=self.parseMessage(data.message)
+				if (typeof msg.message=="string") {
+                    msg.message="<p>"+msg.message+"</p>";
+				} else {
+                    a="<ul>"
+		            for(value in msg.message) {
+                        m = msg.message[value];
+                        console.log(m);
+                        a += "<li>"+m+"</li>";
+                    }
+                    a+="</ul>";
+                    msg.message=a;
+                }
+                console.log("message out: %o", msg.message)
 			}
+			
 			if (data.assurances) {
 				msg.title=_("User informations");
 				msg.success=self.parseUserdata(data);
 			}
+			
 			if (data.errors) {
 				msg.title = _("Error message")
 				msg.error = '<ul class="disced">';
 				errs = data.errors;
-				console.log(errs)
 				if (typeof(errs)!='string') {
 					[].forEach.call(errs, function(e) {
 						msg.error += "<li>"+ translateError(e) +"</li>" ;})
@@ -157,14 +169,28 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				}
 				msg.error += "</ul>";
 			}
+			
 			return msg;
 	}
 	
-	PageScript.prototype.setAppCanEmailMe=function(app, value, callback){
+	PageScript.prototype.parseMessage = function(value,key,arr)  {
+		if (typeof value == "string"){
+			if (key==undefined || key!=0) return _(value)
+			var pars=arr;
+			pars.shift();
+			return _(value, pars.map(function(v,k){return _(v)}))
+		}
+		if (typeof value[0]=="string") return self.parseMessage(value[0],0,value)
+		var a=[];
+		value.forEach( function(v,k,arr){a.push(self.parseMessage(v))})
+		return a
+	}
+	
+	PageScript.prototype.setAppCanEmailMe=function(appId, value, callback){
 		var csrf_token = self.getCookie('csrf');
 	    data= {
 			canemail: value,
-	    	appname: self.myApps[self.currentAppId].name,
+	    	appname: self.aps[appId].name,
 	    	csrf_token: csrf_token
 	    }
 	    self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
@@ -324,17 +350,11 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 
 	PageScript.prototype.logoutCallback = function(status, text) {
-console.log("logoutCallback")
 		data=JSON.parse(text)
 		if (data.error)	self.displayError();
 		else {
-			var loc = '' +win.location
-			var newloc = loc.replace(self.QueryString.uris.SSL_LOGIN_BASE_URL, self.QueryString.uris.BASE_URL)
-			if (newloc!=loc) self.doRedirect( newloc );
-			else {
-				self.isLoggedIn=false
-				self.doRedirect( self.QueryString.uris.START_URL)
-			}
+			self.isLoggedIn=false
+			self.doRedirect( self.QueryString.uris.START_URL)
 		}
 	}
 	
@@ -465,23 +485,12 @@ console.log("logoutCallback")
 			document.getElementById("nav-bar-register").style.display="none";
 			document.getElementById("nav-bar-my_account").style.display="block";
 			document.getElementById("nav-bar-logout").style.display="block";
-			document.getElementById("nav-bar-aboutus").style.display="block";
 		}
 		else {
 			document.getElementById("nav-bar-my_account").style.display="none";
 			document.getElementById("nav-bar-logout").style.display="none";
 			document.getElementById("nav-bar-login").style.display="block";
 			document.getElementById("nav-bar-register").style.display="block";
-			document.getElementById("nav-bar-aboutus").style.display="block";
-		}
-	}
-
-	PageScript.prototype.sslLogin = function() {
-		console.log("sslLogin")
-		var t=document.getElementById("SSL")
-		if (t) {
-			t.onload=function(){window.location.reload()}
-			t.src=self.QueryString.uris.SSL_LOGIN_BASE_URL+self.uribase+'/v1/ssl_login'
 		}
 	}
 
@@ -623,11 +632,6 @@ console.log("logoutCallback")
 				document.getElementById("registration-form-username-container").style.display="none";
 				facebook.fbregister()
 			break;
-			case "ssl":
-				heading=_("SSL certificate")
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
-			break;
 		}
 		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
 	}
@@ -652,15 +656,6 @@ console.log("logoutCallback")
 		window.traces.push("register")
 	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
 	}
-	
-	PageScript.prototype.onSslRegister= function(){
-		console.log('ssl_onSslRegister')
-		if (self.sslCallback()) self.sslLogin();
-	}
-
-	PageScript.prototype.addSslCredentialCallback= function(){
-		if (self.sslCallback()) self.get_me();
-	}
 
 	PageScript.prototype.doRegister=function() {
 		if ( document.getElementById("registration-form_confirmField").checked ) {
@@ -677,35 +672,9 @@ console.log("logoutCallback")
 					console.log('fb')
 					self.register("facebook")
 					break;
-				case "ssl":
-					console.log('ssl_register')
-					document.getElementById("SSL").onload=self.onSslRegister;
-					document.getElementById('registration-keygenform').submit();
-					console.log("after submit")
-//					self.doRedirect(self.QueryString.uris.SSL_LOGIN_BASE_URL+"fiokom.html")
-					break;
 			}
 		}
 		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
-	}
-	
-	PageScript.prototype.sslCallback=function() {
-		console.log("sslCallback")
-		response=document.getElementById("SSL").contentDocument.body.innerHTML
-		console.log(response)
-		if (response!="")  {
-			var msg
-			if (data=JSON.parse(response)) {
-				msg=self.processErrors(data)
-			}
-			else {
-				msg.title=_("Server failure")
-				msg.error=response
-			}
-			self.displayMsg(msg)
-			return false
-		}
-		else return true
 	}
 	
 	PageScript.prototype.deactivateButton = function(buttonId) {
@@ -755,181 +724,91 @@ console.log("logoutCallback")
 		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
+	
+PageScript.prototype.initGettext = function(text) {
+		// waiting for gettext loads po files
+		try {
+			self.dictionary=JSON.parse(text)
+			_=function() { return self.gettext.apply( this, arguments ) } 
+		}
+		catch (e) {
+			_=function(str) {return str;}
+		}
+		self.init_()
+	}
+	
+	PageScript.prototype.gettext = function() {
 
-    PageScript.prototype.create_PKCS10 = function (formName) {
+		if (!arguments || arguments.length < 1 || !RegExp) return; // called without arguments
+		arguments=$.map(arguments, function(value, index){return [value]})
+        console.log(arguments)
+        if (typeof arguments[0] != "string") {
+                arguments=arguments[0]
+                var str=arguments.shift()
+                return self.gettext(str,arguments.map(function(value, index){return self.gettext(value)}))
+        }
+		var str = arguments.shift();
+
+		if (arguments.length == 1 && typeof arguments[0] == 'object') {
+			arguments=arguments[0].map(function(value, index){return [value]})
+		}
+	
+		// Try to find translated string
+		str = self.dictionary[str] || str
+
+		// Check needed attrubutes given for tokens
+		hasTokens = str.match(/%\D/g);
+		hasPhytonTokens = str.match(/{\d}/g)
+		if ( (hasTokens && hasTokens.length != arguments.length) || (hasPhytonTokens && hasPhytonTokens.length != arguments.length)) {
+			console.log('Gettext error: Arguments count ('+ arguments.length +') does not match replacement token count ('+ ((hasTokens && hasTokens.length) + (hasPhytonTokens && hasPhytonTokens.length)) + ').');
+			return str;
+		}
 		
-		function formatPEM(pem_string)
-        {
-            /// <summary>Format string in order to have each line with length equal to 63</summary>
-            /// <param name="pem_string" type="String">String to format</param>
-
-            var string_length = pem_string.length;
-            var result_string = "";
-
-            for(var i = 0, count = 0; i < string_length; i++, count++)
-            {
-                if(count > 63)
-                {
-                    result_string = result_string + "\r\n";
-                    count = 0;
-                }
-
-                result_string = result_string + pem_string[i];
-            }
-
-            return result_string;
-        }
-        //*********************************************************************************
-        function arrayBufferToString(buffer)
-        {
-            /// <summary>Create a string from ArrayBuffer</summary>
-            /// <param name="buffer" type="ArrayBuffer">ArrayBuffer to create a string from</param>
-
-            var result_string = "";
-            var view = new Uint8Array(buffer);
-
-            for(var i = 0; i < view.length; i++)
-                result_string = result_string + String.fromCharCode(view[i]);
-
-            return result_string;
-        }
-        //*********************************************************************************
-        function stringToArrayBuffer(str)
-        {
-            /// <summary>Create an ArrayBuffer from string</summary>
-            /// <param name="str" type="String">String to create ArrayBuffer from</param>
-
-            var stringLength = str.length;
-
-            var resultBuffer = new ArrayBuffer(stringLength);
-            var resultView = new Uint8Array(resultBuffer);
-
-            for(var i = 0; i < stringLength; i++)
-                resultView[i] = str.charCodeAt(i);
-
-            return resultBuffer;
-        }
-		
-            // #region Initial variables 
-            var sequence = Promise.resolve();
-            var pkcs10_simpl = new org.pkijs.simpl.PKCS10();
-            var publicKey;
-            var privateKey;
-            var hash_algorithm = "sha-512";
-            var signature_algorithm_name = "ECDSA"
-            // #endregion 
-
-            // #region Get a "crypto" extension 
-            var crypto = org.pkijs.getCrypto();
-            if(typeof crypto == "undefined")
-            {
-                self.displayMsg({title:_("Error"), error:_("No WebCrypto extension found")});
-                return;
-            }
-            // #endregion 
-
-            // #region Put a static values 
-            pkcs10_simpl.version = 0;
-            pkcs10_simpl.subject.types_and_values.push(new org.pkijs.simpl.ATTR_TYPE_AND_VALUE({ type: "2.5.4.6", value: new org.pkijs.asn1.PRINTABLESTRING({ value: "RU" }) }));
-            pkcs10_simpl.subject.types_and_values.push(new org.pkijs.simpl.ATTR_TYPE_AND_VALUE({ type: "2.5.4.3", value: new org.pkijs.asn1.UTF8STRING({ value: "Simple test (простой тест)" }) }));
-            pkcs10_simpl.attributes = new Array();
-            // #endregion 
-
-            // #region Create a new key pair 
-            sequence = sequence.then(
-                function()
-                {
-                    // #region Get default algorithm parameters for key generation 
-                    var algorithm = org.pkijs.getAlgorithmParameters(signature_algorithm_name, "generatekey");
-                    if("hash" in algorithm.algorithm)
-                        algorithm.algorithm.hash.name = hash_algorithm;
-                    // #endregion 
-                    return crypto.generateKey(algorithm.algorithm, true, algorithm.usages);
-                }
-                );
-            // #endregion 
-
-            // #region Store new key in an interim variables
-            sequence = sequence.then(
-                function(keyPair)
-                {
-                    publicKey = keyPair.publicKey;
-                    privateKey = keyPair.privateKey;
-					console.log(privateKey)
-//					crypto.importKey("jwk", keyPair, "RSA-OAEP", false, ["sign","verify"]);
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error during key generation: ") + _(error)}); 
-                }
-                );
-            // #endregion 
-
-            // #region Exporting public key into "subjectPublicKeyInfo" value of PKCS#10 
-            sequence = sequence.then(
-                function()
-                {
-                    return pkcs10_simpl.subjectPublicKeyInfo.importKey(publicKey);
-                }
-                );
-            // #endregion 
-
-            // #region SubjectKeyIdentifier 
-            sequence = sequence.then(
-                function(result)
-                {
-                    return crypto.digest({ name: "SHA-1" }, pkcs10_simpl.subjectPublicKeyInfo.subjectPublicKey.value_block.value_hex);
-                }
-                ).then(
-                function(result)
-                {
-                    pkcs10_simpl.attributes.push(new org.pkijs.simpl.ATTRIBUTE({
-                        type: "1.2.840.113549.1.9.14", // pkcs-9-at-extensionRequest
-                        values: [(new org.pkijs.simpl.EXTENSIONS({
-                            extensions_array: [
-                                new org.pkijs.simpl.EXTENSION({
-                                    extnID: "2.5.29.14",
-                                    critical: false,
-                                    extnValue: (new org.pkijs.asn1.OCTETSTRING({ value_hex: result })).toBER(false)
-                                })
-                            ]
-                        })).toSchema()]
-                    }));
-                }
-                );
-            // #endregion 
-
-            // #region Signing final PKCS#10 request 
-            sequence = sequence.then(
-                function()
-                {
-                    return pkcs10_simpl.sign(privateKey, hash_algorithm);
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error during exporting public key: ")+ _(error)});
-                }
-                );
-            // #endregion 
-
-            sequence.then(
-                function(result)
-                {
-                    var pkcs10_schema = pkcs10_simpl.toSchema();
-                    var pkcs10_encoded = pkcs10_schema.toBER(false);
-
-                    var result_string = "-----BEGIN CERTIFICATE REQUEST-----\r\n";
-                    result_string = result_string + formatPEM(window.btoa(arrayBufferToString(pkcs10_encoded)));
-                    result_string = result_string + "\r\n-----END CERTIFICATE REQUEST-----\r\n";
-
-                    document.getElementById(formName+"_pubkey").value = result_string;
-                },
-                function(error)
-                {
-					self.displayMsg({title:_("Error"), error:_("Error signing PKCS#10: ")+ _(error)});
-                }
-                );
-        }
+		if (hasTokens) {
+			// replace tokens with the given arguments
+			var re  = /([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X)(.*)/; //'
+			var a   = b = [], i = 0, numMatches = 0;		
+			while (a = re.exec(str)) {
+				var leftpart   = a[1], 
+					pPad  = a[2], 
+					pJustify  = a[3], 
+					pMinLength = a[4],
+					pPrecision = a[5], 
+					pType = a[6], 
+					rightPart = a[7];
+				numMatches++;
+				if (pType == '%') subst = '%';
+				else {
+					var param = arguments[i],
+						pad   = '',
+						justifyRight = true,
+						minLength = -1,
+						precision = -1,
+						subst = param;
+					if (pPad && pPad.substr(0,1) == "'") pad = leftpart.substr(1,1);
+					else if (pPad) pad = pPad;
+					if (pJustify && pJustify === "-") justifyRight = false;
+					if (pMinLength) minLength = parseInt(pMinLength);
+					if (pPrecision && pType == 'f') precision = parseInt(pPrecision.substring(1));
+					if (pType == 'b')      subst = parseInt(param).toString(2);
+					else if (pType == 'c') subst = String.fromCharCode(parseInt(param));
+					else if (pType == 'd') subst = parseInt(param) ? parseInt(param) : 0;
+					else if (pType == 'u') subst = Math.abs(param);
+					else if (pType == 'f') subst = (precision > -1) ? Math.round(parseFloat(param) * Math.pow(10, precision)) / Math.pow(10, precision): parseFloat(param);
+					else if (pType == 'o') subst = parseInt(param).toString(8);
+					else if (pType == 's') subst = param;
+					else if (pType == 'x') subst = ('' + parseInt(param).toString(16)).toLowerCase();
+					else if (pType == 'X') subst = ('' + parseInt(param).toString(16)).toUpperCase();
+				}
+				str = leftpart + subst + rightPart;
+				i++;
+			}
+		}
+		if (hasPhytonTokens){
+			arguments.forEach( function(value,key){ str=str.replace("{"+key+"}",value)} )
+		}
+		return str;
+	}
 	
 }
 	

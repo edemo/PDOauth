@@ -1,0 +1,35 @@
+{
+	"assurers":
+	[
+		{
+			"name":"Assurer One",
+			"email":"assureron@adatom.hu",
+			"districts":["Budapest","Nagymaros"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		},
+		{
+			"name":"Assurer Two",
+			"email":"assurertwo@gmail.com",
+			"districts":["Magyarország"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					},
+					{
+						"assurance":"assurer",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		}
+	]
+}

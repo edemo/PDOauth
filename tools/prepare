@@ -1,6 +1,8 @@
 #!/bin/bash
 set -xe
 chown postgres /var/run/postgresql/
+#apt -y --allow-downgrades install chromium-chromedriver=49.0.2623.108-0ubuntu1.1233 chromium-browser=49.0.2623.108-0ubuntu1.1233 chromium-codecs-ffmpeg=49.0.2623.108-0ubuntu1.1233
+
 export DISPLAY=:0
 Xvnc -SecurityTypes=None :0&
 export  NSS_DEFAULT_DB_TYPE="sql"
@@ -9,7 +11,6 @@ export PATH=/firefox:/chromedriver:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr
 set +e
 service postgresql start; ret=1 ; while [ $ret != 0 ] ; do psql -c "select count(*) from pg_user;" ; ret=$?; done
 set -e
-pip3 install enforce
 ./tools/setupdoc
 cp /etc/hosts /tmp
 echo "127.0.0.1 local.sso.edemokraciagep.org" >>/tmp/hosts

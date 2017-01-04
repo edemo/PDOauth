@@ -2,6 +2,11 @@ from pdoauth.models.Assurance import Assurance
 from pdoauth.models.Credential import Credential
 from flask import json
 import uritools
+from typing import Union, List
+
+I18ableMessage = List[str]
+I18ableMessages = Union[str,List[I18ableMessage]]
+
 class Responses(object):
 
     def errors_to_json(self, form):
@@ -12,7 +17,8 @@ class Responses(object):
                 errs.append("{0}: {1}".format(fieldname,error))
         return errs
 
-    def simple_response(self,text,additionalInfo=None):
+    def simple_response(self, text, additionalInfo:dict = None):
+        #text: I18ableMessages https://github.com/RussBaz/enforce/issues/31
         if additionalInfo is None:
             additionalInfo = dict()
         additionalInfo['message']=text
@@ -43,8 +49,8 @@ class Responses(object):
         parts = uritools.urisplit(url)
         return parts.getquerydict()
     
-    @staticmethod
-    def build_url(base, additional_params=None):
+    @classmethod
+    def build_url(cls, base, additional_params=None):
         url = uritools.urisplit(base)
         query_params = url.getquerydict()
         if additional_params is not None:
@@ -54,6 +60,7 @@ class Responses(object):
                     query_params.pop(k)
         return uritools.uricompose(scheme=url.scheme,
                                     host=url.host,
+                                    port=url.port,
                                     path=url.path,
                                     query=query_params,
                                     fragment=url.fragment)

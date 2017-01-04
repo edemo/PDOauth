@@ -12,7 +12,6 @@ from pdoauth.Messages import invalidGrant, invalidClient,\
     missingRequiredParam, unsupportedGrantType, unsupportedResponseType,\
     unauthorizedClient, invalidRequest, invalidScope, accessDenied
 
-
 TokenInfo = namedtuple('TokenInfo','access_token, token_type, expires_in, refresh_token')
 class AuthProvider(WebInterface, Responses, CryptoUtils):
 
