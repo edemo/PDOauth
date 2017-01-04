@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-03 22:25+0000\n"
+"POT-Creation-Date: 2017-01-04 18:09+0100\n"
 "PO-Revision-Date: 2016-03-10 23:30+0100\n"
 "Last-Translator: mag <mag@magwas.rulez.org>\n"
 "Language-Team: Hungarian\n"
@@ -1015,7 +1015,7 @@ msgstr "Add meg az új email címed"
 #: static/js/script.js:826 static/js/script.js:863 static/js/script.js:910
 #: static/js/script.js:929
 msgid "Error"
-msgstr ""
+msgstr "Hiba"
 
 #: static/js/script.js:826
 msgid "No WebCrypto extension found"
@@ -1037,3 +1037,9 @@ msgstr ""
 #, python-brace-format
 msgid "{0} other users found with your hash. Those hashes are deleted"
 msgstr ""
+"{0} másik felhasználót találtunk ugyanezzel a titkos kóddal, amit töröltünk"
+
+#: src/pdoauth/Messages.py:58
+#, python-brace-format
+msgid "Added assurance {0} to user {1}."
+msgstr "A {0} igazolást a {1} felhasználó számára kiadtuk."
