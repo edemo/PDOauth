@@ -320,7 +320,7 @@
 /***** Settings tab *****/
 	PageScript.prototype.parseSettings = function(data) {
 		$("#ChangeEmailAddressForm_email_input").val(data.email)	
-		$("#change-hash-form_digest-code").text(data.hash?data.hash:"")
+		$("#change-hash-form_digest-code").text(data.hash||"-- nincs megadva --")
 		var result = '<h4><b>'+_("My credentials")+'</b></h4>\
 		<table class="multiheader">';
 		var c={	pw:[_("Password"),"password","document.getElementById('change-email_form').style.display='table-row'",true],
