@@ -254,7 +254,7 @@
 			<section>
 
             <div class="feature-tab">
-               <div class="ada_tab_panel col-md-3 col-sm-3 col-xs-12">
+               <div class="ada_tab_panel col-md-2 col-sm-2 col-xs-12">
                     <ul class="nav nav-tabs main-tab-list text-center" role="tablist">
 					
                           <li role="presentation" id="account_section" class="active">
@@ -314,7 +314,7 @@
 						  
                     </ul>
                 </div>  <!-- col-md-12 end -->
-                <div class="col-md-9 col-sm-9 col-xs-12" style="margin-left: -25px;">
+                <div class="account-tabber col-md-10 col-sm-10 col-xs-12">
                     <div class="tab-content main-tab-content">
                           <div role="tabpanel" class="tab-pane active " id="1">
                                 <div class="col-md-12 col-sm-12">
@@ -361,10 +361,6 @@
 													<td>
 														<p><b>Ha megváltoztatod a Titkos Kódodat, az összes eddigi igazolásod elvész!</b></p>
 														<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>
-														<button class="button" type="button" id="create_hash_here" onclick="javascript:document.getElementById('change-hash-form_code-generation-input').style.display='block'">Készítsük el itt</button>
-														<a href="" target="_blank" class="digest_self_made_button">
-															<button class="button" id="create_hash_myself" type="button" onclick="javascript:document.getElementById('code-generation-input').style.display='none'">Elkészítem magam</button>
-														</a>
 														<div id="change-hash-form_code-generation-input" class="form">
 															<div class="bordered">
 																<label for="input">Személyi azonosító:</label>
@@ -379,6 +375,12 @@
 													<td class="button-container">
 														<a id="changeHash" onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="mentés"></a>
 														<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="mégse"></a>
+													</td>
+												</tr>
+												<tr id="change-hash-form_hash-changer-buttons" style="display: none;">
+													<td colspan="3" style="text-align:center">
+														<button class="button" type="button" id="create_hash_here" onclick="javascript:pageScript.showHashChanger()">Készítsük el itt</button>
+														<button class="button" type="button" id="create_hash_myself" onclick="javascript:pageScript.hideHashChanger()">Elkészítem magam</button>
 													</td>
 												</tr>
 											</table>

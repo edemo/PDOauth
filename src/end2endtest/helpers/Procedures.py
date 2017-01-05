@@ -80,7 +80,6 @@ class Procedures(object):
         if digest is None:
             digest = self.createHash()
         self.click("settings_section_link")
-        self.closeMessage()
         self.click("viewChangeHashForm")
         self.fillInField("change-hash-form_digest_input", digest)
         self.click("changeHash")

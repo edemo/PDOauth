@@ -304,13 +304,26 @@
 	
 	PageScript.prototype.viewChangeHashForm = function() {
 		document.getElementById("change-hash-form_hash-changer").style.display="table-row";
+		document.getElementById("change-hash-form_hash-changer-buttons").style.display="table-row";
 		document.getElementById("change-hash-form_hash-container").style.display="none";
 	}
 	
 	PageScript.prototype.viewChangeHashContainer = function() {
 		document.getElementById("change-hash-form_hash-changer").style.display="none";
+		document.getElementById("change-hash-form_hash-changer-buttons").style.display="none";
 		document.getElementById("change-hash-form_hash-container").style.display="table-row";
 	}
+	
+	PageScript.prototype.showHashChanger = function(){
+		document.getElementById('change-hash-form_code-generation-input').style.display='block'
+	}
+	
+	PageScript.prototype.hideHashChanger = function(){
+		document.getElementById('change-hash-form_code-generation-input').style.display="none";
+		window.open(self.QueryString.uris.ANCHOR_URL)
+	}
+	
+
 	
 /*
 ********************************
