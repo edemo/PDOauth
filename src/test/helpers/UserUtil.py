@@ -3,8 +3,9 @@ from pdoauth.CredentialManager import CredentialManager
 from pdoauth.models.Credential import Credential
 from test.helpers.ResponseInfo import ResponseInfo
 from test.helpers.RandomUtil import RandomUtil
-from test.helpers.FakeInterFace import FakeForm
+from test.helpers.FakeInterFace import FakeForm, FakeApp, FakeMail
 import time
+from pdoauth.models import Assurance
 
 class UserUtil(ResponseInfo, RandomUtil):
 
@@ -35,6 +36,21 @@ class UserUtil(ResponseInfo, RandomUtil):
             self.userCreationEmail)
         cred.user.activate()
         return cred
+
+    def createUnassuredUser(self):
+        self.controller.app = FakeApp()
+        self.controller.mail = FakeMail()
+        anotheruser = self.createUserWithCredentials().user
+        digest = self.createHash()
+        anotheruser.hash = digest
+        anotheruser.save()
+        return digest, anotheruser
+
+    def createAssuredUser(self):
+        digest, anotheruser = self.createUnassuredUser()
+        Assurance.new(anotheruser, "test", anotheruser)
+        anotheruser.save()
+        return digest, anotheruser
 
     def createLoggedInUser(self):
         self.setupRandom()

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -xe
 chown postgres /var/run/postgresql/
+#apt -y --allow-downgrades install chromium-chromedriver=49.0.2623.108-0ubuntu1.1233 chromium-browser=49.0.2623.108-0ubuntu1.1233 chromium-codecs-ffmpeg=49.0.2623.108-0ubuntu1.1233
+
 export DISPLAY=:0
 Xvnc -SecurityTypes=None :0&
 export  NSS_DEFAULT_DB_TYPE="sql"

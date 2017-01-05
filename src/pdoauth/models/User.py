@@ -5,6 +5,8 @@ from sqlalchemy.sql.sqltypes import String, BOOLEAN, Integer
 import uuid
 from pdoauth.ReportedError import ReportedError
 from pdoauth.Messages import noHashGiven, thereIsAlreadyAUserWithThatEmail
+from typing import Union
+from flask_login import AnonymousUserMixin
 
 class AlreadyExistingUser(Exception):
     pass
@@ -73,3 +75,7 @@ class User(db.Model, ModelUtils):
         if digest == '' or digest is None:
             raise ReportedError(noHashGiven)
         return cls.query.filter_by(hash=digest).all()
+
+Digest = Union[str, None]
+UserOrAnonymous = Union[User, AnonymousUserMixin]
+

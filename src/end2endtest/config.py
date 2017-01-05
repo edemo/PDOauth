@@ -6,6 +6,7 @@ def absolutePathForEnd2EndResource(fileName):
     return os.path.join(os.path.dirname(__file__), "..", "end2endtest", fileName)
 
 class Config(object):
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = False
@@ -103,16 +104,44 @@ The Test machine
 </body></html>
 """
 
-    HASHCOLLISION_EMAIL_SUBJECT = "hash collision email"
-    HASHCOLLISION_EMAIL_BODY_TEXT = """Dear {0.name},
-Someone have tried to register with your hash with adatom.
+    HASHCOLLISION_UNASSURED_EMAIL_SUBJECT = "hash collision email (unassured)"
+    HASHCOLLISION_UNASSURED_EMAIL_BODY_TEXT = """Dear {0.name},
+Someone have tried to register with your hash with adatom (unassured).
 
 Sincerely,
 The Test machine
 """
-    HASHCOLLISION_EMAIL_BODY_HTML = """<html><head></head><body>
+    HASHCOLLISION_UNASSURED_EMAIL_BODY_HTML = """<html><head></head><body>
 Dear {0.name},<br>
-Someone have tried to register with your hash with adatom.<br/>
+Someone have tried to register with your hash with adatom.(unassured)<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
+"""
+    HASHCOLLISION_ASSURED_EMAIL_SUBJECT = "hash collision email (assured)"
+    HASHCOLLISION_ASSURED_EMAIL_BODY_TEXT = """Dear {0.name},
+Someone have tried to register with your hash with adatom (assured).
+
+Sincerely,
+The Test machine
+"""
+    HASHCOLLISION_ASSURED_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+Someone have tried to register with your hash with adatom (assured).<br/>
+Sincerely,<br/>
+The Test machine
+</body></html>
+"""
+    HASHCOLLISION_INASSURANCE_EMAIL_SUBJECT = "hash collision email (inassurance)"
+    HASHCOLLISION_INASSURANCE_EMAIL_BODY_TEXT = """Dear {0.name},
+Someone have tried to register with your hash with adatom (inassurance).
+
+Sincerely,
+The Test machine
+"""
+    HASHCOLLISION_INASSURANCE_EMAIL_BODY_HTML = """<html><head></head><body>
+Dear {0.name},<br>
+Someone have tried to register with your hash with adatom (inassurance).<br/>
 Sincerely,<br/>
 The Test machine
 </body></html>

@@ -153,22 +153,31 @@ class SimpleActions(object):
     def waitForMessage2(self):
         return  WebDriverWait(TE.driver, 10).until(element_to_be_useable((By.ID,"myModal")))
 
-    def waitLoginPage(self, maxCount=40):
-        count = 0
+    def haveAllTraces(self, labels):
         traces = self.getTraces()
-        while (traces is None) or (not ( 
-                ("initialized" in traces) and
-                ("main end" in traces) and
-                ("fbAsyncInit" in traces))):
+        if traces is None:
+            return False
+        for label in labels:
+            if label not in traces:
+                return False
+        return True
+
+    def waitInitializationTraces(self, traces):
+        maxCount = 40
+        count = 0
+        while not self.haveAllTraces(traces):
             if count > maxCount:
                 TE.driver.save_screenshot("shippable/pageTimeout.png")
                 self.assertFalse("timeout waiting for javascript state")
             time.sleep(1)
-            traces = self.getTraces()
             count += 1
+
+    def waitLoginPage(self):
+        self.waitInitializationTraces(["initialized", "main end", "fbAsyncInit"])
         return self.waitUntilElementEnabled("nav-bar-aboutus")
 
     def waitContentProviderLoginPage(self):
+        self.waitInitializationTraces(["initialized", "fbAsyncInit", "loginpage"])
         return self.waitUntilElementEnabled("greatings")
 
     def switchToTab(self,tab):

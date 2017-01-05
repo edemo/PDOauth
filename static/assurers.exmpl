@@ -1,0 +1,18 @@
+{
+	"assurers":
+	[
+		{
+			"name":"Mekk Elek",
+			"email":"mekkelek@adatom.hu",
+			"districts":["Budapest","Velence","Vácrátót"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		}
+	]
+}
