@@ -1,5 +1,5 @@
 QUnit.test("mail blanks, lowercase; #804-805", function( assert ) {
-    pageScript = new PageScript();
+    pageScript = new PageScript(test);
     assert.equal(pageScript.mailRepair("Szabo . Gez\na @ gm Ail.c OM"), "szabo.geza@gmail.com");
     assert.equal(pageScript.mailRepair(""), "");
 });
