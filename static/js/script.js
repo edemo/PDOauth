@@ -304,6 +304,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
 		var emailInput=document.getElementById(myForm+"_email_input").value
+        emailInput = pageScript.mailRepair(emailInput);
 		if (emailInput!="")
 			self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.callback(self.myCallback));
 		else {
@@ -312,6 +313,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 	}
 	
+    PageScript.prototype.mailRepair = function(mail) {
+        return self.mail = mail.replace(/\s+/g,'').toLowerCase();
+	}
+    
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_email_input").value;
 	    var onerror=false;
@@ -643,6 +648,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			document.getElementById("registration-form_identifier_input").value;
 	    var secret = document.getElementById("registration-form_secret_input").value;
 	    var email = document.getElementById("registration-form_email_input").value;
+        email = pageScript.mailRepair(email);
 		var d=document.getElementById("registration-form_digest_input");
 		var digest =(d)?d.value:"";
 	    var data= {
