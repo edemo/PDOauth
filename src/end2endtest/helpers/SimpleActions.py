@@ -191,6 +191,7 @@ class SimpleActions(object):
 
     def closeMessage(self):
         self.waitForMessage2()
+        self.waitInitializationTraces(['MSGbox ready'])
         TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
 
     def goToLoginPage(self):
