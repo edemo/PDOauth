@@ -109,7 +109,7 @@
 				<h3 class="title">Bejelentkezés</h3>
 			</section>
 			<section class="container_ form ">
-				<button id="Facebook_registration_button" class="social" title="Facebook bejelentkezés" type="button" onclick="facebook.fblogin()">
+				<button id="Facebook_registration_button" class="social fb-button inactive" title="Facebook bejelentkezés" type="button" action-func="facebook.fblogin()">
 					<i class="fa fa-facebook"></i>
 				</button>
 <!--
@@ -167,7 +167,7 @@
 					<button id="registration-form-method-selector-pw" class="social active" title="felhasználónév + jelszó" type="button" onclick="javascript:pageScript.setRegistrationMethode('pw')">
 						<i class="fa fa-tag"></i>
 					</button>
-					<button id="registration-form-method-selector-fb" class="social" title="Facebook fiókkal" type="button" onclick="javascript:pageScript.setRegistrationMethode('fb')">
+					<button id="registration-form-method-selector-fb" class="social fb-button inactive" title="Facebook fiókkal" type="button" action-func="javascript:pageScript.setRegistrationMethode('fb')">
 						<i class="fa fa-facebook"></i>
 					</button>
 <!--					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button" onclick="">

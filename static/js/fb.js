@@ -43,6 +43,8 @@ function FaceBook(pageScript) {
 					xfbml      : true,  // parse social plugins on this page
 					version    : 'v2.2' // use version 2.2
 				});
+				this.pageScript.isFBsdkLoaded=true
+				$(".fb-button").map(function(){pageScript.activateButton(this.id, $(this).attr("action-func"))})
 				window.traces.push("fbAsyncInit")
 			};
 
