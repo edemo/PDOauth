@@ -25,7 +25,7 @@ function FaceBook(pageScript) {
 
 
   function testAPI() {
-    FB.api('/me', function(response) {
+    FB.api('/me?fields=email', function(response) {
       console.log('response: ' + DumpObjectIndented(response,' '));
       document.getElementById('status').innerHTML =
         'Thanks for logging in, ' + response.name + '!';
@@ -88,10 +88,10 @@ function FaceBook(pageScript) {
 			callback(response)
 		} else if (response.status === 'not_authorized') {
 			console.log('not_authorised')
-			FB.login(function(resp){callback(resp)})
+			FB.login(function(resp){callback(resp)},{scope: 'email'})
 		} else {
 			console.log('login')
-			FB.login(function(resp){callback(resp)})
+			FB.login(function(resp){callback(resp)},{scope: 'email'})
 		}
 	}
   
@@ -121,7 +121,7 @@ function FaceBook(pageScript) {
 		var self = this;
 	    self.loggedIn = response;
 		if (response.status === 'connected') {
-			FB.api('/me', function(response2) {
+			FB.api('/me?fields=email', function(response2) {
 				var email;
 		     	if (response2.email) {
 		     		email = response2.email;
@@ -145,7 +145,7 @@ function FaceBook(pageScript) {
 		window.traces.push("registerCallBack begin")
 		var self = this;
 		if (response.status === 'connected') {
-			FB.api('/me', function(response2) {
+			FB.api('/me?fields=email', function(response2) {
 				document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
 				document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
 				if (response2.email) document.getElementById("registration-form_email_input").value=response2.email;
