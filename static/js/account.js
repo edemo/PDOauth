@@ -72,11 +72,34 @@
 					$(assurances).append('<li>'+_(assurance.assurance)+'</li>')
 				} )
 				$(row).append( $('<td></td>').append( $(assurances) ) )
-				$(row).append( $('<td></td>').append( $('<a href="mailto:'+assurer.email+'"></a>').append( $('<button class="social"></button>').append('<i class="fa fa-envelope"></i>') ) ) )
+				$(row).append( $('<td nowrap></td>').append( 
+					$('<a href="mailto:'+assurer.email+'"></a>').append( 
+					$('<button class="social" title="'+_("Open in your mail client")+'"></button>').append('<i class="fa fa-envelope"></i>') )
+				).append(
+					$('<button class="social" style="margin-left:5px" title="'+_("Copy email address to clipboard")+'"></button>'
+					).click(function(){self.copyEmailAddressToClipboard(assurer.email)}).append('<i class="fa fa-clipboard"></i>')
+				) )
 				$("#assurers_table tbody").append(row)
 			}
 		} ) 
 	}
+	
+	PageScript.prototype.copyEmailAddressToClipboard = function(text) {	
+		if (!document.queryCommandSupported('copy')) alert(text)
+		else { 
+			var textArea = $('<textarea class="tmp_clpbrd">').append(text)
+			$("body").append( textArea )
+			textArea.select();
+			try {
+				var successful = document.execCommand('copy');
+				alert ( successful ? _("The email address copied to the clipboard.") : text )
+			} catch (err) {
+				console.log('Oops, unable to copy');
+			}
+			$(textArea).remove();
+		}
+	}
+	
 	
 	PageScript.prototype.initialise = function(text) {
 		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
