@@ -27,6 +27,11 @@
 		document.getElementById("magyar-counter").innerHTML=(data.assurances.magyar)?data.assurances.magyar:0
 		document.getElementById("assurer-counter").innerHTML=(data.assurances.assurer)?data.assurances.assurer:0
 		document.getElementById("application-counter").innerHTML=(data.applications)?data.applications:0
+		//init counter if data presents
+		$('.counter').counterUp({
+			delay: 100,
+			time: 2000
+		});
 	}
 }()
 )
