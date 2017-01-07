@@ -7,6 +7,7 @@ from pdoauth.models import Assurance
 from test.helpers.UserUtil import UserUtil
 from test.helpers.CryptoTestUtil import CryptoTestUtil
 from unittest.case import TestCase
+import pdb
 
 class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
 
@@ -49,8 +50,7 @@ class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
         self.click("create_hash_here")
         self.obtainHash("11111111110", mothername, "change-hash-form")
         time.sleep(4)
-        self.click("changeHash")
-        time.sleep(4)
+        self.closeMessage()
         self.assertElementMatchesRe("change-hash-form_digest-pre", "[0-9a-f]{10}")
         self.switchToSection("account")
         time.sleep(2)
