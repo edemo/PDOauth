@@ -1,7 +1,6 @@
 from end2endtest.helpers.BrowsingUtil import BrowsingUtil
 from test.helpers.CryptoTestUtil import CryptoTestUtil
 from unittest.case import TestCase
-import pdb
 
 class DigestTest(TestCase, BrowsingUtil, CryptoTestUtil):
 
