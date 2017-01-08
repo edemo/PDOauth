@@ -1,9 +1,32 @@
-function FaceBook(pageScript) {
+FaceBook = function(pageScript) {
 	this.pageScript = pageScript;
 	this.doc = document;
 	this.loggedIn = false;
 	window.traces.push("fb constructor")
+	var $this=this
+	
+	FaceBook.prototype.getMeCallback = function(response){
+		console.log(response)
+		if (response.email) document.getElementById("registration-form_email_input").value=response.email;
+		else document.getElementById("registration-form_email_input").placeholder=_("Type here your email address");
+		window.traces.push("getMecallback")		
+	}
+	
+	FaceBook.prototype.registerCallBack = function(response) {
+		window.traces.push("registerCallBack begin")
+		console.log($this)
+		if (response.status == 'connected' && response.authResponse.userID && response.authResponse.userID!="" && response.authResponse.accessToken && response.authResponse.accessToken!="" ) {
+			document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
+			document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
+			console.log($this.getMeCallback)
+			FB.api('/me?fields=email', {fields:"email"}, function(r){ $this.getMeCallback(r)} );
+		} else {
+		  $this.pageScript.displayMsg({ title:_("Facebook error"), error:_("Coonection to facebook was unsuccesfull") })
+		} 
+		window.traces.push("registerCallBack end")
+	}
 }
+
 
   function statusChangeCallback(response) {
     if (response.status === 'connected') {
@@ -143,26 +166,7 @@ function FaceBook(pageScript) {
 		  self.pageScript.displayMsg({ title:_("Facebook error"), error:'Facebook login is unsuccessful' })
 		} 
 	}
-	
-	FaceBook.prototype.registerCallBack = function(response) {
-		window.traces.push("registerCallBack begin")
-		var self = this;
-		if (response.status == 'connected' && response.authResponse.userID && response.authResponse.userID!="" && response.authResponse.accessToken && response.authResponse.accessToken!="" ) {
-			document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
-			document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
-			FB.api('/me?fields=email', self.getMeCallback(r));
-		} else {
-		  self.pageScript.displayMsg({ title:_("Facebook error"), error:_("Coonection to facebook was unsuccesfull") })
-		} 
-		window.traces.push("registerCallBack end")
-	}
-	
-	FaceBook.prototype.getMeCallback = function(response){
-		if (response.email) document.getElementById("registration-form_email_input").value=response.email;
-		else document.getElementById("registration-form_email_input").placeholder=_("Type here your email address");
-		window.traces.push("getMecallback")		
-	}
-	
+
 	FaceBook.prototype.fbregister = function() {
 		var self = this;
 		self.getFbUser(self.registerCallBack);
