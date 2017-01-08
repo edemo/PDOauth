@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-08 12:28+0100\n"
+"POT-Creation-Date: 2017-01-08 16:21+0100\n"
 "PO-Revision-Date: 2016-03-10 23:30+0100\n"
 "Last-Translator: mag <mag@magwas.rulez.org>\n"
 "Language-Team: Hungarian\n"
@@ -1092,7 +1092,7 @@ msgstr "Megnyitás a levelezőben"
 #: static/js/account.js:79
 #, fuzzy
 msgid "Copy email address to clipboard"
-msgstr "E-mail cím cseréje megtörtént"
+msgstr "Email cím másolása a vágólapra"
 
 #: static/js/account.js:95
 msgid "The email address copied to the clipboard."
@@ -1104,6 +1104,7 @@ msgid "Type here your email address"
 msgstr "Add meg az új email címed"
 
 #: static/js/fb.js:24
+#, fuzzy
 msgid "Coonection to facebook was unsuccesfull"
 msgstr "Nem sikerült a facebook-hoz csatlakozni"
 
