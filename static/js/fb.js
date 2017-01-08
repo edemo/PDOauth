@@ -21,7 +21,7 @@ FaceBook = function(pageScript) {
 			console.log($this.getMeCallback)
 			FB.api('/me?fields=email', {fields:"email"}, function(r){ $this.getMeCallback(r)} );
 		} else {
-		  $this.pageScript.displayMsg({ title:_("Facebook error"), error:_("Coonection to facebook was unsuccesfull") })
+		  $this.pageScript.displayMsg({ title:_("Facebook error"), error:_("Connection to facebook was unsuccesfull") })
 		} 
 		window.traces.push("registerCallBack end")
 	}
