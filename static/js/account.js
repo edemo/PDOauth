@@ -240,6 +240,7 @@
 
 	PageScript.prototype.byEmail = function() {
 	    var email = document.getElementById("ByEmailForm_email_input").value;
+        email = pageScript.mailRepair(email);
 		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
@@ -252,6 +253,7 @@
 	    digest = document.getElementById("assurancing_digest_input").value;
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
+        email = pageScript.mailRepair(email);
 	    csrf_token = self.getCookie('csrf');
 	    data= {
 	    	digest: digest,
@@ -450,6 +452,7 @@
 	
 	PageScript.prototype.changeEmailAddress = function() {
 	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
+        email = pageScript.mailRepair(email);
 		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
 		else {
 			var csrf_token = self.getCookie('csrf');

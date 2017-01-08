@@ -7,7 +7,6 @@ from pdoauth.models import Assurance
 from test.helpers.UserUtil import UserUtil
 from test.helpers.CryptoTestUtil import CryptoTestUtil
 from unittest.case import TestCase
-import pdb
 
 class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
 
