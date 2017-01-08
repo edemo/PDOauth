@@ -96,7 +96,7 @@ input[type='email'], input[type='number'], input[type='password'], input[type='s
 	padding-top: 0.5rem;
 	padding-bottom: 0.5rem;
 	margin-bottom: 0;
-	max-width: 80.0rem;
+	max-width: 100.0rem;
 }
 .form {
 	max-width: 50.0rem;
@@ -178,9 +178,20 @@ ul.disced {
 	width: 60%;
 }
 
+.account-tabber {
+	margin-left:25px;
+}
+
 @media (max-width: 767px){
 .feature_title {
     width: 75%;
     font-size: 30px;
 }
+.account-tabber {
+	margin-left:0px;
+}
+}
+
+#assurers_table ul{
+	margin-bottom:0px;
 }

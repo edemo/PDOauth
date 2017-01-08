@@ -83,6 +83,8 @@ class Procedures(object):
         self.click("viewChangeHashForm")
         self.fillInField("change-hash-form_digest_input", digest)
         self.click("changeHash")
+        self.observeField("PopupWindow_SuccessDiv")
+        self.closeMessage()
         self.endProcess("change your hash")
         return digest
 

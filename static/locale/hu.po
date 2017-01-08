@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-03 22:25+0000\n"
+"POT-Creation-Date: 2017-01-06 23:04+0000\n"
 "PO-Revision-Date: 2016-03-10 23:30+0100\n"
 "Last-Translator: mag <mag@magwas.rulez.org>\n"
 "Language-Team: Hungarian\n"
@@ -332,12 +332,12 @@ msgid "assurer.{0}"
 msgstr "{0} Tanúsító"
 
 #: static/js/account.js:115 static/js/account.js:140 static/js/account.js:155
-#: static/js/account.js:158 static/js/account.js:180
+#: static/js/account.js:158 static/js/account.js:180 static/js/account.js:181
 msgid "Your email validation was succesfull."
 msgstr "Az email címed igazolása sikerült."
 
 #: static/js/account.js:119 static/js/account.js:144 static/js/account.js:159
-#: static/js/account.js:162 static/js/account.js:184
+#: static/js/account.js:162 static/js/account.js:184 static/js/account.js:185
 msgid "Your email validation <b>failed</b>.<br/>The servers response: "
 msgstr "Az email címed igazolása <b>nem</b> sikerült.<br/>A szerver üzenete: "
 
@@ -374,7 +374,7 @@ msgstr "A Felhasználási Feltételek elfogadása"
 
 #: static/js/account.js:280 static/js/account.js:310 static/js/script.js:501
 #: static/js/script.js:513 static/js/script.js:524 static/js/script.js:540
-#: static/js/script.js:533
+#: static/js/script.js:533 static/js/script.js:532
 #, fuzzy
 msgid "The Secret Hash is given for assuring"
 msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
@@ -389,7 +389,8 @@ msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
 #: static/js/script.js:541 static/js/script.js:673 static/js/script.js:160
 #: static/js/script.js:461 static/js/script.js:467 static/js/script.js:557
 #: static/js/script.js:675 static/js/script.js:454 static/js/script.js:460
-#: static/js/script.js:550 static/js/script.js:668
+#: static/js/script.js:550 static/js/script.js:668 static/js/script.js:159
+#: static/js/script.js:453 static/js/script.js:459
 msgid "Error message"
 msgstr "Hibaüzenet"
 
@@ -407,6 +408,7 @@ msgstr "Még nincs Titkos Kód "
 #: static/js/script.js:303 static/js/script.js:589 static/js/script.js:593
 #: static/js/script.js:336 static/js/script.js:605 static/js/script.js:609
 #: static/js/script.js:329 static/js/script.js:598 static/js/script.js:602
+#: static/js/script.js:328
 msgid "Missing data"
 msgstr "Hiányzó adat"
 
@@ -469,24 +471,28 @@ msgstr "A kód előállítása"
 #: static/js/account.js:358 static/js/account.js:312 static/js/account.js:344
 #: static/js/account.js:373 static/js/account.js:325 static/js/account.js:359
 #: static/js/account.js:388 static/js/account.js:336 static/js/account.js:370
-#: static/js/account.js:399
+#: static/js/account.js:399 static/js/account.js:348 static/js/account.js:361
+#: static/js/account.js:362
 msgid "save"
 msgstr "mentés"
 
 #: static/js/account.js:458 static/js/account.js:523 static/js/account.js:552
 #: static/js/account.js:330 static/js/account.js:359 static/js/account.js:345
 #: static/js/account.js:374 static/js/account.js:360 static/js/account.js:389
-#: static/js/account.js:371 static/js/account.js:400
+#: static/js/account.js:371 static/js/account.js:400 static/js/account.js:349
+#: static/js/account.js:362 static/js/account.js:363
 msgid "cancel"
 msgstr "mégse"
 
 #: static/js/account.js:462 static/js/account.js:527 static/js/account.js:334
 #: static/js/account.js:349 static/js/account.js:364 static/js/account.js:375
+#: static/js/account.js:324 static/js/account.js:337 static/js/account.js:338
 msgid "My credentials"
 msgstr "Hitelesítési módjaim"
 
 #: static/js/account.js:464 static/js/account.js:529 static/js/account.js:336
 #: static/js/account.js:351 static/js/account.js:366 static/js/account.js:377
+#: static/js/account.js:326 static/js/account.js:339 static/js/account.js:340
 msgid "Password"
 msgstr "Jelszavas"
 
@@ -503,21 +509,25 @@ msgstr ""
 
 #: static/js/script.js:89 static/js/script.js:90 static/js/script.js:104
 #: static/js/script.js:133 static/js/script.js:139 static/js/script.js:137
+#: static/js/script.js:136
 msgid "Server message"
 msgstr "Szerverüzenet"
 
 #: static/js/script.js:93 static/js/script.js:94 static/js/script.js:108
 #: static/js/script.js:137 static/js/script.js:143 static/js/script.js:155
+#: static/js/script.js:154
 msgid "User informations"
 msgstr "A felhasználó adatai"
 
 #: static/js/script.js:119 static/js/script.js:120 static/js/account.js:424
 #: static/js/account.js:440 static/js/account.js:455 static/js/account.js:444
+#: static/js/account.js:393 static/js/account.js:406 static/js/account.js:407
 msgid "Application"
 msgstr "Alkalmazás"
 
 #: static/js/script.js:120 static/js/script.js:121 static/js/account.js:425
 #: static/js/account.js:441 static/js/account.js:456 static/js/account.js:445
+#: static/js/account.js:394 static/js/account.js:407 static/js/account.js:408
 msgid "Domain"
 msgstr "Hivatkozás"
 
@@ -525,65 +535,68 @@ msgstr "Hivatkozás"
 #: static/js/script.js:161 static/js/account.js:426 static/js/script.js:142
 #: static/js/account.js:442 static/js/script.js:171 static/js/account.js:457
 #: static/js/script.js:177 static/js/account.js:446 static/js/script.js:210
-#: static/js/script.js:203
+#: static/js/script.js:203 static/js/account.js:395 static/js/script.js:202
+#: static/js/account.js:408 static/js/account.js:409
 msgid "User identifier"
 msgstr "Felhasználó azonosító"
 
 #: static/js/script.js:122 static/js/script.js:123 static/js/account.js:427
 #: static/js/account.js:443 static/js/account.js:458 static/js/account.js:447
+#: static/js/account.js:396 static/js/account.js:409 static/js/account.js:410
 msgid "Emailing"
 msgstr "Levelezés"
 
 #: static/js/script.js:123 static/js/script.js:124 static/js/account.js:428
 #: static/js/account.js:444 static/js/account.js:459 static/js/account.js:448
+#: static/js/account.js:397 static/js/account.js:410 static/js/account.js:411
 msgid "Allow emailing"
 msgstr "Kaphatok levelet"
 
 #: static/js/script.js:164 static/js/script.js:165 static/js/script.js:146
 #: static/js/script.js:175 static/js/script.js:181 static/js/script.js:214
-#: static/js/script.js:207
+#: static/js/script.js:207 static/js/script.js:206
 msgid "Assurances"
 msgstr "Igazolások"
 
 #: static/js/script.js:168 static/js/script.js:169 static/js/script.js:150
 #: static/js/script.js:179 static/js/script.js:185 static/js/script.js:218
-#: static/js/script.js:211
+#: static/js/script.js:211 static/js/script.js:210
 msgid "Name"
 msgstr "Megnevezés"
 
 #: static/js/script.js:169 static/js/script.js:170 static/js/script.js:151
 #: static/js/script.js:180 static/js/script.js:186 static/js/script.js:219
-#: static/js/script.js:212
+#: static/js/script.js:212 static/js/script.js:211
 msgid "Assurer"
 msgstr "Kiállító"
 
 #: static/js/script.js:170 static/js/script.js:171 static/js/script.js:152
 #: static/js/script.js:181 static/js/script.js:187 static/js/script.js:220
-#: static/js/script.js:213
+#: static/js/script.js:213 static/js/script.js:212
 msgid "Date of assurance"
 msgstr "Kiállítás dátuma"
 
 #: static/js/script.js:171 static/js/script.js:172 static/js/script.js:153
 #: static/js/script.js:182 static/js/script.js:188 static/js/script.js:221
-#: static/js/script.js:214
+#: static/js/script.js:214 static/js/script.js:213
 msgid "Valid until"
 msgstr "Érvényesség"
 
 #: static/js/script.js:183 static/js/script.js:184 static/js/script.js:165
 #: static/js/script.js:194 static/js/script.js:200 static/js/script.js:233
-#: static/js/script.js:226
+#: static/js/script.js:226 static/js/script.js:225
 msgid "unlimited"
 msgstr "korlátlan"
 
 #: static/js/script.js:360 static/js/script.js:361 static/js/script.js:267
 #: static/js/script.js:289 static/js/script.js:295 static/js/script.js:328
-#: static/js/script.js:321
+#: static/js/script.js:321 static/js/script.js:320
 msgid "User name is missing. "
 msgstr "Hiányzik a felhasználónév. "
 
 #: static/js/script.js:365 static/js/script.js:366 static/js/script.js:272
 #: static/js/script.js:294 static/js/script.js:300 static/js/script.js:333
-#: static/js/script.js:326
+#: static/js/script.js:326 static/js/script.js:325
 msgid "Password is missing. "
 msgstr "Nem adtál meg jelszót. "
 
@@ -602,7 +615,9 @@ msgstr "Nem adtál meg jelszót. "
 #: static/js/script.js:419 static/js/script.js:423 static/js/script.js:427
 #: static/js/script.js:441 static/js/script.js:445 static/js/script.js:449
 #: static/js/script.js:380 static/js/script.js:420 static/js/script.js:434
-#: static/js/script.js:438 static/js/script.js:442
+#: static/js/script.js:438 static/js/script.js:442 static/js/script.js:379
+#: static/js/script.js:411 static/js/script.js:415 static/js/script.js:433
+#: static/js/script.js:437
 msgid "Under construction"
 msgstr "Keményen dolgozunk,"
 
@@ -621,12 +636,15 @@ msgstr "Keményen dolgozunk,"
 #: static/js/script.js:419 static/js/script.js:423 static/js/script.js:427
 #: static/js/script.js:441 static/js/script.js:445 static/js/script.js:449
 #: static/js/script.js:380 static/js/script.js:420 static/js/script.js:434
-#: static/js/script.js:438 static/js/script.js:442
+#: static/js/script.js:438 static/js/script.js:442 static/js/script.js:379
+#: static/js/script.js:411 static/js/script.js:415 static/js/script.js:433
+#: static/js/script.js:437
 msgid "This function is not working yet."
 msgstr "Ez a funkció sajnos még nem működik."
 
 #: static/js/script.js:450 static/js/script.js:206 static/js/script.js:235
 #: static/js/script.js:241 static/js/script.js:274 static/js/script.js:267
+#: static/js/script.js:266
 msgid "Congratulation!"
 msgstr "Gratulálunk!"
 
@@ -637,7 +655,7 @@ msgstr "A Titkos Kód elkészült."
 
 #: static/js/script.js:583 static/js/script.js:555 static/js/script.js:417
 #: static/js/script.js:429 static/js/script.js:435 static/js/script.js:462
-#: static/js/script.js:455
+#: static/js/script.js:455 static/js/script.js:454
 msgid "The secret is missing"
 msgstr "Hiányzik a hitelesítő eszköz"
 
@@ -857,6 +875,7 @@ msgstr "alkalmazás használatához jelentkezz be ADA fiókoddal!"
 
 #: static/js/script.js:561 static/js/script.js:423 static/js/script.js:435
 #: static/js/script.js:441 static/js/script.js:468 static/js/script.js:461
+#: static/js/script.js:460
 msgid "To accept the terms please mark the checkbox!"
 msgstr ""
 "Ha fiók törlésével kapcsolatos figyelmeztetést tudomásul vétted, kattints a "
@@ -992,7 +1011,7 @@ msgid "email address changed"
 msgstr "E-mail cím cseréje megtörtént"
 
 #: static/js/script.js:236 static/js/script.js:242 static/js/script.js:275
-#: static/js/script.js:268
+#: static/js/script.js:268 static/js/script.js:267
 msgid ""
 "You have succesfully registered and logged in. </br> Please click the link "
 "inside the email we sent you to validate your email address, otherwise your "
@@ -1008,14 +1027,15 @@ msgstr ""
 msgid "email address change is cancelled"
 msgstr "E-mail cím csere nem történt meg"
 
-#: static/js/account.js:523 static/js/account.js:512
+#: static/js/account.js:523 static/js/account.js:512 static/js/account.js:461
+#: static/js/account.js:474 static/js/account.js:475
 msgid "Type your new email address here"
 msgstr "Add meg az új email címed"
 
 #: static/js/script.js:826 static/js/script.js:863 static/js/script.js:910
 #: static/js/script.js:929
 msgid "Error"
-msgstr ""
+msgstr "Hiba"
 
 #: static/js/script.js:826
 msgid "No WebCrypto extension found"
@@ -1037,3 +1057,9 @@ msgstr ""
 #, python-brace-format
 msgid "{0} other users found with your hash. Those hashes are deleted"
 msgstr ""
+"{0} másik felhasználót találtunk ugyanezzel a titkos kóddal, amit töröltünk"
+
+#: src/pdoauth/Messages.py:58
+#, python-brace-format
+msgid "Added assurance {0} to user {1}."
+msgstr "A {0} igazolást a {1} felhasználó számára kiadtuk."

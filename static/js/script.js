@@ -70,7 +70,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		self.QueryString.uris = JSON.parse(text);
 		self.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
-//		if ( typeof Gettext == "undefined" ) _=function(x){return x};
 
 		// filling hrefs of anchors
 		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
@@ -540,6 +539,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 						document.getElementById("assurance-giving_submit-button").className=""
 						break;
 					case "login":
+					case "change-hash-form":
 						self.changeHash()
 						break;
 					case "registration-form":

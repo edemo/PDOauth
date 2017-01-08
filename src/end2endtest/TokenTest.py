@@ -14,9 +14,7 @@ class TokenTest(TestCase,BrowsingUtil):
             client_secret=app.secret, 
             redirect_uri=app.redirect_uri)
         url = WebInterface.parametrizeUri(TE.backendUrl + "/v1/oauth2/token", fields)
-        print(url)
         resp = requests.post(url, fields, verify=False)
-        print(resp.text)
         answer = resp.json()
         return answer
 
