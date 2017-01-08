@@ -186,6 +186,7 @@
 	PageScript.prototype.hashIsUpdated = function(text) {
 		self.hideAllSection()
 		self.init_()
+		window.traces.push("hashIsUpdated")
 	}
 	
 	PageScript.prototype.showForm = function(formName) {

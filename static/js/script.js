@@ -274,6 +274,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		if( self.page=="login"){
 			self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
 		}
+		window.traces.push("registerCallback")
 	}	
 
 	PageScript.prototype.reloadCallback = function(text) {
@@ -530,6 +531,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		digestCallback = function(status,text,xml) {
 			var diegestInput=document.getElementById(formName + "_digest_input")
 			if (status==200) {
+				window.traces.push("digest cb")
 				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
 				$("#"+formName + "_digest_input").trigger('keyup');
 				document.getElementById(formName + "_predigest_input").value = "";
@@ -545,13 +547,17 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 						self.changeHash()
 						break;
 					case "registration-form":
-						document.getElementById(formName+"_code-generation-input").style.display="none"
+						console.log("formname is " + formName)
+						var style = document.getElementById(formName+"_code-generation-input").style;
+						console.log("style:" + formName)
+						style.display="none"
 						document.getElementById(formName+"_digest-input").style.display="block"
 						self.activateButton( formName+"_make-here", function(){self.digestGetter(formName).methodChooser('here')})
 						break;
 					default:
-						document.getElementById(formName+"_code-generation-input").style.display="none"
+						style.display="none"
 				}
+				window.traces.push("gotDigest")
 			}
 			else {
 				self.displayMsg({title:_("Error message"),error: text});

@@ -137,6 +137,7 @@
 			else return;
 		}
 		else self.displayTheSection();
+		window.traces.push('userIsLoggedIn')
 	}
 
 	
@@ -176,6 +177,7 @@
 		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
 		document.getElementById("PopupWindow_SuccessDiv").innerHTML = "";
 		if (popupCallback) popupCallback();
+		window.traces.push("popup closed")
 		return "closePopup";
 	}
 
@@ -332,6 +334,7 @@
 		document.getElementById("change-hash-form_hash-changer").style.display="table-row";
 		document.getElementById("change-hash-form_hash-changer-buttons").style.display="table-row";
 		document.getElementById("change-hash-form_hash-container").style.display="none";
+		window.traces.push("viewChangeHashForm")
 	}
 	
 	PageScript.prototype.viewChangeHashContainer = function() {
@@ -454,6 +457,7 @@
 		applist +='\
 		</table>';
 		document.getElementById("me_Applications").innerHTML=applist;
+		window.traces.push("myappsCallback")
 	}
 
 	PageScript.prototype.parseAssurances = function(data) {
