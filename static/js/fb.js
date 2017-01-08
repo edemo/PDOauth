@@ -37,11 +37,12 @@ function FaceBook(pageScript) {
 		if (appID=this.pageScript.QueryString.uris.FACEBOOK_APP_ID) {
 			window.fbAsyncInit = function() {
 				FB.init({
-					appId      : appID,
-					cookie     : true,  // enable cookies to allow the server to access 
+					appId	: appID,
+					cookie	: true,  // enable cookies to allow the server to access 
 								// the session
-					xfbml      : true,  // parse social plugins on this page
-					version    : 'v2.2' // use version 2.2
+					xfbml	: true,  // parse social plugins on this page
+					status	: true,
+					version	: 'v2.3' // use version 2.2
 				});
 				this.pageScript.isFBsdkLoaded=true
 				$(".fb-button").map(function(){pageScript.activateButton(this.id, $(this).attr("action-func"))})
@@ -146,18 +147,20 @@ function FaceBook(pageScript) {
 	FaceBook.prototype.registerCallBack = function(response) {
 		window.traces.push("registerCallBack begin")
 		var self = this;
-		if (response.status === 'connected') {
-			FB.api('/me?fields=email', function(response2) {
-				document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
-				document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
-				if (response2.email) document.getElementById("registration-form_email_input").value=response2.email;
-				else document.getElementById("registration-form_email_input").placeholder="Add meg az emailcímed!";
-				window.traces.push("registerCallBack callback")
-		    });
+		if (response.status == 'connected' && response.authResponse.userID && response.authResponse.userID!="" && response.authResponse.accessToken && response.authResponse.accessToken!="" ) {
+			document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
+			document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
+			FB.api('/me?fields=email', self.getMeCallback(r));
 		} else {
-		  self.pageScript.displayMsg({ title:_("Facebook error"), error:_('Can not login with your Facebook account') })
+		  self.pageScript.displayMsg({ title:_("Facebook error"), error:_("Coonection to facebook was unsuccesfull") })
 		} 
 		window.traces.push("registerCallBack end")
+	}
+	
+	FaceBook.prototype.getMeCallback = function(response){
+		if (response.email) document.getElementById("registration-form_email_input").value=response.email;
+		else document.getElementById("registration-form_email_input").placeholder=_("Type here your email address");
+		window.traces.push("getMecallback")		
 	}
 	
 	FaceBook.prototype.fbregister = function() {
