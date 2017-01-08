@@ -9,6 +9,8 @@ function PageScript(test) {
 	this.isLoggedIn=false;
 	this.isAssurer=false;
 	this.registrationMethode="pw";
+	this.isFBsdkLoaded=false;
+	this.isFBconnected=false;
 
 PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   var query_string = {};
@@ -692,10 +694,14 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
-		b=document.getElementById(buttonId)
+		console.log(buttonId)
+		var b=document.getElementById(buttonId),
+			c
 		if (b) {
 			b.className=b.className.slice(0,b.className.indexOf("inactive"))
-			b.onclick=onclickFunc
+			if (onclickFunc) {
+				b.onclick = (typeof onclickFunc=="string")? function(){ eval(onclickFunc) } : onclickFunc 
+			}
 		}
 	}
 
@@ -731,7 +737,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
 	
-PageScript.prototype.initGettext = function(text) {
+	PageScript.prototype.initGettext = function(text) {
 		// waiting for gettext loads po files
 		try {
 			self.dictionary=JSON.parse(text)
@@ -742,6 +748,7 @@ PageScript.prototype.initGettext = function(text) {
 		}
 		self.init_()
 	}
+
 	
 	PageScript.prototype.gettext = function() {
 
