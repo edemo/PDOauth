@@ -123,7 +123,7 @@ FaceBook = function(pageScript) {
   
 	FaceBook.prototype.loginCallBack = function(response) {
   		var self = this;
-	    if (response.status === 'connected') {
+	    if (response.status === 'connected' && response.authResponse.userID && response.authResponse.userID!="" && response.authResponse.accessToken && response.authResponse.accessToken!="") {
 	    	self.loggedIn = response;
 	    	self.pageScript.login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
 	    } else {
