@@ -51,7 +51,7 @@ class Procedures(object):
         TE.driver.get(passwordResetLink)
         self.fillInField("PasswordResetForm_password_input",password)
         self.click("PasswordResetForm_OnLoginTab_submitButton")
-        self.closeMessage()
+        self.closeMessage(closeWait=False)
         self.endProcess("click password reset link")
 
     def registerUser(self, digest=None, buttonId="nav-bar-register", personalId=None, motherName=None):
@@ -67,12 +67,14 @@ class Procedures(object):
         if digest:
             self.fillInField("registration-form_digest_input", digest)
         if personalId:
-            self.click("create_here")
+            self.click("make_here")
             self.fillInField("registration-form_predigest_input", personalId)
             self.fillInField("registration-form_predigest_mothername", motherName)
             self.click("registration-form_getDigestButton")
             self.waitUntilElementHasText("registration-form_digest_input")
         self.click("registration-form_submitButton")
+        if buttonId=="nav-bar-register":
+            self.waitForTraces(["myappsCallback"])
         self.endProcess("register with password")
 
     def changeMyHash(self, digest=None):
@@ -80,7 +82,10 @@ class Procedures(object):
         if digest is None:
             digest = self.createHash()
         self.click("settings_section_link")
+        print(TE.driver.execute_script("return document.getElementById('viewChangeHashForm').onclick.toString()"))
+        print(self.getTraces())
         self.click("viewChangeHashForm")
+        print(self.getTraces())
         self.fillInField("change-hash-form_digest_input", digest)
         self.click("changeHash")
         self.observeField("PopupWindow_SuccessDiv")
@@ -101,5 +106,6 @@ class Procedures(object):
         self.fillInField(formName + "_predigest_input", identityNumber)
         self.fillInField(formName + "_predigest_mothername", motherName)
         self.click(formName + "_getDigestButton")
+        self.waitForTraces(["gotDigest"])
         self.endProcess("obtain hash")
 

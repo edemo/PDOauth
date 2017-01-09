@@ -11,6 +11,7 @@ from end2endtest.helpers.FacebookUtil import FacebookUtil
 from end2endtest.helpers.Assertions import Assertions
 from end2endtest.helpers.ComplexProcedures import ComplexProcedures
 from end2endtest.helpers.SimpleActions import SimpleActions
+import pdb
 
 class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexProcedures):
 
@@ -53,12 +54,9 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
     def tearDown(self):
         test_method_name = self._testMethodName
         TE.driver.save_screenshot("shippable/%s.png" % test_method_name)
-        #f=open("shippable/%s.log" % test_method_name,"w")
-        #for entry in TE.driver.get_log('browser'):
-        #    f.write("%s\n"%(entry,))
-        #f.close()
+        if os.environ.get("E2EDEBUG"):
+            pdb.set_trace()
         self.logOut()
         fbuser = User.getByEmail(config.facebookUser1.email)
         if fbuser:
             fbuser.rm()
-
