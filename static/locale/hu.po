@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PDOauth\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-08 22:01+0000\n"
+"POT-Creation-Date: 2017-01-09 21:58+0000\n"
 "PO-Revision-Date: 2016-03-10 23:30+0100\n"
 "Last-Translator: mag <mag@magwas.rulez.org>\n"
 "Language-Team: Hungarian\n"
@@ -393,7 +393,8 @@ msgstr "A felhasználó adatai"
 #: static/js/script.js:161 static/js/script.js:460 static/js/script.js:466
 #: static/js/script.js:557 static/js/script.js:676 static/js/script.js:461
 #: static/js/script.js:467 static/js/script.js:558 static/js/script.js:677
-#: static/js/script.js:678
+#: static/js/script.js:678 static/js/script.js:563 static/js/script.js:682
+#: static/js/script.js:564 static/js/script.js:683
 msgid "Error message"
 msgstr "Hibaüzenet"
 
@@ -446,7 +447,8 @@ msgstr "Nem adtál meg jelszót. "
 
 #: static/js/script.js:335 static/js/script.js:605 static/js/script.js:609
 #: static/js/script.js:336 static/js/script.js:606 static/js/script.js:610
-#: static/js/script.js:607 static/js/script.js:611
+#: static/js/script.js:607 static/js/script.js:611 static/js/script.js:615
+#: static/js/script.js:612 static/js/script.js:616
 msgid "Missing data"
 msgstr "Hiányzó adat"
 
@@ -476,47 +478,57 @@ msgstr ""
 "Ha fiók törlésével kapcsolatos figyelmeztetést tudomásul vétted, kattints a "
 "jelölőnégyzetbe!"
 
-#: static/js/script.js:539 static/js/script.js:540
+#: static/js/script.js:539 static/js/script.js:540 static/js/script.js:541
+#: static/js/script.js:542
 #, fuzzy
 msgid "The Secret Hash is given for assuring"
 msgstr "A Titkos Kód az igazolás kiadásához előkészítve"
 
-#: static/js/script.js:561 static/js/script.js:562
+#: static/js/script.js:561 static/js/script.js:562 static/js/script.js:567
+#: static/js/script.js:568
 #, fuzzy
 msgid "The Secret Hash isn't given yet"
 msgstr "Még nincs Titkos Kód "
 
 #: static/js/script.js:605 static/js/script.js:606 static/js/script.js:607
+#: static/js/script.js:611 static/js/script.js:612
 msgid "Personal identifier is missing"
 msgstr "A személyi azonosító nincs megadva"
 
 #: static/js/script.js:609 static/js/script.js:610 static/js/script.js:611
+#: static/js/script.js:615 static/js/script.js:616
 msgid "Mother's name is missing"
 msgstr "Anyja neve nincs megadva"
 
 #: static/js/script.js:630 static/js/script.js:631 static/js/script.js:632
+#: static/js/script.js:636 static/js/script.js:637
 msgid "email address and/or username / password"
 msgstr "email-cím és/vagy felhasználónév és jelszó"
 
 #: static/js/script.js:637 static/js/script.js:638 static/js/script.js:639
+#: static/js/script.js:643 static/js/script.js:644
 msgid "my facebook account"
 msgstr "facebook fiókom"
 
 #: static/js/script.js:643 static/js/script.js:644 static/js/script.js:645
+#: static/js/script.js:649 static/js/script.js:650
 #, javascript-format
 msgid "Registration with %s "
 msgstr "Regisztráció %s használatával"
 
 #: static/js/script.js:676 static/js/script.js:677 static/js/script.js:678
+#: static/js/script.js:682 static/js/script.js:683
 msgid "The passwords are not identical"
 msgstr "A jelszavak nem egyeznek meg"
 
 #: static/js/script.js:685 static/js/script.js:686 static/js/script.js:687
+#: static/js/script.js:691 static/js/script.js:692
 #, fuzzy
 msgid "Acceptance is missing"
 msgstr "Hiányzik a beleegyezésed"
 
 #: static/js/script.js:685 static/js/script.js:686 static/js/script.js:687
+#: static/js/script.js:691 static/js/script.js:692
 msgid ""
 "For the registration you have to accept the terms of use. To accept the "
 "terms of use please mark the checkbox!"
@@ -525,30 +537,37 @@ msgstr ""
 "elfogadáshoz kattints a Regisztrálok gomb felett található a jelölőnégyzetbe"
 
 #: static/js/script.js:715 static/js/script.js:716 static/js/script.js:717
+#: static/js/script.js:721 static/js/script.js:722
 msgid "Type Password"
 msgstr "Írd be a jelszavad"
 
 #: static/js/script.js:718 static/js/script.js:719 static/js/script.js:720
+#: static/js/script.js:724 static/js/script.js:725
 msgid "More Characters"
 msgstr "Több karakter kell"
 
 #: static/js/script.js:721 static/js/script.js:722 static/js/script.js:723
+#: static/js/script.js:727 static/js/script.js:728
 msgid "Strong!"
 msgstr "Erős"
 
 #: static/js/script.js:724 static/js/script.js:725 static/js/script.js:726
+#: static/js/script.js:730 static/js/script.js:731
 msgid "Medium!"
 msgstr "Közepes"
 
 #: static/js/script.js:727 static/js/script.js:728 static/js/script.js:729
+#: static/js/script.js:733 static/js/script.js:734
 msgid "Weak!"
 msgstr "Gyenge"
 
 #: static/js/script.js:736 static/js/script.js:737 static/js/script.js:738
+#: static/js/script.js:742 static/js/script.js:743
 msgid "OK."
 msgstr "Rendben."
 
 #: static/js/script.js:737 static/js/script.js:738 static/js/script.js:739
+#: static/js/script.js:743 static/js/script.js:744
 msgid "Passwords are not equal."
 msgstr "A jelszavak nem egyeznek meg."
 

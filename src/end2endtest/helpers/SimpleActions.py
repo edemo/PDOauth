@@ -205,11 +205,12 @@ class SimpleActions(object):
     def actuallyIHaveNoClueWhyWeHaveToWaitHere(self):
         time.sleep(1)
 
-    def closeMessage(self):
+    def closeMessage(self, closeWait=True):
         self.waitForMessage2()
         self.waitForTraces(['MSGbox ready'])
         TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
-        self.waitForTraces(['popup closed'])
+        if closeWait:
+            self.waitForTraces(['popup closed'])
         self.actuallyIHaveNoClueWhyWeHaveToWaitHere()
 
     def goToLoginPage(self):

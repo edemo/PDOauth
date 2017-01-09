@@ -13,7 +13,7 @@ class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
     def giveHash(self):
         self.goToLoginPage()
         self.switchToTab('register')
-        self.click("create_here")
+        self.click("make_here")
         self.obtainHash("11111111110", "Mother Test", "registration-form")
         self.assertHashFromFormEquals("registration-form", config.testSignatureAllOne)
 
@@ -34,11 +34,6 @@ class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
         self.assertPopupErrorMatchesRe("emailben megadott")
         self.closeMessage()
         self.assertElementMatchesRe("me_Data", "van Titkos K\xf3d")
-
-    def test_many_times(self):
-        for i in range(20):
-            self.test_if_you_give_hash_after_registration_you_will_have_a_hashgiven_assurance()
-            self.logOut()
 
     def test_if_you_give_hash_after_registration_you_will_have_a_hashgiven_assurance(self):
         self.goToLoginPage()
