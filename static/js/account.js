@@ -72,11 +72,34 @@
 					$(assurances).append('<li>'+_(assurance.assurance)+'</li>')
 				} )
 				$(row).append( $('<td></td>').append( $(assurances) ) )
-				$(row).append( $('<td></td>').append( $('<a href="mailto:'+assurer.email+'"></a>').append( $('<button class="social"></button>').append('<i class="fa fa-envelope"></i>') ) ) )
+				$(row).append( $('<td nowrap></td>').append( 
+					$('<a href="mailto:'+assurer.email+'"></a>').append( 
+					$('<button class="social" title="'+_("Open in your mail client")+'"></button>').append('<i class="fa fa-envelope"></i>') )
+				).append(
+					$('<button class="social" style="margin-left:5px" title="'+_("Copy email address to clipboard")+'"></button>'
+					).click(function(){self.copyEmailAddressToClipboard(assurer.email)}).append('<i class="fa fa-clipboard"></i>')
+				) )
 				$("#assurers_table tbody").append(row)
 			}
 		} ) 
 	}
+	
+	PageScript.prototype.copyEmailAddressToClipboard = function(text) {	
+		if (!document.queryCommandSupported('copy')) alert(text)
+		else { 
+			var textArea = $('<textarea class="tmp_clpbrd">').append(text)
+			$("body").append( textArea )
+			textArea.select();
+			try {
+				var successful = document.execCommand('copy');
+				alert ( successful ? _("The email address copied to the clipboard.") : text )
+			} catch (err) {
+				console.log('Oops, unable to copy');
+			}
+			$(textArea).remove();
+		}
+	}
+	
 	
 	PageScript.prototype.initialise = function(text) {
 		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
@@ -114,6 +137,7 @@
 			else return;
 		}
 		else self.displayTheSection();
+		window.traces.push('userIsLoggedIn')
 	}
 
 	
@@ -153,6 +177,7 @@
 		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
 		document.getElementById("PopupWindow_SuccessDiv").innerHTML = "";
 		if (popupCallback) popupCallback();
+		window.traces.push("popup closed")
 		return "closePopup";
 	}
 
@@ -240,6 +265,7 @@
 
 	PageScript.prototype.byEmail = function() {
 	    var email = document.getElementById("ByEmailForm_email_input").value;
+        email = pageScript.mailRepair(email);
 		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
@@ -252,6 +278,7 @@
 	    digest = document.getElementById("assurancing_digest_input").value;
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
+        email = pageScript.mailRepair(email);
 	    csrf_token = self.getCookie('csrf');
 	    data= {
 	    	digest: digest,
@@ -307,6 +334,7 @@
 		document.getElementById("change-hash-form_hash-changer").style.display="table-row";
 		document.getElementById("change-hash-form_hash-changer-buttons").style.display="table-row";
 		document.getElementById("change-hash-form_hash-container").style.display="none";
+		window.traces.push("viewChangeHashForm")
 	}
 	
 	PageScript.prototype.viewChangeHashContainer = function() {
@@ -429,6 +457,7 @@
 		applist +='\
 		</table>';
 		document.getElementById("me_Applications").innerHTML=applist;
+		window.traces.push("myappsCallback")
 	}
 
 	PageScript.prototype.parseAssurances = function(data) {
@@ -450,6 +479,7 @@
 	
 	PageScript.prototype.changeEmailAddress = function() {
 	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
+        email = pageScript.mailRepair(email);
 		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
 		else {
 			var csrf_token = self.getCookie('csrf');

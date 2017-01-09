@@ -3,7 +3,6 @@ from pdoauth.WebInterface import WebInterface
 from pdoauth.Responses import Responses
 import sys
 from pdoauth.app import app
-import pdb
 import traceback
 
 class Decorators(WebInterface, Responses):

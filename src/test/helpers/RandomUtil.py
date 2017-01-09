@@ -25,7 +25,7 @@ class RandomUtil(object):
 
     @classmethod
     def createRandomEmailAddress(cls):
-        return "email{0}@example.com".format(cls.mkRandomString(6))
+        return "email{0}@example.com".format(cls.mkRandomString(6).lower())
 
     def setupUserCreationData(self, userid=None, password=None, email=None):
         self.setupRandom()
