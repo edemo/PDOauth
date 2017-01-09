@@ -16,16 +16,21 @@ class AppInfoUtil(PDUnitTest, UserUtil, AuthProviderUtil):
         klass.user.username = klass.util.userCreationUserid
         klass.user.password = klass.util.usercreationPassword
         klass.createTestAppMaps()
+        klass.createEmailtestApp()
         klass.appHandler = AppHandler(FakeInterface)
         klass.appList = klass.appHandler.getAppList(klass.user)
-        for app in klass.boundApps:
-            if not (app in klass.emailerApps):
-                klass.app = app
-                break
         klass.appNames = list()
         for anApp in klass.emailerApps:
             klass.appNames.append(anApp.name)
 
+    @classmethod
+    def createEmailtestApp(klass):
+        name = klass.createRandomUserId()
+        app = Application.new(name, name, "https://{0}.com/".format(name))
+        klass.allApps.add(app)
+        AppMap.new(app, klass.user)
+        klass.boundApps.add(app)
+        klass.app = app
 
     @classmethod
     def createTestAppMaps(self):

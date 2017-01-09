@@ -1,12 +1,28 @@
-You can find all the dependencies and their installation in .travis.yml
-To setup (and reset) testing environment, type
-make testsetup
+The starting point to understand the build is shippable.yml
+
+you need only docker installed to do the tests
+
+To get into the testing environment, type
+
+make testenv
+
+to prepare for the tests, do
+
+source tools/prepare
+
+if you want to debug end-to-end tests, you can run
+
+source tools/testenv
+
+which givesyouawindow manager, and makes sure that after running a test you will be dropped to a python debugger
+so you can inspect the browser using java console, inspector, etc
 
 to run all test, just type
 
 make checkall
 
 this currently runs the unit/integration tests, and end-to-end tests using firefox and chrome
+before make checkall, you do not want to source tools/testenv. if you did, unset E2EDEBUG
 
 to run just the unit/integration tests, do
 
@@ -28,8 +44,8 @@ make killall
 
 to bring down the hand test environment
 
-The test harness uses an sqlite database file at /tmp/pdoauth.db
-If you can rework it to use in-memory sqlite (and initialize it!) I will be thankful.
+to run one test, use tools/runone,with the test identifier as argument.
+for example
+./tools/runone HashE2ETest.HashTest.test_if_you_give_hash_after_registration_you_will_have_a_hashgiven_assurance
 
-Please look for FIXMEs for known areas with deficient testing.
 And of course more input validation tests are always welcome!

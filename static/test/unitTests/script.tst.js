@@ -1,3 +1,8 @@
+QUnit.test("mail blanks, lowercase; #804-805", function( assert ) {
+    pageScript = new PageScript(test);
+    assert.equal(pageScript.mailRepair("Szabo . Gez\na @ gm Ail.c OM"), "szabo.geza@gmail.com");
+    assert.equal(pageScript.mailRepair(""), "");
+});
 
 QUnit.module( "qeryStringFunc" ); 
 QUnit.test( "should return an array of query strings contained in url", function( assert ) {

@@ -9,6 +9,8 @@ function PageScript(test) {
 	this.isLoggedIn=false;
 	this.isAssurer=false;
 	this.registrationMethode="pw";
+	this.isFBsdkLoaded=false;
+	this.isFBconnected=false;
 
 PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   var query_string = {};
@@ -272,6 +274,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		if( self.page=="login"){
 			self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
 		}
+		window.traces.push("registerCallback")
 	}	
 
 	PageScript.prototype.reloadCallback = function(text) {
@@ -304,6 +307,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
 		var emailInput=document.getElementById(myForm+"_email_input").value
+        emailInput = pageScript.mailRepair(emailInput);
 		if (emailInput!="")
 			self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.callback(self.myCallback));
 		else {
@@ -312,6 +316,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 	}
 	
+    PageScript.prototype.mailRepair = function(mail) {
+        return self.mail = mail.replace(/\s+/g,'').toLowerCase();
+	}
+    
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_email_input").value;
 	    var onerror=false;
@@ -523,8 +531,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		digestCallback = function(status,text,xml) {
 			var diegestInput=document.getElementById(formName + "_digest_input")
 			if (status==200) {
+				window.traces.push("digest cb")
 				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
-				$("#"+formName + "_digest_input").trigger('keyup');
+				console.log(diegestInput.value)
+				$("#"+formName + "_digest-input").trigger('keyup');
 				document.getElementById(formName + "_predigest_input").value = "";
 				switch (formName) {
 					case "assurancing":
@@ -538,13 +548,17 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 						self.changeHash()
 						break;
 					case "registration-form":
-						document.getElementById(formName+"_code-generation-input").style.display="none"
-						document.getElementById(formName+"_digest-input").style.display="block"
+						console.log("formname is " + formName)
+						var style = document.getElementById(formName+"_code-generation-input").style;
+						console.log("style:" + formName)
+						style.display="none"
+						document.getElementById(formName+"_digest_input").style.display="block"
 						self.activateButton( formName+"_make-here", function(){self.digestGetter(formName).methodChooser('here')})
 						break;
 					default:
-						document.getElementById(formName+"_code-generation-input").style.display="none"
+						style.display="none"
 				}
+				window.traces.push("gotDigest")
 			}
 			else {
 				self.displayMsg({title:_("Error message"),error: text});
@@ -643,6 +657,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			document.getElementById("registration-form_identifier_input").value;
 	    var secret = document.getElementById("registration-form_secret_input").value;
 	    var email = document.getElementById("registration-form_email_input").value;
+        email = pageScript.mailRepair(email);
 		var d=document.getElementById("registration-form_digest_input");
 		var digest =(d)?d.value:"";
 	    var data= {
@@ -686,10 +701,14 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
-		b=document.getElementById(buttonId)
+		console.log(buttonId)
+		var b=document.getElementById(buttonId),
+			c
 		if (b) {
 			b.className=b.className.slice(0,b.className.indexOf("inactive"))
-			b.onclick=onclickFunc
+			if (onclickFunc) {
+				b.onclick = (typeof onclickFunc=="string")? function(){ eval(onclickFunc) } : onclickFunc 
+			}
 		}
 	}
 
@@ -725,7 +744,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
 	
-PageScript.prototype.initGettext = function(text) {
+	PageScript.prototype.initGettext = function(text) {
 		// waiting for gettext loads po files
 		try {
 			self.dictionary=JSON.parse(text)
@@ -736,6 +755,7 @@ PageScript.prototype.initGettext = function(text) {
 		}
 		self.init_()
 	}
+
 	
 	PageScript.prototype.gettext = function() {
 
