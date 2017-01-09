@@ -274,6 +274,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		if( self.page=="login"){
 			self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
 		}
+		window.traces.push("registerCallback")
 	}	
 
 	PageScript.prototype.reloadCallback = function(text) {
@@ -306,6 +307,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
 		var emailInput=document.getElementById(myForm+"_email_input").value
+        emailInput = pageScript.mailRepair(emailInput);
 		if (emailInput!="")
 			self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.callback(self.myCallback));
 		else {
@@ -314,6 +316,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 	}
 	
+    PageScript.prototype.mailRepair = function(mail) {
+        return self.mail = mail.replace(/\s+/g,'').toLowerCase();
+	}
+    
 	PageScript.prototype.login = function() {
 	    username = document.getElementById("LoginForm_email_input").value;
 	    var onerror=false;
@@ -525,6 +531,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		digestCallback = function(status,text,xml) {
 			var diegestInput=document.getElementById(formName + "_digest_input")
 			if (status==200) {
+				window.traces.push("digest cb")
 				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
 				$("#"+formName + "_digest_input").trigger('keyup');
 				document.getElementById(formName + "_predigest_input").value = "";
@@ -540,13 +547,17 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 						self.changeHash()
 						break;
 					case "registration-form":
-						document.getElementById(formName+"_code-generation-input").style.display="none"
+						console.log("formname is " + formName)
+						var style = document.getElementById(formName+"_code-generation-input").style;
+						console.log("style:" + formName)
+						style.display="none"
 						document.getElementById(formName+"_digest-input").style.display="block"
 						self.activateButton( formName+"_make-here", function(){self.digestGetter(formName).methodChooser('here')})
 						break;
 					default:
-						document.getElementById(formName+"_code-generation-input").style.display="none"
+						style.display="none"
 				}
+				window.traces.push("gotDigest")
 			}
 			else {
 				self.displayMsg({title:_("Error message"),error: text});
@@ -645,6 +656,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			document.getElementById("registration-form_identifier_input").value;
 	    var secret = document.getElementById("registration-form_secret_input").value;
 	    var email = document.getElementById("registration-form_email_input").value;
+        email = pageScript.mailRepair(email);
 		var d=document.getElementById("registration-form_digest_input");
 		var digest =(d)?d.value:"";
 	    var data= {

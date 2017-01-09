@@ -1,7 +1,5 @@
 import end2endtest.helpers.TestEnvironment as TE
 from selenium.webdriver.common.by import By
-import pdb
-import time
 
 class Procedures(object):
 
@@ -75,6 +73,7 @@ class Procedures(object):
             self.click("registration-form_getDigestButton")
             self.waitUntilElementHasText("registration-form_digest_input")
         self.click("registration-form_submitButton")
+        self.waitForTraces(["myappsCallback"])
         self.endProcess("register with password")
 
     def changeMyHash(self, digest=None):
@@ -82,7 +81,10 @@ class Procedures(object):
         if digest is None:
             digest = self.createHash()
         self.click("settings_section_link")
+        print(TE.driver.execute_script("return document.getElementById('viewChangeHashForm').onclick.toString()"))
+        print(self.getTraces())
         self.click("viewChangeHashForm")
+        print(self.getTraces())
         self.fillInField("change-hash-form_digest_input", digest)
         self.click("changeHash")
         self.observeField("PopupWindow_SuccessDiv")
@@ -103,5 +105,6 @@ class Procedures(object):
         self.fillInField(formName + "_predigest_input", identityNumber)
         self.fillInField(formName + "_predigest_mothername", motherName)
         self.click(formName + "_getDigestButton")
+        self.waitForTraces(["gotDigest"])
         self.endProcess("obtain hash")
 

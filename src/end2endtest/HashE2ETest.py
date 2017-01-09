@@ -7,7 +7,6 @@ from pdoauth.models import Assurance
 from test.helpers.UserUtil import UserUtil
 from test.helpers.CryptoTestUtil import CryptoTestUtil
 from unittest.case import TestCase
-import pdb
 
 class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
 
@@ -36,7 +35,11 @@ class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
         self.closeMessage()
         self.assertElementMatchesRe("me_Data", "van Titkos K\xf3d")
 
-    
+    def test_many_times(self):
+        for i in range(20):
+            self.test_if_you_give_hash_after_registration_you_will_have_a_hashgiven_assurance()
+            self.logOut()
+
     def test_if_you_give_hash_after_registration_you_will_have_a_hashgiven_assurance(self):
         self.goToLoginPage()
         self.switchToTab('register')
@@ -44,16 +47,13 @@ class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
         self.registerUser()
         self.assertPopupErrorMatchesRe("emailben megadott")
         self.closeMessage()
-        time.sleep(1)
         self.switchToSection("settings")
         self.click("viewChangeHashForm")
         self.click("create_hash_here")
         self.obtainHash("11111111110", mothername, "change-hash-form")
-        time.sleep(4)
         self.closeMessage()
         self.assertElementMatchesRe("change-hash-form_digest-pre", "[0-9a-f]{10}")
         self.switchToSection("account")
-        time.sleep(2)
         self.assertElementMatchesRe("me_Data", "van Titkos K\xf3d")
 
     
