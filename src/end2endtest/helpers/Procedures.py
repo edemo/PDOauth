@@ -51,7 +51,7 @@ class Procedures(object):
         TE.driver.get(passwordResetLink)
         self.fillInField("PasswordResetForm_password_input",password)
         self.click("PasswordResetForm_OnLoginTab_submitButton")
-        self.closeMessage()
+        self.closeMessage(closeWait=False)
         self.endProcess("click password reset link")
 
     def registerUser(self, digest=None, buttonId="nav-bar-register", personalId=None, motherName=None):
@@ -67,13 +67,14 @@ class Procedures(object):
         if digest:
             self.fillInField("registration-form_digest_input", digest)
         if personalId:
-            self.click("create_here")
+            self.click("make_here")
             self.fillInField("registration-form_predigest_input", personalId)
             self.fillInField("registration-form_predigest_mothername", motherName)
             self.click("registration-form_getDigestButton")
             self.waitUntilElementHasText("registration-form_digest_input")
         self.click("registration-form_submitButton")
-        self.waitForTraces(["myappsCallback"])
+        if buttonId=="nav-bar-register":
+            self.waitForTraces(["myappsCallback"])
         self.endProcess("register with password")
 
     def changeMyHash(self, digest=None):
