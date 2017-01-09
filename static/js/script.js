@@ -533,7 +533,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			if (status==200) {
 				window.traces.push("digest cb")
 				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
-				$("#"+formName + "_digest_input").trigger('keyup');
+				console.log(diegestInput.value)
+				$("#"+formName + "_digest-input").trigger('keyup');
 				document.getElementById(formName + "_predigest_input").value = "";
 				switch (formName) {
 					case "assurancing":
@@ -551,7 +552,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 						var style = document.getElementById(formName+"_code-generation-input").style;
 						console.log("style:" + formName)
 						style.display="none"
-						document.getElementById(formName+"_digest-input").style.display="block"
+						document.getElementById(formName+"_digest_input").style.display="block"
 						self.activateButton( formName+"_make-here", function(){self.digestGetter(formName).methodChooser('here')})
 						break;
 					default:
