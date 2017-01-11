@@ -72,11 +72,34 @@
 					$(assurances).append('<li>'+_(assurance.assurance)+'</li>')
 				} )
 				$(row).append( $('<td></td>').append( $(assurances) ) )
-				$(row).append( $('<td></td>').append( $('<a href="mailto:'+assurer.email+'"></a>').append( $('<button class="social"></button>').append('<i class="fa fa-envelope"></i>') ) ) )
+				$(row).append( $('<td nowrap></td>').append( 
+					$('<a href="mailto:'+assurer.email+'"></a>').append( 
+					$('<button class="social" title="'+_("Open in your mail client")+'"></button>').append('<i class="fa fa-envelope"></i>') )
+				).append(
+					$('<button class="social" style="margin-left:5px" title="'+_("Copy email address to clipboard")+'"></button>'
+					).click(function(){self.copyEmailAddressToClipboard(assurer.email)}).append('<i class="fa fa-clipboard"></i>')
+				) )
 				$("#assurers_table tbody").append(row)
 			}
 		} ) 
 	}
+	
+	PageScript.prototype.copyEmailAddressToClipboard = function(text) {	
+		if (!document.queryCommandSupported('copy')) alert(text)
+		else { 
+			var textArea = $('<textarea class="tmp_clpbrd">').append(text)
+			$("body").append( textArea )
+			textArea.select();
+			try {
+				var successful = document.execCommand('copy');
+				alert ( successful ? _("The email address copied to the clipboard.") : text )
+			} catch (err) {
+				console.log('Oops, unable to copy');
+			}
+			$(textArea).remove();
+		}
+	}
+	
 	
 	PageScript.prototype.initialise = function(text) {
 		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
@@ -114,6 +137,7 @@
 			else return;
 		}
 		else self.displayTheSection();
+		window.traces.push('userIsLoggedIn')
 	}
 
 	
@@ -143,6 +167,7 @@
 		if (msg.error) document.getElementById("PopupWindow_ErrorDiv").innerHTML     = "<p class='warning'>"+msg.error+"</p>";
 		if (msg.message) document.getElementById("PopupWindow_MessageDiv").innerHTML = "<p class='message'>"+msg.message+"</p>";
 		if (msg.success)document.getElementById("PopupWindow_SuccessDiv").innerHTML  = "<p class='success'>"+msg.success+"</p>";
+		window.traces.push("MSGbox ready")
 	}
 
 	PageScript.prototype.closePopup = function(popupCallback) {
@@ -152,6 +177,7 @@
 		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
 		document.getElementById("PopupWindow_SuccessDiv").innerHTML = "";
 		if (popupCallback) popupCallback();
+		window.traces.push("popup closed")
 		return "closePopup";
 	}
 
@@ -239,6 +265,7 @@
 
 	PageScript.prototype.byEmail = function() {
 	    var email = document.getElementById("ByEmailForm_email_input").value;
+        email = pageScript.mailRepair(email);
 		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
@@ -251,6 +278,7 @@
 	    digest = document.getElementById("assurancing_digest_input").value;
 	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
 	    email = document.getElementById("ByEmailForm_email_input").value;
+        email = pageScript.mailRepair(email);
 	    csrf_token = self.getCookie('csrf');
 	    data= {
 	    	digest: digest,
@@ -290,31 +318,41 @@
 	    	digest: digest,
 	    	csrf_token: csrf_token
 	    }
-	    self.ajaxpost("/v1/users/me/update_hash", data, self.changeHashCallback)
+	    self.ajaxpost("/v1/users/me/update_hash", data, self.callback(self.changeHashCallback))
 	}	
 	
-	PageScript.prototype.changeHashCallback = function(status,text,xml) {
-		if (status==200) { 
+	PageScript.prototype.changeHashCallback = function(text) {
+		var msg=self.processErrors(JSON.parse(text))
+		msg.callback=function(){
 			self.get_me()
 			self.viewChangeHashContainer()
-		}
-		else {
-			var data = JSON.parse(text);
-			var errs = self.processErrors(data);
-			self.displayMsg(errs);	
-		}
-
+			}
+		self.displayMsg(msg)
 	}
 	
 	PageScript.prototype.viewChangeHashForm = function() {
 		document.getElementById("change-hash-form_hash-changer").style.display="table-row";
+		document.getElementById("change-hash-form_hash-changer-buttons").style.display="table-row";
 		document.getElementById("change-hash-form_hash-container").style.display="none";
+		window.traces.push("viewChangeHashForm")
 	}
 	
 	PageScript.prototype.viewChangeHashContainer = function() {
 		document.getElementById("change-hash-form_hash-changer").style.display="none";
+		document.getElementById("change-hash-form_hash-changer-buttons").style.display="none";
 		document.getElementById("change-hash-form_hash-container").style.display="table-row";
 	}
+	
+	PageScript.prototype.showHashChanger = function(){
+		document.getElementById('change-hash-form_code-generation-input').style.display='block'
+	}
+	
+	PageScript.prototype.hideHashChanger = function(){
+		document.getElementById('change-hash-form_code-generation-input').style.display="none";
+		window.open(self.QueryString.uris.ANCHOR_URL)
+	}
+	
+
 	
 /*
 ********************************
@@ -323,56 +361,9 @@
 
 /***** Settings tab *****/
 	PageScript.prototype.parseSettings = function(data) {
-				
-		var result = '\
-		<table>\
-			<tr id="change-email-form_container">\
-				<td nowrap><b>'+_('Email address:')+'</b></td>\
-				<td id="email-change">\
-					<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" onkeyup="javascript:pageScript.emailChangeInput_onkeyup()">\
-				</td>\
-				<td class="button-container">\
-					<a onclick="javascript:pageScript.emailChangeEditButton_onclick()" class="btn btn_ fa fa-edit"></a>\
-					<a id="changeEmil_saveButton" onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save inactive" title="'+_("save")+'"></a>\
-				</td>\
-			</tr>\
-			<tr id="change-hash-form_hash-container">\
-				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
-				<td>\
-					<pre id="change-hash-form_digest-pre"><code>'+((data.hash)?data.hash:"")+'</code></pre>\
-				</td>\
-				<td class="button-container">\
-					<a id="viewChangeHashForm" onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>\
-					<a onclick="javascript:pageScript.deleteHash()" class="btn btn_ fa fa-trash"></a>\
-				</td>\
-			</tr>\
-			<tr id="change-hash-form_hash-changer" style="display: none;">\
-				<td nowrap><b>'+_("My Secret Hash:")+'</b></td>\
-				<td>\
-					<p><b>'+_("If you change your Secret Hash, all of your assurences will be deleted!")+'</b></p>\
-					<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>\
-					<button class="button" type="button" id="create_hash_here" onclick="javascript:document.getElementById(\'change-hash-form_code-generation-input\').style.display=\'block\'">'+_("Let's make it here")+'</button>\
-					<a href="'+self.QueryString.uris.ANCHOR_URL+'" target="_blank">\
-						<button class="button" id="create_hash_myself" type="button" onclick="javascript:document.getElementById(\'code-generation-input\').style.display=\'none\'">'+_("I make it myself")+'</button>\
-					</a>\
-					<div id="change-hash-form_code-generation-input" class="form">\
-						<div class="bordered">\
-							<label for="input">'+_("Personal identifier")+':</label>\
-							<input type="text" placeholder="" id="change-hash-form_predigest_input" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
-							<label for="mothername">'+_("Mother's name")+':</label>\
-							<input type="text" placeholder="" id="change-hash-form_predigest_mothername" onkeyup="pageScript.convert_mothername(\'change-hash-form_predigest\')">\
-							<button type="button" id="change-hash-form_getDigestButton" onclick="pageScript.digestGetter(\'change-hash-form\').getDigest()">'+_("Generate")+'</button>\
-							<div class="monitor" id="change-hash-form_predigest_monitor"></div>\
-						</div>\
-					</div>\
-				</td>\
-				<td class="button-container">\
-					<a id="changeHash" onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
-					<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
-				</td>\
-			</tr>\
-		</table>\
-		<h4><b>'+_("My credentials")+'</b></h4>\
+		$("#ChangeEmailAddressForm_email_input").val(data.email)	
+		$("#change-hash-form_digest-code").text(data.hash||"-- nincs megadva --")
+		var result = '<h4><b>'+_("My credentials")+'</b></h4>\
 		<table class="multiheader">';
 		var c={	pw:[_("Password"),"password","document.getElementById('change-email_form').style.display='table-row'",true],
 				fb:["Facebook","facebook","facebook.add_fb_credential()",false]}
@@ -466,6 +457,7 @@
 		applist +='\
 		</table>';
 		document.getElementById("me_Applications").innerHTML=applist;
+		window.traces.push("myappsCallback")
 	}
 
 	PageScript.prototype.parseAssurances = function(data) {
@@ -487,6 +479,7 @@
 	
 	PageScript.prototype.changeEmailAddress = function() {
 	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
+        email = pageScript.mailRepair(email);
 		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
 		else {
 			var csrf_token = self.getCookie('csrf');

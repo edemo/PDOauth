@@ -57,11 +57,7 @@ class FacebookUtil(object):
         self.click("register")
         self.pushFbButtonWhenready()
         self.handleFbLoginPage(user)
-        self.waitForJsState('registerCallBack callback')
-        if useEmail:
-            if user is None:
-                user = config.facebookUser2
-            self.fillInField("registration-form_email_input",user.email)
+        self.waitForJsState('getMecallback')
         self.tickCheckbox("registration-form_confirmField")
         self.getTraces()
         self.click("registration-form_submitButton")

@@ -181,4 +181,24 @@ ul.main-tab-list {
 .c-tab table, #me_Applications table{
 	font-size: 12px;
 }
+button.social {
+	line-height: 1rem;
+    font-size: 1.5rem;
+    height: 2.5rem;
+	margin: 0;
+	width:4rem;
+}
+}
+
+.tmp_clpbrd{
+	position:fixed;
+	top:0;
+	left:0;
+	width:2em;
+	height:2em;
+	padding:;
+	border:none;
+	outline:none;
+	box-shadow:none;
+	background:transparent;	
 }

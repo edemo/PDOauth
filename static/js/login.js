@@ -41,7 +41,8 @@
 		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		else {
 			self.greating("The %s application needs to sign in with your ADA account")
-			self.unhideSection("login_section")
+			if (self.QueryString.section && self.QueryString.section=="registration") self.unhideSection("register_section")
+			else self.unhideSection("login_section")
 		}
 		window.traces.push('loginpage')
 	}
@@ -185,6 +186,7 @@
 	PageScript.prototype.hashIsUpdated = function(text) {
 		self.hideAllSection()
 		self.init_()
+		window.traces.push("hashIsUpdated")
 	}
 	
 	PageScript.prototype.showForm = function(formName) {

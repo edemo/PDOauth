@@ -1,0 +1,7 @@
+grep export tools/prepare >tmp/p
+chmod a+x tmp/p
+set -x
+. tmp/p
+export E2EDEBUG=yes
+fvwm&
+set +x

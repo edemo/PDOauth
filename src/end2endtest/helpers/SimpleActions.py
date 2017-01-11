@@ -85,6 +85,13 @@ class SimpleActions(object):
 
     def fillInField(self, fieldId, value):
         self.logAction('<fillinfield fieldid="{0}">'.format(fieldId))
+        TE.driver.execute_script("""
+            window.scrollTo(
+                0,
+                document.getElementById('{0}').getBoundingClientRect().top-
+                 document.body.getBoundingClientRect().top-
+                 100)""".format(fieldId))
+
         element = self.waitUntilElementEnabled(fieldId)
         element.clear()
         element.send_keys(value)
@@ -105,6 +112,12 @@ class SimpleActions(object):
 
     def click(self, fieldId):
         self.logAction('<click fieldid="{0}">'.format(fieldId))
+        TE.driver.execute_script("""
+            window.scrollTo(
+                0,
+                document.getElementById('{0}').getBoundingClientRect().top-
+                 document.body.getBoundingClientRect().top-
+                 100)""".format(fieldId))
         element = self.waitUntilElementEnabled(fieldId)
         TE.driver.execute_script("""
             window.scrollTo(
@@ -162,7 +175,7 @@ class SimpleActions(object):
                 return False
         return True
 
-    def waitInitializationTraces(self, traces):
+    def waitForTraces(self, traces):
         maxCount = 40
         count = 0
         while not self.haveAllTraces(traces):
@@ -173,11 +186,11 @@ class SimpleActions(object):
             count += 1
 
     def waitLoginPage(self):
-        self.waitInitializationTraces(["initialized", "main end", "fbAsyncInit"])
+        self.waitForTraces(["initialized", "main end", "fbAsyncInit"])
         return self.waitUntilElementEnabled("nav-bar-aboutus")
 
     def waitContentProviderLoginPage(self):
-        self.waitInitializationTraces(["initialized", "fbAsyncInit", "loginpage"])
+        self.waitForTraces(["initialized", "fbAsyncInit", "loginpage"])
         return self.waitUntilElementEnabled("greatings")
 
     def switchToTab(self,tab):
@@ -189,9 +202,16 @@ class SimpleActions(object):
         self.click(element)
         self.waitUntilElementEnabled("{0}_section".format(tab))
 
-    def closeMessage(self):
+    def actuallyIHaveNoClueWhyWeHaveToWaitHere(self):
+        time.sleep(1)
+
+    def closeMessage(self, closeWait=True):
         self.waitForMessage2()
+        self.waitForTraces(['MSGbox ready'])
         TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
+        if closeWait:
+            self.waitForTraces(['popup closed'])
+        self.actuallyIHaveNoClueWhyWeHaveToWaitHere()
 
     def goToLoginPage(self):
         TE.driver.get(TE.loginUrl)

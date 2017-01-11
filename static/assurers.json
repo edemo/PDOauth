@@ -2,8 +2,8 @@
 	"assurers":
 	[
 		{
-			"name":"Assurer One",
-			"email":"assureron@adatom.hu",
+			"name":"Takács Bori",
+			"email":"takacsbori@adatom.hu",
 			"districts":["Budapest","Nagymaros"],
 			"assurances":
 				[
@@ -15,8 +15,8 @@
 			"availability":"yes"
 		},
 		{
-			"name":"Assurer Two",
-			"email":"assurertwo@gmail.com",
+			"name":"Madarász Csaba",
+			"email":"madarasz.csaba@gmail.com",
 			"districts":["Magyarország"],
 			"assurances":
 				[
@@ -26,6 +26,70 @@
 					},
 					{
 						"assurance":"assurer",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		},
+		{
+			"name":"Szabó Károly",
+			"email":"vbszk@adatom.hu",
+			"districts":["Magyarország"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					},
+					{
+						"assurance":"assurer",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		},
+		{
+			"name":"Magosányi Árpád",
+			"email":"m4gw4s@gmail.com",
+			"districts":["Magyarország"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					},
+					{
+						"assurance":"assurer",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		},
+		{
+			"name":"Peng György",
+			"email":"gypeng@adatom.hu",
+			"districts":["Páty"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					},
+					{
+						"assurance":"assurer",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		},
+		{
+			"name":"Lang András",
+			"email":"lang.andras@gmail.com",
+			"districts":["Budapest", "Szentendre"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
 						"expires":"never"
 					}
 				],
