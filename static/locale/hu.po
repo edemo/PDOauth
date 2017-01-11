@@ -309,7 +309,7 @@ msgstr "Email cím másolása a vágólapra"
 
 #: static/js/account.js:95
 msgid "The email address copied to the clipboard."
-msgstr "Az tanusító email címét a vágólapra másoltuk."
+msgstr "Az tanúsító email címét a vágólapra másoltuk."
 
 #: static/js/account.js:204 static/js/account.js:205 static/js/account.js:206
 msgid "Your email validation was succesfull."
@@ -584,7 +584,7 @@ msgstr "A jelszavak nem egyeznek meg."
 #~ msgstr "ellenőrzött email-cím"
 
 #~ msgid "assurer"
-#~ msgstr "Tanusító"
+#~ msgstr "Tanúsító"
 
 #~ msgid "assurer.magyar"
 #~ msgstr "'magyar'Tanúsító"
