@@ -524,6 +524,11 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		return s;
 	}
 	
+	// removing all non numeric characters
+	PageScript.prototype.normalizeId = function(val) {
+		return val.replace(/[^0-9]/g,"");
+	}
+	
 	PageScript.prototype.digestGetter = function(formName) {
 		var formName=formName
 		var digestCallback
@@ -605,7 +610,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 		function createXmlForAnchor(formName) {
 			console.log(formName)
-			personalId = document.getElementById(formName+"_predigest_input").value;
+			personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value);
 			motherValue = document.getElementById(formName+"_predigest_mothername").value;
 			mothername = self.normalizeString(motherValue);
 			if ( personalId == "") {
@@ -625,8 +630,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.convert_mothername = function(formName) {
 		var inputElement = document.getElementById( formName+"_mothername");
 		var outputElement = document.getElementById( formName+"_monitor");
-		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
-	}	
+		outputElement.innerHTML = self.normalizeId(document.getElementById( formName+"_input").value) +' - '+ self.normalizeString(inputElement.value);
+	}
+	
 	PageScript.prototype.setRegistrationMethode=function(methode){
 		self.registrationMethode=methode;
 		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) { e.className=e.className.replace(" active",""); } );
