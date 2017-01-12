@@ -66,7 +66,7 @@ class SimpleActions(object):
         print(element)
         TE.logfile.write(element)
         TE.logfile.write("\n")
-    
+
     def beginProcess(self, name):
         self.logAction('<process name="{0}">'.format(name))
         self.currentProcess.append(name)
@@ -88,6 +88,11 @@ class SimpleActions(object):
         element = self.waitUntilElementEnabled(fieldId)
         element.clear()
         element.send_keys(value)
+
+    def sendEnter(self, fieldId):
+        self.logAction('<sendEnter fieldid="{0}">'.format(fieldId))
+        element = TE.driver.find_element_by_id(fieldId)
+        element.send_keys(Keys.ENTER)
 
     def selectOptionValue(self, fieldId, value):
         self.logAction('<selectOptionValue fieldid="{0}" value="{1}">'.format(fieldId, value))

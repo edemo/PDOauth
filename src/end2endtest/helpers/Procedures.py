@@ -23,6 +23,15 @@ class Procedures(object):
         self.click("LoginForm_submitButton")
         self.endProcess("login with password")
 
+    def loginWithPasswordAndSubmitAs(self, user):
+        self.beginProcess("login with password and submit")
+        self.goToLoginPage()
+        self.switchToTab('login')
+        self.fillInField("LoginForm_email_input", user.userName)
+        self.fillInField("LoginForm_password_input", user.password)
+        self.sendEnter("LoginForm_password_input")
+        self.endProcess("login with password and submit")
+
     def assignAssurance(self, clientEmail, personalId, motherName):
         self.beginProcess("assign assurance to customer")
         self.switchToSection("assurer")
@@ -104,4 +113,3 @@ class Procedures(object):
         self.fillInField(formName + "_predigest_mothername", motherName)
         self.click(formName + "_getDigestButton")
         self.endProcess("obtain hash")
-
