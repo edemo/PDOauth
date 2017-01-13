@@ -513,5 +513,10 @@
 		}
 		else self.deactivateButton("changeEmil_saveButton")
 	}
+	
+	PageScript.prototype.InitiateResendRegistrationEmail = function() {
+		self.ajaxget( "/v1/send_verify_email", self.callback( function(data){ self.displayMsg( self.processErrors( self.validateServerMessage(data) ) )} ) )
+	}
+
 }()
 )

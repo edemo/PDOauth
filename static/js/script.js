@@ -122,7 +122,27 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
-
+	
+	PageScript.prototype.validateServerMessage = function (text) {
+		if (!text) return {
+			errors: [
+				"Something went wrong",
+				"An empty message is arrived from the server" 
+			]
+		}
+		try {
+			return JSON.parse(text)
+		}
+		catch(err) {
+			return { 
+				errors: [
+					"Something went wrong",
+					"Unexpected server message:" + "<br>" + text
+				]
+			}
+		}
+	}
+	
 	PageScript.prototype.processErrors = function(data) {
 			var msg = {},
 				translateError = function(e){
@@ -170,7 +190,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				}
 				msg.error += "</ul>";
 			}
-			
+			console.log(msg)
 			return msg;
 	}
 	
@@ -382,10 +402,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    }
 	    return "";
 	} 
-
-	PageScript.prototype.InitiateResendRegistrationEmail = function() {
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-		}
 
 	PageScript.prototype.loadjs = function(src) {
 	    var fileref=document.createElement('script')
@@ -707,7 +723,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
-		console.log(buttonId)
 		var b=document.getElementById(buttonId),
 			c
 		if (b) {

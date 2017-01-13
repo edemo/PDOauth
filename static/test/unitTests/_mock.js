@@ -48,8 +48,8 @@
 			document.getElementById('message-container').style.display = 'none';
 		},
 
-		isMessageBoxShown = function() { return document.getElementById("message-container").style.display=="block"; },
-		isMessageBoxHidden = function() { return document.getElementById("message-container").style.display!="block"; },
+		isMessageBoxShown = function() { return document.getElementById("myModal").style.display=="block"; },
+		isMessageBoxHidden = function() { return document.getElementById("myModal").style.display!="block"; },
 
 		isLoginButtonHidden        = function() { return document.getElementById("login-menu").style.display=="none" },
 		isRegistrationButtonHidden = function() { return document.getElementById("registration-menu").style.display=="none" },
@@ -113,6 +113,14 @@
 				},
 			debug: true,
 			uribase: "/ada"
+		},
+		
+		mockAjaxget = function(status, answer){
+			return function(uri, callback) {
+				pageScript.method = "GET"
+				pageScript.uri = uri
+				callback(status, answer)
+			}
 		}
 		
 QUnit.jUnitReport = function(report) {
