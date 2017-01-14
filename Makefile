@@ -1,16 +1,31 @@
+
+HTML_FILES = user_howto.html\
+	index.html\
+	login.html\
+	about_us.html\
+	fiokom.html
+
 all:
 	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
 
 %.json: %.po
 	./tools/po2json $< >$@
 
-install: static/locale/hu.json
+install: static static/locale/hu.json
 
 checkall: install tests integrationtests end2endtest xmldoc
 
 checkmanual: install alltests xmldoc
 
 alltests: tests integrationtests end2endtest
+
+static: static-base static-html
+static-base:
+	mkdir -p static
+	cp -r site/js site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
+
+static-html:
+	for page in $(HTML_FILES); do ./tools/compilehtml $$page; done
 
 realclean:
 	rm -rf PDAnchor; git clean -fdx
