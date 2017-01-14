@@ -1,6 +1,18 @@
 *, *:after, *:before {
     box-sizing: inherit;
 }
+.waiting {
+    background-image: url("images/waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
+.loader{
+    background-image: url("images/loader.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
 html {
     box-sizing: border-box;
     font-size: 62.5%;

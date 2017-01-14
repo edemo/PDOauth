@@ -121,7 +121,6 @@
 		self.isLoggedIn=true
 		self.refreshTheNavbar()
 		self.ajaxget('/v1/getmyapps', self.myappsCallback)
-		console.log(data)
 		if (data.assurances.hashgiven && data.assurances.emailverification) {
 			self.ajaxget("assurers.json", self.callback(self.fillAssurersTable), true)
 		}
