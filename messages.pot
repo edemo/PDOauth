@@ -324,7 +324,7 @@ msgid "Domain"
 msgstr ""
 
 #: static/js/account.js:435 static/js/script.js:204 static/js/account.js:436
-#: static/js/account.js:437
+#: static/js/account.js:437 static/js/script.js:224
 msgid "User identifier"
 msgstr ""
 
@@ -360,11 +360,11 @@ msgstr ""
 msgid "Server error occured"
 msgstr ""
 
-#: static/js/script.js:138
+#: static/js/script.js:138 static/js/script.js:158
 msgid "Server message"
 msgstr ""
 
-#: static/js/script.js:156
+#: static/js/script.js:156 static/js/script.js:176
 msgid "User informations"
 msgstr ""
 
@@ -372,57 +372,60 @@ msgstr ""
 #: static/js/script.js:557 static/js/script.js:676 static/js/script.js:461
 #: static/js/script.js:467 static/js/script.js:558 static/js/script.js:677
 #: static/js/script.js:678 static/js/script.js:563 static/js/script.js:682
-#: static/js/script.js:564 static/js/script.js:683
+#: static/js/script.js:564 static/js/script.js:683 static/js/script.js:181
+#: static/js/script.js:477 static/js/script.js:483 static/js/script.js:585
+#: static/js/script.js:705
 msgid "Error message"
 msgstr ""
 
-#: static/js/script.js:208
+#: static/js/script.js:208 static/js/script.js:228
 msgid "Assurances"
 msgstr ""
 
-#: static/js/script.js:212
+#: static/js/script.js:212 static/js/script.js:232
 msgid "Name"
 msgstr ""
 
-#: static/js/script.js:213
+#: static/js/script.js:213 static/js/script.js:233
 msgid "Assurer"
 msgstr ""
 
-#: static/js/script.js:214
+#: static/js/script.js:214 static/js/script.js:234
 msgid "Date of assurance"
 msgstr ""
 
-#: static/js/script.js:215
+#: static/js/script.js:215 static/js/script.js:235
 msgid "Valid until"
 msgstr ""
 
-#: static/js/script.js:227
+#: static/js/script.js:227 static/js/script.js:247
 msgid "unlimited"
 msgstr ""
 
-#: static/js/script.js:268
+#: static/js/script.js:268 static/js/script.js:288
 msgid "Congratulation!"
 msgstr ""
 
-#: static/js/script.js:269
+#: static/js/script.js:269 static/js/script.js:289
 msgid ""
 "You have succesfully registered and logged in. </br> Please click the link "
 "inside the email we sent you to validate your email address, otherwise your "
 "account will be destroyed in one week."
 msgstr ""
 
-#: static/js/script.js:327 static/js/script.js:328
+#: static/js/script.js:327 static/js/script.js:328 static/js/script.js:348
 msgid "User name is missing. "
 msgstr ""
 
-#: static/js/script.js:332 static/js/script.js:333
+#: static/js/script.js:332 static/js/script.js:333 static/js/script.js:353
 msgid "Password is missing. "
 msgstr ""
 
 #: static/js/script.js:335 static/js/script.js:605 static/js/script.js:609
 #: static/js/script.js:336 static/js/script.js:606 static/js/script.js:610
 #: static/js/script.js:607 static/js/script.js:611 static/js/script.js:615
-#: static/js/script.js:612 static/js/script.js:616
+#: static/js/script.js:612 static/js/script.js:616 static/js/script.js:356
+#: static/js/script.js:633 static/js/script.js:637
 msgid "Missing data"
 msgstr ""
 
@@ -430,7 +433,9 @@ msgstr ""
 #: static/js/script.js:426 static/js/script.js:440 static/js/script.js:444
 #: static/js/script.js:448 static/js/script.js:387 static/js/script.js:419
 #: static/js/script.js:423 static/js/script.js:427 static/js/script.js:441
-#: static/js/script.js:445 static/js/script.js:449
+#: static/js/script.js:445 static/js/script.js:449 static/js/script.js:435
+#: static/js/script.js:439 static/js/script.js:443 static/js/script.js:457
+#: static/js/script.js:461 static/js/script.js:465
 msgid "Under construction"
 msgstr ""
 
@@ -438,102 +443,104 @@ msgstr ""
 #: static/js/script.js:426 static/js/script.js:440 static/js/script.js:444
 #: static/js/script.js:448 static/js/script.js:387 static/js/script.js:419
 #: static/js/script.js:423 static/js/script.js:427 static/js/script.js:441
-#: static/js/script.js:445 static/js/script.js:449
+#: static/js/script.js:445 static/js/script.js:449 static/js/script.js:435
+#: static/js/script.js:439 static/js/script.js:443 static/js/script.js:457
+#: static/js/script.js:461 static/js/script.js:465
 msgid "This function is not working yet."
 msgstr ""
 
-#: static/js/script.js:461 static/js/script.js:462
+#: static/js/script.js:461 static/js/script.js:462 static/js/script.js:478
 msgid "The secret is missing"
 msgstr ""
 
-#: static/js/script.js:467 static/js/script.js:468
+#: static/js/script.js:467 static/js/script.js:468 static/js/script.js:484
 msgid "To accept the terms please mark the checkbox!"
 msgstr ""
 
 #: static/js/script.js:539 static/js/script.js:540 static/js/script.js:541
-#: static/js/script.js:542
+#: static/js/script.js:542 static/js/script.js:563
 msgid "The Secret Hash is given for assuring"
 msgstr ""
 
 #: static/js/script.js:561 static/js/script.js:562 static/js/script.js:567
-#: static/js/script.js:568
+#: static/js/script.js:568 static/js/script.js:589
 msgid "The Secret Hash isn't given yet"
 msgstr ""
 
 #: static/js/script.js:605 static/js/script.js:606 static/js/script.js:607
-#: static/js/script.js:611 static/js/script.js:612
+#: static/js/script.js:611 static/js/script.js:612 static/js/script.js:633
 msgid "Personal identifier is missing"
 msgstr ""
 
 #: static/js/script.js:609 static/js/script.js:610 static/js/script.js:611
-#: static/js/script.js:615 static/js/script.js:616
+#: static/js/script.js:615 static/js/script.js:616 static/js/script.js:637
 msgid "Mother's name is missing"
 msgstr ""
 
 #: static/js/script.js:630 static/js/script.js:631 static/js/script.js:632
-#: static/js/script.js:636 static/js/script.js:637
+#: static/js/script.js:636 static/js/script.js:637 static/js/script.js:659
 msgid "email address and/or username / password"
 msgstr ""
 
 #: static/js/script.js:637 static/js/script.js:638 static/js/script.js:639
-#: static/js/script.js:643 static/js/script.js:644
+#: static/js/script.js:643 static/js/script.js:644 static/js/script.js:666
 msgid "my facebook account"
 msgstr ""
 
 #: static/js/script.js:643 static/js/script.js:644 static/js/script.js:645
-#: static/js/script.js:649 static/js/script.js:650
+#: static/js/script.js:649 static/js/script.js:650 static/js/script.js:672
 #, javascript-format
 msgid "Registration with %s "
 msgstr ""
 
 #: static/js/script.js:676 static/js/script.js:677 static/js/script.js:678
-#: static/js/script.js:682 static/js/script.js:683
+#: static/js/script.js:682 static/js/script.js:683 static/js/script.js:705
 msgid "The passwords are not identical"
 msgstr ""
 
 #: static/js/script.js:685 static/js/script.js:686 static/js/script.js:687
-#: static/js/script.js:691 static/js/script.js:692
+#: static/js/script.js:691 static/js/script.js:692 static/js/script.js:714
 msgid "Acceptance is missing"
 msgstr ""
 
 #: static/js/script.js:685 static/js/script.js:686 static/js/script.js:687
-#: static/js/script.js:691 static/js/script.js:692
+#: static/js/script.js:691 static/js/script.js:692 static/js/script.js:714
 msgid ""
 "For the registration you have to accept the terms of use. To accept the "
 "terms of use please mark the checkbox!"
 msgstr ""
 
 #: static/js/script.js:715 static/js/script.js:716 static/js/script.js:717
-#: static/js/script.js:721 static/js/script.js:722
+#: static/js/script.js:721 static/js/script.js:722 static/js/script.js:743
 msgid "Type Password"
 msgstr ""
 
 #: static/js/script.js:718 static/js/script.js:719 static/js/script.js:720
-#: static/js/script.js:724 static/js/script.js:725
+#: static/js/script.js:724 static/js/script.js:725 static/js/script.js:746
 msgid "More Characters"
 msgstr ""
 
 #: static/js/script.js:721 static/js/script.js:722 static/js/script.js:723
-#: static/js/script.js:727 static/js/script.js:728
+#: static/js/script.js:727 static/js/script.js:728 static/js/script.js:749
 msgid "Strong!"
 msgstr ""
 
 #: static/js/script.js:724 static/js/script.js:725 static/js/script.js:726
-#: static/js/script.js:730 static/js/script.js:731
+#: static/js/script.js:730 static/js/script.js:731 static/js/script.js:752
 msgid "Medium!"
 msgstr ""
 
 #: static/js/script.js:727 static/js/script.js:728 static/js/script.js:729
-#: static/js/script.js:733 static/js/script.js:734
+#: static/js/script.js:733 static/js/script.js:734 static/js/script.js:755
 msgid "Weak!"
 msgstr ""
 
 #: static/js/script.js:736 static/js/script.js:737 static/js/script.js:738
-#: static/js/script.js:742 static/js/script.js:743
+#: static/js/script.js:742 static/js/script.js:743 static/js/script.js:764
 msgid "OK."
 msgstr ""
 
 #: static/js/script.js:737 static/js/script.js:738 static/js/script.js:739
-#: static/js/script.js:743 static/js/script.js:744
+#: static/js/script.js:743 static/js/script.js:744 static/js/script.js:765
 msgid "Passwords are not equal."
 msgstr ""

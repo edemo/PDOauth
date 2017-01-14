@@ -107,3 +107,13 @@ QUnit.test( "ajaxget() can be mocked", function( assert ) {
 		// cleaning
 	pageScript.uribase = _uribase;
 });
+
+QUnit.test( "normalizeId() removes non numeric characters", function( assert ) {
+		// Initializing the test		
+	pageScript = new PageScript(test)
+	var testStr = "valami személyi szám 1-234567-1234 =/%!+",
+		// calling the unit		
+	retVal=pageScript.normalizeId( testStr );
+		// asserts 
+	assert.ok(( retVal == "12345671234" ), "the non numeric characters have been removed");
+});

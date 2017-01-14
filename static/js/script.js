@@ -122,7 +122,27 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
-
+	
+	PageScript.prototype.validateServerMessage = function (text) {
+		if (!text) return {
+			errors: [
+				"Something went wrong",
+				"An empty message is arrived from the server" 
+			]
+		}
+		try {
+			return JSON.parse(text)
+		}
+		catch(err) {
+			return { 
+				errors: [
+					"Something went wrong",
+					"Unexpected server message:" + "<br>" + text
+				]
+			}
+		}
+	}
+	
 	PageScript.prototype.processErrors = function(data) {
 			var msg = {},
 				translateError = function(e){
@@ -170,7 +190,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				}
 				msg.error += "</ul>";
 			}
-			
+			console.log(msg)
 			return msg;
 	}
 	
@@ -383,10 +403,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    return "";
 	} 
 
-	PageScript.prototype.InitiateResendRegistrationEmail = function() {
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-		}
-
 	PageScript.prototype.loadjs = function(src) {
 	    var fileref=document.createElement('script')
 	    fileref.setAttribute("type","text/javascript")
@@ -524,6 +540,11 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		return s;
 	}
 	
+	// removing all non numeric characters
+	PageScript.prototype.normalizeId = function(val) {
+		return val.replace(/[^0-9]/g,"");
+	}
+	
 	PageScript.prototype.digestGetter = function(formName) {
 		var formName=formName
 		var digestCallback
@@ -605,7 +626,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 		function createXmlForAnchor(formName) {
 			console.log(formName)
-			personalId = document.getElementById(formName+"_predigest_input").value;
+			personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value);
 			motherValue = document.getElementById(formName+"_predigest_mothername").value;
 			mothername = self.normalizeString(motherValue);
 			if ( personalId == "") {
@@ -625,8 +646,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.convert_mothername = function(formName) {
 		var inputElement = document.getElementById( formName+"_mothername");
 		var outputElement = document.getElementById( formName+"_monitor");
-		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
-	}	
+		outputElement.innerHTML = self.normalizeId(document.getElementById( formName+"_input").value) +' - '+ self.normalizeString(inputElement.value);
+	}
+	
 	PageScript.prototype.setRegistrationMethode=function(methode){
 		self.registrationMethode=methode;
 		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) { e.className=e.className.replace(" active",""); } );
@@ -701,7 +723,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
-		console.log(buttonId)
 		var b=document.getElementById(buttonId),
 			c
 		if (b) {
