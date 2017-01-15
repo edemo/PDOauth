@@ -1,0 +1,30 @@
+running all tests on a remote Linux machine
+
+preparation:
+    @remotemachine$ sudo apt-get install docker
+    @remotemachine$ git clone <your git repo uri>
+
+    $localmachine$ ssh -L 5900:127.0.0.1:5900 remotemachine
+#^^^the point is that you use local port forwarding for port 5900 with ssh when logging in
+
+    @remotemachine$ cd PDOauth
+    @remotemachine$ make testenv
+#^at this point you entered the test environment
+
+    root@68ce70d4714b:/PDOauth# . tools/prepare
+#^at this point you can launch a VNC viewer on the local machine for the display :0
+    root@68ce70d4714b:/PDOauth# make checkall
+#^this runs all the tests
+
+#to run only one test, first figure out the name of the test.
+#for example if you see this in the build output
+#    ======================================================================
+#    ERROR: test_you_can_add_a_digest_as_a_logged_in_user (DigestTest.DigestTest)
+#    ----------------------------------------------------------------------
+#    Traceback (most recent call last):
+#
+#then the name of the test is DigestTest.DigestTest.test_you_can_add_a_digest_as_a_logged_in_user
+#and you run it like this:
+
+root@68ce70d4714b:/PDOauth# ./tools/runone DigestTest.DigestTest.test_you_can_add_a_digest_as_a_logged_in_user
+
