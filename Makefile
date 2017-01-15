@@ -142,6 +142,8 @@ doc/html/documentation.html: lib/saxon9he.jar doc/html/documentation.docbook doc
 always:
 
 messages.pot: always
+	rm -f messages.pot
+	touch messages.pot
 	xgettext -L Python -j --package-name=PDOauth -o messages.pot src/pdoauth/Messages.py
 	xgettext -L javascript -j --from-code=utf-8 --package-name=PDOauth -o messages.pot static/js/*.js
 
