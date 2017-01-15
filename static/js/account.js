@@ -100,13 +100,16 @@
 		}
 	}
 	
-	
 	PageScript.prototype.initialise = function(text) {
-		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
+		self.ajaxget("locale/hu.json",self.callback(self.initGettext, function(status, response){
+			_=function(str){return str}
+			self.displayServerResponse(response, {ok: self.init_})
+		} ),true)
+		window.traces.push("initialise")
 	}
 	
-	PageScript.prototype.userNotLoggedIn = function(status, text) {
-		var data = JSON.parse(text);
+	PageScript.prototype.userNotLoggedIn = function( response ) {
+		var data = self.validateServerMessage( response );
 		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		self.refreshTheNavbar()
 		if (self.QueryString.section) {
@@ -199,7 +202,8 @@
 					break;
 			}
 		}
-		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))	
+		window.traces.push("init_")		
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
@@ -547,5 +551,33 @@
 		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
 	}
 
+	PageScript.prototype.doDeregister = function() {
+		
+		var deregisterCallback = function( response ) {
+			self.isLoggedIn = false
+			self.refreshTheNavbar();
+			if ( self.page == "account" ) self.displayTheSection( "login" );
+			self.displayServerResponse( response, {ok: self.doLoadHome} )
+		}
+		
+		if ( document.getElementById("accept_deregister").checked ) {
+			if ( self.QueryString.secret ) {
+				var post = {
+					csrf_token: self.getCookie("csrf"),
+					deregister_secret: self.QueryString.secret
+				}
+				self.ajaxpost( "/v1/deregister_doit", post, self.callback( deregisterCallback ) )
+			}
+			else self.displayMsg({
+					title:_("Error message"),
+					error:_("The secret is missing")
+			})
+		}
+		else self.displayMsg({
+			title:_("Error message"),
+			error:_("To accept the terms please mark the checkbox!")
+		})			
+	}
+	
 }()
 )
