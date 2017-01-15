@@ -18,7 +18,7 @@ function PageScript(test) {
 		if (currentLocation != fiokom) {
 			win.location = fiokom +"?section="+section
 		} else{
-			if (self.QueryString.section) self.doRedirect(self.QueryString.uris.BASE_URL+"/fiokom.html");
+			if (self.QueryString.section) self.doRedirect(self.QueryString.uris.START_URL);
 			else self.displayTheSection(section)
 		}
 	}
