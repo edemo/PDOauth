@@ -1,6 +1,18 @@
 *, *:after, *:before {
     box-sizing: inherit;
 }
+.waiting {
+    background-image: url("images/waiting.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
+.loader{
+    background-image: url("images/loader.gif");
+    background-repeat: no-repeat;
+    background-position: center;
+	min-height: 150px;
+	}
 html {
     box-sizing: border-box;
     font-size: 62.5%;
@@ -182,6 +194,16 @@ ul.disced {
 	margin-left:25px;
 }
 
+
+#assurers_table ul{
+	margin-bottom:0px;
+}
+
+input[type=checkbox]{
+	width:25px;
+	height:25px;
+}
+
 @media (max-width: 767px){
 .feature_title {
     width: 75%;
@@ -190,8 +212,8 @@ ul.disced {
 .account-tabber {
 	margin-left:0px;
 }
+input[type=checkbox]{
+	width:15px;
+	height:15px;
 }
-
-#assurers_table ul{
-	margin-bottom:0px;
 }

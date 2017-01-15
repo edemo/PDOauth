@@ -57,7 +57,7 @@
 -->
 
 				<p></p>
-				<form id="loginform" action="" method="post" name="login">
+				<form id="loginform" action="" method="post" name="login" onsubmit="javascript:pageScript.login(); return false">
 					<fieldset>
 						<!-- label for="LoginForm_username_input">Felhasználónév vagy email cím:</label -->
 						<div class="form-level">
@@ -69,7 +69,7 @@
 						<input class="input-block" type="password" placeholder="Jelszó" id="LoginForm_password_input">
 						<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
-						<button id="LoginForm_submitButton" type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
+						<button id="LoginForm_submitButton" type="submit">Bejelentkezés</button>
 					</fieldset>
 				</form>
 			</section>
@@ -86,14 +86,14 @@
 			<a name="feltetelek"></a>
 		</div>
 <!-- End login section -->
-	
+
 <!-- Regisztration -->
 		<div class="func container" id="register_section">
 			<section class="container_">
 				<h3 class="title">Regisztráció</h3>
 			</section>
 			<section class="container_ ">
-			
+
 				<H4>Válaszd ki hogyan akarsz regisztrálni</h4>
 				<div id="registration-form-method-selector" class="form">
 					<button id="registration-form-method-selector-pw" class="social active" title="felhasználónév + jelszó" type="button" onclick="javascript:pageScript.setRegistrationMethode('pw')">
@@ -135,17 +135,17 @@
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 						<div class="input-block" id="registration-form_pw-equal"></div>
-						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p> 
+						<p class="note">A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is.</p>
 						</div>
 					</div>
 				<h4>Elkészítem a Titkos Kódom</h4>
-				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni. A kód elkészítéséhez szükséged lesz a 
+				<p class="note">Nem kötelező, de egyes alkalmazásokat enélkül nem tudsz majd használni. A kód elkészítéséhez szükséged lesz a
 						Személyi azonosítódra is, melyet a lakcímkártyád hátoldalán találhatsz meg. </p>
 				<div class="digest-input">
-					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer. 
-							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg, 
-							melyből az eredeti adatok nem nyerhetők vissza. 
-							A Titkos Kódot magad is előállíthatod 
+					<p class="note">A Titkos Kód elkészítéséhez szükséges adatokat nem tárolja a rendszer.
+							Az alább megadott személyes adataidból a "Titkos Kód Gép" segítségével előállított kódot őrzünk meg,
+							melyből az eredeti adatok nem nyerhetők vissza.
+							A Titkos Kódot magad is előállíthatod
 							, és akkor csak azt kell bemásolnod a lenti "Tikos Kód" mezőbe</p>
 				</div>
 						<button class="button" id="make_here" type="button" onclick="javascript:document.getElementById('registration-form_code-generation-input').style.display='block'">Készítsük el itt</button>
@@ -167,7 +167,7 @@
 						<textarea data-autoresize class="digest" name="digest" type="text" id="registration-form_digest_input"></textarea>
 						</div>
 					<input type="checkbox" id="registration-form_confirmField" name="accept" value="accept">
-					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az 
+					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az
 					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
 
 				<button type="button" id="registration-form_submitButton" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
@@ -175,8 +175,8 @@
 			</section>
 		</div>
 
-	
-<!-- End registration section -->	
+
+<!-- End registration section -->
 
 <!-- My account -->
 		<div class="func container" id="my_account_section">
@@ -188,7 +188,7 @@
             <div class="feature-tab">
                <div class="ada_tab_panel col-md-2 col-sm-2 col-xs-12">
                     <ul class="nav nav-tabs main-tab-list text-center" role="tablist">
-					
+
                           <li role="presentation" id="account_section" class="active">
                             <a href="#1" role="tab" data-toggle="tab" id="account_section_link">
                               <div class="single-tab">
@@ -199,7 +199,7 @@
                                  <h4>Adataim</h4>
                             </a>
                           </li>
-						  
+
                           <li role="presentation" id="settings_section">
                             <a href="#2" role="tab" data-toggle="tab" id="settings_section_link">
                                 <div class="single-tab">
@@ -210,7 +210,7 @@
                                 <h4>Beállítások</h4>
                             </a>
                           </li>
-						  
+
                           <li role="presentation">
                             <a href="#3" role="tab" data-toggle="tab" id="applications_section_link">
                                 <div class="single-tab">
@@ -221,7 +221,7 @@
                                 <h4>Alkalmazásaim</h4>
                             </a>
                           </li>
-						  
+
                           <li role="presentation">
                             <a href="#4" role="tab" data-toggle="tab"  id="assurers_section_link">
                                 <div class="single-tab">
@@ -232,7 +232,7 @@
                                 <h4>Tanusítás</h4>
                             </a>
                           </li>
-						  
+
                           <li role="presentation"  class="func" id="assurer_section">
                             <a href="#5" role="tab" data-toggle="tab" id="assurer_section_link">
                                 <div class="single-tab">
@@ -243,7 +243,7 @@
                                 <h4>Tanúsítói felület</h4>
                             </a>
                           </li>
-						  
+
                     </ul>
                 </div>  <!-- col-md-12 end -->
                 <div class="account-tabber col-md-10 col-sm-10 col-xs-12">
@@ -254,13 +254,13 @@
                                          <h4><b>Adataim</b></h4>
                                          <div id="me_Data"></div>
                                     </div>
-                                </div> 
+                                </div>
                           </div>
-						  
+
                           <div role="tabpanel" class="tab-pane" id="2">
                                 <div class="col-md-12 col-sm-12">
                                     <div class="c-tab">
-									
+
                                          <h4><b>Beállítások</b></h4>
 										 <div id="me_Settings_">
 										 	<table>
@@ -274,7 +274,7 @@
 														<a id="changeEmil_saveButton" onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save inactive" title="mentés"></a>
 													</td>
 												</tr>
-												
+
 												<tr id="change-hash-form_hash-container">
 													<td nowrap><b>Titkos Kódom:</b></td>
 													<td>
@@ -287,7 +287,7 @@
 														<a onclick="javascript:pageScript.deleteHash()" class="btn btn_ fa fa-trash"></a>
 													</td>
 												</tr>
-												
+
 												<tr id="change-hash-form_hash-changer" style="display: none;">
 													<td nowrap><b>Titkos Kódom:</b></td>
 													<td>
@@ -319,12 +319,16 @@
 										</div>
 										<div id="me_Settings">
 										</div>
-										<h4><b>Egyebek</b></h4> 
-										<button type="button" onclick="javascript:pageScript.initiateDeregister('userdata_editform')">Törlöm a fiókom</button>
+										<h4><b>Egyebek</b></h4>
+										<button class="col-md-3 col-sm-4" type="button" onclick="javascript:pageScript.InitiateResendRegistrationEmail()" >Levél újraküldése</button>
+										<div class="col-md-9 col-sm-8">Email cím ellenőrző levél újraküldése</div>
+										<div class="col-md-12 col-sm-12"><hr></div>
+										<button class="col-md-3 col-sm-4" type="button" onclick="javascript:pageScript.initiateDeregister('userdata_editform')">Törlöm a fiókom</button>
+										<div class="col-md-9 col-sm-8 ">Fiók törlése után már nem fogod tudni használni azokat az alkalmazásokat, ahova ADA fiókoddal regisztráltál</div>
                                     </div>
                                 </div>
                           </div>
-						  
+
                           <div role="tabpanel" class="tab-pane" id="3">
                                 <div class="col-md-12 col-sm-12">
                                     <div class="c-tab">
@@ -333,7 +337,7 @@
                                     </div>
                                 </div>
                           </div>
-						  
+
                           <div role="tabpanel" class="tab-pane" id="4">
                                 <div class="col-md-12 col-sm-12">
                                     <div class="c-tab">
@@ -361,7 +365,7 @@
                                     </div>
                                 </div>
                           </div>
-						  
+
                           <div role="tabpanel" class="tab-pane" id="5">
                                <div class="col-md-12 col-sm-12">
                                     <div class="c-tab">
@@ -392,9 +396,9 @@
                       </div>
                 </div>
 
-                 
+
             </div>
-     
+
 </section>
 <!-- About us End -->
 		</div>
@@ -414,8 +418,8 @@
 		<div class="func container" id="deregistration_section">
 			<section class="container_">
 				<h3 class="title">Fiók törlése</h3>
-				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük. 
-				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be. 
+				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük.
+				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be.
 				Az <b>igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
 				<p>Az alábbi jelölőnégyzet kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
 				<div>
@@ -443,7 +447,7 @@
 				</form>
 			</section>
 		</div>
-<!-- End password reset section -->	
+<!-- End password reset section -->
 
 <!-- Email change section-->
 		<div class="func container" id="emailchange_section">
@@ -455,7 +459,7 @@
 				<button type="button" onclick="javascript:pageScript.changeEmail(false)">Mégse</button>
 			</section>
 		</div>
-<!-- Email change section -->	
+<!-- Email change section -->
 
 	</div>
 

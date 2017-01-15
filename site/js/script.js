@@ -87,29 +87,23 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.reportServerFailure = function(text){
 		self.displayMsg({title:_("Server error occured"),error: text})
 	}
-
+	
 	PageScript.prototype.callback = function(next,error){
-		var next  = next || function(){return}
-		var error = error || defaultErrorHandler
-		function callback(status,text,xml) {
+		var next  = next || self.displayServerResponse,
+			error = error || self.displayServerResponse;
+		return function(status,response,xml) {
 			switch (status){
 				case 200:
-					next(text,xml)
+					next(response,xml)
 					break;
 				case 500:
 				case 405:
-					self.reportServerFailure(text)
+					self.reportServerFailure(response)
 					break;
 				default:
-					error(status,text,xml)
+					error(status,response,xml)
 			}
 		}
-		function defaultErrorHandler(status,text,xml){
-            console.log(text)
-			data=JSON.parse(text)
-			self.displayMsg(self.processErrors(data))
-		}
-		return callback
 	}
 	
 	PageScript.prototype.commonInit=function(text) {
@@ -169,7 +163,30 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		xmlhttp.send();
 	}
 
-	PageScript.prototype.processErrors = function(data) {
+		
+	PageScript.prototype.displayServerResponse = function( response, callbacks ){
+		self.displayMsg( self.processErrors( self.validateServerMessage( response ), callbacks ) )
+	}
+	
+	PageScript.prototype.validateServerMessage = function (response) {
+		if (!response) return {
+			errors: [
+				"Something went wrong",
+				"An empty message is arrived from the server" 
+			]
+		}
+		try { return JSON.parse(response) }
+		catch(err) {
+			return { 
+				errors: [
+					"Something went wrong",
+					"Unexpected server message:" + "<br>" + response
+				]
+			}
+		}
+	}
+	
+	PageScript.prototype.processErrors = function(data, callbacks) {
 			var msg = {},
 				translateError = function(e){
 					console.log(e)
@@ -179,7 +196,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 					}
 					return a.join(': ')
 				};
-				
+			if (callbacks) msg.callback = callbacks.ok || null;
 			if (data.message) {
 				msg.title=_("Server message");
 				msg.message=self.parseMessage(data.message)
@@ -216,7 +233,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				}
 				msg.error += "</ul>";
 			}
-			
+			console.log(msg)
 			return msg;
 	}
 	
@@ -287,24 +304,18 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 	
 // oldie	
-	PageScript.prototype.myCallback = function(text) {
-
+	PageScript.prototype.myCallback = function(response) {
 		if( self.page=="login"){
 			if( self.QueryString.next) {
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
-		var data = JSON.parse(text);
-		var msg = self.processErrors(data)
-		self.displayMsg(msg);
-
+		self.displayServerResponse(response);
 	}
 	
-	PageScript.prototype.meCallback = function(text) {
-		var data = JSON.parse(text);
-		var msg = self.processErrors(data)
+	PageScript.prototype.meCallback = function(response) {
 		self.get_me()
-		self.displayMsg(msg);
+		self.displayServerResponse(response)
 	}
 
 	PageScript.prototype.registerCallback = function(text) {
@@ -323,10 +334,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		window.traces.push("registerCallback")
 	}	
 
-	PageScript.prototype.reloadCallback = function(text) {
-		var msg = self.processErrors(JSON.parse(text))
-		msg.callback = self.doLoadHome;
-		self.displayMsg(msg);
+	PageScript.prototype.reloadCallback = function(response) {
+		self.displayServerResponse(response, {ok:self.doLoadHome})
 	}
 	
 	PageScript.prototype.doRedirect = function(href){ 
@@ -338,9 +347,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.get_me = function() {
-		this.success=self.userIsLoggedIn
-		this.error=self.userNotLoggedIn
-		self.ajaxget("/v1/users/me", self.callback(this.success, this.error))
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))
 	}
 	
 // Button actions
@@ -401,19 +408,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    }
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
-
-	PageScript.prototype.logoutCallback = function(status, text) {
-		data=JSON.parse(text)
-		if (data.error)	self.displayError();
-		else {
-			self.isLoggedIn=false
-			self.doRedirect( self.QueryString.uris.START_URL)
-		}
-	}
 	
 	PageScript.prototype.logout = function() {
-				console.log("logout")
-	    this.ajaxget("/v1/logout", this.logoutCallback)
+	    this.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
 	}
 	
 	PageScript.prototype.getCookie = function(cname) {
@@ -428,22 +425,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    }
 	    return "";
 	} 
-
-	PageScript.prototype.InitiateResendRegistrationEmail = function() {
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-		}
-
-	PageScript.prototype.loadjs = function(src) {
-	    var fileref=document.createElement('script')
-	    fileref.setAttribute("type","text/javascript")
-	    fileref.setAttribute("src", src)
-	    document.getElementsByTagName("head")[0].appendChild(fileref)
-	}
-	
-	PageScript.prototype.unittest = function() {
-		this.loadjs("ts.js")
-	}
-	
 
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
@@ -473,28 +454,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.addPasswordCredential = function(){
-		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value;
-		var secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
-		self.addCredential("password", identifier, secret);
-	}
-	
-	PageScript.prototype.add_facebook_credential = function( FbUserId, FbAccessToken) {
-		self.addCredential("facebook", FbUserId, FbAccessToken);
-	}
-	
-	PageScript.prototype.addGoogleCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
-	PageScript.prototype.addGithubCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
-	PageScript.prototype.addTwitterCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
 	PageScript.prototype.doDeregister = function() {
 		if ( document.getElementById("accept_deregister").checked ) {
 			if ( self.QueryString.secret ) {
@@ -514,11 +473,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 						error:_("To accept the terms please mark the checkbox!")}
 			self.displayMsg(msg);	
 		}			
-	}
-	
-	PageScript.prototype.initiateDeregister = function(theForm) {
-		text = { csrf_token: self.getCookie("csrf") }
-		self.ajaxpost("/v1/deregister", text, self.callback(self.myCallback))
 	}
 	
 	PageScript.prototype.deregisterCallback = function(text) {
@@ -568,6 +522,11 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		  }
 		}
 		return s;
+	}
+	
+	// removing all non numeric characters
+	PageScript.prototype.normalizeId = function(val) {
+		return val.replace(/[^0-9]/g,"");
 	}
 	
 	PageScript.prototype.digestGetter = function(formName) {
@@ -651,7 +610,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 		function createXmlForAnchor(formName) {
 			console.log(formName)
-			personalId = document.getElementById(formName+"_predigest_input").value;
+			personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value);
 			motherValue = document.getElementById(formName+"_predigest_mothername").value;
 			mothername = self.normalizeString(motherValue);
 			if ( personalId == "") {
@@ -671,8 +630,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.convert_mothername = function(formName) {
 		var inputElement = document.getElementById( formName+"_mothername");
 		var outputElement = document.getElementById( formName+"_monitor");
-		outputElement.innerHTML=document.getElementById( formName+"_input").value +' - '+ self.normalizeString(inputElement.value);
-	}	
+		outputElement.innerHTML = self.normalizeId(document.getElementById( formName+"_input").value) +' - '+ self.normalizeString(inputElement.value);
+	}
+	
 	PageScript.prototype.setRegistrationMethode=function(methode){
 		self.registrationMethode=methode;
 		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) { e.className=e.className.replace(" active",""); } );
@@ -747,7 +707,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
-		console.log(buttonId)
 		var b=document.getElementById(buttonId),
 			c
 		if (b) {

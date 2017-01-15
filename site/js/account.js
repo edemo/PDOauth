@@ -121,7 +121,9 @@
 		self.isLoggedIn=true
 		self.refreshTheNavbar()
 		self.ajaxget('/v1/getmyapps', self.myappsCallback)
-		self.ajaxget("assurers.json", self.callback(self.fillAssurersTable), true)
+		if (data.assurances.hashgiven && data.assurances.emailverification) {
+			self.ajaxget("assurers.json", self.callback(self.fillAssurersTable), true)
+		}
 		if (data.assurances) {
 			document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
 			document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
@@ -284,7 +286,7 @@
 
 /*
 ********************************
-**    Adding credencials      **
+**    Adding credentials      **
 ********************************
 */	
 
@@ -295,9 +297,31 @@
 			identifier: identifier,
 			password: secret
 		}
-		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me))
+		self.ajaxpost("/v1/add_credential", data, self.callback(self.userIsLoggedIn))
 	}
 	
+	PageScript.prototype.addPasswordCredential = function(){
+		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value;
+		var secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
+		self.addCredential("password", identifier, secret);
+	}
+	
+	PageScript.prototype.add_facebook_credential = function( FbUserId, FbAccessToken) {
+		self.addCredential("facebook", FbUserId, FbAccessToken);
+	}
+/*	
+	PageScript.prototype.addGoogleCredential = function(){
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+	}
+	
+	PageScript.prototype.addGithubCredential = function(){
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+	}
+	
+	PageScript.prototype.addTwitterCredential = function(){
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+	}
+*/	
 /*
 ********************************
 **      Change settings       **
@@ -506,5 +530,15 @@
 		}
 		else self.deactivateButton("changeEmil_saveButton")
 	}
+	
+// User actions	
+	PageScript.prototype.InitiateResendRegistrationEmail = function() {
+		self.ajaxget( "/v1/send_verify_email", self.callback() )
+	}
+	
+	PageScript.prototype.initiateDeregister = function() {
+		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
+	}
+
 }()
 )
