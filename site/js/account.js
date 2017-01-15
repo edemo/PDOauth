@@ -144,13 +144,6 @@
 	PageScript.prototype.modNavbarItem=function(){
 		document.getElementById("")
 	}
-	PageScript.prototype.hideAllSection=function(){
-		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
-	}
-	
-	PageScript.prototype.unhideSection=function(section) {
-		document.getElementById(section).style.display="block";
-	}
 
 	PageScript.prototype.displayMsg = function( msg ) {
 		if (!(msg.title || msg.error || msg.message || msg.success)) return

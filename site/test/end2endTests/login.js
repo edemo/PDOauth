@@ -24,8 +24,8 @@
 		tfrwrk.loadPage("index.html",callback);
 	});
 
-	function PageHeaderTests(assert) {
-		this.theTest = function() {
+	var PageHeaderTests = function() {
+		PageHeaderTests.prototype.theTest = function() {
 			t=testFrame.contentWindow
 			uri = t.document.URL.split("/")
 			lastTag = uri[uri.length -1]
@@ -33,13 +33,14 @@
 			start();
 	    }
 	}
-
+	
 	QUnit.test( "clicking on home loads index.html", function( assert ) {
+		
 		var done=assert.async()
 		var callback=function(){
 			t.document.getElementById("nav-bar-home").click()
 			    stop();
-				testFrame.onload=PageHeaderTests(assert).theTest
+				testFrame.onload=PageHeaderTests().theTest
 			done()
 		}
 		tfrwrk.loadPage("fiokom.html",callback);

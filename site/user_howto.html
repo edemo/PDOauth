@@ -1,76 +1,14 @@
- <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-      <!-- Basic Page Needs-->
-        <meta charset="utf-8">
-        <title>ADA - hogyan működik</title>
-        <meta name="description" content="">
-        
-		<!-- Mobile Specific Metas -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "tmpl/page.html" %}
 
-       <!-- CSS-->
-        <!-- Bootstrap -->
-		<link 
-			href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
-			rel="stylesheet" 
-			integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" 
-			crossorigin="anonymous">
-        <!-- FontAwesome -->
-		<link 
-			href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" 
-			rel="stylesheet" 
-			integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" 
-			crossorigin="anonymous">
-        <!-- Template styles-->
-        <link rel="stylesheet" href="css/custom.css" />
-         <!-- color style -->
-        <link rel="stylesheet" href="css/red.css"/>
-        <!-- Responsive  -->
-        <link rel="stylesheet" href="css/responsive.css" />
-		<!-- Ada common -->
-		<link rel="stylesheet" href="css/ada.css">
-		<link rel="stylesheet" href="css/ada_blog.css">
-		
-	  <!-- Fonts -->
-		<link href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic" rel="stylesheet" >
-        <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
-        <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
-		<link rel="preload" href="ada/v1/statistics">
-    </head>
+{% set main = 'pageScript.main()' %}
 
- <body data-spy="scroll" data-target=".navbar-fixed-top" onload="pageScript.main()">
-    <header id="section_header" class="navbar-fixed-top main-nav" role="banner">
-    	<div class="container">
-    		<!-- <div class="row"> -->
-                 <div class="navbar-header ">
-                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                       </button>
-                        <a class="navbar-brand" href="#">
-                            <img src="images/logo/adalogo_379x143.png" alt="">
-                        </a>
-                 </div><!--Navbar header End-->
-                 	<nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
-                        <ul class="nav navbar-nav navbar-right ">
-                           	<li><a href="./index.html" class="">Home </a></li>
-                            <li><a href="./user_howto.html" class="active">Hogyan működik?</a> </li>
-                            <li id="nav-bar-aboutus"><a href="./about_us.html" class="">Rólunk</a> </li>
-<!--                            <li><a href="./index.html#blog" class="page-scroll">Blog</a> </li> -->
-							<li id="nav-bar-login"><a href="./fiokom.html" class="page-scroll">Bejelentkezés</a></li>
-							<li id="nav-bar-register"><a href="./fiokom.html?section=registration" class="page-scroll">Regisztráció</a></li>
-							<li id="nav-bar-my_account"><a href="./fiokom.html">Fiókom</a></li>
-							<li id="nav-bar-logout"><a href="javascript:void (0)" onclick="javascipt:pageScript.logout()">Kijelentkezés</a></li>
-                        </ul>
-                     </nav>
-                </div><!-- /.container-fluid -->
-</header>
+{% set title = 'hogyan működik' %}
+
+{% set additionalJavascripts = ["js/index.js"] %}
+
+{% set additionalCss = ["css/ada_blog.css"] %}
+
+{% block contents %}
  
 <!-- Portfolio works Start -->
 
@@ -263,106 +201,4 @@ Olvasd el az <a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-s
             </div><!-- Portfolio item row end -->
         </div><!-- Portfolio item container end -->
 </section>  <!-- Portfolio Section End -->
-
-<!-- Footer Area Start -->
-
-<section id="footer">
-    <div class="footer_top">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <h3 class="menu_head">Szabályzatok</h3>
-                    <div class="footer_menu">
-                        <ul>
-                            <li><a target="_blank" href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételek</a></li>
-                            <li><a target="_blank" href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Irányelvek</a></li>
-                         </ul>
-                    </div>
-                </div>
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <h3 class="menu_head">Kapcsolat</h3>
-                    <div class="footer_menu_contact">
-                        <ul>
-                            <li><i class="fa fa-envelope"></i> Email: <a href="mailto:info@adatom.hu">info@adatom.hu</a></li>
-                            <li><i class="fa fa-phone"></i> Telefon: </li>
-                            <li><i class="fa fa-home"></i> KDE Alapítvány levelezési cím:</li>
-                            <li>2071 Páty, Burgondia u. 5.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-4 col-sm-6 col-xs-12">
-                    <h3 class="menu_head">Hasznos linkek</h3>
-                    <div class="footer_menu">
-                        <ul>
-                            <li><i class="fa fa-anchor"></i> <a target="_blank" class="digest_self_made_button">Titkos Kód Gép</a></li>
-                            <li><i class="fa fa-github"></i> <a target="_blank" href="https://www.gitbook.com/@edemo">Gitbook</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="footer_b">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <div class="footer_bottom">
-						<p class="text-block">
-							<a href="http://e.demokracia.rulez.org">KDE Alapítvány</a> ADA - Anonim Digitális Azonosító szolgáltatása 
-							<a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Nevezd meg! - Így add tovább! 4.0 Nemzetközi Licenc</a> alatt van.
-						</p>
-						<p>
- 						<a href="http://creativecommons.org/licenses/by-sa/4.0/">
-							<img alt="Creative Commons Licenc" src="https://camo.githubusercontent.com/e170e276291254896665fa8f612b99fe5b7dd005/68747470733a2f2f692e6372656174697665636f6d6d6f6e732e6f72672f6c2f62792d73612f342e302f38387833312e706e67" data-canonical-src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" style="max-width:100%;">
-						</a>
-						</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <div class="footer_mid pull-right">
-
-                        <ul class="social-contact list-inline">
-                            <li> <a target="_blank" href="https://www.facebook.com/adatom.hu"><i class="fa fa-facebook"></i></a></li>
-                            <li> <a target="_blank" href="https://github.com/edemo/"><i class="fa fa-github"></i></a></li>
-<!-- temporaly hidden
-
-                            <li> <a href="#"><i class="fa fa-rss"></i></a></li>
-                            <li> <a href="#"><i class="fa fa-google-plus"></i> </a></li>
-                            <li><a href="#"> <i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"> <i class="fa fa-pinterest"></i></a></li>
--->
-						</ul>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- Footer Area End -->
-
-<!-- Back To Top Button -->
-    <div id="back-top" style="display:none;">
-        <a href="#banner" class="scroll" data-scroll>
-            <button class="btn btn-primary" title="Back to Top"><i class="fa fa-angle-up"></i></button>
-        </a>
-    </div>
-    <!-- End Back To Top Button -->
-        <!-- Main jquery -->
-		<script
-			src="https://code.jquery.com/jquery-3.1.1.min.js"
-			integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-			crossorigin="anonymous"></script>
-        <!-- Bootstrap jQuery -->
-		<script 
-			src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-			integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" 
-			crossorigin="anonymous"></script>
-		<!-- pagescript -->
-		<script type="text/javascript" src="js/script.js"></script>
-		<!-- pagescript extension-->
-		<script type="text/javascript" src="js/index.js"></script>
-	</body>
-</html>
+{% endblock %}
