@@ -191,7 +191,15 @@ ul.disced {
 	margin-left:0px;
 }
 }
-
 #assurers_table ul{
 	margin-bottom:0px;
+}
+@media (max-width: 320px){
+	.navbar-fixed-top {
+		position: relative;
+	}
+	.navbar-toggle {
+		position: top;
+		right: 0
+	}
 }
