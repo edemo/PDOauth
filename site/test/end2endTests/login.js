@@ -10,9 +10,13 @@
 		};
 
 		self.assertPageLoaded = function(pageName) {
+			console.log("assert")
 			return function() {
+				console.log("before assert " + pageName)
 				assert.equal(self.getPageName(), pageName)
+				console.log("after assert" + pageName)
 				done();
+				console.log("after done" + pageName)
 			}
 	    };
 
@@ -27,6 +31,15 @@
 			var t=testFrame.contentWindow;
 			t.document.getElementById("nav-bar-howto").click()
 		};
+
+	    self.testClickingLoginGoesToLogin = function() {
+			testFrame.onload=self.assertPageLoaded("fiokom.html")
+			var t=testFrame.contentWindow;
+			console.log("before")
+			t.document.getElementById("nav-bar-login").click()
+			console.log("after")
+		};
+
 		return self;
 	};
 
@@ -93,6 +106,11 @@
 	QUnit.test( "clicking on howto loads user_howto.html (user howto)", function( assert ) {
 		var callback=PageHeaderTests(assert, testFrame).testClickingHowtoGoesToHowto
 		tfrwrk.loadPage("user_howto.html",callback);
+	});
+
+	QUnit.test( "clicking on login goes to login (account)", function( assert ) {
+		var callback=PageHeaderTests(assert, testFrame).testClickingLoginGoesToLogin
+		tfrwrk.loadPage("index.html",callback);
 	});
 
 }())
