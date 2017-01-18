@@ -94,22 +94,28 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		return function(status,response,xml) {
 			switch (status){
 				case 200:
-					next(response,xml)
+					next( response,xml )
 					break;
 				case 500:
 				case 405:
-					self.reportServerFailure(response)
+					self.reportServerFailure( response )
 					break;
 				default:
-					error(status,response,xml)
+					error( response, xml )
 			}
 		}
 	}
 	
-	PageScript.prototype.commonInit=function(text) {
+	PageScript.prototype.commonInit=function( response ) {
 		// initialising variables
-		self.QueryString.uris = JSON.parse(text);
-		console.log("uris=%o",self.QueryString.uris)
+		var temp = self.validateServerMessage( response )
+		console.log(temp)
+		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
+		else {
+			self.displayMsg( self.processErrors( temp ))
+			window.traces.push( 'adauris failed' )
+			return
+		}
 		self.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
 
@@ -187,7 +193,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.processErrors = function(data, callbacks) {
-			var msg = {},
+		console.log(data)
+			var msg = {}, 
 				translateError = function(e){
 					console.log(e)
 					var a=e.split(': ');
@@ -452,38 +459,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 	PageScript.prototype.TwitterLogin = function(){
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
-	PageScript.prototype.doDeregister = function() {
-		if ( document.getElementById("accept_deregister").checked ) {
-			if ( self.QueryString.secret ) {
-				text = {	csrf_token: self.getCookie("csrf"),
-							deregister_secret: self.QueryString.secret
-							}
-				self.ajaxpost( "/v1/deregister_doit", text, self.callback(self.deregisterCallback) )
-			}
-			else {
-				var msg={ 	title:_("Error message"),
-							error:_("The secret is missing")}
-				self.displayMsg(msg);			
-			}
-		}
-		else {
-			var msg={ 	title:_("Error message"),
-						error:_("To accept the terms please mark the checkbox!")}
-			self.displayMsg(msg);	
-		}			
-	}
-	
-	PageScript.prototype.deregisterCallback = function(text) {
-		var msg=self.processErrors(JSON.parse(text))
-		self.isLoggedIn=false
-		self.refreshTheNavbar();
-		if (self.page=="account") {
-			self.displayTheSection("login");
-		}
-		msg.callback=function(){self.doRedirect(self.QueryString.uris.START_URL)};
-		self.displayMsg(msg);
 	}
 	
 	PageScript.prototype.refreshTheNavbar=function(){
@@ -758,6 +733,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		catch (e) {
 			_=function(str) {return str;}
 		}
+		window.traces.push("init gettext")
 		self.init_()
 	}
 
