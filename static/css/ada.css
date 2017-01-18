@@ -182,6 +182,16 @@ ul.disced {
 	margin-left:25px;
 }
 
+
+#assurers_table ul{
+	margin-bottom:0px;
+}
+
+input[type=checkbox]{
+	width:25px;
+	height:25px;
+}
+
 @media (max-width: 767px){
 .feature_title {
     width: 75%;
@@ -190,8 +200,26 @@ ul.disced {
 .account-tabber {
 	margin-left:0px;
 }
+input[type=checkbox]{
+	width:15px;
+	height:15px;
+}
 }
 
 #assurers_table ul{
 	margin-bottom:0px;
 }
+
+@media (max-width: 320px){
+	.navbar-fixed-top {
+		position: relative;
+	}
+	.navbar-toggle {
+		position: top;
+		right: 0
+	}
+	ul.navbar-nav a {
+		line-height: 20px;
+	}
+}
+
