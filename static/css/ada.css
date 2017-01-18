@@ -218,5 +218,8 @@ input[type=checkbox]{
 		position: top;
 		right: 0
 	}
+	ul.navbar-nav a {
+		line-height: 20px;
+	}
 }
 
