@@ -6,6 +6,7 @@ doc/xml
 doc/screenshots
 .coverage
 .settings
+messages.pot
 tmp/
 lib/
 doc/static
