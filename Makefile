@@ -19,10 +19,13 @@ checkmanual: install alltests xmldoc
 
 alltests: tests integrationtests end2endtest
 
-static: static-base static-html
+static: static-base static-html static-js
 static-base:
 	mkdir -p static
 	cp -r site/js site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
+
+static-js:
+	rollup --format=cjs --output=static/test/end2endTests/login.js -- site/test/end2endTests/login.js
 
 static-html:
 	for page in $(HTML_FILES); do ./tools/compilehtml $$page; done
