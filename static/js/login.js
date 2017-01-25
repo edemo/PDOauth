@@ -36,7 +36,7 @@
 		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
 	}
 	
-	PageScript.prototype.userNotLoggedIn = function(status, text) {
+	PageScript.prototype.userNotLoggedIn = function(text) {
 		var data = JSON.parse(text);
 		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		else {
