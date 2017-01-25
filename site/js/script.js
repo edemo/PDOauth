@@ -12,6 +12,51 @@ function PageScript(test) {
 	this.isFBsdkLoaded=false;
 	this.isFBconnected=false;
 
+	PageScript.prototype.navigateToTheSection=function(section) {
+		var fiokom = self.QueryString.uris.START_URL;
+		var currentLocation = location.protocol + '//' + location.host + location.pathname
+		if (currentLocation != fiokom) {
+			win.location = fiokom +"?section="+section
+		} else{
+			if (self.QueryString.section) self.doRedirect(self.QueryString.uris.START_URL);
+			else self.displayTheSection(section)
+		}
+	}
+	
+	PageScript.prototype.displayTheSection=function(section) {
+		self.hideAllSection();
+		var lis=document.getElementsByClassName("navbar-nav")[0].getElementsByTagName("li");
+		[].forEach.call( lis, function (e) { e.className=""; } );
+		if (!section){
+			if (self.isLoggedIn){
+				self.unhideSection("my_account_section")
+				document.getElementById("nav-bar-my_account").className="active"
+				if (self.isAssurer) self.unhideSection("assurer_section")
+			}
+			else {
+				self.unhideSection("login_section")
+				document.getElementById("nav-bar-login").className="active"
+			}
+		}
+		else { 
+			if (self.isLoggedIn && (section=="registration")) {
+				self.unhideSection("my_account_section")
+			}
+			else {
+				self.unhideSection(section+"_section")
+			}
+			var navbar=document.getElementById("nav-bar-"+section)
+			if (navbar) navbar.className="active";
+		}
+	}
+	PageScript.prototype.hideAllSection=function(){
+		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
+	}
+	
+	PageScript.prototype.unhideSection=function(section) {
+		document.getElementById(section).style.display="block";
+	}
+
 PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   var query_string = {};
   var query = search.substring(1);
@@ -42,34 +87,35 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.reportServerFailure = function(text){
 		self.displayMsg({title:_("Server error occured"),error: text})
 	}
-
+	
 	PageScript.prototype.callback = function(next,error){
-		var next  = next || function(){return}
-		var error = error || defaultErrorHandler
-		function callback(status,text,xml) {
+		var next  = next || self.displayServerResponse,
+			error = error || self.displayServerResponse;
+		return function(status,response,xml) {
 			switch (status){
 				case 200:
-					next(text,xml)
+					next( response,xml )
 					break;
 				case 500:
 				case 405:
-					self.reportServerFailure(text)
+					self.reportServerFailure( response )
 					break;
 				default:
-					error(status,text,xml)
+					error( response, xml )
 			}
 		}
-		function defaultErrorHandler(status,text,xml){
-            console.log(text)
-			data=JSON.parse(text)
-			self.displayMsg(self.processErrors(data))
-		}
-		return callback
 	}
 	
-	PageScript.prototype.commonInit=function(text) {
+	PageScript.prototype.commonInit=function( response ) {
 		// initialising variables
-		self.QueryString.uris = JSON.parse(text);
+		var temp = self.validateServerMessage( response )
+		console.log(temp)
+		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
+		else {
+			self.displayMsg( self.processErrors( temp ))
+			window.traces.push( 'adauris failed' )
+			return
+		}
 		self.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
 
@@ -122,29 +168,33 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
+
+		
+	PageScript.prototype.displayServerResponse = function( response, callbacks ){
+		self.displayMsg( self.processErrors( self.validateServerMessage( response ), callbacks ) )
+	}
 	
-	PageScript.prototype.validateServerMessage = function (text) {
-		if (!text) return {
+	PageScript.prototype.validateServerMessage = function (response) {
+		if (!response) return {
 			errors: [
 				"Something went wrong",
 				"An empty message is arrived from the server" 
 			]
 		}
-		try {
-			return JSON.parse(text)
-		}
+		try { return JSON.parse(response) }
 		catch(err) {
 			return { 
 				errors: [
 					"Something went wrong",
-					"Unexpected server message:" + "<br>" + text
+					"Unexpected server message:" + "<br>" + response
 				]
 			}
 		}
 	}
 	
-	PageScript.prototype.processErrors = function(data) {
-			var msg = {},
+	PageScript.prototype.processErrors = function(data, callbacks) {
+		console.log(data)
+			var msg = {}, 
 				translateError = function(e){
 					console.log(e)
 					var a=e.split(': ');
@@ -153,7 +203,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 					}
 					return a.join(': ')
 				};
-				
+			if (callbacks) msg.callback = callbacks.ok || null;
 			if (data.message) {
 				msg.title=_("Server message");
 				msg.message=self.parseMessage(data.message)
@@ -261,24 +311,18 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 	
 // oldie	
-	PageScript.prototype.myCallback = function(text) {
-
+	PageScript.prototype.myCallback = function(response) {
 		if( self.page=="login"){
 			if( self.QueryString.next) {
 				self.doRedirect(decodeURIComponent(self.QueryString.next))
 			}
 		}
-		var data = JSON.parse(text);
-		var msg = self.processErrors(data)
-		self.displayMsg(msg);
-
+		self.displayServerResponse(response);
 	}
 	
-	PageScript.prototype.meCallback = function(text) {
-		var data = JSON.parse(text);
-		var msg = self.processErrors(data)
+	PageScript.prototype.meCallback = function(response) {
 		self.get_me()
-		self.displayMsg(msg);
+		self.displayServerResponse(response)
 	}
 
 	PageScript.prototype.registerCallback = function(text) {
@@ -297,10 +341,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		window.traces.push("registerCallback")
 	}	
 
-	PageScript.prototype.reloadCallback = function(text) {
-		var msg = self.processErrors(JSON.parse(text))
-		msg.callback = self.doLoadHome;
-		self.displayMsg(msg);
+	PageScript.prototype.reloadCallback = function(response) {
+		self.displayServerResponse(response, {ok:self.doLoadHome})
 	}
 	
 	PageScript.prototype.doRedirect = function(href){ 
@@ -312,9 +354,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.get_me = function() {
-		this.success=self.userIsLoggedIn
-		this.error=self.userNotLoggedIn
-		self.ajaxget("/v1/users/me", self.callback(this.success, this.error))
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))
 	}
 	
 // Button actions
@@ -375,19 +415,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    }
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
-
-	PageScript.prototype.logoutCallback = function(status, text) {
-		data=JSON.parse(text)
-		if (data.error)	self.displayError();
-		else {
-			self.isLoggedIn=false
-			self.doRedirect( self.QueryString.uris.START_URL)
-		}
-	}
 	
 	PageScript.prototype.logout = function() {
-				console.log("logout")
-	    this.ajaxget("/v1/logout", this.logoutCallback)
+	    this.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
 	}
 	
 	PageScript.prototype.getCookie = function(cname) {
@@ -402,18 +432,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    }
 	    return "";
 	} 
-
-	PageScript.prototype.loadjs = function(src) {
-	    var fileref=document.createElement('script')
-	    fileref.setAttribute("type","text/javascript")
-	    fileref.setAttribute("src", src)
-	    document.getElementsByTagName("head")[0].appendChild(fileref)
-	}
-	
-	PageScript.prototype.unittest = function() {
-		this.loadjs("ts.js")
-	}
-	
 
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
@@ -441,65 +459,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 	PageScript.prototype.TwitterLogin = function(){
 		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
-	PageScript.prototype.addPasswordCredential = function(){
-		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value;
-		var secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
-		self.addCredential("password", identifier, secret);
-	}
-	
-	PageScript.prototype.add_facebook_credential = function( FbUserId, FbAccessToken) {
-		self.addCredential("facebook", FbUserId, FbAccessToken);
-	}
-	
-	PageScript.prototype.addGoogleCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
-	PageScript.prototype.addGithubCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
-	PageScript.prototype.addTwitterCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
-	}
-	
-	PageScript.prototype.doDeregister = function() {
-		if ( document.getElementById("accept_deregister").checked ) {
-			if ( self.QueryString.secret ) {
-				text = {	csrf_token: self.getCookie("csrf"),
-							deregister_secret: self.QueryString.secret
-							}
-				self.ajaxpost( "/v1/deregister_doit", text, self.callback(self.deregisterCallback) )
-			}
-			else {
-				var msg={ 	title:_("Error message"),
-							error:_("The secret is missing")}
-				self.displayMsg(msg);			
-			}
-		}
-		else {
-			var msg={ 	title:_("Error message"),
-						error:_("To accept the terms please mark the checkbox!")}
-			self.displayMsg(msg);	
-		}			
-	}
-	
-	PageScript.prototype.initiateDeregister = function(theForm) {
-		text = { csrf_token: self.getCookie("csrf") }
-		self.ajaxpost("/v1/deregister", text, self.callback(self.myCallback))
-	}
-	
-	PageScript.prototype.deregisterCallback = function(text) {
-		var msg=self.processErrors(JSON.parse(text))
-		self.isLoggedIn=false
-		self.refreshTheNavbar();
-		if (self.page=="account") {
-			self.displayTheSection("login");
-		}
-		msg.callback=function(){self.doRedirect(self.QueryString.uris.START_URL)};
-		self.displayMsg(msg);
 	}
 	
 	PageScript.prototype.refreshTheNavbar=function(){
@@ -774,6 +733,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		catch (e) {
 			_=function(str) {return str;}
 		}
+		window.traces.push("init gettext")
 		self.init_()
 	}
 
