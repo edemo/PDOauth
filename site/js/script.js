@@ -12,6 +12,51 @@ function PageScript(test) {
 	this.isFBsdkLoaded=false;
 	this.isFBconnected=false;
 
+	PageScript.prototype.navigateToTheSection=function(section) {
+		var fiokom = self.QueryString.uris.START_URL;
+		var currentLocation = location.protocol + '//' + location.host + location.pathname
+		if (currentLocation != fiokom) {
+			win.location = fiokom +"?section="+section
+		} else{
+			if (self.QueryString.section) self.doRedirect(self.QueryString.uris.START_URL);
+			else self.displayTheSection(section)
+		}
+	}
+	
+	PageScript.prototype.displayTheSection=function(section) {
+		self.hideAllSection();
+		var lis=document.getElementsByClassName("navbar-nav")[0].getElementsByTagName("li");
+		[].forEach.call( lis, function (e) { e.className=""; } );
+		if (!section){
+			if (self.isLoggedIn){
+				self.unhideSection("my_account_section")
+				document.getElementById("nav-bar-my_account").className="active"
+				if (self.isAssurer) self.unhideSection("assurer_section")
+			}
+			else {
+				self.unhideSection("login_section")
+				document.getElementById("nav-bar-login").className="active"
+			}
+		}
+		else { 
+			if (self.isLoggedIn && (section=="registration")) {
+				self.unhideSection("my_account_section")
+			}
+			else {
+				self.unhideSection(section+"_section")
+			}
+			var navbar=document.getElementById("nav-bar-"+section)
+			if (navbar) navbar.className="active";
+		}
+	}
+	PageScript.prototype.hideAllSection=function(){
+		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
+	}
+	
+	PageScript.prototype.unhideSection=function(section) {
+		document.getElementById(section).style.display="block";
+	}
+
 PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   var query_string = {};
   var query = search.substring(1);

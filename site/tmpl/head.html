@@ -1,0 +1,40 @@
+{% macro head(title, additionalCss) -%}
+    <head>
+	  <!-- Basic Page Needs -->
+        <meta charset="utf-8">
+        <title>ADA - {{ title }}</title>
+        <meta name="description" content="anonim digitális azonosító">
+	  <!-- Mobile Specific Metas -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	  <!-- CSS -->
+        <!-- Bootstrap -->
+		<link 
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+			rel="stylesheet" 
+			integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" 
+			crossorigin="anonymous">
+        <!-- FontAwesome -->
+		<link 
+			href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" 
+			rel="stylesheet" 
+			integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" 
+			crossorigin="anonymous">
+        <!-- Main color style -->
+        <link rel="stylesheet" href="css/red.css"/>
+        <!-- Template styles-->
+        <link rel="stylesheet" href="css/custom.css" />
+        <!-- Responsive -->
+        <link rel="stylesheet" href="css/responsive.css" />
+		<!-- Ada common -->
+		<link rel="stylesheet" href="css/ada.css">
+{% for css in additionalCss %}
+		<link rel="stylesheet" href="{{css}}">
+{% endfor %}		
+
+	  <!-- Fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500' rel='stylesheet' type='text/css'>
+    </head>
+{%- endmacro %}

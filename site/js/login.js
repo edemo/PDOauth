@@ -130,15 +130,6 @@
 		if (section=="register_section" && self.neededAssurances.indexOf('hashgiven')!=-1) self.unhideSection("registration-form-getdigest_input")
 	}
 	
-	PageScript.prototype.unhideSection=function(section) {
-		document.getElementById(section).style.display="block";
-	}
-	
-	PageScript.prototype.hideAllSection=function(){
-		var a=document.getElementsByClassName("func");
-		[].forEach.call( a, function (e) { e.style.display="none"; } );
-	}
-	
 	PageScript.prototype.acceptGivingTheData=function(flag){
 		if (flag){
 			self.dataGivingAccepted=true
