@@ -217,3 +217,21 @@ input[type=checkbox]{
 	height:15px;
 }
 }
+
+#assurers_table ul{
+	margin-bottom:0px;
+}
+
+@media (max-width: 320px){
+	.navbar-fixed-top {
+		position: relative;
+	}
+	.navbar-toggle {
+		position: top;
+		right: 0
+	}
+	ul.navbar-nav a {
+		line-height: 20px;
+	}
+}
+
