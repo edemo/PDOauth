@@ -3,7 +3,7 @@
 	PageScript.prototype.page = "account";
 	PageScript.prototype.main = function() {
 		self=this.getThis()
-		xxxx=self
+		var xxxx=self
 		this.ajaxget("/adauris", self.callback(self.commonInit))
 		var section = self.QueryString.section
 			switch (section) {
@@ -301,12 +301,12 @@
 */
 
 	PageScript.prototype.changeHash = function() {
-	    digest = document.getElementById("change-hash-form_digest_input").value;
-	    csrf_token = self.getCookie('csrf');
-	    data= {
-	    	digest: digest,
-	    	csrf_token: csrf_token
-	    }
+	    var digest = document.getElementById("change-hash-form_digest_input").value,
+			csrf_token = self.getCookie('csrf'),
+			data= {
+				digest: digest,
+				csrf_token: csrf_token
+			}
 	    self.ajaxpost("/v1/users/me/update_hash", data, self.callback(self.changeHashCallback))
 	}	
 	
@@ -392,7 +392,7 @@
 			</tr>'
 				}
 			}
-			credential_header='\
+			var credential_header='\
 			<tr id="'+i+'-credential-list">\
 				<th>'+c[i][0]+'</th>\
 				<th>'
@@ -467,12 +467,11 @@
 	}
 	
 	PageScript.prototype.changeEmailAddress = function() {
-	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
-        email = pageScript.mailRepair(email);
+	    var email = self.mailRepair(document.getElementById("ChangeEmailAddressForm_email_input").value);
 		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
 		else {
-			var csrf_token = self.getCookie('csrf');
-			var data= {
+			var csrf_token = self.getCookie('csrf'),
+				data= {
 				newemail: email,
 				csrf_token: csrf_token
 			}
@@ -495,7 +494,7 @@
 	}
 	
 	PageScript.prototype.emailChangeInput_onkeyup = function(){
-		rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
+		var rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
 		var inputField = document.getElementById("ChangeEmailAddressForm_email_input")
 		if (rgx_email.exec(inputField.value)) {
 			self.activateButton("changeEmil_saveButton", self.changeEmailAddress)

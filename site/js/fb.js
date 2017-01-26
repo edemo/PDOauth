@@ -1,4 +1,4 @@
-FaceBook = function(pageScript) {
+function FaceBook(pageScript) {
 	this.pageScript = pageScript;
 	this.doc = document;
 	this.loggedIn = false;
@@ -173,4 +173,4 @@ FaceBook = function(pageScript) {
 		window.traces.push("fbRegister")
 	}
 
-facebook = new FaceBook(pageScript)
+var facebook = new FaceBook(pageScript)

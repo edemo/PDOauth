@@ -1,10 +1,11 @@
 window.traces = new Array();
+var _
 
 function PageScript(test) {
 	var self = this
 	test=test || { debug: false, uribase: "" }
 	this.debug=test.debug
-	win = test.win || window;
+	var win = test.win || window;
     self.uribase=test.uribase;
 	this.isLoggedIn=false;
 	this.isAssurer=false;
@@ -149,22 +150,18 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 
 	PageScript.prototype.ajaxpost = function( uri, data, callback ) {
-		xmlhttp = this.ajaxBase( callback );
+		var xmlhttp = this.ajaxBase( callback );
 		xmlhttp.open( "POST", self.uribase + uri, true );
 		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
-		l = []
-		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
+		var l = []
+		for (var key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		var dataString = l.join("&")
 		xmlhttp.send( dataString );
 	}
 
 	PageScript.prototype.ajaxget = function( uri, callback, direct) {
-		xmlhttp = this.ajaxBase( callback )
-		if (direct) {
-			theUri = uri;
-		} else {
-			theUri = self.uribase + uri;
-		}
+		var xmlhttp = this.ajaxBase( callback )
+		var theUri=(direct || false)? uri : self.uribase + uri;
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
 	}
@@ -258,12 +255,12 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.setAppCanEmailMe=function(appId, value, callback){
-		var csrf_token = self.getCookie('csrf');
-	    data= {
+		var csrf_token = self.getCookie('csrf'),
+			data= {
 			canemail: value,
 	    	appname: self.aps[appId].name,
 	    	csrf_token: csrf_token
-	    }
+			}
 	    self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
 	}
 	
@@ -381,14 +378,14 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
     
 	PageScript.prototype.login = function() {
-	    username = document.getElementById("LoginForm_email_input").value;
-	    var onerror=false;
-		var errorMsg="";
+	    var username = document.getElementById("LoginForm_email_input").value,
+			onerror=false,
+			errorMsg="",
+			password = document.getElementById("LoginForm_password_input").value;
 		if (username=="") {
 			errorMsg+=_("User name is missing. ");
 			onerror=true;
 		}
-	    password = document.getElementById("LoginForm_password_input").value;
 	    if (password=="") {
 			errorMsg+=_("Password is missing. ");
 			onerror=true; 
@@ -406,13 +403,13 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
 	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
 		console.log("facebook login")
-	    username = userId
-	    password = encodeURIComponent(accessToken)
-	    data = {
-	    	credentialType: 'facebook',
-	    	identifier: username,
-	    	password: password
-	    }
+	    var username = userId,
+			password = encodeURIComponent(accessToken),
+			data = {
+				credentialType: 'facebook',
+				identifier: username,
+				password: password
+			}
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
 	
@@ -436,13 +433,13 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
 		this.doRemove = function(type) {
-			credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML;
-			identifier = document.getElementById(this.formName+"_identifier").innerHTML;
-			text = {
-				csrf_token: self.getCookie("csrf"),
-				credentialType: credentialType,
-				identifier: identifier
-			}
+			var credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML,
+				identifier = document.getElementById(this.formName+"_identifier").innerHTML,
+				text = {
+					csrf_token: self.getCookie("csrf"),
+					credentialType: credentialType,
+					identifier: identifier
+				}
 			console.log("text")
 			this.ajaxpost("/v1/remove_credential", text, self.callback(self.meCallback));
 		}
@@ -585,9 +582,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 		function createXmlForAnchor(formName) {
 			console.log(formName)
-			personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value);
-			motherValue = document.getElementById(formName+"_predigest_mothername").value;
-			mothername = self.normalizeString(motherValue);
+			var personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value),
+				motherValue = document.getElementById(formName+"_predigest_mothername").value,
+				mothername = self.normalizeString(motherValue);
 			if ( personalId == "") {
 				self.displayMsg({title:_('Missing data'), error:_("Personal identifier is missing")})
 				return;
@@ -674,7 +671,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.deactivateButton = function(buttonId) {
-		b=document.getElementById(buttonId)
+		var b=document.getElementById(buttonId)
 		if (b) {
 			b.className+=" inactive";
 			b.onclick=function(){return}
@@ -687,7 +684,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		if (b) {
 			b.className=b.className.slice(0,b.className.indexOf("inactive"))
 			if (onclickFunc) {
-				b.onclick = (typeof onclickFunc=="string")? function(){ eval(onclickFunc) } : onclickFunc 
+				b.onclick = (typeof onclickFunc=="string")? null : onclickFunc 
 			}
 		}
 	}
@@ -741,27 +738,27 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.gettext = function() {
 
 		if (!arguments || arguments.length < 1 || !RegExp) return; // called without arguments
-		arguments=$.map(arguments, function(value, index){return [value]})
-        console.log(arguments)
-        if (typeof arguments[0] != "string") {
-                arguments=arguments[0]
-                var str=arguments.shift()
-                return self.gettext(str,arguments.map(function(value, index){return self.gettext(value)}))
+		var args=$.map(arguments, function(value, index){return [value]})
+        console.log(args)
+        if (typeof args[0] != "string") {
+                args=args[0]
+                var str=args.shift()
+                return self.gettext(str,args.map(function(value, index){return self.gettext(value)}))
         }
-		var str = arguments.shift();
+		var str = args.shift();
 
-		if (arguments.length == 1 && typeof arguments[0] == 'object') {
-			arguments=arguments[0].map(function(value, index){return [value]})
+		if (args.length == 1 && typeof args[0] == 'object') {
+			args=args[0].map(function(value, index){return [value]})
 		}
 	
 		// Try to find translated string
 		str = self.dictionary[str] || str
 
 		// Check needed attrubutes given for tokens
-		hasTokens = str.match(/%\D/g);
-		hasPhytonTokens = str.match(/{\d}/g)
-		if ( (hasTokens && hasTokens.length != arguments.length) || (hasPhytonTokens && hasPhytonTokens.length != arguments.length)) {
-			console.log('Gettext error: Arguments count ('+ arguments.length +') does not match replacement token count ('+ ((hasTokens && hasTokens.length) + (hasPhytonTokens && hasPhytonTokens.length)) + ').');
+		var hasTokens = str.match(/%\D/g),
+			hasPhytonTokens = str.match(/{\d}/g)
+		if ( (hasTokens && hasTokens.length != args.length) || (hasPhytonTokens && hasPhytonTokens.length != args.length)) {
+			console.log('Gettext error: Arguments count ('+ args.length +') does not match replacement token count ('+ ((hasTokens && hasTokens.length) + (hasPhytonTokens && hasPhytonTokens.length)) + ').');
 			return str;
 		}
 		
@@ -780,7 +777,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				numMatches++;
 				if (pType == '%') subst = '%';
 				else {
-					var param = arguments[i],
+					var param = args[i],
 						pad   = '',
 						justifyRight = true,
 						minLength = -1,
@@ -806,14 +803,14 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			}
 		}
 		if (hasPhytonTokens){
-			arguments.forEach( function(value,key){ str=str.replace("{"+key+"}",value)} )
+			args.forEach( function(value,key){ str=str.replace("{"+key+"}",value)} )
 		}
 		return str;
 	}
 	
 }
 	
-pageScript = new PageScript();
+var pageScript = new PageScript();
 
 
 
