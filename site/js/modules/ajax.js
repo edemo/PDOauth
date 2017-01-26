@@ -1,5 +1,5 @@
 
-export default function(args){
+export function ajax( args ){
  
     var $this = {},
         win = args.environment || window  //window can be mocked
@@ -10,7 +10,7 @@ export default function(args){
     
     $this.displayServerResponse = args.displayServerResponse || function(response){return response}
     
-    $this.reportServerFailure = args.reportServerFailure || function(response){return repsonse}
+    $this.reportServerFailure = args.reportServerFailure || function(response){return response}
 
     $this.callback = function( next, error ){
 		var next  = next || $this.displayServerResponse,
@@ -65,14 +65,13 @@ export default function(args){
         $this.ajaxpost( uri, data, $this.callback( cb.next, cb.error ) )
     }
     
-    $this.ajaxpost= function( uri, data, callbacks ) {         //for old style compatibility
-		xmlhttp = $this.ajaxBase( callback, uri );
-		xmlhttp.open( "POST", self.uribase + uri, true );
+    $this.ajaxpost= function( uri, data, callback ) {         //for old style compatibility
+		var xmlhttp = $this.ajaxBase( callback, uri ),
+			l = []
+		xmlhttp.open( "POST", $this.uribase + uri, true );
 		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
-		l = []
 		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
-		var dataString = l.join("&")
-		xmlhttp.send( dataString );
+		xmlhttp.send( l.join("&") );
         $this.stack[uri]="GET"
 	}
     
@@ -81,13 +80,9 @@ export default function(args){
         $this.ajaxget(uri, $this.callback(cb.next,cb.error), direct || null)
     }
     
-	$this.ajaxget= function( uri, callback, direct) {       //for old style compatibility
-		xmlhttp = this.ajaxBase( callback, uri )
-		if (direct) {
-			theUri = uri;
-		} else {
-			theUri = $rhis.uribase + uri;
-		}
+    $this.ajaxget= function( uri, callback, direct) {       //for old style compatibility
+		var xmlhttp = $this.ajaxBase( callback, uri ),
+			theUri = direct ? uri : $this.uribase + uri
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
         $this.stack[uri]="GET"
@@ -114,3 +109,4 @@ export default function(args){
     
     return $this
 }
+
