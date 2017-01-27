@@ -412,9 +412,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
 //Getdigest functions	
 	PageScript.prototype.normalizeString = function(val) {
-		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
-		var unaccented="ouooueauiouooueaui";
-		var s = "";
+		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ",
+			unaccented="ouooueauiouooueaui",
+			s = "",
+			c;
 		
 		for (var i = 0, len = val.length; i < len; i++) {
 		  c = val[i];
@@ -439,9 +440,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.digestGetter = function(formName) {
-		var formName=formName
-		var digestCallback
-		
+		var formName=formName,
 		digestCallback = function(status,text,xml) {
 			var diegestInput=document.getElementById(formName + "_digest_input")
 			if (status==200) {
@@ -507,9 +506,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 		
 		this.getDigest = function() {
-			text = createXmlForAnchor(formName)
+			var text = createXmlForAnchor(formName)
 			if (text == null) return;
-			http = self.ajaxBase(digestCallback);
+			var http = self.ajaxBase(digestCallback);
 			http.open("POST",self.QueryString.uris.ANCHOR_URL+"anchor",true);
 			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		  	http.setRequestHeader("Content-length", text.length);
