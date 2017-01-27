@@ -380,7 +380,7 @@ QUnit.test( "hides account and assurer menutabs and shows login and registration
 			var testForm = "PasswordResetInitiateForm_OnLoginTab";
 			var testUri = test.uribase+"/v1/users/my@email.com/passwordreset";
 			var testMethod = "GET";
-			document.getElementById( testForm + "_email_input" ).value = "my@email.com";
+			document.getElementById( testForm + "_email_input" ).value = "M y@email.com";
 				// calling the unit	
 			pageScript.InitiatePasswordReset( testForm );
 				// asserts		
@@ -492,7 +492,7 @@ QUnit.test( "hides account and assurer menutabs and shows login and registration
 		QUnit.test( "byEmail() should request the server for the data of the user selected by Email", function( assert ) {
 				// Initializing the test
 			var oldEmail = document.getElementById("ByEmailForm_email_input").value
-			document.getElementById("ByEmailForm_email_input").value = "email@address.com";
+			document.getElementById("ByEmailForm_email_input").value = "E mail@address.com";
 			pageScript = new PageScript(test);
 			var checkUri = test.uribase+"/v1/user_by_email/email%40address.com"
 			var checkMethod = "GET";

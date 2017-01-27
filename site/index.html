@@ -1,0 +1,179 @@
+{% extends "tmpl/page.html" %}
+
+{% set main = 'pageScript.main()' %}
+
+{% set title = 'anonim digitális azonosító' %}
+
+{% set additionalJavascripts = ["js/vendor/jquery.waypoints.min.js", "js/index.js"] %}
+
+{% set additionalCss = [] %}
+
+{% block contents %}
+		<div class="wrapper">
+<!-- Heading -->
+		<section id="heading" class="container">
+			<h1>Anonim Digitális Azonosító</h1>
+		</section>
+<!-- Heading end -->
+
+<!-- What is it start -->
+		<section class="container">
+			<h3 class="feature_title">Mi ez?</h3>
+			<p>
+A felhasználók anonim azonosítását nyújtó szolgáltatás.
+A felhasználók ADA fiókjuk segítségével be tudnak jelentkezni az ADA szolgáltatást támogató alkalmazásokba.
+			</p>
+		</section>
+<!-- What is it End -->
+
+<!-- How it works start -->
+		<section class="container">
+			<h3 class="feature_title">Hogyan működik? </h3>
+			<p>
+Személyes adataidból a rendszer egyedi, vissza nem fejthető kódot készít. 
+Így a rendszer tudja, hogy valós személy vagy, de nem tudja, hogy kicsoda.
+			</p>
+			<p>
+				<a href="user_howto.html">többet szeretnék megtudni <i class="fa fa-arrow-right"></i></a>
+			</p>
+		</section>
+<!-- How it works End -->
+
+<!-- Why it is good for me start -->
+		<section class="container">
+			<h3 class="feature_title">Miért jó ez?</h3>
+			<h4>Neked azért, mert:</h4>
+			<ul class="disced">
+				<li>anonim módon, de mégis valódi személyként jelenhetsz meg különféle online alkalmazásokban</li>
+				<li>kifejezett engedélyed nélkül senki sem kaphatja meg az adataidat</li>
+				<li>egy regisztrációval  több alkalmazást is elérhetsz</li>
+			</ul>
+			<h4>Az alkalmazások számára azért, mert:</h4>
+			<ul class="disced">
+				<li>nem kell az azonosításoddal bajlódniuk,</li>
+				<li>a Felhasználók azonosított magyar állampolgárok,</li>
+				<li>speciális digitális igazolásokat adhatnak tagjaiknak</li>
+			</ul>
+		</section>
+<!-- Why it is good for me End -->
+
+<!-- Why it is especial start -->
+		<section class="container">
+			<h3 class="feature_title">Miért különleges?</h3>
+			<h4>Mert:</h4>
+			<ul class="disced">
+				<li>soha nem ad ki személyes adatot és nem is tárol ilyeneket,</li>
+				<li>olyan szolgáltatás, melyhez kapcsolódik valós azonosítás  (Tanúsítás),</li>
+				<li>kényelmes, sokféle bejelentkezési módot támogat,</li>
+
+				<li>nem naplózzuk a Felhasználók tevékenységét,</li>
+				<li>bárki által ellenőrizhető nyílt forráskódú szoftverekből épül fel,</li>
+				<li>a Felhasználók anonimitása a legfőbb érték számunkra</li>
+			</ul>
+		</section>
+<!-- Why it is especial End -->
+
+<!-- Counter Strat -->
+<section id="counter_area">
+        <div class="facts">
+            <div class="container">
+                <div class="col-md-3 col-xs-12 col-sm-6 columns">
+                    <div class="facts-wrap">
+                     <div class="graph">
+                        <div class="graph-left-side">
+                        	<div class="graph-left-container">
+                        		<div class="graph-left-half"> </div>
+                        	</div>
+                        </div>
+                        <div class="graph-right-side">
+                        	<div class="graph-right-container">
+                        		<div class="graph-right-half"></div>
+                        	</div>
+                        </div>
+                        <i class="fa fa-users fa-3x fw"></i>
+                        <div class="facts-wrap-num">
+                            <span class="counter" id="user-counter" >0</span>
+                        </div>
+                    </div>
+                        <h6>Regisztrált felhasználó</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xs-12 col-sm-6 columns">
+                    <div class="facts-wrap">
+                     <div class="graph">
+                        <div class="graph-left-side">
+                        	<div class="graph-left-container">
+                        		<div class="graph-left-half"> </div>
+                        	</div>
+                        </div>
+                        <div class="graph-right-side">
+                        	<div class="graph-right-container">
+                        		<div class="graph-right-half"></div>
+                        	</div>
+                        </div>
+                        <i class="fa fa-user-plus fa-3x fw"></i>
+                        <div class="facts-wrap-num"><span class="counter" id="magyar-counter" >0</span></div>
+                     </div>
+                        <h6>Magyar igazolással rendelkező</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xs-12 col-sm-6 columns">
+                    <div class="facts-wrap">
+                     <div class="graph">
+                        <div class="graph-left-side">
+                        	<div class="graph-left-container">
+                        		<div class="graph-left-half"> </div>
+                        	</div>
+                        </div>
+                        <div class="graph-right-side">
+                        	<div class="graph-right-container">
+                        		<div class="graph-right-half"></div>
+                        	</div>
+                        </div>
+                        <i class="fa fa-thumbs-up fa-3x fw"></i>
+                        <div class="facts-wrap-num"><span class="counter" id="assurer-counter" >0</span></div>
+                        </div>
+                        <h6>Tanusító</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xs-12 col-sm-6 columns">
+                    <div class="facts-wrap">
+                     <div class="graph">
+                        <div class="graph-left-side">
+                        	<div class="graph-left-container">
+                        		<div class="graph-left-half"> </div>
+                        	</div>
+                        </div>
+                        <div class="graph-right-side">
+                        	<div class="graph-right-container">
+                        		<div class="graph-right-half"></div>
+                        	</div>
+                        </div>
+                        <i class="fa fa-star-o fa-3x fw"></i>
+                        <div class="facts-wrap-num"><span class="counter" id="application-counter">0</span></div>
+                        </div>
+                        <h6>Elérhető alkalmazás</h6>
+                    </div>
+                </div>
+            </div> <!-- Conatainer End -->
+        </div>	<!-- Fact div ENd -->
+</section>
+<!-- Counter End -->
+
+<div class="clearfix"></div>
+
+<!-- Who we are start -->
+		<section class="container">
+			<p></p>
+			<h3 class="feature_title">Kik vagyunk?</h3>
+			<p>
+Az Anonim Digitális Azonosító szolgáltatás a  Közösségi  Digitális Eszközök  Alapítvány támogatott projektje. 
+A projektet közösségi munkában és finanszírozással hozták  létre  informatikusok, közgazdászok, 
+szociológusok, média szakemberek és még sokan mások.
+			</p>
+			<p>
+				<a href="about_us.html">többet szeretnék megtudni <i class="fa fa-arrow-right"></i></a>
+			</p>
+		</section>
+<!-- Who we are End -->
+{% endblock %}

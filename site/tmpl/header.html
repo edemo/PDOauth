@@ -1,0 +1,34 @@
+<header id="section_header" class="navbar-fixed-top main-nav" role="banner">
+    <div class="container">
+        <div class="navbar-header ">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <img src="images/logo/adalogo_379x143.png" alt="">
+            </a>
+        </div>
+        <nav class="collapse navbar-collapse navigation" id="bs-example-navbar-collapse-1" role="navigation">
+            <ul class="nav navbar-nav navbar-right ">
+				<li><a id="nav-bar-home" href="./index.html" class="active">Home </a></li>
+				<li><a id="nav-bar-howto" href="./user_howto.html"  class="">Hogyan működik?</a> </li>
+				<li id="nav-bar-aboutus" ><a href="./about_us.html" class="">Rólunk</a> </li>
+				<li id="nav-bar-login">
+					<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('login')">Bejelentkezés</a>
+				</li>
+				<li id="nav-bar-register">
+					<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('register')">Regisztráció</a>
+				</li>
+				<li id="nav-bar-my_account">
+					<a href="javascript:void (0)" onclick="javascript:pageScript.navigateToTheSection('my_account')">Fiókom</a>
+				</li>
+				<li id="nav-bar-logout">
+					<a id="logout_button" href="javascript:void (0)" onclick="pageScript.logout()">Kijelentkezés</a>
+				</li>
+            </ul>
+        </nav>
+    </div>
+</header>

@@ -100,13 +100,16 @@
 		}
 	}
 	
-	
 	PageScript.prototype.initialise = function(text) {
-		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
+		self.ajaxget("locale/hu.json",self.callback(self.initGettext, function(status, response){
+			_=function(str){return str}
+			self.displayServerResponse(response, {ok: self.init_})
+		} ),true)
+		window.traces.push("initialise")
 	}
 	
-	PageScript.prototype.userNotLoggedIn = function(status, text) {
-		var data = JSON.parse(text);
+	PageScript.prototype.userNotLoggedIn = function( response ) {
+		var data = self.validateServerMessage( response );
 		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		self.refreshTheNavbar()
 		if (self.QueryString.section) {
@@ -121,7 +124,6 @@
 		self.isLoggedIn=true
 		self.refreshTheNavbar()
 		self.ajaxget('/v1/getmyapps', self.myappsCallback)
-		console.log(data)
 		if (data.assurances.hashgiven && data.assurances.emailverification) {
 			self.ajaxget("assurers.json", self.callback(self.fillAssurersTable), true)
 		}
@@ -146,13 +148,6 @@
 	
 	PageScript.prototype.modNavbarItem=function(){
 		document.getElementById("")
-	}
-	PageScript.prototype.hideAllSection=function(){
-		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
-	}
-	
-	PageScript.prototype.unhideSection=function(section) {
-		document.getElementById(section).style.display="block";
 	}
 
 	PageScript.prototype.displayMsg = function( msg ) {
@@ -200,7 +195,8 @@
 					break;
 			}
 		}
-		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
+		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))	
+		window.traces.push("init_")		
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
@@ -223,38 +219,6 @@
 		this.success=function(text){self.displayMsg({title:"Üzi",error:text})}
 		self.ajaxpost( "/v1/confirmemailchange", data, self.callback(this.success) )
 	}	
-	
-	PageScript.prototype.navigateToTheSection=function(section) {
-		if (self.QueryString.section) self.doRedirect(self.QueryString.uris.BASE_URL+"/fiokom.html");
-		else self.displayTheSection(section)
-	}
-	
-	PageScript.prototype.displayTheSection=function(section) {
-		self.hideAllSection();
-		var lis=document.getElementsByClassName("navbar-nav")[0].getElementsByTagName("li");
-		[].forEach.call( lis, function (e) { e.className=""; } );
-		if (!section){
-			if (self.isLoggedIn){
-				self.unhideSection("my_account_section")
-				document.getElementById("nav-bar-my_account").className="active"
-				if (self.isAssurer) self.unhideSection("assurer_section")
-			}
-			else {
-				self.unhideSection("login_section")
-				document.getElementById("nav-bar-login").className="active"
-			}
-		}
-		else { 
-			if (self.isLoggedIn && (section=="registration")) {
-				self.unhideSection("my_account_section")
-			}
-			else {
-				self.unhideSection(section+"_section")
-			}
-			var navbar=document.getElementById("nav-bar-"+section)
-			if (navbar) navbar.className="active";
-		}
-	}
 	
 	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
 		var offset = this.offsetHeight - this.clientHeight;
@@ -294,7 +258,7 @@
 
 /*
 ********************************
-**    Adding credencials      **
+**    Adding credentials      **
 ********************************
 */	
 
@@ -305,9 +269,31 @@
 			identifier: identifier,
 			password: secret
 		}
-		self.ajaxpost("/v1/add_credential", data, self.callback(self.get_me))
+		self.ajaxpost("/v1/add_credential", data, self.callback(self.userIsLoggedIn))
 	}
 	
+	PageScript.prototype.addPasswordCredential = function(){
+		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value;
+		var secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
+		self.addCredential("password", identifier, secret);
+	}
+	
+	PageScript.prototype.add_facebook_credential = function( FbUserId, FbAccessToken) {
+		self.addCredential("facebook", FbUserId, FbAccessToken);
+	}
+/*	
+	PageScript.prototype.addGoogleCredential = function(){
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+	}
+	
+	PageScript.prototype.addGithubCredential = function(){
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+	}
+	
+	PageScript.prototype.addTwitterCredential = function(){
+		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+	}
+*/	
 /*
 ********************************
 **      Change settings       **
@@ -517,9 +503,42 @@
 		else self.deactivateButton("changeEmil_saveButton")
 	}
 	
+// User actions	
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
-		self.ajaxget( "/v1/send_verify_email", self.callback( function(data){ self.displayMsg( self.processErrors( self.validateServerMessage(data) ) )} ) )
+		self.ajaxget( "/v1/send_verify_email", self.callback() )
+	}
+	
+	PageScript.prototype.initiateDeregister = function() {
+		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
 	}
 
+	PageScript.prototype.doDeregister = function() {
+		
+		var deregisterCallback = function( response ) {
+			self.isLoggedIn = false
+			self.refreshTheNavbar();
+			if ( self.page == "account" ) self.displayTheSection( "login" );
+			self.displayServerResponse( response, {ok: self.doLoadHome} )
+		}
+		
+		if ( document.getElementById("accept_deregister").checked ) {
+			if ( self.QueryString.secret ) {
+				var post = {
+					csrf_token: self.getCookie("csrf"),
+					deregister_secret: self.QueryString.secret
+				}
+				self.ajaxpost( "/v1/deregister_doit", post, self.callback( deregisterCallback ) )
+			}
+			else self.displayMsg({
+					title:_("Error message"),
+					error:_("The secret is missing")
+			})
+		}
+		else self.displayMsg({
+			title:_("Error message"),
+			error:_("To accept the terms please mark the checkbox!")
+		})			
+	}
+	
 }()
 )
