@@ -445,9 +445,9 @@
 	}
 
 	PageScript.prototype.parseAssurances = function(data) {
-		var selector = ''
-		var text
-		for(ass in data.assurances) {
+		var selector = '',
+			text
+		for(var ass in data.assurances) {
 			var pos
 			if ( pos=ass.indexOf(".")+1 ) {
 				text=ass.slice(pos)
