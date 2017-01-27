@@ -109,7 +109,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			window.traces.push( 'adauris failed' )
 			return
 		}
-		self.uribase = self.QueryString.uris.BACKEND_PATH;
+		self.ajax.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
 
 		// filling hrefs of anchors
