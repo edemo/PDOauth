@@ -422,7 +422,7 @@
 				<th>'+_("Emailing")+'</th>\
 				<th>'+_("Allow emailing")+'</th>\
 			</tr>'
-		for(app in self.aps){ 
+		for( var app in self.aps){ 
 		if (self.aps[app].username) { 
 			applist+='\
 			<tr>\

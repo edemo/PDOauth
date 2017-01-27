@@ -79,7 +79,7 @@
 		console.log('finis registering')
 		self.myappsCallback(text)
 		self.dataGivingAccepted=true
-		value=document.getElementById("registration-form_allowEmailToMe").checked
+		var value=document.getElementById("registration-form_allowEmailToMe").checked
 		self.setAppCanEmailMe(self.currentAppId, value, self.init_)
 	}
 	
