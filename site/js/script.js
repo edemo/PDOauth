@@ -340,12 +340,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
 	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
 		console.log("facebook login")
-	    var username = userId,
-			password = encodeURIComponent(accessToken),
-			data = {
+	    var data = {
 				credentialType: 'facebook',
-				identifier: username,
-				password: password
+				identifier: userId,
+				password: encodeURIComponent(accessToken)
 			}
 	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
 	}
