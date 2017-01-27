@@ -4,7 +4,7 @@
 
 	PageScript.prototype.main = function() {
 		self=this.getThis()
-		self.ajaxget( "/adauris", self.callback(self.commonInit) )
+		self.ajaxget( "/adauris", self.callback(self.commonInit), true )
 		if ($.fn.owlCarousel) {
 			$("#owl-demo").owlCarousel({
 				navigation : true, // Show next and prev buttons

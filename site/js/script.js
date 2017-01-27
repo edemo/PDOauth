@@ -1,4 +1,7 @@
+import Ajax from './modules/ajax.js'
+
 window.traces = new Array();
+
 var _
 
 function PageScript(test) {
@@ -12,6 +15,11 @@ function PageScript(test) {
 	this.registrationMethode="pw";
 	this.isFBsdkLoaded=false;
 	this.isFBconnected=false;
+	self.ajax=Ajax({
+			displayServerResponse: self.displayServerResponse,
+			reportServerFailure: self.reportServerFailure,
+			uribase: 'ada'
+		})
 
 	PageScript.prototype.navigateToTheSection=function(section) {
 		var fiokom = self.QueryString.uris.START_URL;
@@ -89,23 +97,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		self.displayMsg({title:_("Server error occured"),error: text})
 	}
 	
-	PageScript.prototype.callback = function(next,error){
-		var next  = next || self.displayServerResponse,
-			error = error || self.displayServerResponse;
-		return function(status,response,xml) {
-			switch (status){
-				case 200:
-					next( response,xml )
-					break;
-				case 500:
-				case 405:
-					self.reportServerFailure( response )
-					break;
-				default:
-					error( response, xml )
-			}
-		}
-	}
+	PageScript.prototype.callback = self.ajax.callback
 	
 	PageScript.prototype.commonInit=function( response ) {
 		// initialising variables
@@ -126,68 +118,17 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		window.traces.push('initialized')
 	}
 	
-	PageScript.prototype.ajaxBase = function(callback) {
-		var xmlhttp;
-		if (win.XMLHttpRequest)
-		  {// code for IE7+, Firefox, Chrome, Opera, Safari
-		  xmlhttp = new win.XMLHttpRequest();
-//		  xmlhttp.oName="XMLHttpRequest"; // for testing
-		  }
-		else
-		  {// code for IE6, IE5
-		  xmlhttp = new win.ActiveXObject("Microsoft.XMLHTTP");
-//		  xmlhttp.oName="ActiveXObject";   // for testing
-		  }
-		xmlhttp.callback=callback // for testing
-		xmlhttp.onreadystatechange=function()
-		  {
-		  if (xmlhttp.readyState==4)
-		    {
-		    	callback(xmlhttp.status,xmlhttp.responseText,xmlhttp.responseXML);
-		    }
-		  }
-		return xmlhttp;
-	}
+	PageScript.prototype.ajaxBase = self.ajax.ajaxBase
 
-	PageScript.prototype.ajaxpost = function( uri, data, callback ) {
-		var xmlhttp = this.ajaxBase( callback );
-		xmlhttp.open( "POST", self.uribase + uri, true );
-		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
-		var l = []
-		for (var key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
-		var dataString = l.join("&")
-		xmlhttp.send( dataString );
-	}
+	PageScript.prototype.ajaxpost = self.ajax.ajaxpost
 
-	PageScript.prototype.ajaxget = function( uri, callback, direct) {
-		var xmlhttp = this.ajaxBase( callback )
-		var theUri=(direct || false)? uri : self.uribase + uri;
-		xmlhttp.open( "GET", theUri , true);
-		xmlhttp.send();
-	}
-
+	PageScript.prototype.ajaxget = self.ajax.ajaxget
 		
 	PageScript.prototype.displayServerResponse = function( response, callbacks ){
 		self.displayMsg( self.processErrors( self.validateServerMessage( response ), callbacks ) )
 	}
 	
-	PageScript.prototype.validateServerMessage = function (response) {
-		if (!response) return {
-			errors: [
-				"Something went wrong",
-				"An empty message is arrived from the server" 
-			]
-		}
-		try { return JSON.parse(response) }
-		catch(err) {
-			return { 
-				errors: [
-					"Something went wrong",
-					"Unexpected server message:" + "<br>" + response
-				]
-			}
-		}
-	}
+	PageScript.prototype.validateServerMessage = self.ajax.validateServerMessage
 	
 	PageScript.prototype.processErrors = function(data, callbacks) {
 		console.log(data)

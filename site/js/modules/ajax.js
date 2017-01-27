@@ -1,5 +1,4 @@
-
-export function ajax( args ){
+var Ajax = function( args ){
  
     var $this = {},
         win = args.environment || window  //window can be mocked
@@ -50,12 +49,12 @@ export function ajax( args ){
 	}
 
     
-    $this.valaidateCallbackArgs(arg){
+    $this.valaidateCallbackArgs=function(args){
         var next=null,
             error=null;
-        if (typeof arg != "undefined") {
-            next = arg.next || null;
-            error = arg.error || null
+        if (typeof args != "undefined") {
+            next = args.next || null;
+            error = args.error || null
         }
         return {next: next, error: error }
     }
@@ -109,4 +108,4 @@ export function ajax( args ){
     
     return $this
 }
-
+export default Ajax;

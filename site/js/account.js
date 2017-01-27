@@ -4,7 +4,7 @@
 	PageScript.prototype.main = function() {
 		self=this.getThis()
 		var xxxx=self
-		this.ajaxget("/adauris", self.callback(self.commonInit))
+		this.ajaxget("/adauris", self.callback(self.commonInit), true)
 		var section = self.QueryString.section
 			switch (section) {
 				case "all" :

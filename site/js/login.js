@@ -9,7 +9,7 @@
 		self.dataGivingAccepted=false;
 		console.log(self.neededAssurances)
 		console.log(self.appDomain)
-		self.ajaxget("/adauris", self.callback(self.commonInit) )
+		self.ajaxget("/adauris", self.callback(self.commonInit), true )
 	}
 	
 	PageScript.prototype.parseAppCallbackUrl = function() {
