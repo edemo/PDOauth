@@ -242,17 +242,12 @@
 	
 	PageScript.prototype.addAssurance = function() {
 		if ( $("#assurance-giving_submit-button").hasClass("inactive") ) return;
-	    digest = document.getElementById("assurancing_digest_input").value;
-	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
-	    email = document.getElementById("ByEmailForm_email_input").value;
-        email = pageScript.mailRepair(email);
-	    csrf_token = self.getCookie('csrf');
-	    data= {
-	    	digest: digest,
-	    	assurance: assurance,
-	    	email: email,
-	    	csrf_token: csrf_token
-	    }
+	    var data= {
+		    	digest: document.getElementById("assurancing_digest_input").value,
+		    	assurance: document.getElementById("assurance-giving_assurance_selector").value,
+		    	email: self.mailRepair(document.getElementById("ByEmailForm_email_input").value),
+	  		  	csrf_token: self.getCookie('csrf')
+		    }
 	    self.ajaxpost("/v1/add_assurance", data, self.callback(self.myCallback))
 	}
 
@@ -273,8 +268,8 @@
 	}
 	
 	PageScript.prototype.addPasswordCredential = function(){
-		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value;
-		var secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
+		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value,
+			secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
 		self.addCredential("password", identifier, secret);
 	}
 	
