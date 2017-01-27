@@ -307,7 +307,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		var emailInput=document.getElementById(myForm+"_email_input").value
         emailInput = pageScript.mailRepair(emailInput);
 		if (emailInput!="")
-			self.ajaxget("/v1/users/"+document.getElementById(myForm+"_email_input").value+"/passwordreset", self.callback(self.myCallback));
+			self.ajaxget("/v1/users/"+emailInput+"/passwordreset", self.callback(self.myCallback));
 		else {
 			emailInput.className="missing";
 			this.displayMsg({"title":"Hiba","error":"Nem adtál meg email címet"})
