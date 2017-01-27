@@ -148,8 +148,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				if (typeof msg.message=="string") {
                     msg.message="<p>"+msg.message+"</p>";
 				} else {
-                    a="<ul>"
-		            for(value in msg.message) {
+                    var a="<ul>", m
+		            for(var value in msg.message) {
                         m = msg.message[value];
                         console.log(m);
                         a += "<li>"+m+"</li>";
@@ -168,7 +168,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			if (data.errors) {
 				msg.title = _("Error message")
 				msg.error = '<ul class="disced">';
-				errs = data.errors;
+				var errs = data.errors;
 				if (typeof(errs)!='string') {
 					[].forEach.call(errs, function(e) {
 						msg.error += "<li>"+ translateError(e) +"</li>" ;})
@@ -298,14 +298,15 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 // Button actions
 
 	PageScript.prototype.doPasswordReset = function() {
-		secret = document.getElementById("PasswordResetForm_secret_input").value;
-	    password = document.getElementById("PasswordResetForm_password_input").value;
-	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, self.callback(self.reloadCallback))
+		var data = {
+			secret : document.getElementById("PasswordResetForm_secret_input").value,
+	    	password : document.getElementById("PasswordResetForm_password_input").value
+		}
+	    this.ajaxpost("/v1/password_reset", data, self.callback(self.reloadCallback))
 	}
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
-		var emailInput=document.getElementById(myForm+"_email_input").value
-        emailInput = pageScript.mailRepair(emailInput);
+		var emailInput=self.mailRepair(document.getElementById(myForm+"_email_input").value)
 		if (emailInput!="")
 			self.ajaxget("/v1/users/"+emailInput+"/passwordreset", self.callback(self.myCallback));
 		else {
@@ -359,8 +360,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.getCookie = function(cname) {
-	    var name = cname + "=";
-	    var ca = win.document.cookie.split(';');
+	    var name = cname + "=",
+	    	ca = win.document.cookie.split(';');
 	    for(var i=0; i<ca.length; i++) {
 	        var c = ca[i];
 	        while (c.charAt(0)==' ') c = c.substring(1);
@@ -416,9 +417,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
 //Getdigest functions	
 	PageScript.prototype.normalizeString = function(val) {
-		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
-		var unaccented="ouooueauiouooueaui";
-		var s = "";
+		var	accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ",
+			unaccented="ouooueauiouooueaui",
+			s = "",
+			c;
 		
 		for (var i = 0, len = val.length; i < len; i++) {
 		  c = val[i];
@@ -491,8 +493,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 
 		this.methodChooser = function(method) {
-			var selfButton = formName+"_make-self"
-			var hereButton = formName+"_make-here"
+			var selfButton = formName+"_make-self",
+				hereButton = formName+"_make-here"
 			switch (method) {
 				case "here":
 					document.getElementById(formName+"_code-generation-input").style.display="block"
@@ -511,9 +513,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 		
 		this.getDigest = function() {
-			text = createXmlForAnchor(formName)
+			var text = createXmlForAnchor(formName)
 			if (text == null) return;
-			http = self.ajaxBase(digestCallback);
+			var http = self.ajaxBase(digestCallback);
 			http.open("POST",self.QueryString.uris.ANCHOR_URL+"anchor",true);
 			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		  	http.setRequestHeader("Content-length", text.length);
@@ -541,8 +543,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.convert_mothername = function(formName) {
-		var inputElement = document.getElementById( formName+"_mothername");
-		var outputElement = document.getElementById( formName+"_monitor");
+		var inputElement = document.getElementById( formName+"_mothername"),
+			outputElement = document.getElementById( formName+"_monitor");
 		outputElement.innerHTML = self.normalizeId(document.getElementById( formName+"_input").value) +' - '+ self.normalizeString(inputElement.value);
 	}
 	
@@ -583,9 +585,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	    	credentialType: credentialType,
 	    	identifier: identifier,
 	    	email: email,
-	    	digest: digest
+	    	digest: digest,
+			password: secret
 	    }
-		data.password=secret;
 		window.traces.push(data)
 		window.traces.push("register")
 	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
@@ -597,8 +599,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			switch (self.registrationMethode) {
 				case "pw":
 					console.log('pw')
-					var pwInput=document.getElementById("registration-form_secret_input")
-					var pwBackup=document.getElementById("registration-form_secret_backup")
+					var pwInput=document.getElementById("registration-form_secret_input"),
+						pwBackup=document.getElementById("registration-form_secret_backup")
 					if (pwInput.value!=pwBackup.value) self.displayMsg({title:_("Error message"),error:_("The passwords are not identical")})
 					else self.register("password")
 					break;
@@ -706,7 +708,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		if (hasTokens) {
 			// replace tokens with the given arguments
 			var re  = /([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X)(.*)/; //'
-			var a   = b = [], i = 0, numMatches = 0;		
+			var a   = b = [], i = 0, numMatches = 0, subst;		
 			while (a = re.exec(str)) {
 				var leftpart   = a[1], 
 					pPad  = a[2], 
