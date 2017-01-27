@@ -5,11 +5,11 @@ var Ajax = function( args ){
      
     $this.stack = {}
     
-    $this.uribase = args.uribase || ''
+    $this.uribase = ''
     
-    $this.displayServerResponse = args.displayServerResponse || function(response){return response}
+    $this.displayServerResponse = function(response){return response}
     
-    $this.reportServerFailure = args.reportServerFailure || function(response){return response}
+    $this.reportServerFailure = function(response){return response}
 
     $this.callback = function( next, error ){
 		var next  = next || $this.displayServerResponse,
@@ -24,6 +24,7 @@ var Ajax = function( args ){
 					$this.reportServerFailure( response )
 					break;
 				default:
+					console.log("error ág")
 					error( response, xml )
 			}
 		}
@@ -69,7 +70,7 @@ var Ajax = function( args ){
 			l = []
 		xmlhttp.open( "POST", $this.uribase + uri, true );
 		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
-		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
+		for (var key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		xmlhttp.send( l.join("&") );
         $this.stack[uri]="GET"
 	}
