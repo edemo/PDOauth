@@ -1,4 +1,4 @@
-import { pageScript } from './modules/login'
+import { pageScript } from './modules/account.js'
 import facebook from './modules/script'
 import FaceBook from './modules/fb'
 import x from './modules/back_to_top' //back to top button

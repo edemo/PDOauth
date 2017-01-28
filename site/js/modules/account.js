@@ -1,4 +1,8 @@
-(function(){	
+ import PageScript from './script'
+ import { _ } from './gettext'
+ import { gettext } from './gettext'
+ 
+ (function(){	
 	var self
 	PageScript.prototype.page = "account";
 	PageScript.prototype.main = function() {
@@ -101,12 +105,17 @@
 	}
 	
 	PageScript.prototype.initialise = function(text) {
-		self.ajaxget("locale/hu.json",self.callback(self.initGettext, function(status, response){
-			_=function(str){return str}
+		self.ajaxget("locale/hu.json",self.callback(self.gettextCallback, function(response){
+			gettext.mockGettext()
 			self.displayServerResponse(response, {ok: self.init_})
 		} ),true)
 		window.traces.push("initialise")
 	}
+	
+	PageScript.prototype.gettextCallback = function(response){
+		gettext.initGettext(response)
+		self.init_()
+	} 
 	
 	PageScript.prototype.userNotLoggedIn = function( response ) {
 		var data = self.validateServerMessage( response );
@@ -231,8 +240,7 @@
 // assuring functions
 
 	PageScript.prototype.byEmail = function() {
-	    var email = document.getElementById("ByEmailForm_email_input").value;
-        email = pageScript.mailRepair(email);
+	    var email = self.mailRepair(document.getElementById("ByEmailForm_email_input").value);
 		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
@@ -536,3 +544,5 @@
 	
 }()
 )
+
+export var pageScript = new PageScript()

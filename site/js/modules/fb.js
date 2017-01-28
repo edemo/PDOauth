@@ -1,4 +1,5 @@
-function FaceBook(pageScript) {
+import { _ } from './gettext'
+var FaceBook = function(pageScript) {
 	var $this=this
 	$this.pageScript = pageScript;
 	$this.doc = document;
@@ -167,4 +168,4 @@ function FaceBook(pageScript) {
     });
   }
 	
-var facebook = new FaceBook(pageScript)
+export default FaceBook
