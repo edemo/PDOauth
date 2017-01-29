@@ -1,0 +1,60 @@
+{% extends "tmpl/page.html" %}
+
+{% set main = 'pageScript.main()' %}
+
+{% set title = 'fiókom' %}
+
+{% set additionalJavascripts = ["js/fiokom.js"] %}
+
+{% set additionalCss = ["css/ada_acc.css"] %}
+
+{% block contents %}
+	<!-- content -->
+	<div id="top" style="margin-top:50px"></div>
+	<div class="wrapper">
+
+<!-- message box -->
+		<div id="myModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+    <!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button id="PopupWindow_CloseButton1" type="button" class="close" data-dismiss="modal" onclick="javascript:pageScript.closePopup()">&times;</button>
+					<h3 class="modal-title" id="PopupWindow_TitleDiv"></h3>
+				</div>
+				<div class="modal-body">
+					<div class="msg" id="PopupWindow_ErrorDiv"></div>
+					<div class="msg" id="PopupWindow_MessageDiv"></div>
+					<div class="msg" id="PopupWindow_SuccessDiv"></div>
+				</div>
+				<div class="modal-footer">
+					<button id="PopupWindow_CloseButton2" type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript:pageScript.closePopup()">Close</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+<!-- Delete account -->
+		<div class="func container" id="deregistration_section">
+			<section class="container_">
+				<h3 class="title">Fiók törlése</h3>
+				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük.
+				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be.
+				Az <b>igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
+				<p>Az alábbi jelölőnégyzet kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
+				<div>
+					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
+					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
+				</div>
+				<button type="button" onclick="javascript:pageScript.doDeregister()">Törlöm a fiókom</button>
+			</section>
+		</div>
+<!-- End delete account section -->
+
+
+	</div><!-- End wrapper -->
+
+{% endblock %}
