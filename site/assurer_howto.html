@@ -1,0 +1,135 @@
+{% extends "tmpl/page.html" %}
+
+{% set main = 'pageScript.main()' %}
+
+{% set title = 'tanúsítás' %}
+
+{% set additionalJavascripts = ["js/index.js"] %}
+
+{% set additionalCss = ["css/ada_blog.css"] %}
+
+{% block contents %}
+<!-- Portfolio works Start -->
+
+<!-- Heading -->
+		<section id="heading" class="container">
+			<h1>Tanúsítás</h1>
+		</section>
+<!-- Heading end -->
+	
+    <section id="blog-single wrapper">
+        <div class="container">
+                <!-- Portfolio item slider start -->
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                 <div class="blog-desc">
+					<div id="tanustas">
+						<h3  class="feature_title">Mi az hogy tanúsítás?</h3>
+						<p>
+A tanúsítás az a folyamat, melynek során a felhasználók valódiságát 
+egy személyes találkozót igénylő eljárással igazoljuk.
+A tanúsítás teljes leírását a 
+<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanúsítási Szabályzatban</a> 
+találod meg.
+            </p>
+					<div id="miert_jo">
+						<h3 class="feature_title">Miért jó ha tanúsítva vagyok?</h3>
+						<p>
+A tanúsítást követően igénybe tudsz venni olyan szolgáltatásokat, melyek  gazdája  szeretne 
+100%-ban biztos lenni abban, hogy te egy magyar állampolgár vagy, illetve rendelkezel meghatározott jogosítványokkal 
+(pl. egy adott választó kerület jogosult szavazója vagy, egy adott szervezet tagja vayg stb).
+						</p>
+					</div>
+					<div id="hogy_tortenik">
+						<h3 class="feature_title">Hogyan történik a tanúsítás?</h3>
+						<p>
+A Tanúsító egy személyes találkozó alkalmával  azt vizsgálja, hogy a rendszerben általad elmentett 
+Titkos Kódot elő lehet-e állítani az igazolványaidban szereplő személyes adataidból. Amennyiben igen, 
+akkor kiadja számodra a „magyar” (és/vagy esetleg egyéb) igazolást. 
+Hogy pontosan lásd mi történik majd, fusd át a 
+<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/4mell%C3%A9klet.html">Tanúsító eljárásának összefoglalását</a>.
+            </p>
+					</div>
+					<div id="tanusitok">
+						<h3 class="feature_title">Kik a Tanúsítók?</h3>
+						<p>
+A tanúsítók olyan önkéntes közreműködők, akik a kötelezettséget vállaltak arra, hogy elvégzik a 
+náluk jelentkező felhasználók személyes azonosítását. 
+Tevékenységüket díjmentesen végzik, de adott esetben kérhetik a ténylegesen 
+<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/vi_igazolas_kiadasaval_kapcsolatos_esetleges_kolts.html">felmerült költségeik</a> 
+megtérítését.				
+						</p>
+					</div>
+					<div id="en_is">
+						<h3 class="feature_title">Lehetek én is tanúsító?</h3>
+						<p>
+Igen,  bárki lehet tanúsító, aki sikeres vizsgát tesz az ADA szabályzataiból. 
+Ha szeretnél tanúsító lenni legelőször olvasd el a leendő tanúsítóknak készült 
+<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/leend%C5%91-tan%C3%BAs%C3%ADt%C3%B3knak.html">összefoglalónkat</a>. 
+						</p>
+					</div>
+					<div id="anonimitas">
+						<h3 class="feature_title">Mi lesz az anonimitásommal miután tanúsítottak?</h3>
+						<p>
+A TANÚSÍTÁS NEM JELENTI AZ ANONIMITÁSOD FELADÁSÁT! 
+            </p>
+            <p>
+A Tanúsítónak joga van az személyes adataid megtekintésére, azokból a Titkos Kódod előállítására, azonban nincs joga azok rögzítésére és  nincs lehetősége azok bármilyen formában történő tárolására az ADA rendszerében. Az ADA és/vagy a Titkos Kód gép nem tárolja a személyes adataidat. 
+A tanúsítást követően az ADA, az azonosítódhoz rendelve egyedül a tanúsító által kiadott jogosítványaidat fogja tárolni.
+						</p>
+					</div>
+                </div>
+                <hr>
+                <div class="clearfix"></div>
+
+			</div>  <!-- blog footer end -->
+           
+    <!-- left blog part end -->
+
+    <!-- Right Blog part row start -->
+            <div class="row">
+                <!-- sidebar start -->
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="blog-sidebar">
+						<div id="side-bar-nav">
+							<h4>Szabályzatok</h4>
+							<ul>
+								<li class="active">
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételek</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztató</a>
+								</li>
+								<li>
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanúsítási Szabályzat</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/utmutato-alkalmazasok-szamara/content/">Útmutató Alkalmazások számára</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/felhasznalasi-feltetelek-applikaciok-szamara/content/">Felhasználási Feltételek Applikációk számára</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/ada-iranyito-testulet-ugyrendje/content/">Irányító Testület ügyrendje</a>
+								</li>
+								<li >
+									<a target="_blank" href="https://edemo.gitbooks.io/adamintadokumentumok/content/">ADA mintadokumentumok</a>
+								</li>									
+							</ul>
+							<h4>Kirakat</h4>
+							<ul>
+								<li >
+									<a href="index.html#counter_area">Statisztikák</a>
+								</li>
+							</ul>
+						</div>
+                        
+                    </div> <!-- blog sidebar end -->
+                </div>
+            </div>
+            <!-- sidebar end -->
+
+            </div><!-- Portfolio item row end -->
+        </div><!-- Portfolio item container end -->
+</section>  <!-- Portfolio Section End -->
+<<<<<<< HEAD:site/user_howto.html
+{% endblock %}

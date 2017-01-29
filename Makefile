@@ -3,7 +3,8 @@ HTML_FILES = user_howto.html\
 	index.html\
 	login.html\
 	about_us.html\
-	fiokom.html
+	fiokom.html\
+	assurer_howto.html
 
 all:
 	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
