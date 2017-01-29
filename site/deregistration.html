@@ -11,7 +11,7 @@
 {% block contents %}
 	<!-- content -->
 	<div id="top" style="margin-top:50px"></div>
-		<div class="wrapper">
+	<div class="wrapper">
 
 {% include 'tmpl/message_box.html' %}
 
@@ -27,7 +27,7 @@
 					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
 					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
 				</div>
-				<button type="button" onclick="javascript:pageScript.doDeregister()">Törlöm a fiókom</button>
+				<button id="deregistration-form_submit-button" type="button">Törlöm a fiókom</button>
 			</section>
 		</div>
 <!-- End delete account section -->
