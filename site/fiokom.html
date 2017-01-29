@@ -1,7 +1,5 @@
 {% extends "tmpl/page.html" %}
 
-{% set main = 'pageScript.main()' %}
-
 {% set title = 'fiókom' %}
 
 {% set additionalJavascripts = ["js/fiokom.js"] %}
@@ -392,23 +390,6 @@
 			</section>
 		</div>
 <!-- End email verification success section -->
-
-<!-- Delete account -->
-		<div class="func container" id="deregistration_section">
-			<section class="container_">
-				<h3 class="title">Fiók törlése</h3>
-				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük.
-				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be.
-				Az <b>igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
-				<p>Az alábbi jelölőnégyzet kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
-				<div>
-					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
-					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
-				</div>
-				<button type="button" onclick="javascript:pageScript.doDeregister()">Törlöm a fiókom</button>
-			</section>
-		</div>
-<!-- End delete account section -->
 
 <!-- Password reset -->
 		<div class="func container" id="password_reset_section">

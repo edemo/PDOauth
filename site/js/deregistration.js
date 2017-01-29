@@ -101,4 +101,5 @@ PageScript.prototype.doDeregister = function() {
 }
 
 document.getElementById("deregistration-form_submit-button").onclick=pageScript.doDeregister
+$(document).ready(pageScript.main)
 	

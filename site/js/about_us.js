@@ -2,6 +2,7 @@ import { pageScript } from './modules/index'
 import x from './modules/back_to_top' //back to top button
 
 	//setting up owl Carousel
+$(document).ready(pageScript.main)
 	
 if ($.fn.owlCarousel) {
 	$("#owl-demo").owlCarousel({

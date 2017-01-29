@@ -29,7 +29,7 @@ static-base:
 	cp -r site/js site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
 
 static-js:
-	for js in $(js_files); do rollup --format=cjs --output=static/js/$$js -- site/js/$$js; done
+	for js in $(js_files); do rollup --format=iife --output=static/js/$$js -- site/js/$$js; done
 
 static-html:
 	for page in $(HTML_FILES); do ./tools/compilehtml $$page; done

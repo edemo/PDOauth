@@ -4,3 +4,4 @@ import FaceBook from './modules/fb'
 import x from './modules/back_to_top' //back to top button
 	
 window.facebook = new FaceBook(pageScript)
+$(document).ready(pageScript.main)
