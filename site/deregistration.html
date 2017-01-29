@@ -11,34 +11,12 @@
 {% block contents %}
 	<!-- content -->
 	<div id="top" style="margin-top:50px"></div>
-	<div class="wrapper">
+		<div class="wrapper">
 
-<!-- message box -->
-		<div id="myModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-
-    <!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<button id="PopupWindow_CloseButton1" type="button" class="close" data-dismiss="modal" onclick="javascript:pageScript.closePopup()">&times;</button>
-					<h3 class="modal-title" id="PopupWindow_TitleDiv"></h3>
-				</div>
-				<div class="modal-body">
-					<div class="msg" id="PopupWindow_ErrorDiv"></div>
-					<div class="msg" id="PopupWindow_MessageDiv"></div>
-					<div class="msg" id="PopupWindow_SuccessDiv"></div>
-				</div>
-				<div class="modal-footer">
-					<button id="PopupWindow_CloseButton2" type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript:pageScript.closePopup()">Close</button>
-				</div>
-			</div>
-
-		</div>
-	</div>
-
+{% include 'tmpl/message_box.html' %}
 
 <!-- Delete account -->
-		<div class="func container" id="deregistration_section">
+		<div class="container" id="deregistration_section">
 			<section class="container_">
 				<h3 class="title">Fiók törlése</h3>
 				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük.
