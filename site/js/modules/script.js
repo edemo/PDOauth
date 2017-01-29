@@ -1,19 +1,20 @@
 import { _ } from './gettext'
 import Ajax from './ajax.js'
+import { setup_the_navbar_buttons_onclick } from './setup_buttons'
 
 window.traces = new Array();
 
 function PageScript(test) {
 	var self = this
 	test=test || { debug: false, uribase: "" }
-	this.debug=test.debug
+	self.debug=test.debug
 	var win = test.win || window;
     self.uribase=test.uribase;
-	this.isLoggedIn=false;
-	this.isAssurer=false;
-	this.registrationMethode="pw";
-	this.isFBsdkLoaded=false;
-	this.isFBconnected=false;
+	self.isLoggedIn=false;
+	self.isAssurer=false;
+	self.registrationMethode="pw";
+	self.isFBsdkLoaded=false;
+	self.isFBconnected=false;
 	self.ajax=Ajax({})
 
 	PageScript.prototype.navigateToTheSection=function(section) {
@@ -82,10 +83,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
     return query_string;
 };
 
-    this.QueryString = self.QueryStringFunc(win.location.search);
+PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.getThis=function() {
-		return this
+		return self
 	}
 	
 	PageScript.prototype.reportServerFailure = function(text){
@@ -346,7 +347,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.logout = function() {
-	    this.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
+		console.log(self.QueryString)
+	    self.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
 	}
 	
 	PageScript.prototype.getCookie = function(cname) {
@@ -654,5 +656,8 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
 
 }
+
+setup_the_navbar_buttons_onclick(new PageScript);
+
 export {facebook}
 export default PageScript

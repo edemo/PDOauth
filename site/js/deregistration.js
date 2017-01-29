@@ -2,15 +2,16 @@ import x from './modules/back_to_top' //back to top button
 import { _ } from './modules/gettext'
 import { gettext } from './modules/gettext'
 import PageScript from './modules/script.js'
+import { setup_the_deregister_form_buttons } from './modules/setup_buttons'
 
-var $this,
-	pageScript = new PageScript()
+var pageScript = new PageScript(),
+	$this=pageScript
 	
 PageScript.prototype.page = "deregistration";
 
 PageScript.prototype.main = function() {
-	$this=this
-	this.ajaxget("/adauris", this.callback(this.commonInit), true)
+	$this.ajaxget("/adauris", $this.callback($this.commonInit), true)
+	setup_the_deregister_form_buttons($this)
 	window.traces.push("main end")
 }
 	
@@ -23,12 +24,12 @@ PageScript.prototype.initialise = function(text) {
 			gettext.mockGettext()
 			$this.displayServerResponse(response, {ok: $this.init_})
 	}	
-	this.ajaxget("locale/hu.json",this.callback( dictionaryLoadedCallback, dictionaryFailureCallback ),true)
+	$this.ajaxget("locale/hu.json",$this.callback( dictionaryLoadedCallback, dictionaryFailureCallback ),true)
 	window.traces.push("initialise")
 }
 
 PageScript.prototype.init_=function(){
-	this.ajaxget("/v1/users/me", this.callback(this.userIsLoggedIn, this.userNotLoggedIn))	
+	$this.ajaxget("/v1/users/me", $this.callback($this.userIsLoggedIn, $this.userNotLoggedIn))	
 	window.traces.push("init_")		
 }
 
@@ -48,7 +49,7 @@ PageScript.prototype.displayMsg = function( msg ) {
 	if (!(msg.title || msg.error || msg.message || msg.success)) return
 	$("#myModal").modal();
 	if (!msg.callback) msg.callback="";
-	this.msgCallback=msg.callback; //only for testing
+	$this.msgCallback=msg.callback; //only for testing
 	document.getElementById("PopupWindow_CloseButton1").onclick = function() {$this.closePopup(msg.callback)}
 	document.getElementById("PopupWindow_CloseButton2").onclick = function() {$this.closePopup(msg.callback)}
 	document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
@@ -63,7 +64,7 @@ PageScript.prototype.displayMsg = function( msg ) {
 }
 
 PageScript.prototype.closePopup = function(popupCallback) {
-	this.popupCallback=popupCallback //only for testing
+	$this.popupCallback=popupCallback //only for testing
 	document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
 	document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
 	document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
@@ -100,6 +101,6 @@ PageScript.prototype.doDeregister = function() {
 	})			
 }
 
-document.getElementById("deregistration-form_submit-button").onclick=pageScript.doDeregister
+
 $(document).ready(pageScript.main)
 	

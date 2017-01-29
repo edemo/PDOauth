@@ -1,14 +1,16 @@
  import PageScript from './script'
  import { _ } from './gettext'
  import { gettext } from './gettext'
- 
- (function(){	
-	var self
-	PageScript.prototype.page = "account";
+ import { setup_the_registration_form_buttons } from './setup_buttons'
+ import { setup_the_login_form_buttons } from './setup_buttons'
+ export var pageScript = new PageScript()
+ var self = pageScript
+
+ PageScript.prototype.page = "account";
 	PageScript.prototype.main = function() {
-		self=this.getThis()
-		var xxxx=self
-		this.ajaxget("/adauris", self.callback(self.commonInit), true)
+		self.ajaxget("/adauris", self.callback(self.commonInit), true)
+		setup_the_registration_form_buttons(self)
+		setup_the_login_form_buttons(self)
 		var section = self.QueryString.section
 			switch (section) {
 				case "all" :
@@ -163,7 +165,7 @@
 		if (!(msg.title || msg.error || msg.message || msg.success)) return
 		$("#myModal").modal();
 		if (!msg.callback) msg.callback="";
-		this.msgCallback=msg.callback; //only for testing
+		self.msgCallback=msg.callback; //only for testing
 		document.getElementById("PopupWindow_CloseButton1").onclick = function() {self.closePopup(msg.callback)}
 		document.getElementById("PopupWindow_CloseButton2").onclick = function() {self.closePopup(msg.callback)}
 		document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
@@ -178,7 +180,7 @@
 	}
 
 	PageScript.prototype.closePopup = function(popupCallback) {
-		this.popupCallback=popupCallback //only for testing
+		self.popupCallback=popupCallback //only for testing
 		document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
@@ -209,24 +211,23 @@
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
-		var target   = document.getElementById("email_verification_message").innerHTML
-		this.success = function(text){
-			target=_("Your email validation was succesfull.")
-		}
-		this.error   = function(status,text){
-			var data=JSON.parse(text);
-			target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
-		}
-		self.ajaxget( "/v1/verify_email/" + self.QueryString.secret, self.callback(this.succes,this.error) )
+		var target   = document.getElementById("email_verification_message").innerHTML,
+			onsuccess = function(text){
+				target=_("Your email validation was succesfull.")
+			},
+			onerror   = function(text){
+				var data=JSON.parse(text);
+				target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
+			}
+		self.ajaxget( "/v1/verify_email/" + self.QueryString.secret, self.callback(onsucces,onerror) )
 	}
 
 	PageScript.prototype.changeEmail=function(confirm) {
 		var data={
-			confirm: confirm,
-			secret: self.QueryString.secret
-		}
-		this.success=function(text){self.displayMsg({title:"Üzi",error:text})}
-		self.ajaxpost( "/v1/confirmemailchange", data, self.callback(this.success) )
+				confirm: confirm,
+				secret: self.QueryString.secret
+			}
+		self.ajaxpost( "/v1/confirmemailchange", data, self.callback() )
 	}	
 	
 	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
@@ -542,7 +543,3 @@
 		})			
 	}
 	
-}()
-)
-
-export var pageScript = new PageScript()

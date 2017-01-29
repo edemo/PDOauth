@@ -34,7 +34,7 @@
 -->
 
 				<p></p>
-				<form id="loginform" action="" method="post" name="login" onsubmit="javascript:pageScript.login(); return false">
+				<form id="loginform" action="" method="post" name="login" >
 					<fieldset>
 						<!-- label for="LoginForm_username_input">Felhasználónév vagy email cím:</label -->
 						<div class="form-level">
@@ -57,7 +57,7 @@
 			</section>
 			<section class="container_ form">
 				<form>
-					<button id="InitiatePasswordReset" type="button" onclick="javascript:pageScript.InitiatePasswordReset('LoginForm')">Új jelszót szeretnék</button>
+					<button id="InitiatePasswordReset" type="button">Új jelszót szeretnék</button>
 				</form>
 			</section>
 			<a name="feltetelek"></a>
@@ -73,7 +73,7 @@
 
 				<H4>Válaszd ki hogyan akarsz regisztrálni</h4>
 				<div id="registration-form-method-selector" class="form">
-					<button id="registration-form-method-selector-pw" class="social active" title="felhasználónév + jelszó" type="button" onclick="javascript:pageScript.setRegistrationMethode('pw')">
+					<button id="registration-form-method-selector-pw" class="social active" title="felhasználónév + jelszó" type="button">
 						<i class="fa fa-tag"></i>
 					</button>
 					<button id="registration-form-method-selector-fb" class="social fb-button inactive" title="Facebook fiókkal" type="button">
@@ -147,8 +147,7 @@
 					<label class="label-inline" for="confirmField">A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételeket</a> és az
 					<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztatót</a> megértettem és elfogadom</label>
 
-				<button type="button" id="registration-form_submitButton" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
-<!--				<button type="button" onclick="javascript:pageScript.createAndSaveAKeyPair()">Keygen</button> -->
+				<button type="button" id="registration-form_submitButton">Regisztrálok</button>
 			</section>
 		</div>
 

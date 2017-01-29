@@ -30,7 +30,7 @@ var FaceBook = function(pageScript) {
 
   	FaceBook.prototype.fbinit = function() {
 		var appID
-		if (appID=this.pageScript.QueryString.uris.FACEBOOK_APP_ID) {
+		if (appID=$this.pageScript.QueryString.uris.FACEBOOK_APP_ID) {
 			window.fbAsyncInit = function() {
 				FB.init({
 					appId	: appID,
@@ -40,7 +40,7 @@ var FaceBook = function(pageScript) {
 					status	: true,
 					version	: 'v2.3' // use version 2.2
 				});
-				this.pageScript.isFBsdkLoaded=true
+				$this.pageScript.isFBsdkLoaded=true
 				pageScript.activateButton("Facebook_login_button", facebook.fblogin)
 				pageScript.activateButton("registration-form-method-selector-fb", function(){pageScript.setRegistrationMethode('fb')})
 				window.traces.push("fbAsyncInit")
