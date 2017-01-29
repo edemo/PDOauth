@@ -1,10 +1,18 @@
+
+HTML_FILES = user_howto.html\
+	index.html\
+	login.html\
+	about_us.html\
+	fiokom.html\
+	assurer_howto.html
+
 all:
-	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
+	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
 
 %.json: %.po
 	./tools/po2json $< >$@
 
-install: static/locale/hu.json
+install: static static/locale/hu.json
 
 checkall: install tests integrationtests end2endtest xmldoc
 
@@ -12,16 +20,28 @@ checkmanual: install alltests xmldoc
 
 alltests: tests integrationtests end2endtest
 
+static: static-base static-html static-js
+static-base:
+	mkdir -p static
+	cp -r site/js site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
+
+static-js:
+	rollup --format=cjs --output=static/test/end2endTests/login.js -- site/test/end2endTests/login.js
+
+static-html:
+	for page in $(HTML_FILES); do ./tools/compilehtml $$page; done
+
 realclean:
 	rm -rf PDAnchor; git clean -fdx
 testenv:
-	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -w /PDOauth -it magwas/edemotest:master
+	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -w /PDOauth -it magwas/edemotest:master
 
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
+prepare2e: install testsetup runanchor runserver runemail
 
-onlyend2endtest: install testsetup runanchor runserver runemail waitbeforebegin firefoxtest
+onlyend2endtest: prepare2e waitbeforebegin firefoxtest
 #chrometest is not running now
 
 waitbeforebegin:

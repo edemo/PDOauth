@@ -1,0 +1,4 @@
+#!/bin/bash
+set -xe
+cd site
+j2 $1 >../static/$1

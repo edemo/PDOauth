@@ -36,7 +36,7 @@
 		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
 	}
 	
-	PageScript.prototype.userNotLoggedIn = function(status, text) {
+	PageScript.prototype.userNotLoggedIn = function(text) {
 		var data = JSON.parse(text);
 		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
 		else {
@@ -128,15 +128,6 @@
 		self.hideAllSection()
 		self.unhideSection(section)
 		if (section=="register_section" && self.neededAssurances.indexOf('hashgiven')!=-1) self.unhideSection("registration-form-getdigest_input")
-	}
-	
-	PageScript.prototype.unhideSection=function(section) {
-		document.getElementById(section).style.display="block";
-	}
-	
-	PageScript.prototype.hideAllSection=function(){
-		var a=document.getElementsByClassName("func");
-		[].forEach.call( a, function (e) { e.style.display="none"; } );
 	}
 	
 	PageScript.prototype.acceptGivingTheData=function(flag){
