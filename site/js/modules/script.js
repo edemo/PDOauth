@@ -97,7 +97,6 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.commonInit=function( response ) {
 		// initialising variables
 		var temp = self.validateServerMessage( response )
-		console.log(temp)
 		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
 		else {
 			self.displayMsg( self.processErrors( temp ))
