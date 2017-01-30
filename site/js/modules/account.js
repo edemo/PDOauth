@@ -147,7 +147,7 @@
 				self.isAssurer=true;
 			}
 		}
-
+		console.log(self.QueryString.section)
 		if (self.QueryString.section) {
 			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
 			else return;
@@ -515,31 +515,4 @@
 		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
 	}
 
-	PageScript.prototype.doDeregister = function() {
-		
-		var deregisterCallback = function( response ) {
-			self.isLoggedIn = false
-			self.refreshTheNavbar();
-			if ( self.page == "account" ) self.displayTheSection( "login" );
-			self.displayServerResponse( response, {ok: self.doLoadHome} )
-		}
-		
-		if ( document.getElementById("accept_deregister").checked ) {
-			if ( self.QueryString.secret ) {
-				var post = {
-					csrf_token: self.getCookie("csrf"),
-					deregister_secret: self.QueryString.secret
-				}
-				self.ajaxpost( "/v1/deregister_doit", post, self.callback( deregisterCallback ) )
-			}
-			else self.displayMsg({
-					title:_("Error message"),
-					error:_("The secret is missing")
-			})
-		}
-		else self.displayMsg({
-			title:_("Error message"),
-			error:_("To accept the terms please mark the checkbox!")
-		})			
-	}
 	

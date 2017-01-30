@@ -16,17 +16,6 @@ function PageScript(test) {
 	self.isFBsdkLoaded=false;
 	self.isFBconnected=false;
 	self.ajax=Ajax({})
-
-	PageScript.prototype.navigateToTheSection=function(section) {
-		var fiokom = self.QueryString.uris.START_URL;
-		var currentLocation = location.protocol + '//' + location.host + location.pathname
-		if (currentLocation != fiokom) {
-			win.location = fiokom +"?section="+section
-		} else{
-			if (self.QueryString.section) self.doRedirect(self.QueryString.uris.START_URL);
-			else self.displayTheSection(section)
-		}
-	}
 	
 	PageScript.prototype.displayTheSection=function(section) {
 		self.hideAllSection();
@@ -97,6 +86,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.commonInit=function( response ) {
 		// initialising variables
+		setup_the_navbar_buttons_onclick(self);
 		var temp = self.validateServerMessage( response )
 		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
 		else {
@@ -311,7 +301,12 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
     PageScript.prototype.mailRepair = function(mail) {
         return self.mail = mail.replace(/\s+/g,'').toLowerCase();
 	}
-    
+	
+	PageScript.prototype.justLoggedIn = function(response){
+		self.QueryString.section='my_account'
+		self.userIsLoggedIn(response)
+	}
+	
 	PageScript.prototype.login = function() {
 	    var username = document.getElementById("LoginForm_email_input").value,
 			onerror=false,
@@ -332,7 +327,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				identifier: username, 
 				password: password
 				}
-			self.ajaxpost( "/v1/login", data, self.callback(self.userIsLoggedIn) )
+			self.ajaxpost( "/v1/login", data, self.callback(self.justLoggedIn) )
 		}
 	}
 
@@ -343,7 +338,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				identifier: userId,
 				password: encodeURIComponent(accessToken)
 			}
-	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
+	    self.ajaxpost("/v1/login", data , self.callback(self.justLoggedIn) )
 	}
 	
 	PageScript.prototype.logout = function() {
@@ -656,8 +651,6 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 
 
 }
-
-setup_the_navbar_buttons_onclick(new PageScript);
 
 export {facebook}
 export default PageScript

@@ -1,13 +1,13 @@
 export function setup_the_navbar_buttons_onclick(ps){
 	console.log(ps)
 	if (ps.page=="account") {
-		document.getElementById("nav-bar-login_a").onclick=function(){ps.navigateToTheSection('login')}
-		document.getElementById("nav-bar-register_a").onclick=function(){ps.navigateToTheSection('register')}
-		document.getElementById("nav-bar-my_account_a").onclick=function(){ps.navigateToTheSection('my_account')}	
+		document.getElementById("nav-bar-login_a").onclick=function(){ps.displayTheSection('login')}
+		document.getElementById("nav-bar-register_a").onclick=function(){ps.displayTheSection('register')}
+		document.getElementById("nav-bar-my_account_a").onclick=function(){ps.displayTheSection('my_account')}	
 	}
 	else {
 		document.getElementById("nav-bar-login_a").onclick=function(){ps.doRedirect('fiokom.html')}
-		document.getElementById("nav-bar-register_a").onclick=function(){ps.doRedirect('fiokom.html')}
+		document.getElementById("nav-bar-register_a").onclick=function(){ps.doRedirect('fiokom.html?section=register')}
 		document.getElementById("nav-bar-my_account_a").onclick=function(){ps.doRedirect('fiokom.html')}	
 	}
 	document.getElementById("logout_button").onclick=ps.logout	
