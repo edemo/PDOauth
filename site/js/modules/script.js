@@ -89,7 +89,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.commonInit=function( response ) {
 		// initialising variables
-		setup_the_navbar_buttons_onclick(self);
+		if (self.page!='login') setup_the_navbar_buttons_onclick(self);
 		var temp = self.validateServerMessage( response )
 		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
 		else {
@@ -182,13 +182,15 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	}
 	
 	PageScript.prototype.setAppCanEmailMe=function(appId, value, callback){
-		var csrf_token = self.getCookie('csrf'),
-			data= {
-			canemail: value,
-	    	appname: self.aps[appId].name,
-	    	csrf_token: csrf_token
-			}
-	    self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
+		if (self.aps && self.aps[appId]) {
+			var	data= {
+				canemail: value,
+				appname: self.aps[appId].name,
+				csrf_token: self.getCookie('csrf')
+				}
+			self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
+		}
+		else self.displayMsg({title:_("Error message"),error:_("The application does not exist.")})
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {

@@ -115,7 +115,7 @@ div.checkbox {
 					<div class="msg" id="PopupWindow_ErrorDiv"></div>
 					<div class="msg" id="PopupWindow_MessageDiv"></div>
 					<div class="msg" id="PopupWindow_SuccessDiv"></div>
-					<button id="PopupWindow_CloseButton" class="pbutton" type="button" onclick = "javascript:pageScript.closePopup()">Close</button>
+					<button id="PopupWindow_CloseButton" class="pbutton" type="button">Close</button>
 				</div>
 			</div>
 			<div id="fade" class="black_overlay"></div>	
@@ -133,20 +133,20 @@ div.checkbox {
 			<div class="func" id="login_section">
 				<section class="container_">
 					<h3 class="title">Bejelentkezés
-						<button class="right" id="register" type="button" onclick="javascript:pageScript.showSection('register_section')">Regisztrálok</button>
+						<button class="right" id="section_changer_register" type="button">Regisztrálok</button>
 					</h3>
 				</section>
 				<section class="container_ form ">
 					<button class="social" title="Facebook bejelentkezés" type="button" onclick="facebook.fblogin()">
 						<i class="fa fa-facebook"></i>
 					</button>
-<!--					<button class="social inactive" title="Google+ bejlentkezés" type="button" onclick="">
+<!--					<button class="social inactive" title="Google+ bejlentkezés" type="button">
 						<i class="fa fa-google-plus"></i>
 					</button>
-					<button class="social inactive" title="Twitter bejlentkezés" type="button" onclick="">
+					<button class="social inactive" title="Twitter bejlentkezés" type="button">
 						<i class="fa fa-twitter"></i>
 					</button>
-					<button class="social inactive" title="Pinterest bejlentkezés" type="button" onclick="">
+					<button class="social inactive" title="Pinterest bejlentkezés" type="button">
 						<i class="fa fa-github"></i>
 					</button>
 -->
@@ -161,7 +161,7 @@ div.checkbox {
 							<input class="input-block" type="password" placeholder="Jelszó" id="LoginForm_password_input">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 							</div>
-							<button type="button" onclick="javascript:pageScript.login()">Bejelentkezés</button>
+							<button type="button">Bejelentkezés</button>
 						</fieldset>
 					</form>
 				</section>
@@ -173,7 +173,7 @@ div.checkbox {
 				</section>
 				<section class="container_ form">
 					<form>
-						<button type="button" onclick="javascript:pageScript.InitiatePasswordReset('LoginForm')">Új jelszót szeretnék</button>
+						<button id="InitiatePasswordReset" type="button">Új jelszót szeretnék</button>
 					</form>
 				</section>
 			</div>
@@ -182,7 +182,7 @@ div.checkbox {
 				<section class="container_ form_header" id="emailverification_header">
 					<b>"Ellenőrzőtt email" igazolás</b>
 					<span id="emailverification_ok" class="right"><i class="fa fa-check"></i></span>
-					<button id="emailverification_button" class="right" type="button" onclick="pageScript.showForm('emailverification')">Szeretnék</button>
+					<button id="emailverification_button" class="right" type="button">Szeretnék</button>
 				</section>
 				<section class="container_ input_form" id="emailverification_input">
 					<h3>Email cím ellenőrzés</h3>
@@ -192,8 +192,8 @@ div.checkbox {
 							<li>vagy felfüggesztettük az email címedet, mert visszapattannak onnan a levelek</li>
 						</ul>
 					<p class="center">
-						<button id="emailverification-input_button" type="button" onclick="pageScript.init_()">Frissít</button>
-						<button id="emailverification-cancel_button" type="button" onclick="pageScript.hideForm('emailverification')">Mégse</button>
+						<button id="emailverification-input_button" type="button">Frissít</button>
+						<button id="emailverification-cancel_button" type="button">Mégse</button>
 					<p>
 				</section>
 			</div>
@@ -201,7 +201,7 @@ div.checkbox {
 				<section class="container_ form_header" id="hashgiven_header">
 					<b>"Titkos Kód" igazolás</b>
 					<span id="hashgiven_ok" class="right"><i class="fa fa-check"></i></span>
-					<button id="hashgiven_button" class="right" type="button" onclick="pageScript.showForm('hashgiven')">A kód előállítása</button>
+					<button id="hashgiven_button" class="right" type="button">A kód előállítása</button>
 				</section>
 				<section class="container_ input_form" id="hashgiven_input">
 					<h3>Elkészítem a Titkos Kódom</h3>
@@ -211,18 +211,18 @@ div.checkbox {
 					<p class="center">
 						<button class="button inactive" type="button" id="login_make-here" >Készítsük el itt</button>
 						<a class="digest_self_made_button" id="" target="_blank">
-							<button id="login_make-self" class="button" type="button" onclick="javascript:pageScript.digestGetter('login').methodChooser('self')">Elkészítem magam</button>
+							<button id="login_make-self" class="button" type="button">Elkészítem magam</button>
 						</a>
 					</p>
 						<div id="login_code-generation-input" class="form">
 							<div class="bordered">
 								<label for="input">Személyi azonosító:</label>
-								<input type="text" placeholder="" id="login_predigest_input" onkeyup="pageScript.convert_mothername('login_predigest')">
+								<input type="text" placeholder="" id="login_predigest_input">
 								<label for="mothername">Anyja neve:</label>
-								<input type="text" placeholder="" id="login_predigest_mothername" onkeyup="pageScript.convert_mothername('login_predigest')">
+								<input type="text" placeholder="" id="login_predigest_mothername">
 								<p class="center">
-									<button type="button" onclick="pageScript.digestGetter('login').getDigest()">A kód előállítása</button>
-									<button id="code-generation-cancel_button" type="button" onclick="pageScript.hideForm('hashgiven')">Mégse</button>
+									<button id="login_getDigestButton" type="button">A kód előállítása</button>
+									<button id="code-generation-cancel_button" type="button">Mégse</button>
 								</p>
 								<div class="monitor" id="login_predigest_monitor"></div>
 							</div>
@@ -231,11 +231,11 @@ div.checkbox {
 							<p>
 								<label for="digest">Titkos Kód:</label>
 							</p>
-							<textarea data-autoresize class="digest" name="digest" type="text" id="login_digest_input" onkeyup="pageScript.textareaOnKeyup(this)"></textarea>
+							<textarea data-autoresize class="digest" name="digest" type="text" id="login_digest_input"></textarea>
 							<div class="center">
 								<p class="center">
 									<button id="code-generation-input_button" type="button" class="inactive">Titkos Kód mentése</button>
-									<button id="code-generation-cancel_button" type="button" onclick="pageScript.hideForm('hashgiven')">Mégse</button>
+									<button id="code-generation-cancel_button_" type="button">Mégse</button>
 								<p>
 							</div>
 						</div>
@@ -258,8 +258,8 @@ div.checkbox {
 					<label class="label-inline" for="confirmField">Az alkalmazás felveheti velem a kapcsolatot</label>
 				</li>
 			</ul>
-			<button type="button" onclick="javascript:pageScript.acceptGivingTheData(true)">igen</button>
-			<button type="button" onclick="javascript:pageScript.acceptGivingTheData(false)">nem</button>
+			<button id="acceptance_accept" type="button">igen</button>
+			<button id="acceptance_cancel" type="button">nem</button>
 			</section>
 		</div>
 
@@ -267,17 +267,17 @@ div.checkbox {
 			<div class="func" id="register_section">
 				<section class="container_">
 					<h3 class="title">Regisztráció
-						<button class="right" type="button"  onclick="javascript:pageScript.showSection('login_section')">Bejelentkezek</button>
+						<button id="section_changer_login" class="right" type="button">Bejelentkezek</button>
 					</h3>
 				</section>
 			<section class="container_ ">
 			
 				<H4>Válaszd ki hogyan akarsz regisztrálni</h4>
 				<p id="registration-form-method-selector" class="center">
-					<button id="registration-form-method-selector-pw" class="social active" title="felhasználónév + jelszó" type="button" onclick="javascript:pageScript.setRegistrationMethode('pw')">
+					<button id="registration-form-method-selector-pw" class="social active" title="felhasználónév + jelszó" type="button">
 						<i class="fa fa-tag"></i>
 					</button>
-					<button id="registration-form-method-selector-fb" class="social" title="Facebook fiókkal" type="button" onclick="javascript:pageScript.setRegistrationMethode('fb')">
+					<button id="registration-form-method-selector-fb" class="social" title="Facebook fiókkal" type="button">
 						<i class="fa fa-facebook"></i>
 					</button>
 <!--					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button" onclick="">
@@ -301,10 +301,10 @@ div.checkbox {
 							<span class="form-icon_"><i class=" fa fa-user"></i></span>
 						</div>
 						<div id="registration-form-password-container" class="form-level">
-							<input title="A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is." class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input" onkeyup="pageScript.passwordChanged('registration-form')">
+							<input title="A jelszó hossza minimum 8 karakter, tartalmaznia kell kis és nagybetűket és számot is." class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 							<div class="input-block center" id="registration-form_pw-strength-meter"></div>
-							<input title="" class="input-block" type="password" placeholder="Jelszó ismét" id="registration-form_secret_backup" onkeyup="pageScript.pwEqual('registration-form')">
+							<input title="" class="input-block" type="password" placeholder="Jelszó ismét" id="registration-form_secret_backup">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 							<div class="input-block center" id="registration-form_pw-equal"></div>
 						</div>
@@ -317,17 +317,17 @@ div.checkbox {
 						<p class="center">
 							<button class="button inactive" type="button" id="registration-form_make-here" >Készítsük el itt</button>
 							<a class="digest_self_made_button" id="" target="_blank">
-								<button id="registration-form_make-self" class="button" type="button" onclick="javascript:pageScript.digestGetter('registration-form').methodChooser('self')">Elkészítem magam</button>
+								<button id="registration-form_make-self" class="button" type="button">Elkészítem magam</button>
 							</a>
 						</p>
 						<div id="registration-form_code-generation-input" class="form">
 							<div class="bordered">
 								<label for="input">Személyi azonosító:</label>
-								<input type="text" placeholder="" id="registration-form_predigest_input" onkeyup="pageScript.convert_mothername('registration-form_predigest')">
+								<input type="text" placeholder="" id="registration-form_predigest_input" >
 								<label for="mothername">Anyja neve:</label>
-								<input type="text" placeholder="" id="registration-form_predigest_mothername" onkeyup="pageScript.convert_mothername('registration-form_predigest')">
+								<input type="text" placeholder="" id="registration-form_predigest_mothername">
 								<p class="center">
-									<button type="button" onclick="pageScript.digestGetter('registration-form').getDigest()">A kód előállítása</button>
+									<button id="registration-form_getDigestButton" type="button">A kód előállítása</button>
 								</p>
 								<div class="monitor" id="registration-form_predigest_monitor"></div>
 							</div>
@@ -336,7 +336,7 @@ div.checkbox {
 							<p>
 								<label for="digest">Titkos Kód:</label>
 							</p>
-							<textarea data-autoresize class="digest" name="digest" type="text" id="registration-form_digest_input" onkeyup="pageScript.textareaOnKeyup(this)"></textarea>
+							<textarea data-autoresize class="digest" name="digest" type="text" id="registration-form_digest_input"></textarea>
 						</div>
 					</div>
 				
@@ -354,13 +354,13 @@ div.checkbox {
 					<div class="checkbox">
 						<input type="checkbox" id="registration-form_confirmField" name="accept" value="accept">
 						<label class="label-inline" for="confirmField">
-							A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/" target="_blank">Felhasználási Feltételeket</a> és az 
-							<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/" target="_blank">Adatkezelési Tájékoztatót</a> megértettem és elfogadom. Hozzájárulok, 
+							A <a href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/" target="_parent">Felhasználási Feltételeket</a> és az 
+							<a href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/" target="_parent">Adatkezelési Tájékoztatót</a> megértettem és elfogadom. Hozzájárulok, 
 							hogy a <span class="app" id="accept-section_app"></span> alkalmazás a fenti adataimat megkapja.
 						</label>
 					</div>
 				<p  class="center">
-					<button id="registration-form_submitButton" type="button" onclick="javascript:pageScript.doRegister()">Regisztrálok</button>
+					<button id="registration-form_submitButton" type="button">Regisztrálok</button>
 				</p>
 				
 			</section>

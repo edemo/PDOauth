@@ -1,20 +1,25 @@
- import PageScript from './script'
- import { _ } from './gettext'
- import { gettext } from './gettext'
- 
-(function(){	
-	var self;
+import PageScript from './script'
+import { _ } from './gettext'
+import { gettext } from './gettext'
+import { setup_login_page_controlls } from './setup_buttons'
+export var pageScript = new PageScript()
+var self = pageScript
 
 	PageScript.prototype.page = "login";
 
 	PageScript.prototype.main = function() {
-		self=this.getThis()
 		self.parseAppCallbackUrl();
 		self.dataGivingAccepted=false;
 		console.log(self.neededAssurances)
 		console.log(self.appDomain)
 		self.ajaxget("/adauris", self.callback(self.commonInit), true )
+		setup_login_page_controlls(self)
 	}
+	
+	PageScript.prototype.gettextCallback = function(response){
+		gettext.initGettext(response)
+		self.init_()
+	} 
 	
 	PageScript.prototype.parseAppCallbackUrl = function() {
 		if (self.QueryString.next) {
@@ -32,7 +37,7 @@
 	PageScript.prototype.initialise = function() {
 		// redirect to official account page if callback uri is missing
 		if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
-		self.ajaxget("locale/hu.json",self.callback(self.initGettext),true)
+		self.ajaxget("locale/hu.json",self.callback(self.gettextCallback),true)
 	}
 	
 	PageScript.prototype.init_=function(){
@@ -90,7 +95,7 @@
 	PageScript.prototype.myappsCallback= function (text) {
 		console.log('myappsCallback')
 		self.aps=JSON.parse(text)
-		for (i=0; i<self.aps.length; i++){
+		for (var i=0; i<self.aps.length; i++){
 			if (self.aps[i].hostname==self.appDomain) {
 				self.currentAppId=i
 				if (self.aps[i].username) self.dataGivingAccepted=true
@@ -131,7 +136,7 @@
 	PageScript.prototype.showSection=function(section) {
 		self.hideAllSection()
 		self.unhideSection(section)
-		if (section=="register_section" && self.neededAssurances.indexOf('hashgiven')!=-1) self.unhideSection("registration-form-getdigest_input")
+		if (section=="register_section" && self.neededAssurances && self.neededAssurances.indexOf('hashgiven')!=-1) self.unhideSection("registration-form-getdigest_input")
 	}
 	
 	PageScript.prototype.acceptGivingTheData=function(flag){
@@ -153,7 +158,7 @@
 	}
 
 	PageScript.prototype.deactivateButton = function(buttonId) {
-		b=document.getElementById(buttonId)
+		var b=document.getElementById(buttonId)
 		if (b) {
 			b.className+=" inactive";
 			b.onclick=function(){return}
@@ -161,7 +166,7 @@
 	}
 	
 	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
-		b=document.getElementById(buttonId)
+		var b=document.getElementById(buttonId)
 		if (b) {
 			b.className="";
 			b.onclick=onclickFunc
@@ -169,11 +174,9 @@
 	}
 	
 	PageScript.prototype.changeHash = function() {
-	    digest = document.getElementById("login_digest_input").value;
-	    csrf_token = self.getCookie('csrf');
-	    data= {
-	    	digest: digest,
-	    	csrf_token: csrf_token
+	    var data= {
+	    	digest: document.getElementById("login_digest_input").value,
+	    	csrf_token: self.getCookie('csrf')
 	    }
 	    self.ajaxpost( "/v1/users/me/update_hash", data, self.callback(self.hashIsUpdated) )
 	}	
@@ -193,7 +196,3 @@
 		document.getElementById(formName+"_header").style.display="block";
 		document.getElementById(formName+"_input").style.display="none";
 	}
-
-}()
-)
-export var pageScript = new PageScript()
