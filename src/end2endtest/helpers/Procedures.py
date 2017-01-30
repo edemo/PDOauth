@@ -63,7 +63,7 @@ class Procedures(object):
         self.closeMessage(closeWait=False)
         self.endProcess("click password reset link")
 
-    def registerUser(self, digest=None, buttonId="nav-bar-register", personalId=None, motherName=None):
+    def registerUser(self, digest=None, buttonId="nav-bar-register_a", personalId=None, motherName=None):
         self.beginProcess("register with password")
         self.click(buttonId)
         self.setupUserCreationData()
