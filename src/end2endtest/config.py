@@ -87,7 +87,7 @@ The Test machine
     DEREGISTRATION_EMAIL_SUBJECT = "deregistration email"
     DEREGISTRATION_EMAIL_BODY_TEXT = """Dear {0.name},
 This is a deregistration email.
-Go to https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}
+Go to https://local.sso.edemokraciagep.org:8888/static/deregistration.html?deregistration_secret={0.secret}
 you have to do it until {0.expiry}.
 
 Sincerely,
@@ -96,7 +96,7 @@ The Test machine
     DEREGISTRATION_EMAIL_BODY_HTML = """<html><head></head><body>
 Dear {0.name},<br>
 This is a deregistration email.<br/>
-Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}">here</a><br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/deregistration.html?deregistration_secret={0.secret}">here</a><br/>
 you have to do it until {0.expiry}.<br/>
 <br/>
 Sincerely,<br/>
