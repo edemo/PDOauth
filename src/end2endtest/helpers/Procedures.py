@@ -82,7 +82,7 @@ class Procedures(object):
             self.click("registration-form_getDigestButton")
             self.waitUntilElementHasText("registration-form_digest_input")
         self.click("registration-form_submitButton")
-        if buttonId=="nav-bar-register":
+        if buttonId=="nav-bar-register_a":
             self.waitForTraces(["myappsCallback"])
         self.endProcess("register with password")
 
