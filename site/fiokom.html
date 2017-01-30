@@ -385,7 +385,7 @@
 			<section class="container_">
 				<h3 class="title">Az email címed igazolása</h3>
 				<p id="email_verification_message"></p>
-				<button type="button" onclick="javascript:pageScript.doRedirect('fiokom.html')">Ok</button>
+				<button id="email_verification_button" type="button">Ok</button>
 			</section>
 		</div>
 <!-- End email verification success section -->
@@ -401,7 +401,7 @@
 						<input type="text" class="disabled" id="PasswordResetForm_secret_input" style="display:none;">
 						<label for="PasswordResetForm_password_input">Új jelszó:</label>
 						<input type="password" placeholder="Jelszó" id="PasswordResetForm_password_input">
-						<button id="PasswordResetForm_OnLoginTab_submitButton" type="button" onclick="javascript:pageScript.doPasswordReset()">Jelszó mentése</button>
+						<button id="PasswordResetForm_OnLoginTab_submitButton" type="submit">Jelszó mentése</button>
 					</fieldset>
 				</form>
 			</section>
@@ -414,8 +414,8 @@
 				<h3 class="title">Email cím cseréje</h3>
 				<p>Az email címed megváltoztatását kedzdeményezted. A "Cserélem" gombra kattintva véglegesítjuk az új email címidet: <span id="emailchange_email"></span></p>
 				<p>Ha meggondoltad magad kattints a "Mégse" gombra."</p>
-				<button type="button" onclick="javascript:pageScript.changeEmail(true)">Cserélem</button>
-				<button type="button" onclick="javascript:pageScript.changeEmail(false)">Mégse</button>
+				<button id="change-email-form_ok" type="button">Cserélem</button>
+				<button id="change-email-form_cancel" type="button">Mégse</button>
 			</section>
 		</div>
 <!-- Email change section -->

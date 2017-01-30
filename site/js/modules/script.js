@@ -286,8 +286,8 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 // Button actions
 
 	PageScript.prototype.doPasswordReset = function() {
-		secret = document.getElementById("PasswordResetForm_secret_input").value;
-	    password = document.getElementById("PasswordResetForm_password_input").value;
+		var secret = document.getElementById("PasswordResetForm_secret_input").value,
+			password = document.getElementById("PasswordResetForm_password_input").value;
 	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, self.callback(self.reloadCallback))
 	}
 	

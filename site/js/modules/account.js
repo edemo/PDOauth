@@ -5,6 +5,9 @@
  import { setup_the_login_form_buttons } from './setup_buttons'
  import { setup_the_assurancing_form_buttons } from './setup_buttons'
  import { setup_the_mysettings_form_buttons } from './setup_buttons'
+ import { setup_email_verification_form_buttons } from './setup_buttons'
+ import { setup_reset_password_form_buttons } from './setup_buttons'
+ import { setup_email_change_form_buttons} from './setup_buttons'
  export var pageScript = new PageScript()
  var self = pageScript
 
@@ -15,6 +18,9 @@
 		setup_the_login_form_buttons(self)
 		setup_the_assurancing_form_buttons(self)
 		setup_the_mysettings_form_buttons(self)
+		setup_email_verification_form_buttons(self)
+		setup_reset_password_form_buttons(self)
+		setup_email_change_form_buttons(self)
 		var section = self.QueryString.section
 			switch (section) {
 				case "all" :

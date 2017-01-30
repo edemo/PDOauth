@@ -94,3 +94,13 @@ export function setup_login_page_controlls(ps){
 	field_.onclick=function(){ps.textareaOnKeyup(field_)}
 	document.getElementById("registration-form_submitButton").onclick=ps.doRegister
 }
+export function setup_email_verification_form_buttons(ps){
+	document.getElementById("email_verification_button").onclick=function(){ps.doRedirect('fiokom.html')}
+}
+export function setup_reset_password_form_buttons(ps){
+	document.getElementById("PasswordResetForm").onsubmit=function(){ps.doPasswordReset(); return false}
+}
+export function setup_email_change_form_buttons(ps){
+	document.getElementById("change-email-form_ok").onclick=function(){ps.changeEmail(true)}
+	document.getElementById("change-email-form_cancel").onclick=function(){ps.changeEmail(false)}
+}
