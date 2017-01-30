@@ -33,7 +33,7 @@ export function setup_the_registration_form_buttons(ps){
 }
 export function setup_the_login_form_buttons(ps){
 	document.getElementById("loginform").onsubmit=function(){ps.login(); return false}
-	document.getElementById("InitiatePasswordReset").onclick=ps.InitiatePasswordReset
+	document.getElementById("InitiatePasswordReset").onclick=function(){ps.InitiatePasswordReset('LoginForm')}
 }
 export function setup_the_assurancing_form_buttons(ps){
 	document.getElementById("ByEmailForm_submitButton").onclick=ps.byEmail
@@ -66,7 +66,7 @@ export function setup_login_page_controlls(ps){
 	document.getElementById("PopupWindow_CloseButton").onclick=ps.closePopup
 	document.getElementById("section_changer_register").onclick=function(){ps.showSection('register_section')}
 	document.getElementById("loginform").onsubmit=function(){ps.login(); return false}
-	document.getElementById("InitiatePasswordReset").onclick=ps.InitiatePasswordReset
+	document.getElementById("InitiatePasswordReset").onclick=function(){ps.InitiatePasswordReset('LoginForm')}
 	document.getElementById("emailverification_button").onclick=function(){ps.showForm('emailverification')}
 	document.getElementById("emailverification-input_button").onclick=ps.init_
 	document.getElementById("emailverification-cancel_button").onclick=function(){ps.hideForm('emailverification')}
