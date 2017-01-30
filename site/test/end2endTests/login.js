@@ -1,4 +1,4 @@
-import PageHeaderTests from "./PageHeaderTests.js"
+import PageHeaderTests from "./modules/PageHeaderTests.js"
 
 (function(){
 	var testFrame=document.getElementById('testarea')
