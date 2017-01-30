@@ -79,13 +79,13 @@
 					<button id="registration-form-method-selector-fb" class="social fb-button inactive" title="Facebook fiókkal" type="button">
 						<i class="fa fa-facebook"></i>
 					</button>
-<!--					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button" onclick="">
+<!--					<button id="registration-form-method-selector-g+" class="social inactive" title="Google+ fiókkal" type="button">
 						<i class="fa fa-google-plus"></i>
 					</button>
-					<button id="registration-form-method-selector-tw" class="social inactive" title="Twitter fiókkal" type="button" onclick="">
+					<button id="registration-form-method-selector-tw" class="social inactive" title="Twitter fiókkal" type="button">
 						<i class="fa fa-twitter"></i>
 					</button>
-					<button id="registration-form-method-selector-git" class="social inactive" title="Github fiókkal" type="button" onclick="">
+					<button id="registration-form-method-selector-git" class="social inactive" title="Github fiókkal" type="button">
 						<i class="fa fa-github"></i>
 					</button>
 -->
@@ -103,12 +103,12 @@
 						</div>
 						<div id="registration-form-password-container">
 						<div class="form-level">
-							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input" onkeyup="pageScript.passwordChanged('registration-form')">
+							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 						<div class="input-block" id="registration-form_pw-strength-meter"></div>
 						<div class="form-level">
-							<input title="" class="input-block" type="password" placeholder="Jelszó ismét" id="registration-form_secret_backup" onkeyup="pageScript.pwEqual('registration-form')">
+							<input title="" class="input-block" type="password" placeholder="Jelszó ismét" id="registration-form_secret_backup">
 							<span class="form-icon_"><i class=" fa fa-lock"></i></span>
 						</div>
 						<div class="input-block" id="registration-form_pw-equal"></div>
@@ -349,22 +349,22 @@
 										<div id="check-the-user" class="form">
 											<label for="email">A Felhasználó email címe</label>
 											<input name="email" type="text" id="ByEmailForm_email_input">
-											<button id="ByEmailForm_submitButton" onclick="javascript:pageScript.byEmail()" type="button">Lekérdezés</button>
+											<button id="ByEmailForm_submitButton" type="button">Lekérdezés</button>
 										</div>
 										<h4><b>Igazolás kiadása</b></h4>
 										<div id="assurance-giving" class="form">
 											<label for="input">Személyi azonosító:</label>
-											<input type="text" placeholder="" id="assurancing_predigest_input" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
+											<input type="text" placeholder="" id="assurancing_predigest_input">
 											<label for="mothername">Anyja neve:</label>
-											<input type="text" placeholder="" id="assurancing_predigest_mothername" onkeyup="pageScript.convert_mothername('assurancing_predigest')">
-											<button type="button" id="assurancing_getDigestButton" onclick="pageScript.digestGetter('assurancing').getDigest()">A kód előállítása</button>
+											<input type="text" placeholder="" id="assurancing_predigest_mothername">
+											<button type="button" id="assurancing_getDigestButton">A kód előállítása</button>
 											<div class="monitor" id="assurancing_predigest_monitor"></div>
 											<textarea class="digest" name="digest" type="text" id="assurancing_digest_input" style="display: none"></textarea>
 											<div id="assurance-giving_message" class="missing" >A Titkos Kód még nem áll rendelkezésre</div>
 											<label for="digest" style="margin-top:15px;">Kiadható igazolások:</label>
 											<select id="assurance-giving_assurance_selector">
 											</select>
-											<button id="assurance-giving_submit-button" type="button" onclick="javascript:pageScript.addAssurance()" class="inactive">Igazolás kiadása</button>
+											<button id="assurance-giving_submit-button" type="button" class="inactive">Igazolás kiadása</button>
 										</div>
                                     </div>
                                 </div>

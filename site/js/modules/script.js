@@ -21,10 +21,12 @@ function PageScript(test) {
 		self.hideAllSection();
 		var lis=document.getElementsByClassName("navbar-nav")[0].getElementsByTagName("li");
 		[].forEach.call( lis, function (e) { e.className=""; } );
+		console.log(section)
 		if (!section){
 			if (self.isLoggedIn){
 				self.unhideSection("my_account_section")
 				document.getElementById("nav-bar-my_account").className="active"
+				console.log(self.isAssurer)
 				if (self.isAssurer) self.unhideSection("assurer_section")
 			}
 			else {
@@ -38,6 +40,7 @@ function PageScript(test) {
 			}
 			else {
 				self.unhideSection(section+"_section")
+				if (self.isAssurer && section=='my_account') self.unhideSection("assurer_section")
 			}
 			var navbar=document.getElementById("nav-bar-"+section)
 			if (navbar) navbar.className="active";
@@ -208,7 +211,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 					<th>'+_("Valid until")+'</th>\
 				</tr>\
 			<tbody>'
-		for(assurance in data.assurances) {
+		for( var assurance in data.assurances) {
 			for( var i=0; i<data.assurances[assurance].length; i++){
 				result += '\
 				<tr>\

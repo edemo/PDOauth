@@ -3,6 +3,7 @@
  import { gettext } from './gettext'
  import { setup_the_registration_form_buttons } from './setup_buttons'
  import { setup_the_login_form_buttons } from './setup_buttons'
+ import { setup_the_assurancing_form_buttons } from './setup_buttons'
  export var pageScript = new PageScript()
  var self = pageScript
 
@@ -11,6 +12,7 @@
 		self.ajaxget("/adauris", self.callback(self.commonInit), true)
 		setup_the_registration_form_buttons(self)
 		setup_the_login_form_buttons(self)
+		setup_the_assurancing_form_buttons(self)
 		var section = self.QueryString.section
 			switch (section) {
 				case "all" :

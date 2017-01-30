@@ -28,8 +28,24 @@ export function setup_the_registration_form_buttons(ps){
 	document.getElementById("make_here").onclick=function() {
 		document.getElementById('registration-form_code-generation-input').style.display='block'
 	}
+	document.getElementById("registration-form_secret_input").onkeyup=function(){ps.passwordChanged('registration-form')}
+	document.getElementById("registration-form_secret_backup").onkeyup=function(){ps.pwEqual('registration-form')}
 }
 export function setup_the_login_form_buttons(ps){
 	document.getElementById("loginform").onsubmit=function(){ps.login(); return false}
 	document.getElementById("InitiatePasswordReset").onclick=ps.InitiatePasswordReset
+}
+export function setup_the_assurancing_form_buttons(ps){
+	document.getElementById("ByEmailForm_submitButton").onclick=ps.byEmail
+	document.getElementById("assurance-giving_submit-button").onclick=ps.addAssurance
+	document.getElementById("assurancing_getDigestButton").onclick=ps.digestGetter('assurancing').getDigest
+	document.getElementById("assurancing_predigest_mothername").onkeyup=function(){ps.convert_mothername('assurancing_predigest')}
+	document.getElementById("assurancing_predigest_input").onkeyup=function(){ps.convert_mothername('assurancing_predigest')}
+	document.getElementById("create_myself").onclick=function() {
+		document.getElementById('registration-form_code-generation-input').style.display='none'
+	} 
+	document.getElementById("make_here").onclick=function() {
+		document.getElementById('registration-form_code-generation-input').style.display='block'
+	}
+
 }
