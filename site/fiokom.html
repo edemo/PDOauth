@@ -243,11 +243,11 @@
 												<tr id="change-email-form_container">
 													<td nowrap><b>E-mail cím:</b></td>
 													<td id="email-change">
-														<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" onkeyup="javascript:pageScript.emailChangeInput_onkeyup()">
+														<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" >
 													</td>
 													<td class="button-container">
-														<a onclick="javascript:pageScript.emailChangeEditButton_onclick()" class="btn btn_ fa fa-edit"></a>
-														<a id="changeEmil_saveButton" onclick="javascript:pageScript.changeEmailAddress()" class="btn btn_ fa fa-save inactive" title="mentés"></a>
+														<a id="emailChangeEditButton" class="btn btn_ fa fa-edit"></a>
+														<a id="changeEmil_saveButton" class="btn btn_ fa fa-save inactive" title="mentés"></a>
 													</td>
 												</tr>
 
@@ -259,8 +259,8 @@
 														</pre>
 													</td>
 													<td class="button-container">
-														<a id="viewChangeHashForm" onclick="javascript:pageScript.viewChangeHashForm()" class="btn btn_ fa fa-edit"></a>
-														<a onclick="javascript:pageScript.deleteHash()" class="btn btn_ fa fa-trash"></a>
+														<a id="viewChangeHashForm" class="btn btn_ fa fa-edit"></a>
+														<a id="deleteHashButton" class="btn btn_ fa fa-trash"></a>
 													</td>
 												</tr>
 
@@ -268,27 +268,27 @@
 													<td nowrap><b>Titkos Kódom:</b></td>
 													<td>
 														<p><b>Ha megváltoztatod a Titkos Kódodat, az összes eddigi igazolásod elvész!</b></p>
-														<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input""></textarea>
+														<textarea data-autoresize class="digest" type="text" id="change-hash-form_digest_input"></textarea>
 														<div id="change-hash-form_code-generation-input" class="form">
 															<div class="bordered">
 																<label for="input">Személyi azonosító:</label>
-																<input type="text" placeholder="" id="change-hash-form_predigest_input" onkeyup="pageScript.convert_mothername('change-hash-form_predigest')">
+																<input type="text" placeholder="" id="change-hash-form_predigest_input">
 																<label for="mothername">Anjya neve:</label>
-																<input type="text" placeholder="" id="change-hash-form_predigest_mothername" onkeyup="pageScript.convert_mothername('change-hash-form_predigest')">
-																<button type="button" id="change-hash-form_getDigestButton" onclick="pageScript.digestGetter('change-hash-form').getDigest()">A kód előállítása</button>
+																<input type="text" placeholder="" id="change-hash-form_predigest_mothername">
+																<button type="button" id="change-hash-form_getDigestButton">A kód előállítása</button>
 																<div class="monitor" id="change-hash-form_predigest_monitor"></div>
 															</div>
 														</div>
 													</td>
 													<td class="button-container">
-														<a onclick="javascript:pageScript.viewChangeHashContainer()" class="btn btn_ fa fa-times" title="mégse"></a>
-														<a id="changeHash" onclick="javascript:pageScript.changeHash()" class="btn btn_ fa fa-save" title="mentés"></a>
+														<a id="change-hash-form_view-container" class="btn btn_ fa fa-times" title="mégse"></a>
+														<a id="changeHash" class="btn btn_ fa fa-save" title="mentés"></a>
 													</td>
 												</tr>
 												<tr id="change-hash-form_hash-changer-buttons" style="display: none;">
 													<td colspan="3" style="text-align:center">
-														<button class="button" type="button" id="create_hash_here" onclick="javascript:pageScript.showHashChanger()">Készítsük el itt</button>
-														<button class="button" type="button" id="create_hash_myself" onclick="javascript:pageScript.hideHashChanger()">Elkészítem magam</button>
+														<button class="button" type="button" id="create_hash_here">Készítsük el itt</button>
+														<button class="button" type="button" id="create_hash_myself">Elkészítem magam</button>
 													</td>
 												</tr>
 											</table>

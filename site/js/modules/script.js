@@ -136,11 +136,9 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				if (typeof msg.message=="string") {
                     msg.message="<p>"+msg.message+"</p>";
 				} else {
-                    a="<ul>"
-		            for(value in msg.message) {
-                        m = msg.message[value];
-                        console.log(m);
-                        a += "<li>"+m+"</li>";
+                    var a="<ul>"
+		            for( var value in msg.message) {
+                        a += "<li>"+msg.message[value]+"</li>";
                     }
                     a+="</ul>";
                     msg.message=a;

@@ -47,5 +47,18 @@ export function setup_the_assurancing_form_buttons(ps){
 	document.getElementById("make_here").onclick=function() {
 		document.getElementById('registration-form_code-generation-input').style.display='block'
 	}
-
+}
+export function setup_the_mysettings_form_buttons(ps){
+	document.getElementById("ChangeEmailAddressForm_email_input").onkeyup=ps.emailChangeInput_onkeyup
+	document.getElementById("emailChangeEditButton").onclick=ps.emailChangeEditButton_onclick
+	document.getElementById("changeEmil_saveButton").onclick=ps.changeEmailAddress
+	document.getElementById("viewChangeHashForm").onclick=ps.viewChangeHashForm
+	document.getElementById("deleteHashButton").onclick=ps.deleteHash
+	document.getElementById("change-hash-form_view-container").onclick=ps.viewChangeHashContainer
+	document.getElementById("changeHash").onclick=ps.changeHash
+	document.getElementById("change-hash-form_getDigestButton").onclick=ps.digestGetter('change-hash-form').getDigest	
+	document.getElementById("change-hash-form_predigest_mothername").onkeyup=function(){ps.convert_mothername('change-hash-form_predigest')}
+	document.getElementById("change-hash-form_predigest_input").onkeyup=function(){ps.convert_mothername('change-hash-form_predigest')}
+	document.getElementById("create_hash_myself").onclick=ps.hideHashChanger
+	document.getElementById("create_hash_here").onclick=ps.showHashChanger
 }
