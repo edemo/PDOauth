@@ -32,7 +32,7 @@ class Config(object):
     CA_CERTIFICATE_FILE = absolutePathForEnd2EndResource("server.crt")
     CA_KEY_FILE = absolutePathForEnd2EndResource("server.key")
     SERVICE_NAME = "eDemokrácia SSO"
-    DEREGISTRATION_URL = LOGIN_URL
+    DEREGISTRATION_URL = "{0}/static/deregistration.html".format(BASE_URL)
     EMAIL_DOMAIN = "local.sso.edemokraciagep.org"
 #    ANCHOR_URL = "https://anchor.edemokraciagep.org/"
     ANCHOR_URL = "https://local.sso.edemokraciagep.org:8890/"

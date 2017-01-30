@@ -27,8 +27,8 @@ alltests: tests integrationtests end2endtest
 
 static: static-base static-html static-js static-jstest
 static-base:
-	mkdir -p static
-	cp -r site/js site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
+	mkdir -p static/js
+	cp -r site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
 
 static-js:
 	for js in $(js_files); do rollup --format=iife --output=static/js/$$js -- site/js/$$js; done
