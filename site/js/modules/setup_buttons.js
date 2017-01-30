@@ -18,6 +18,16 @@ export function setup_the_deregister_form_buttons(ps){
 export function setup_the_registration_form_buttons(ps){
 	document.getElementById("registration-form_submitButton").onclick=ps.doRegister
 	document.getElementById("registration-form-method-selector-pw").onclick=function(){ps.setRegistrationMethode('pw')}
+	document.getElementById("registration-form_getDigestButton").onclick=ps.digestGetter('registration-form').getDigest
+	document.getElementById("registration-form_predigest_mothername").onkeyup=function(){ps.convert_mothername('registration-form_predigest')}
+	document.getElementById("registration-form_predigest_input").onkeyup=function(){ps.convert_mothername('registration-form_predigest')}
+	document.getElementById("registration-form-method-selector-pw").onclick=function(){ps.setRegistrationMethode('pw')}
+	document.getElementById("create_myself").onclick=function() {
+		document.getElementById('registration-form_code-generation-input').style.display='none'
+	} 
+	document.getElementById("make_here").onclick=function() {
+		document.getElementById('registration-form_code-generation-input').style.display='block'
+	}
 }
 export function setup_the_login_form_buttons(ps){
 	document.getElementById("loginform").onsubmit=function(){ps.login(); return false}
