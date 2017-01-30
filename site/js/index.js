@@ -1,60 +1,5 @@
-(function(){	
-	var self;
-	PageScript.prototype.page = "index";
-
-	PageScript.prototype.main = function() {
-		self=this.getThis()
-		self.ajaxget( "/adauris", self.callback(self.commonInit) )
-		if ($.fn.owlCarousel) {
-			$("#owl-demo").owlCarousel({
-				navigation : true, // Show next and prev buttons
-				navigationText: [
-					"<i class='fa fa-angle-left'></i>",
-					"<i class='fa fa-angle-right'></i>"
-				],
-				slideSpeed : 300,
-				paginationSpeed : 400,
-				autoPlay: true,  
-				items : 4,
-				itemsDesktop:[1199,4],  
-				itemsDesktopSmall:[979,3],  //As above.
-				itemsTablet:[768,3],    //As above.
-				itemsTablet:[640,2],   
-				itemsMobile:[479,1],    //As above
-				goToFirst: true,    //Slide to first item if autoPlay reach end
-				goToFirstSpeed:1000 
-			});
-		}
-	}
-
-	PageScript.prototype.initialise = function() {
-		self.ajaxget("/v1/users/me", self.initCallback)
-		if (document.getElementById("counter_area")) self.getStatistics()
-	}
-	
-	PageScript.prototype.initCallback = function(status, text) {
-		self.isLoggedIn = (status == 200)
-		self.refreshTheNavbar()
-	}
-	
-	PageScript.prototype.getStatistics=function(){
-		this.ajaxget("/v1/statistics", self.callback(self.statCallback))
-	}
-	
-	PageScript.prototype.statCallback=function(text) {
-		data=JSON.parse(text)
-		document.getElementById("user-counter").innerHTML=(data.users)?data.users:0
-		document.getElementById("magyar-counter").innerHTML=(data.assurances.magyar)?data.assurances.magyar:0
-		document.getElementById("assurer-counter").innerHTML=(data.assurances.assurer)?data.assurances.assurer:0
-		document.getElementById("application-counter").innerHTML=(data.applications)?data.applications:0
-		//init counter if data presents
-		$('.counter').counterUp({
-			delay: 100,
-			time: 2000
-		});
-	}
-})();
-
+import { pageScript } from './modules/index'
+import x from './modules/back_to_top' //back to top button
 
 /*!
 * jquery.counterup.js 1.0
@@ -64,8 +9,6 @@
 *
 * Date: Nov 26, 2013
 */
-
-
 (function( $ ){
   "use strict";
 
@@ -144,3 +87,5 @@
   };
 
 })( jQuery );
+
+$(document).ready(pageScript.main);

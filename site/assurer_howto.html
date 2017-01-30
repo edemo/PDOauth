@@ -1,15 +1,12 @@
 {% extends "tmpl/page.html" %}
 
-{% set main = 'pageScript.main()' %}
-
 {% set title = 'tanúsítás' %}
 
-{% set additionalJavascripts = ["js/index.js"] %}
+{% set additionalJavascripts = ["js/basic.js"] %}
 
 {% set additionalCss = ["css/ada_blog.css"] %}
 
 {% block contents %}
-<!-- Portfolio works Start -->
 
 <!-- Heading -->
 		<section id="heading" class="container">
@@ -19,7 +16,7 @@
 	
     <section id="blog-single wrapper">
         <div class="container">
-                <!-- Portfolio item slider start -->
+	<!-- left blog part start -->
             <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                  <div class="blog-desc">
 					<div id="tanustas">
@@ -78,58 +75,16 @@ A tanúsítást követően az ADA, az azonosítódhoz rendelve egyedül a tanús
 						</p>
 					</div>
                 </div>
-                <hr>
                 <div class="clearfix"></div>
 
 			</div>  <!-- blog footer end -->
-           
+			</div>
     <!-- left blog part end -->
 
     <!-- Right Blog part row start -->
-            <div class="row">
-                <!-- sidebar start -->
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                    <div class="blog-sidebar">
-						<div id="side-bar-nav">
-							<h4>Szabályzatok</h4>
-							<ul>
-								<li class="active">
-									<a target="_blank" href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételek</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztató</a>
-								</li>
-								<li>
-									<a target="_blank" href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanúsítási Szabályzat</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/utmutato-alkalmazasok-szamara/content/">Útmutató Alkalmazások számára</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/felhasznalasi-feltetelek-applikaciok-szamara/content/">Felhasználási Feltételek Applikációk számára</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/ada-iranyito-testulet-ugyrendje/content/">Irányító Testület ügyrendje</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/adamintadokumentumok/content/">ADA mintadokumentumok</a>
-								</li>									
-							</ul>
-							<h4>Kirakat</h4>
-							<ul>
-								<li >
-									<a href="index.html#counter_area">Statisztikák</a>
-								</li>
-							</ul>
-						</div>
-                        
-                    </div> <!-- blog sidebar end -->
-                </div>
-            </div>
-            <!-- sidebar end -->
+{% include 'tmpl/right-sidebar.html' %}
 
-            </div><!-- Portfolio item row end -->
-        </div><!-- Portfolio item container end -->
-</section>  <!-- Portfolio Section End -->
-<<<<<<< HEAD:site/user_howto.html
+        </div>
+	</section>
+
 {% endblock %}
