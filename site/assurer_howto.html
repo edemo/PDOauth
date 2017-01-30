@@ -1,0 +1,90 @@
+{% extends "tmpl/page.html" %}
+
+{% set title = 'tanúsítás' %}
+
+{% set additionalJavascripts = ["js/basic.js"] %}
+
+{% set additionalCss = ["css/ada_blog.css"] %}
+
+{% block contents %}
+
+<!-- Heading -->
+		<section id="heading" class="container">
+			<h1>Tanúsítás</h1>
+		</section>
+<!-- Heading end -->
+	
+    <section id="blog-single wrapper">
+        <div class="container">
+	<!-- left blog part start -->
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                 <div class="blog-desc">
+					<div id="tanustas">
+						<h3  class="feature_title">Mi az hogy tanúsítás?</h3>
+						<p>
+A tanúsítás az a folyamat, melynek során a felhasználók valódiságát 
+egy személyes találkozót igénylő eljárással igazoljuk.
+A tanúsítás teljes leírását a 
+<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanúsítási Szabályzatban</a> 
+találod meg.
+            </p>
+					<div id="miert_jo">
+						<h3 class="feature_title">Miért jó ha tanúsítva vagyok?</h3>
+						<p>
+A tanúsítást követően igénybe tudsz venni olyan szolgáltatásokat, melyek  gazdája  szeretne 
+100%-ban biztos lenni abban, hogy te egy magyar állampolgár vagy, illetve rendelkezel meghatározott jogosítványokkal 
+(pl. egy adott választó kerület jogosult szavazója vagy, egy adott szervezet tagja vayg stb).
+						</p>
+					</div>
+					<div id="hogy_tortenik">
+						<h3 class="feature_title">Hogyan történik a tanúsítás?</h3>
+						<p>
+A Tanúsító egy személyes találkozó alkalmával  azt vizsgálja, hogy a rendszerben általad elmentett 
+Titkos Kódot elő lehet-e állítani az igazolványaidban szereplő személyes adataidból. Amennyiben igen, 
+akkor kiadja számodra a „magyar” (és/vagy esetleg egyéb) igazolást. 
+Hogy pontosan lásd mi történik majd, fusd át a 
+<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/4mell%C3%A9klet.html">Tanúsító eljárásának összefoglalását</a>.
+            </p>
+					</div>
+					<div id="tanusitok">
+						<h3 class="feature_title">Kik a Tanúsítók?</h3>
+						<p>
+A tanúsítók olyan önkéntes közreműködők, akik a kötelezettséget vállaltak arra, hogy elvégzik a 
+náluk jelentkező felhasználók személyes azonosítását. 
+Tevékenységüket díjmentesen végzik, de adott esetben kérhetik a ténylegesen 
+<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/vi_igazolas_kiadasaval_kapcsolatos_esetleges_kolts.html">felmerült költségeik</a> 
+megtérítését.				
+						</p>
+					</div>
+					<div id="en_is">
+						<h3 class="feature_title">Lehetek én is tanúsító?</h3>
+						<p>
+Igen,  bárki lehet tanúsító, aki sikeres vizsgát tesz az ADA szabályzataiból. 
+Ha szeretnél tanúsító lenni legelőször olvasd el a leendő tanúsítóknak készült 
+<a href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/leend%C5%91-tan%C3%BAs%C3%ADt%C3%B3knak.html">összefoglalónkat</a>. 
+						</p>
+					</div>
+					<div id="anonimitas">
+						<h3 class="feature_title">Mi lesz az anonimitásommal miután tanúsítottak?</h3>
+						<p>
+A TANÚSÍTÁS NEM JELENTI AZ ANONIMITÁSOD FELADÁSÁT! 
+            </p>
+            <p>
+A Tanúsítónak joga van az személyes adataid megtekintésére, azokból a Titkos Kódod előállítására, azonban nincs joga azok rögzítésére és  nincs lehetősége azok bármilyen formában történő tárolására az ADA rendszerében. Az ADA és/vagy a Titkos Kód gép nem tárolja a személyes adataidat. 
+A tanúsítást követően az ADA, az azonosítódhoz rendelve egyedül a tanúsító által kiadott jogosítványaidat fogja tárolni.
+						</p>
+					</div>
+                </div>
+                <div class="clearfix"></div>
+
+			</div>  <!-- blog footer end -->
+			</div>
+    <!-- left blog part end -->
+
+    <!-- Right Blog part row start -->
+{% include 'tmpl/right-sidebar.html' %}
+
+        </div>
+	</section>
+
+{% endblock %}
