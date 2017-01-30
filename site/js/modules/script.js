@@ -292,9 +292,9 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	}
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
-		var emailInput=self.mailRepair(document.getElementById(myForm+"_email_input").value)
+		var emailInput=document.getElementById(myForm+"_email_input")
 		if (emailInput!="")
-			self.ajaxget("/v1/users/"+emailInput+"/passwordreset", self.callback(self.myCallback));
+			self.ajaxget("/v1/users/"+self.mailRepair(emailInput.value)+"/passwordreset", self.callback(self.myCallback));
 		else {
 			emailInput.className="missing";
 			this.displayMsg({"title":"Hiba","error":"Nem adtál meg email címet"})
