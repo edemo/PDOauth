@@ -4,7 +4,7 @@ from unittest.case import TestCase
 
 class LogoutE2ETest(TestCase,BrowsingUtil):
 
-    def test_login_using_enter(self):
+    def test_the_user_can_set_the_allow_autologaut_and_autologaut_logs_the_user_out(self):
         user = self.getAssurerUser()
         self.loginWithPasswordAndSubmitAs(user)
         self.switchToSection("settings")
