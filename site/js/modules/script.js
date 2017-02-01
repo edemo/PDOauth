@@ -648,11 +648,16 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
+	
+	PageScript.prototype.setCookie = function( cname, cvalue, expireDays ) {
+		var d = new Date(),	expireDays = expireDays || 1;
+    	d.setTime(d.getTime() + (expireDays*24*60*60*1000));
+    	var expires = "expires="+ d.toUTCString();
+    	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	} 
 
 	self.ajax.displayServerResponse= self.displayServerResponse
 	self.ajax.reportServerFailure= self.reportServerFailure
-
-
 }
 
 export {facebook}
