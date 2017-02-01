@@ -1,5 +1,5 @@
 import { _ } from './gettext'
-import Ajax from './ajax.js'
+import Ajax from './ajax_.js'
 import { setup_the_navbar_buttons_onclick } from './setup_buttons'
 
 window.traces = new Array();
@@ -89,7 +89,6 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.commonInit=function( response ) {
 		// initialising variables
-		if (self.page!='login') setup_the_navbar_buttons_onclick(self);
 		var temp = self.validateServerMessage( response )
 		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
 		else {

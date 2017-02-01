@@ -1,11 +1,14 @@
 import PageScript from './script'
-export var pageScript = new PageScript();	
+import { setup_the_navbar_buttons_onclick } from './setup_buttons'
+export var pageScript = new PageScript();
+	
 	var self=pageScript
 	
 	PageScript.prototype.page = "index";
 
 	PageScript.prototype.main = function() {
 		self.ajaxget( "/adauris", self.callback(self.commonInit), true )
+		setup_the_navbar_buttons_onclick(self)
 	}
 
 	PageScript.prototype.initialise = function() {

@@ -1,17 +1,17 @@
-export function setup_the_navbar_buttons_onclick(ps){
-	console.log(ps)
-	if (ps.page=="account") {
-		document.getElementById("nav-bar-login_a").onclick=function(){ps.displayTheSection('login')}
-		document.getElementById("nav-bar-register_a").onclick=function(){ps.displayTheSection('register')}
-		document.getElementById("nav-bar-my_account_a").onclick=function(){ps.displayTheSection('my_account')}	
-	}
-	else {
-		document.getElementById("nav-bar-login_a").onclick=function(){ps.doRedirect('fiokom.html')}
-		document.getElementById("nav-bar-register_a").onclick=function(){ps.doRedirect('fiokom.html?section=register')}
-		document.getElementById("nav-bar-my_account_a").onclick=function(){ps.doRedirect('fiokom.html')}	
-	}
+export function setup_the_navbar_buttons_onclick_account(ps){
+	document.getElementById("nav-bar-login_a").onclick=function(){ps.displayTheSection('login')}
+	document.getElementById("nav-bar-register_a").onclick=function(){ps.displayTheSection('register')}
+	document.getElementById("nav-bar-my_account_a").onclick=function(){ps.displayTheSection('my_account')}	
 	document.getElementById("logout_button").onclick=ps.logout	
 }
+
+export function	setup_the_navbar_buttons_onclick(ps) {
+	document.getElementById("nav-bar-login_a").onclick=function(){ window.location='fiokom.html' }
+	document.getElementById("nav-bar-register_a").onclick=function(){ window.location='fiokom.html?section=register' }
+	document.getElementById("nav-bar-my_account_a").onclick=function(){ window.location='fiokom.html' }	
+	document.getElementById("logout_button").onclick=ps.logout	
+}
+
 export function setup_the_deregister_form_buttons(ps){
 	document.getElementById("deregistration-form_submit-button").onclick=ps.doDeregister
 }
@@ -97,9 +97,7 @@ export function setup_login_page_controlls(ps){
 export function setup_email_verification_form_buttons(ps){
 	document.getElementById("email_verification_button").onclick=function(){ps.doRedirect('fiokom.html')}
 }
-export function setup_reset_password_form_buttons(ps){
-	document.getElementById("PasswordResetForm").onsubmit=function(){ps.doPasswordReset(); return false}
-}
+
 export function setup_email_change_form_buttons(ps){
 	document.getElementById("change-email-form_ok").onclick=function(){ps.changeEmail(true)}
 	document.getElementById("change-email-form_cancel").onclick=function(){ps.changeEmail(false)}

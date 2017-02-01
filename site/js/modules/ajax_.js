@@ -1,12 +1,17 @@
-// module ajax
+var Ajax = function( args ){
+ 
+    var $this = {},
+        win = args.environment || window  //window can be mocked
+     
+    $this.stack = {}
+    
+    $this.uribase = ''
+    
+    $this.displayServerResponse = function(response){return response}
+    
+    $this.reportServerFailure = function(response){return response}
 
-export var win = window  		//window can be mocked
-export var stack = {}			//tacking asyncronous calls
-export var uribase = ''			//
-export var displayServerResponse = function(response){return response}
-export var reportServerFailure = function(response){return response}
-
-export function callback( next, error ){
+    $this.callback = function( next, error ){
 		var next  = next || $this.displayServerResponse,
 			error = error || $this.displayServerResponse;
 		return function( status, response, xml ) {
@@ -25,7 +30,7 @@ export function callback( next, error ){
 		}
 	}
     
-export function ajaxBase( callback, uri ) {
+    $this.ajaxBase= function( callback, uri ) {
 		var xmlhttp;
 		if (win.XMLHttpRequest) {   // code for IE7+, Firefox, Chrome, Opera, Safari
             xmlhttp = new win.XMLHttpRequest();
@@ -36,30 +41,31 @@ export function ajaxBase( callback, uri ) {
 		xmlhttp.callback=callback   // for testing
 		xmlhttp.onreadystatechange=function() {
             if ( xmlhttp.readyState==4 ) {
-                stack[uri]="callback"
+                $this.stack[uri]="callback"
                 callback( xmlhttp.status, xmlhttp.responseText, xmlhttp.responseXML );
-                stack[uri]="done"
+                $this.stack[uri]="done"
             }
 		}
 		return xmlhttp;
 	}
+
     
-export function valaidateCallbackArgs( args ){
+    $this.valaidateCallbackArgs=function(args){
         var next=null,
             error=null;
         if (typeof args != "undefined") {
             next = args.next || null;
             error = args.error || null
         }
-        return { next: next, error: error }
+        return {next: next, error: error }
     }
     
-export function post( uri, data, callbacks ){
+    $this.post=function( uri, data, callbacks ){
         var cb=$this.valaidateCallbackArgs( callbacks )
         $this.ajaxpost( uri, data, $this.callback( cb.next, cb.error ) )
     }
     
-export function ajaxpost( uri, data, callback ) {         //for old style compatibility
+    $this.ajaxpost= function( uri, data, callback ) {         //for old style compatibility
 		var xmlhttp = $this.ajaxBase( callback, uri ),
 			l = []
 		xmlhttp.open( "POST", $this.uribase + uri, true );
@@ -69,12 +75,12 @@ export function ajaxpost( uri, data, callback ) {         //for old style compat
         $this.stack[uri]="GET"
 	}
     
-export function get( uri, callbacks, direct){
-        var cb=$this.valaidateCallbackArgs( callbacks )
-        $this.ajaxget(uri, callback( cb.next, cb.error ), direct || null)
+    $this.get=function(uri, callbacks, direct){
+        var cb=$this.valaidateCallbackArgs(callbacks)
+        $this.ajaxget(uri, $this.callback(cb.next,cb.error), direct || null)
     }
     
-export function ajaxget( uri, callback, direct) {       //for old style compatibility
+    $this.ajaxget= function( uri, callback, direct) {       //for old style compatibility
 		var xmlhttp = $this.ajaxBase( callback, uri ),
 			theUri = direct ? uri : $this.uribase + uri
 		xmlhttp.open( "GET", theUri , true);
@@ -82,7 +88,7 @@ export function ajaxget( uri, callback, direct) {       //for old style compatib
         $this.stack[uri]="GET"
 	}
 	
-export function validateServerMessage(response) {
+    $this.validateServerMessage= function (response) {
 		if (!response) return {
 			errors: [
 				"Something went wrong",
@@ -100,6 +106,7 @@ export function validateServerMessage(response) {
 			}
 		}
 	}
-
-
-
+    
+    return $this
+}
+export default Ajax;

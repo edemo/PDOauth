@@ -1,6 +1,7 @@
  import PageScript from './script'
  import { _ } from './gettext'
  import { gettext } from './gettext'
+ import { setup_the_navbar_buttons_onclick_account } from './setup_buttons'
  import { setup_the_registration_form_buttons } from './setup_buttons'
  import { setup_the_login_form_buttons } from './setup_buttons'
  import { setup_the_assurancing_form_buttons } from './setup_buttons'
@@ -14,6 +15,7 @@
  PageScript.prototype.page = "account";
 	PageScript.prototype.main = function() {
 		self.ajaxget("/adauris", self.callback(self.commonInit), true)
+		setup_the_navbar_buttons_onclick_account(self);
 		setup_the_registration_form_buttons(self)
 		setup_the_login_form_buttons(self)
 		setup_the_assurancing_form_buttons(self)
