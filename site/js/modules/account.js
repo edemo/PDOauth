@@ -22,7 +22,7 @@ PageScript.prototype.main = function() {
 	setup_email_verification_form_buttons(self)
 	setup_reset_password_form_buttons(self)
 	setup_email_change_form_buttons(self)
-	var section = self.QueryString.section, 
+	var section = self.QueryString.section
 	switch (section) {
 		case "all" :
 		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
