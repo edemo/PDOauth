@@ -524,5 +524,7 @@
 	PageScript.prototype.initiateDeregister = function() {
 		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
 	}
-
 	
+	PageScript.prototype.setAutologoutCookie = function(checkbox) {
+		self.setCookie("sso_no_app_logout", this.checked.toString() )
+	}
