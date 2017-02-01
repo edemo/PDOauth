@@ -15,4 +15,4 @@ getCookie = function(cname) {
     return false;
 } 
 
-if ( !(c=getCookie(sso_no_app_logout)) || c!="true" ) ajax.get( "/v1/logout" )
+if ( !(c=getCookie("sso_no_app_logout")) || c!="true" ) ajax.get( "/v1/logout" )
