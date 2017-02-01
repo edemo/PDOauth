@@ -526,5 +526,5 @@
 	}
 	
 	PageScript.prototype.setAutologoutCookie = function() {
-		self.setCookie("sso_no_app_logout", this.checked.toString() )
+		self.setCookie("sso_no_app_logout", this.checked.toString(), 2000 )
 	}
