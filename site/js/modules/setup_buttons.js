@@ -61,6 +61,7 @@ export function setup_the_mysettings_form_buttons(ps){
 	document.getElementById("change-hash-form_predigest_input").onkeyup=function(){ps.convert_mothername('change-hash-form_predigest')}
 	document.getElementById("create_hash_myself").onclick=ps.hideHashChanger
 	document.getElementById("create_hash_here").onclick=ps.showHashChanger
+	document.getElementById("allow_app_sso_autologout").onclick=ps.setAutologoutCookie
 }
 export function setup_login_page_controlls(ps){
 	document.getElementById("PopupWindow_CloseButton").onclick=ps.closePopup
