@@ -32,7 +32,7 @@ class Config(object):
     CA_CERTIFICATE_FILE = absolutePathForEnd2EndResource("server.crt")
     CA_KEY_FILE = absolutePathForEnd2EndResource("server.key")
     SERVICE_NAME = "eDemokrácia SSO"
-    DEREGISTRATION_URL = LOGIN_URL
+    DEREGISTRATION_URL = "{0}/static/deregistration.html".format(BASE_URL)
     EMAIL_DOMAIN = "local.sso.edemokraciagep.org"
 #    ANCHOR_URL = "https://anchor.edemokraciagep.org/"
     ANCHOR_URL = "https://local.sso.edemokraciagep.org:8890/"
@@ -87,7 +87,7 @@ The Test machine
     DEREGISTRATION_EMAIL_SUBJECT = "deregistration email"
     DEREGISTRATION_EMAIL_BODY_TEXT = """Dear {0.name},
 This is a deregistration email.
-Go to https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}
+Go to https://local.sso.edemokraciagep.org:8888/static/deregistration.html?deregistration_secret={0.secret}
 you have to do it until {0.expiry}.
 
 Sincerely,
@@ -96,7 +96,7 @@ The Test machine
     DEREGISTRATION_EMAIL_BODY_HTML = """<html><head></head><body>
 Dear {0.name},<br>
 This is a deregistration email.<br/>
-Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}">here</a><br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/deregistration.html?deregistration_secret={0.secret}">here</a><br/>
 you have to do it until {0.expiry}.<br/>
 <br/>
 Sincerely,<br/>

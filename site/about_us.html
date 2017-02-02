@@ -1,10 +1,8 @@
 {% extends "tmpl/page.html" %}
 
-{% set main = 'pageScript.main()' %}
-
 {% set title = 'rólunk' %}
 
-{% set additionalJavascripts = ["js/vendor/owl.carousel.min.js", "js/index.js"] %}
+{% set additionalJavascripts = ["js/vendor/owl.carousel.min.js", "js/about_us.js"] %}
 
 {% set additionalCss = ["css/owl.carousel.css", "css/owl.theme.css", "css/ada_blog.css"] %}
 
@@ -47,51 +45,10 @@
     <!-- left blog part end -->
 
     <!-- Right Blog part row start -->
-            <div class="row">
-                <!-- sidebar start -->
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                    <div class="blog-sidebar">
-						<div id="side-bar-nav">
-							<h4>Szabályzatok</h4>
-							<ul>
-								<li class="active">
-									<a target="_blank" href="https://edemo.gitbooks.io/ada-felhasznalasi-feltetelek/content/">Felhasználási Feltételek</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/adatkezelesi-szabalyzat-az-ada-szolgaltatashoz/content/">Adatkezelési Tájékoztató</a>
-								</li>
-								<li>
-									<a target="_blank" href="https://edemo.gitbooks.io/ada-tanusitasi-szabalyzat/content/">Tanúsítási Szabályzat</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/utmutato-alkalmazasok-szamara/content/">Útmutató Alkalmazások számára</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/felhasznalasi-feltetelek-applikaciok-szamara/content/">Felhasználási Feltételek Applikációk számára</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/ada-iranyito-testulet-ugyrendje/content/">Irányító Testület ügyrendje</a>
-								</li>
-								<li >
-									<a target="_blank" href="https://edemo.gitbooks.io/adamintadokumentumok/content/">ADA mintadokumentumok</a>
-								</li>									
-							</ul>
-							<h4>Kirakat</h4>
-							<ul>
-								<li >
-									<a href="index.html#counter_area">Statisztikák</a>
-								</li>
-							</ul>
-						</div>
-                        
-                    </div> <!-- blog sidebar end -->
-                </div>
-            </div>
-            <!-- sidebar end -->
+ {% include 'tmpl/right-sidebar.html' %}
+        </div>
+</section>
 
-            </div><!-- Portfolio item row end -->
-        </div><!-- Portfolio item container end -->
-</section>  <!-- Portfolio Section End -->
 <section id="team">
     <div class="us container">
         <div class="row">
