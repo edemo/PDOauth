@@ -13,7 +13,6 @@ class LogoutE2ETest(TestCase,BrowsingUtil):
         TE.driver.get(baseUrl + "/static/logout.html")
         self.waitUntilElementEnabled("flag")
         TE.driver.get(baseUrl + "/static/fiokom.html")
-        pdb.set_trace()
         self.waitUntilElementEnabled("nav-bar-my_account")
         self.switchToSection("settings")
         self.tickCheckbox("allow_app_sso_autologout")

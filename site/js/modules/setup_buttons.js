@@ -62,7 +62,7 @@ export function setup_the_mysettings_form_buttons(ps){
 	document.getElementById("create_hash_myself").onclick=ps.hideHashChanger
 	document.getElementById("create_hash_here").onclick=ps.showHashChanger
 	document.getElementById("allow_app_sso_autologout").onclick=ps.setAutologoutCookie
-	if (ps.sso_no_app_logout!="") document.getElementById("allow_app_sso_autologout").checked=ps.sso_no_app_logout
+	if (ps.sso_no_app_logout!="") document.getElementById("allow_app_sso_autologout").checked=ps.sso_no_app_logout=='true'
 }
 export function setup_login_page_controlls(ps){
 	document.getElementById("PopupWindow_CloseButton").onclick=ps.closePopup
