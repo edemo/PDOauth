@@ -1,3 +1,4 @@
+import { uris } from './modules/adauris'
 import Ajax from './modules/ajax.js'
 var ajax = new Ajax({}),
 	c,
@@ -14,10 +15,7 @@ var ajax = new Ajax({}),
 		return false;
 	},
 	tracker = document.getElementById("flag"),
-	next = function(){ tracker.style.display = "block"	},
-	logout = function( result ) {
-		ajax.uribase = JSON.parse(result).BACKEND_PATH;
-		ajax.get( "/v1/logout", {next:next, error:next} )
-	};
-if ( !(c=getCookie("sso_no_app_logout")) || c=="true" ) ajax.get("/adauris", {next:logout, error:next}, true)
+	next = function(){ tracker.style.display = "block"	}
+ajax.uribase = uris.BACKEND_PATH;
+if ( !(c=getCookie("sso_no_app_logout")) || c=="true" ) ajax.get( "/v1/logout", {next:next, error:next} )
 else next();
