@@ -4,7 +4,12 @@ HTML_FILES = user_howto.html\
 	login.html\
 	about_us.html\
 	fiokom.html\
-	assurer_howto.html
+	assurer_howto.html\
+	deregistration.html
+
+js_files := $(shell find site/js -maxdepth 1 -type f -name '*.js' -printf '%f\n')
+
+js_test_files := $(shell find site/test/end2endTests -maxdepth 1 -type f -name '*.js' -printf '%f\n')
 
 all:
 	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
@@ -20,13 +25,16 @@ checkmanual: install alltests xmldoc
 
 alltests: tests integrationtests end2endtest
 
-static: static-base static-html static-js
+static: static-base static-html static-js static-jstest
 static-base:
-	mkdir -p static
-	cp -r site/js site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
+	mkdir -p static/js
+	cp -r site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
 
 static-js:
-	rollup --format=cjs --output=static/test/end2endTests/login.js -- site/test/end2endTests/login.js
+	for js in $(js_files); do rollup --format=iife --output=static/js/$$js -- site/js/$$js; done
+
+static-jstest:
+	for js in $(js_test_files); do rollup --format=iife --output=static/test/end2endTests/$$js -- site/test/end2endTests/$$js; done
 
 static-html:
 	for page in $(HTML_FILES); do ./tools/compilehtml $$page; done

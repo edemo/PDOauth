@@ -1,10 +1,26 @@
-(function(){	
-	var self
-	PageScript.prototype.page = "account";
+ import PageScript from './script'
+ import { _ } from './gettext'
+ import { gettext } from './gettext'
+ import { setup_the_registration_form_buttons } from './setup_buttons'
+ import { setup_the_login_form_buttons } from './setup_buttons'
+ import { setup_the_assurancing_form_buttons } from './setup_buttons'
+ import { setup_the_mysettings_form_buttons } from './setup_buttons'
+ import { setup_email_verification_form_buttons } from './setup_buttons'
+ import { setup_reset_password_form_buttons } from './setup_buttons'
+ import { setup_email_change_form_buttons} from './setup_buttons'
+ export var pageScript = new PageScript()
+ var self = pageScript
+
+ PageScript.prototype.page = "account";
 	PageScript.prototype.main = function() {
-		self=this.getThis()
-		xxxx=self
-		this.ajaxget("/adauris", self.callback(self.commonInit))
+		self.ajaxget("/adauris", self.callback(self.commonInit), true)
+		setup_the_registration_form_buttons(self)
+		setup_the_login_form_buttons(self)
+		setup_the_assurancing_form_buttons(self)
+		setup_the_mysettings_form_buttons(self)
+		setup_email_verification_form_buttons(self)
+		setup_reset_password_form_buttons(self)
+		setup_email_change_form_buttons(self)
 		var section = self.QueryString.section
 			switch (section) {
 				case "all" :
@@ -101,12 +117,17 @@
 	}
 	
 	PageScript.prototype.initialise = function(text) {
-		self.ajaxget("locale/hu.json",self.callback(self.initGettext, function(status, response){
-			_=function(str){return str}
+		self.ajaxget("locale/hu.json",self.callback(self.gettextCallback, function(response){
+			gettext.mockGettext()
 			self.displayServerResponse(response, {ok: self.init_})
 		} ),true)
 		window.traces.push("initialise")
 	}
+	
+	PageScript.prototype.gettextCallback = function(response){
+		gettext.initGettext(response)
+		self.init_()
+	} 
 	
 	PageScript.prototype.userNotLoggedIn = function( response ) {
 		var data = self.validateServerMessage( response );
@@ -136,7 +157,7 @@
 				self.isAssurer=true;
 			}
 		}
-
+		console.log(self.QueryString.section)
 		if (self.QueryString.section) {
 			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
 			else return;
@@ -154,7 +175,7 @@
 		if (!(msg.title || msg.error || msg.message || msg.success)) return
 		$("#myModal").modal();
 		if (!msg.callback) msg.callback="";
-		this.msgCallback=msg.callback; //only for testing
+		self.msgCallback=msg.callback; //only for testing
 		document.getElementById("PopupWindow_CloseButton1").onclick = function() {self.closePopup(msg.callback)}
 		document.getElementById("PopupWindow_CloseButton2").onclick = function() {self.closePopup(msg.callback)}
 		document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
@@ -169,7 +190,7 @@
 	}
 
 	PageScript.prototype.closePopup = function(popupCallback) {
-		this.popupCallback=popupCallback //only for testing
+		self.popupCallback=popupCallback //only for testing
 		document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
 		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
@@ -200,24 +221,23 @@
 	}
 	
 	PageScript.prototype.verifyEmail=function() {
-		var target   = document.getElementById("email_verification_message").innerHTML
-		this.success = function(text){
-			target=_("Your email validation was succesfull.")
-		}
-		this.error   = function(status,text){
-			var data=JSON.parse(text);
-			target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
-		}
-		self.ajaxget( "/v1/verify_email/" + self.QueryString.secret, self.callback(this.succes,this.error) )
+		var target   = document.getElementById("email_verification_message").innerHTML,
+			onsuccess = function(text){
+				target=_("Your email validation was succesfull.")
+			},
+			onerror   = function(text){
+				var data=JSON.parse(text);
+				target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
+			}
+		self.ajaxget( "/v1/verify_email/" + self.QueryString.secret, self.callback(onsucces,onerror) )
 	}
 
 	PageScript.prototype.changeEmail=function(confirm) {
 		var data={
-			confirm: confirm,
-			secret: self.QueryString.secret
-		}
-		this.success=function(text){self.displayMsg({title:"Üzi",error:text})}
-		self.ajaxpost( "/v1/confirmemailchange", data, self.callback(this.success) )
+				confirm: confirm,
+				secret: self.QueryString.secret
+			}
+		self.ajaxpost( "/v1/confirmemailchange", data, self.callback() )
 	}	
 	
 	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
@@ -231,8 +251,7 @@
 // assuring functions
 
 	PageScript.prototype.byEmail = function() {
-	    var email = document.getElementById("ByEmailForm_email_input").value;
-        email = pageScript.mailRepair(email);
+	    var email = self.mailRepair(document.getElementById("ByEmailForm_email_input").value);
 		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
@@ -242,17 +261,12 @@
 	
 	PageScript.prototype.addAssurance = function() {
 		if ( $("#assurance-giving_submit-button").hasClass("inactive") ) return;
-	    digest = document.getElementById("assurancing_digest_input").value;
-	    assurance = document.getElementById("assurance-giving_assurance_selector").value;
-	    email = document.getElementById("ByEmailForm_email_input").value;
-        email = pageScript.mailRepair(email);
-	    csrf_token = self.getCookie('csrf');
-	    data= {
-	    	digest: digest,
-	    	assurance: assurance,
-	    	email: email,
-	    	csrf_token: csrf_token
-	    }
+	    var data= {
+		    	digest: document.getElementById("assurancing_digest_input").value,
+		    	assurance: document.getElementById("assurance-giving_assurance_selector").value,
+		    	email: self.mailRepair(document.getElementById("ByEmailForm_email_input").value),
+	  		  	csrf_token: self.getCookie('csrf')
+		    }
 	    self.ajaxpost("/v1/add_assurance", data, self.callback(self.myCallback))
 	}
 
@@ -273,8 +287,8 @@
 	}
 	
 	PageScript.prototype.addPasswordCredential = function(){
-		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value;
-		var secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
+		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value,
+			secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
 		self.addCredential("password", identifier, secret);
 	}
 	
@@ -301,12 +315,12 @@
 */
 
 	PageScript.prototype.changeHash = function() {
-	    digest = document.getElementById("change-hash-form_digest_input").value;
-	    csrf_token = self.getCookie('csrf');
-	    data= {
-	    	digest: digest,
-	    	csrf_token: csrf_token
-	    }
+	    var digest = document.getElementById("change-hash-form_digest_input").value,
+			csrf_token = self.getCookie('csrf'),
+			data= {
+				digest: digest,
+				csrf_token: csrf_token
+			}
 	    self.ajaxpost("/v1/users/me/update_hash", data, self.callback(self.changeHashCallback))
 	}	
 	
@@ -392,7 +406,7 @@
 			</tr>'
 				}
 			}
-			credential_header='\
+			var credential_header='\
 			<tr id="'+i+'-credential-list">\
 				<th>'+c[i][0]+'</th>\
 				<th>'
@@ -427,7 +441,7 @@
 				<th>'+_("Emailing")+'</th>\
 				<th>'+_("Allow emailing")+'</th>\
 			</tr>'
-		for(app in self.aps){ 
+		for( var app in self.aps){ 
 		if (self.aps[app].username) { 
 			applist+='\
 			<tr>\
@@ -450,9 +464,9 @@
 	}
 
 	PageScript.prototype.parseAssurances = function(data) {
-		var selector = ''
-		var text
-		for(ass in data.assurances) {
+		var selector = '',
+			text
+		for(var ass in data.assurances) {
 			var pos
 			if ( pos=ass.indexOf(".")+1 ) {
 				text=ass.slice(pos)
@@ -467,12 +481,11 @@
 	}
 	
 	PageScript.prototype.changeEmailAddress = function() {
-	    email = document.getElementById("ChangeEmailAddressForm_email_input").value;
-        email = pageScript.mailRepair(email);
+	    var email = self.mailRepair(document.getElementById("ChangeEmailAddressForm_email_input").value);
 		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
 		else {
-			var csrf_token = self.getCookie('csrf');
-			var data= {
+			var csrf_token = self.getCookie('csrf'),
+				data= {
 				newemail: email,
 				csrf_token: csrf_token
 			}
@@ -495,7 +508,7 @@
 	}
 	
 	PageScript.prototype.emailChangeInput_onkeyup = function(){
-		rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
+		var rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
 		var inputField = document.getElementById("ChangeEmailAddressForm_email_input")
 		if (rgx_email.exec(inputField.value)) {
 			self.activateButton("changeEmil_saveButton", self.changeEmailAddress)
@@ -512,33 +525,4 @@
 		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
 	}
 
-	PageScript.prototype.doDeregister = function() {
-		
-		var deregisterCallback = function( response ) {
-			self.isLoggedIn = false
-			self.refreshTheNavbar();
-			if ( self.page == "account" ) self.displayTheSection( "login" );
-			self.displayServerResponse( response, {ok: self.doLoadHome} )
-		}
-		
-		if ( document.getElementById("accept_deregister").checked ) {
-			if ( self.QueryString.secret ) {
-				var post = {
-					csrf_token: self.getCookie("csrf"),
-					deregister_secret: self.QueryString.secret
-				}
-				self.ajaxpost( "/v1/deregister_doit", post, self.callback( deregisterCallback ) )
-			}
-			else self.displayMsg({
-					title:_("Error message"),
-					error:_("The secret is missing")
-			})
-		}
-		else self.displayMsg({
-			title:_("Error message"),
-			error:_("To accept the terms please mark the checkbox!")
-		})			
-	}
 	
-}()
-)

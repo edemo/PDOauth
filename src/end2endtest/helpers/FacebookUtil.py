@@ -54,7 +54,7 @@ class FacebookUtil(object):
         self.click("registration-form_submitButton")
 
     def handleFbRegistrationAppLogin(self, user=None, useEmail=True):
-        self.click("register")
+        self.click("section_changer_register")
         self.pushFbButtonWhenready()
         self.handleFbLoginPage(user)
         self.waitForJsState('getMecallback')

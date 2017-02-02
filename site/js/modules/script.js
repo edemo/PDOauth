@@ -1,36 +1,32 @@
+import { _ } from './gettext'
+import Ajax from './ajax.js'
+import { setup_the_navbar_buttons_onclick } from './setup_buttons'
+
 window.traces = new Array();
 
 function PageScript(test) {
 	var self = this
 	test=test || { debug: false, uribase: "" }
-	this.debug=test.debug
-	win = test.win || window;
+	self.debug=test.debug
+	var win = test.win || window;
     self.uribase=test.uribase;
-	this.isLoggedIn=false;
-	this.isAssurer=false;
-	this.registrationMethode="pw";
-	this.isFBsdkLoaded=false;
-	this.isFBconnected=false;
-
-	PageScript.prototype.navigateToTheSection=function(section) {
-		var fiokom = self.QueryString.uris.START_URL;
-		var currentLocation = location.protocol + '//' + location.host + location.pathname
-		if (currentLocation != fiokom) {
-			win.location = fiokom +"?section="+section
-		} else{
-			if (self.QueryString.section) self.doRedirect(self.QueryString.uris.START_URL);
-			else self.displayTheSection(section)
-		}
-	}
+	self.isLoggedIn=false;
+	self.isAssurer=false;
+	self.registrationMethode="pw";
+	self.isFBsdkLoaded=false;
+	self.isFBconnected=false;
+	self.ajax=Ajax({})
 	
 	PageScript.prototype.displayTheSection=function(section) {
 		self.hideAllSection();
 		var lis=document.getElementsByClassName("navbar-nav")[0].getElementsByTagName("li");
 		[].forEach.call( lis, function (e) { e.className=""; } );
+		console.log(section)
 		if (!section){
 			if (self.isLoggedIn){
 				self.unhideSection("my_account_section")
 				document.getElementById("nav-bar-my_account").className="active"
+				console.log(self.isAssurer)
 				if (self.isAssurer) self.unhideSection("assurer_section")
 			}
 			else {
@@ -44,6 +40,7 @@ function PageScript(test) {
 			}
 			else {
 				self.unhideSection(section+"_section")
+				if (self.isAssurer && section=='my_account') self.unhideSection("assurer_section")
 			}
 			var navbar=document.getElementById("nav-bar-"+section)
 			if (navbar) navbar.className="active";
@@ -78,45 +75,29 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
     return query_string;
 };
 
-    this.QueryString = self.QueryStringFunc(win.location.search);
+PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.getThis=function() {
-		return this
+		return self
 	}
 	
 	PageScript.prototype.reportServerFailure = function(text){
 		self.displayMsg({title:_("Server error occured"),error: text})
 	}
 	
-	PageScript.prototype.callback = function(next,error){
-		var next  = next || self.displayServerResponse,
-			error = error || self.displayServerResponse;
-		return function(status,response,xml) {
-			switch (status){
-				case 200:
-					next( response,xml )
-					break;
-				case 500:
-				case 405:
-					self.reportServerFailure( response )
-					break;
-				default:
-					error( response, xml )
-			}
-		}
-	}
+	PageScript.prototype.callback = self.ajax.callback
 	
 	PageScript.prototype.commonInit=function( response ) {
 		// initialising variables
+		if (self.page!='login') setup_the_navbar_buttons_onclick(self);
 		var temp = self.validateServerMessage( response )
-		console.log(temp)
 		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
 		else {
 			self.displayMsg( self.processErrors( temp ))
 			window.traces.push( 'adauris failed' )
 			return
 		}
-		self.uribase = self.QueryString.uris.BACKEND_PATH;
+		self.ajax.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
 
 		// filling hrefs of anchors
@@ -125,72 +106,17 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		window.traces.push('initialized')
 	}
 	
-	PageScript.prototype.ajaxBase = function(callback) {
-		var xmlhttp;
-		if (win.XMLHttpRequest)
-		  {// code for IE7+, Firefox, Chrome, Opera, Safari
-		  xmlhttp = new win.XMLHttpRequest();
-//		  xmlhttp.oName="XMLHttpRequest"; // for testing
-		  }
-		else
-		  {// code for IE6, IE5
-		  xmlhttp = new win.ActiveXObject("Microsoft.XMLHTTP");
-//		  xmlhttp.oName="ActiveXObject";   // for testing
-		  }
-		xmlhttp.callback=callback // for testing
-		xmlhttp.onreadystatechange=function()
-		  {
-		  if (xmlhttp.readyState==4)
-		    {
-		    	callback(xmlhttp.status,xmlhttp.responseText,xmlhttp.responseXML);
-		    }
-		  }
-		return xmlhttp;
-	}
+	PageScript.prototype.ajaxBase = self.ajax.ajaxBase
 
-	PageScript.prototype.ajaxpost = function( uri, data, callback ) {
-		xmlhttp = this.ajaxBase( callback );
-		xmlhttp.open( "POST", self.uribase + uri, true );
-		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
-		l = []
-		for (key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
-		var dataString = l.join("&")
-		xmlhttp.send( dataString );
-	}
+	PageScript.prototype.ajaxpost = self.ajax.ajaxpost
 
-	PageScript.prototype.ajaxget = function( uri, callback, direct) {
-		xmlhttp = this.ajaxBase( callback )
-		if (direct) {
-			theUri = uri;
-		} else {
-			theUri = self.uribase + uri;
-		}
-		xmlhttp.open( "GET", theUri , true);
-		xmlhttp.send();
-	}
-
+	PageScript.prototype.ajaxget = self.ajax.ajaxget
 		
 	PageScript.prototype.displayServerResponse = function( response, callbacks ){
 		self.displayMsg( self.processErrors( self.validateServerMessage( response ), callbacks ) )
 	}
 	
-	PageScript.prototype.validateServerMessage = function (response) {
-		if (!response) return {
-			errors: [
-				"Something went wrong",
-				"An empty message is arrived from the server" 
-			]
-		}
-		try { return JSON.parse(response) }
-		catch(err) {
-			return { 
-				errors: [
-					"Something went wrong",
-					"Unexpected server message:" + "<br>" + response
-				]
-			}
-		}
-	}
+	PageScript.prototype.validateServerMessage = self.ajax.validateServerMessage
 	
 	PageScript.prototype.processErrors = function(data, callbacks) {
 		console.log(data)
@@ -210,11 +136,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				if (typeof msg.message=="string") {
                     msg.message="<p>"+msg.message+"</p>";
 				} else {
-                    a="<ul>"
-		            for(value in msg.message) {
-                        m = msg.message[value];
-                        console.log(m);
-                        a += "<li>"+m+"</li>";
+                    var a="<ul>"
+		            for( var value in msg.message) {
+                        a += "<li>"+msg.message[value]+"</li>";
                     }
                     a+="</ul>";
                     msg.message=a;
@@ -230,7 +154,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			if (data.errors) {
 				msg.title = _("Error message")
 				msg.error = '<ul class="disced">';
-				errs = data.errors;
+				var errs = data.errors;
 				if (typeof(errs)!='string') {
 					[].forEach.call(errs, function(e) {
 						msg.error += "<li>"+ translateError(e) +"</li>" ;})
@@ -258,13 +182,15 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.setAppCanEmailMe=function(appId, value, callback){
-		var csrf_token = self.getCookie('csrf');
-	    data= {
-			canemail: value,
-	    	appname: self.aps[appId].name,
-	    	csrf_token: csrf_token
-	    }
-	    self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
+		if (self.aps && self.aps[appId]) {
+			var	data= {
+				canemail: value,
+				appname: self.aps[appId].name,
+				csrf_token: self.getCookie('csrf')
+				}
+			self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
+		}
+		else self.displayMsg({title:_("Error message"),error:_("The application does not exist.")})
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {
@@ -285,7 +211,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 					<th>'+_("Valid until")+'</th>\
 				</tr>\
 			<tbody>'
-		for(assurance in data.assurances) {
+		for( var assurance in data.assurances) {
 			for( var i=0; i<data.assurances[assurance].length; i++){
 				result += '\
 				<tr>\
@@ -360,16 +286,15 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 // Button actions
 
 	PageScript.prototype.doPasswordReset = function() {
-		secret = document.getElementById("PasswordResetForm_secret_input").value;
-	    password = document.getElementById("PasswordResetForm_password_input").value;
+		var secret = document.getElementById("PasswordResetForm_secret_input").value,
+			password = document.getElementById("PasswordResetForm_password_input").value;
 	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, self.callback(self.reloadCallback))
 	}
 	
 	PageScript.prototype.InitiatePasswordReset = function(myForm) {
-		var emailInput=document.getElementById(myForm+"_email_input").value
-        emailInput = pageScript.mailRepair(emailInput);
+		var emailInput=document.getElementById(myForm+"_email_input")
 		if (emailInput!="")
-			self.ajaxget("/v1/users/"+emailInput+"/passwordreset", self.callback(self.myCallback));
+			self.ajaxget("/v1/users/"+self.mailRepair(emailInput.value)+"/passwordreset", self.callback(self.myCallback));
 		else {
 			emailInput.className="missing";
 			this.displayMsg({"title":"Hiba","error":"Nem adtál meg email címet"})
@@ -379,16 +304,21 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
     PageScript.prototype.mailRepair = function(mail) {
         return self.mail = mail.replace(/\s+/g,'').toLowerCase();
 	}
-    
+	
+	PageScript.prototype.justLoggedIn = function(response){
+		self.QueryString.section='my_account'
+		self.userIsLoggedIn(response)
+	}
+	
 	PageScript.prototype.login = function() {
-	    username = document.getElementById("LoginForm_email_input").value;
-	    var onerror=false;
-		var errorMsg="";
+	    var username = document.getElementById("LoginForm_email_input").value,
+			onerror=false,
+			errorMsg="",
+			password = document.getElementById("LoginForm_password_input").value;
 		if (username=="") {
 			errorMsg+=_("User name is missing. ");
 			onerror=true;
 		}
-	    password = document.getElementById("LoginForm_password_input").value;
 	    if (password=="") {
 			errorMsg+=_("Password is missing. ");
 			onerror=true; 
@@ -400,24 +330,23 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 				identifier: username, 
 				password: password
 				}
-			self.ajaxpost( "/v1/login", data, self.callback(self.userIsLoggedIn) )
+			self.ajaxpost( "/v1/login", data, self.callback(self.justLoggedIn) )
 		}
 	}
 
 	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
 		console.log("facebook login")
-	    username = userId
-	    password = encodeURIComponent(accessToken)
-	    data = {
-	    	credentialType: 'facebook',
-	    	identifier: username,
-	    	password: password
-	    }
-	    self.ajaxpost("/v1/login", data , self.callback(self.userIsLoggedIn) )
+	    var data = {
+				credentialType: 'facebook',
+				identifier: userId,
+				password: encodeURIComponent(accessToken)
+			}
+	    self.ajaxpost("/v1/login", data , self.callback(self.justLoggedIn) )
 	}
 	
 	PageScript.prototype.logout = function() {
-	    this.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
+		console.log(self.QueryString)
+	    self.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
 	}
 	
 	PageScript.prototype.getCookie = function(cname) {
@@ -436,13 +365,13 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
 		this.doRemove = function(type) {
-			credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML;
-			identifier = document.getElementById(this.formName+"_identifier").innerHTML;
-			text = {
-				csrf_token: self.getCookie("csrf"),
-				credentialType: credentialType,
-				identifier: identifier
-			}
+			var credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML,
+				identifier = document.getElementById(this.formName+"_identifier").innerHTML,
+				text = {
+					csrf_token: self.getCookie("csrf"),
+					credentialType: credentialType,
+					identifier: identifier
+				}
 			console.log("text")
 			this.ajaxpost("/v1/remove_credential", text, self.callback(self.meCallback));
 		}
@@ -478,9 +407,10 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 
 //Getdigest functions	
 	PageScript.prototype.normalizeString = function(val) {
-		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ";
-		var unaccented="ouooueauiouooueaui";
-		var s = "";
+		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ",
+			unaccented="ouooueauiouooueaui",
+			s = "",
+			c;
 		
 		for (var i = 0, len = val.length; i < len; i++) {
 		  c = val[i];
@@ -505,9 +435,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.digestGetter = function(formName) {
-		var formName=formName
-		var digestCallback
-		
+		var formName=formName,
 		digestCallback = function(status,text,xml) {
 			var diegestInput=document.getElementById(formName + "_digest_input")
 			if (status==200) {
@@ -573,9 +501,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		}
 		
 		this.getDigest = function() {
-			text = createXmlForAnchor(formName)
+			var text = createXmlForAnchor(formName)
 			if (text == null) return;
-			http = self.ajaxBase(digestCallback);
+			var http = self.ajaxBase(digestCallback);
 			http.open("POST",self.QueryString.uris.ANCHOR_URL+"anchor",true);
 			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		  	http.setRequestHeader("Content-length", text.length);
@@ -585,9 +513,9 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	
 		function createXmlForAnchor(formName) {
 			console.log(formName)
-			personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value);
-			motherValue = document.getElementById(formName+"_predigest_mothername").value;
-			mothername = self.normalizeString(motherValue);
+			var personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value),
+				motherValue = document.getElementById(formName+"_predigest_mothername").value,
+				mothername = self.normalizeString(motherValue);
 			if ( personalId == "") {
 				self.displayMsg({title:_('Missing data'), error:_("Personal identifier is missing")})
 				return;
@@ -635,19 +563,18 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		//
 	    var identifier = (document.getElementById("registration-form_identifier_input").value=="")?
 			document.getElementById("registration-form_email_input").value:
-			document.getElementById("registration-form_identifier_input").value;
-	    var secret = document.getElementById("registration-form_secret_input").value;
-	    var email = document.getElementById("registration-form_email_input").value;
-        email = pageScript.mailRepair(email);
-		var d=document.getElementById("registration-form_digest_input");
-		var digest =(d)?d.value:"";
-	    var data= {
+			document.getElementById("registration-form_identifier_input").value,
+			secret = document.getElementById("registration-form_secret_input").value,
+			email = self.mailRepair(document.getElementById("registration-form_email_input").value),
+			d=document.getElementById("registration-form_digest_input"),
+			digest =(d)?d.value:"",
+			data= {
 	    	credentialType: credentialType,
 	    	identifier: identifier,
 	    	email: email,
-	    	digest: digest
+	    	digest: digest,
+			password: secret
 	    }
-		data.password=secret;
 		window.traces.push(data)
 		window.traces.push("register")
 	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
@@ -674,7 +601,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 	}
 	
 	PageScript.prototype.deactivateButton = function(buttonId) {
-		b=document.getElementById(buttonId)
+		var b=document.getElementById(buttonId)
 		if (b) {
 			b.className+=" inactive";
 			b.onclick=function(){return}
@@ -686,9 +613,7 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 			c
 		if (b) {
 			b.className=b.className.slice(0,b.className.indexOf("inactive"))
-			if (onclickFunc) {
-				b.onclick = (typeof onclickFunc=="string")? function(){ eval(onclickFunc) } : onclickFunc 
-			}
+			b.onclick = onclickFunc 
 		}
 	}
 
@@ -723,119 +648,12 @@ PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflo
 		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
-	
-	PageScript.prototype.initGettext = function(text) {
-		// waiting for gettext loads po files
-		try {
-			self.dictionary=JSON.parse(text)
-			_=function() { return self.gettext.apply( this, arguments ) } 
-		}
-		catch (e) {
-			_=function(str) {return str;}
-		}
-		window.traces.push("init gettext")
-		self.init_()
-	}
 
-	
-	PageScript.prototype.gettext = function() {
+	self.ajax.displayServerResponse= self.displayServerResponse
+	self.ajax.reportServerFailure= self.reportServerFailure
 
-		if (!arguments || arguments.length < 1 || !RegExp) return; // called without arguments
-		arguments=$.map(arguments, function(value, index){return [value]})
-        console.log(arguments)
-        if (typeof arguments[0] != "string") {
-                arguments=arguments[0]
-                var str=arguments.shift()
-                return self.gettext(str,arguments.map(function(value, index){return self.gettext(value)}))
-        }
-		var str = arguments.shift();
 
-		if (arguments.length == 1 && typeof arguments[0] == 'object') {
-			arguments=arguments[0].map(function(value, index){return [value]})
-		}
-	
-		// Try to find translated string
-		str = self.dictionary[str] || str
-
-		// Check needed attrubutes given for tokens
-		hasTokens = str.match(/%\D/g);
-		hasPhytonTokens = str.match(/{\d}/g)
-		if ( (hasTokens && hasTokens.length != arguments.length) || (hasPhytonTokens && hasPhytonTokens.length != arguments.length)) {
-			console.log('Gettext error: Arguments count ('+ arguments.length +') does not match replacement token count ('+ ((hasTokens && hasTokens.length) + (hasPhytonTokens && hasPhytonTokens.length)) + ').');
-			return str;
-		}
-		
-		if (hasTokens) {
-			// replace tokens with the given arguments
-			var re  = /([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X)(.*)/; //'
-			var a   = b = [], i = 0, numMatches = 0;		
-			while (a = re.exec(str)) {
-				var leftpart   = a[1], 
-					pPad  = a[2], 
-					pJustify  = a[3], 
-					pMinLength = a[4],
-					pPrecision = a[5], 
-					pType = a[6], 
-					rightPart = a[7];
-				numMatches++;
-				if (pType == '%') subst = '%';
-				else {
-					var param = arguments[i],
-						pad   = '',
-						justifyRight = true,
-						minLength = -1,
-						precision = -1,
-						subst = param;
-					if (pPad && pPad.substr(0,1) == "'") pad = leftpart.substr(1,1);
-					else if (pPad) pad = pPad;
-					if (pJustify && pJustify === "-") justifyRight = false;
-					if (pMinLength) minLength = parseInt(pMinLength);
-					if (pPrecision && pType == 'f') precision = parseInt(pPrecision.substring(1));
-					if (pType == 'b')      subst = parseInt(param).toString(2);
-					else if (pType == 'c') subst = String.fromCharCode(parseInt(param));
-					else if (pType == 'd') subst = parseInt(param) ? parseInt(param) : 0;
-					else if (pType == 'u') subst = Math.abs(param);
-					else if (pType == 'f') subst = (precision > -1) ? Math.round(parseFloat(param) * Math.pow(10, precision)) / Math.pow(10, precision): parseFloat(param);
-					else if (pType == 'o') subst = parseInt(param).toString(8);
-					else if (pType == 's') subst = param;
-					else if (pType == 'x') subst = ('' + parseInt(param).toString(16)).toLowerCase();
-					else if (pType == 'X') subst = ('' + parseInt(param).toString(16)).toUpperCase();
-				}
-				str = leftpart + subst + rightPart;
-				i++;
-			}
-		}
-		if (hasPhytonTokens){
-			arguments.forEach( function(value,key){ str=str.replace("{"+key+"}",value)} )
-		}
-		return str;
-	}
-	
 }
-	
-pageScript = new PageScript();
 
-
-
-/* 
-==============================================
-Back To Top Button
-=============================================== */  
- 
-  $(window).scroll(function () {
-            if ($(this).scrollTop() > 50) {
-                $('#back-top').fadeIn();
-            } else {
-                $('#back-top').fadeOut();
-            }
-        });
-      // scroll body to 0px on click
-      $('#back-top').click(function () {
-          $('#back-top a').tooltip('hide');
-          $('body,html').animate({
-              scrollTop: 0
-          }, 800);
-          return false;
-      });
-      
-      if ($('#back-top').length!=0) $('#back-top').tooltip('hide');
+export {facebook}
+export default PageScript
