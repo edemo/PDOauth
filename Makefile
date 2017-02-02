@@ -26,7 +26,10 @@ checkmanual: install alltests xmldoc
 
 alltests: tests integrationtests end2endtest
 
-static: static-base static-html static-js static-jstest
+static: uris static-base static-html static-js static-jstest
+uris:
+	PYTHONPATH=/etc/pdoauth python3 ./tools/adauris.py
+
 static-base:
 	mkdir -p static/js
 	cp -r site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
