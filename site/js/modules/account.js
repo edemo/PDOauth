@@ -13,6 +13,7 @@
 
 PageScript.prototype.page = "account";
 PageScript.prototype.sso_no_app_logout = self.getCookie("sso_no_app_logout");
+console.log(self.sso_no_app_logout)
 PageScript.prototype.main = function() {
 	self.ajaxget("/adauris", self.callback(self.commonInit), true)
 	setup_the_registration_form_buttons(self)
