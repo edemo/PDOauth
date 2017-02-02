@@ -20,16 +20,18 @@ all:
 
 install: static static/locale/hu.json
 
-checkall: install tests integrationtests end2endtest xmldoc
+checkall: uris_ install tests integrationtests end2endtest xmldoc
 
 checkmanual: install alltests xmldoc
 
 alltests: tests integrationtests end2endtest
 
-static: uris static-base static-html static-js static-jstest
+uris_:
+	PYTHONPATH=src/end2endtest python3 ./tools/adauris.py
 uris:
 	PYTHONPATH=/etc/pdoauth python3 ./tools/adauris.py
 
+static: static-base static-html static-js static-jstest
 static-base:
 	mkdir -p static/js
 	cp -r site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
