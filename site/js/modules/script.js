@@ -1,6 +1,7 @@
 import { _ } from './gettext'
 import Ajax from './ajax_.js'
 import { setup_the_navbar_buttons_onclick } from './setup_buttons'
+import { uris } from './adauris'
 
 window.traces = new Array();
 
@@ -16,6 +17,7 @@ function PageScript(test) {
 	self.isFBsdkLoaded=false;
 	self.isFBconnected=false;
 	self.ajax=Ajax({})
+
 	
 	PageScript.prototype.displayTheSection=function(section) {
 		self.hideAllSection();
@@ -87,15 +89,10 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.callback = self.ajax.callback
 	
-	PageScript.prototype.commonInit=function( response ) {
+	PageScript.prototype.commonInit=function() {
 		// initialising variables
-		var temp = self.validateServerMessage( response )
-		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
-		else {
-			self.displayMsg( self.processErrors( temp ))
-			window.traces.push( 'adauris failed' )
-			return
-		}
+		if (self.page!='login') setup_the_navbar_buttons_onclick(self);
+		self.QueryString.uris = uris;
 		self.ajax.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
 
@@ -647,11 +644,16 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
+	
+	PageScript.prototype.setCookie = function( cname, cvalue, expireDays ) {
+		var d = new Date(),	expireDays = expireDays || 1;
+    	d.setTime(d.getTime() + (expireDays*24*60*60*1000));
+    	var expires = "expires="+ d.toUTCString();
+    	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	} 
 
 	self.ajax.displayServerResponse= self.displayServerResponse
 	self.ajax.reportServerFailure= self.reportServerFailure
-
-
 }
 
 export {facebook}

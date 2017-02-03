@@ -7,8 +7,7 @@ export var pageScript = new PageScript();
 	PageScript.prototype.page = "index";
 
 	PageScript.prototype.main = function() {
-		self.ajaxget( "/adauris", self.callback(self.commonInit), true )
-		setup_the_navbar_buttons_onclick(self)
+		self.commonInit()
 	}
 
 	PageScript.prototype.initialise = function() {
