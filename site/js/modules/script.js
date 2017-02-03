@@ -2,6 +2,7 @@ import { _ } from './gettext'
 import Ajax from './ajax_.js'
 import { setup_the_navbar_buttons_onclick } from './setup_buttons'
 import { uris } from './adauris'
+import * as Cookie from './cookie'
 
 window.traces = new Array();
 
@@ -182,7 +183,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 			var	data= {
 				canemail: value,
 				appname: self.aps[appId].name,
-				csrf_token: self.getCookie('csrf')
+				csrf_token: Cookie.get('csrf') || ""
 				}
 			self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
 		}
@@ -345,18 +346,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	    self.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
 	}
 	
-	PageScript.prototype.getCookie = function(cname) {
-	    var name = cname + "=";
-	    var ca = win.document.cookie.split(';');
-	    for(var i=0; i<ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0)==' ') c = c.substring(1);
-	        if (c.indexOf(name) == 0) {
-				return c.substring(name.length,c.length);
-			}
-	    }
-	    return "";
-	} 
+
 
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
@@ -364,7 +354,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 			var credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML,
 				identifier = document.getElementById(this.formName+"_identifier").innerHTML,
 				text = {
-					csrf_token: self.getCookie("csrf"),
+					csrf_token: Cookie.get("csrf") || "",
 					credentialType: credentialType,
 					identifier: identifier
 				}
@@ -509,7 +499,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 		function createXmlForAnchor(formName) {
 			console.log(formName)
-			var personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value),
+			var personalId = selrmalizeId(document.getElementById(formName+"_predigest_input").value),
 				motherValue = document.getElementById(formName+"_predigest_mothername").value,
 				mothername = self.normalizeString(motherValue);
 			if ( personalId == "") {
@@ -645,13 +635,6 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
 	}
 	
-	PageScript.prototype.setCookie = function( cname, cvalue, expireDays ) {
-		var d = new Date(),	expireDays = expireDays || 1;
-    	d.setTime(d.getTime() + (expireDays*24*60*60*1000));
-    	var expires = "expires="+ d.toUTCString();
-    	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-	} 
-
 	self.ajax.displayServerResponse= self.displayServerResponse
 	self.ajax.reportServerFailure= self.reportServerFailure
 }
