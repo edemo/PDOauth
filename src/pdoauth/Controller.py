@@ -235,6 +235,8 @@ class Controller(
     def getUserForEmailAndOrHash(self, digest: Digest, email: Union[str,None]):
         if email:
             user = User.getByEmail(email)
+            if user is None:
+                raise ReportedError([noSuchUser], 400)
             self.checkUserAgainsDigest(digest, user)
             return user
         users = User.getByDigest(digest)
