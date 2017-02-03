@@ -150,10 +150,6 @@ def set_app_can_email(form):
 def remove_credential(form):
     return CONTROLLER.doRemoveCredential(form)
 
-@DECORATOR.interfaceFunc("/v1/uris", methods=["GET"])
-def uriservice():
-    return CONTROLLER.doUris()
-
 @DECORATOR.interfaceFunc("/v1/statistics", methods=["GET"])
 def statisticsService():
     return CONTROLLER.getStatsAsJson()

@@ -12,7 +12,7 @@ var self = pageScript
 		self.dataGivingAccepted=false;
 		console.log(self.neededAssurances)
 		console.log(self.appDomain)
-		self.ajaxget("/adauris", self.callback(self.commonInit), true )
+		self.commonInit()
 		setup_login_page_controlls(self)
 	}
 	

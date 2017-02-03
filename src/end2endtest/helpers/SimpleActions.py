@@ -106,14 +106,22 @@ class SimpleActions(object):
         element = TE.driver.find_element_by_xpath("//select[@id='{0}']/option[@value='{1}']".format(fieldId, value))
         element.click()
 
-    def tickCheckbox(self, elementId):
+    def clickCheckbox(self, elementId):
         self.logAction('<tickCheckbox fieldid="{0}">'.format(elementId))
         element = TE.driver.find_element_by_id(elementId)
         if type(TE.driver) == FIREFOXDRIVER:
             element.send_keys(Keys.SPACE)
         else:
             element.click()
+        return element
+
+    def tickCheckbox(self, elementId):
+        element = self.clickCheckbox(elementId)
         self.assertTrue(element.is_selected())
+
+    def untickCheckbox(self, elementId):
+        element = self.clickCheckbox(elementId)
+        self.assertFalse(element.is_selected())
 
     def click(self, fieldId):
         self.logAction('<click fieldid="{0}">'.format(fieldId))

@@ -5,7 +5,7 @@ export var pageScript = new PageScript();
 	PageScript.prototype.page = "index";
 
 	PageScript.prototype.main = function() {
-		self.ajaxget( "/adauris", self.callback(self.commonInit), true )
+		self.commonInit()
 	}
 
 	PageScript.prototype.initialise = function() {
