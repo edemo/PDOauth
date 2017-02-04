@@ -1,5 +1,5 @@
 // password reset functions
-import * as ajax from '/.ajax'
+import * as ajax from './ajax'
 
 var secret
 

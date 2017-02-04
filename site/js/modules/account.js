@@ -9,6 +9,8 @@
  import { setup_email_verification_form_buttons } from './setup_buttons'
  //import { setup_reset_password_form_buttons } from './setup_buttons'
  import { setup_email_change_form_buttons} from './setup_buttons'
+ import * as Page from './page';
+ 
  export var pageScript = new PageScript()
  
  var self = pageScript
@@ -514,9 +516,9 @@ PageScript.prototype.main = function() {
 		var rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
 		var inputField = document.getElementById("ChangeEmailAddressForm_email_input")
 		if (rgx_email.exec(inputField.value)) {
-			self.activateButton("changeEmil_saveButton", self.changeEmailAddress)
+			Page.activateControl("changeEmil_saveButton", self.changeEmailAddress)
 		}
-		else self.deactivateButton("changeEmil_saveButton")
+		else Page.deactivateControl("changeEmil_saveButton")
 	}
 	
 // User actions	

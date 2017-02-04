@@ -1,3 +1,7 @@
+/*
+cookie helpers
+*/
+
 export function	set( cname, cvalue, expireDays, path ) {
 	var date = new Date(),	
 		expireDays = expireDays || 1,
@@ -9,7 +13,7 @@ export function	set( cname, cvalue, expireDays, path ) {
 
 export function get( cname ) {
 	var name = cname + "=";
-	var cookies = win.document.cookie.split( ';' );
+	var cookies = document.cookie.split( ';' );
 	for ( var i=0; i<cookies.length; i++ ) {
 		var c = cookies[i];
 		while ( c.charAt( 0 ) == ' ' ) c = c.substring( 1 );

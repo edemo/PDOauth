@@ -3,6 +3,7 @@ import * as ajax from './ajax.js';
 import { setup_the_navbar_buttons_onclick } from './setup_buttons';
 import { uris } from './adauris';
 import * as Cookie from './cookie';
+import * as Page from './page';
 
 window.traces = new Array();
 
@@ -444,7 +445,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 						console.log("style:" + formName)
 						style.display="none"
 						document.getElementById(formName+"_digest_input").style.display="block"
-						self.activateButton( formName+"_make-here", function(){self.digestGetter(formName).methodChooser('here')})
+						Page.activateControl( formName+"_make-here", function(){self.digestGetter(formName).methodChooser('here')})
 						break;
 					default:
 						style.display="none"
@@ -470,14 +471,14 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				case "here":
 					document.getElementById(formName+"_code-generation-input").style.display="block"
 					document.getElementById(formName+"_digest-input").style.display="none"
-					self.activateButton( selfButton, function(){self.digestGetter(formName).methodChooser('self')} )
-					self.deactivateButton( hereButton )
+					Page.activateControl( selfButton, function(){self.digestGetter(formName).methodChooser('self')} )
+					Page.deactivateControl( hereButton )
 					break;
 				case "self":
 					document.getElementById(formName+"_code-generation-input").style.display="none"
 					document.getElementById(formName+"_digest-input").style.display="block"
-					self.activateButton( hereButton, function(){self.digestGetter(formName).methodChooser('here')} )
-					self.deactivateButton( selfButton )
+					Page.activateControl( hereButton, function(){self.digestGetter(formName).methodChooser('here')} )
+					Page.deactivateControl( selfButton )
 					break;
 				default:
 			}
@@ -582,23 +583,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		}
 		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
 	}
-	
-	PageScript.prototype.deactivateButton = function(buttonId) {
-		var b=document.getElementById(buttonId)
-		if (b) {
-			b.className+=" inactive";
-			b.onclick=function(){return}
-		}		
-	}
-	
-	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
-		var b=document.getElementById(buttonId),
-			c
-		if (b) {
-			b.className=b.className.slice(0,b.className.indexOf("inactive"))
-			b.onclick = onclickFunc 
-		}
-	}
+
 
 	ajax.set_displayServerResponse( self.displayServerResponse )
 	ajax.set_reportServerFailure( self.reportServerFailure )
