@@ -1,7 +1,11 @@
 // password reset functions
 import * as ajax from '/.ajax'
 
-export var secret
+var secret
+
+export function setSecret(theSecret){
+	secret=theSecret
+}
 
 export function	doit() {
 	var password = document.getElementById("PasswordResetForm_password_input").value;

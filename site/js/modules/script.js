@@ -1,8 +1,8 @@
-import { _ } from './gettext'
-import Ajax from './ajax_.js'
-import { setup_the_navbar_buttons_onclick } from './setup_buttons'
-import { uris } from './adauris'
-import * as Cookie from './cookie'
+import { _ } from './gettext';
+import * as ajax from './ajax.js';
+import { setup_the_navbar_buttons_onclick } from './setup_buttons';
+import { uris } from './adauris';
+import * as Cookie from './cookie';
 
 window.traces = new Array();
 
@@ -17,8 +17,6 @@ function PageScript(test) {
 	self.registrationMethode="pw";
 	self.isFBsdkLoaded=false;
 	self.isFBconnected=false;
-	self.ajax=Ajax({})
-
 	
 	PageScript.prototype.displayTheSection=function(section) {
 		self.hideAllSection();
@@ -88,13 +86,12 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		self.displayMsg({title:_("Server error occured"),error: text})
 	}
 	
-	PageScript.prototype.callback = self.ajax.callback
+	PageScript.prototype.callback = ajax.callback
 	
 	PageScript.prototype.commonInit=function() {
 		// initialising variables
 		if (self.page!='login') setup_the_navbar_buttons_onclick(self);
 		self.QueryString.uris = uris;
-		self.ajax.uribase = self.QueryString.uris.BACKEND_PATH;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
 
 		// filling hrefs of anchors
@@ -103,17 +100,17 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		window.traces.push('initialized')
 	}
 	
-	PageScript.prototype.ajaxBase = self.ajax.ajaxBase
+	PageScript.prototype.ajaxBase = ajax.ajaxBase
 
-	PageScript.prototype.ajaxpost = self.ajax.ajaxpost
+	PageScript.prototype.ajaxpost = ajax.ajaxpost
 
-	PageScript.prototype.ajaxget = self.ajax.ajaxget
+	PageScript.prototype.ajaxget = ajax.ajaxget
 		
 	PageScript.prototype.displayServerResponse = function( response, callbacks ){
 		self.displayMsg( self.processErrors( self.validateServerMessage( response ), callbacks ) )
 	}
 	
-	PageScript.prototype.validateServerMessage = self.ajax.validateServerMessage
+	PageScript.prototype.validateServerMessage = ajax.validateServerMessage
 	
 	PageScript.prototype.processErrors = function(data, callbacks) {
 		console.log(data)
@@ -603,40 +600,8 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		}
 	}
 
-	PageScript.prototype.passwordChanged = function(formName) {
-		var strength = document.getElementById(formName+"_pw-strength-meter");
-		var strongRegex = new RegExp("^(?=.{10,})((?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^a-zA-Z0-9_])).*$", "g");
-		var mediumRegex = new RegExp("^(?=.{8,})((?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])).*$", "g");
-		var enoughRegex = new RegExp("(?=.{8,}).*", "g");
-		var pwd = document.getElementById(formName+"_secret_input");
-		if (pwd.value.length==0) {
-			strength.innerHTML = _('Type Password');
-		} 
-		else if (false == enoughRegex.test(pwd.value)) {
-				strength.innerHTML = _("More Characters");
-			} 
-			else if (strongRegex.test(pwd.value)) {
-					strength.innerHTML = '<span style="color:green">'+_("Strong!")+'</span>';
-				} 
-				else if (mediumRegex.test(pwd.value)) {
-						strength.innerHTML = '<span style="color:orange">'+_("Medium!")+'</span>';
-					} 
-					else {
-						strength.innerHTML = '<span style="color:red">'+_("Weak!")+'</span>';	
-					}
-		self.pwEqual(formName)
-	}
-	
-	PageScript.prototype.pwEqual = function(formName) {
-		var pwInput=document.getElementById(formName+"_secret_input")
-		var pwBackup=document.getElementById(formName+"_secret_backup")
-		var pwEqual=document.getElementById(formName+"_pw-equal")
-		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
-		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
-	}
-	
-	self.ajax.displayServerResponse= self.displayServerResponse
-	self.ajax.reportServerFailure= self.reportServerFailure
+	ajax.set_displayServerResponse( self.displayServerResponse )
+	ajax.set_reportServerFailure( self.reportServerFailure )
 }
 
 export {facebook}

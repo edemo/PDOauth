@@ -1,7 +1,6 @@
-import { uris } from './modules/adauris'
-import Ajax from './modules/ajax.js'
-var ajax = new Ajax({}),
-	c,
+import * as ajax from './modules/ajax.js';
+
+var	c,
 	getCookie = function(cname) {
 		var name = cname + "=",
 			ca = window.document.cookie.split(';');
@@ -14,8 +13,7 @@ var ajax = new Ajax({}),
 		}
 		return false;
 	},
-	tracker = document.getElementById("flag"),
+	tracker = document.getElementById("flag"),		// for testing
 	next = function(){ tracker.style.display = "block"	}
-ajax.uribase = uris.BACKEND_PATH;
 if ( !(c=getCookie("sso_no_app_logout")) || c=="true" ) ajax.get( "/v1/logout", {next:next, error:next} )
 else next();

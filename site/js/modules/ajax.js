@@ -1,10 +1,27 @@
 // module ajax
+import { uris } from './adauris';
 
-export var win = window  		//window can be mocked
-export var stack = {}			//tacking asyncronous calls
-export var uribase = ''			//
-export var displayServerResponse = function(response){return response}
-export var reportServerFailure = function(response){return response}
+var uribase = uris.BACKEND_PATH,
+	stack = {},			//tacking asyncronous calls
+	displayServerResponse = function(response){return response},
+	reportServerFailure = function(response){return response},
+	win = window        //environment can be mocked
+	
+export function set_displayServerResponse(func){
+	displayServerResponse = func
+}
+
+export function set_reportServerFailure(func){
+	displayServerResponse = func
+}
+
+export function setUribase(theUribase){
+	uribase=theUribase
+}
+
+export function getStack(){
+	return stack;
+}
 
 export function callback( next, error ){
 		var next  = next || $this.displayServerResponse,
@@ -99,7 +116,4 @@ export function validateServerMessage(response) {
 				]
 			}
 		}
-	}
-
-
-
+	};

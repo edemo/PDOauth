@@ -7,7 +7,7 @@
  import { setup_the_assurancing_form_buttons } from './setup_buttons'
  import { setup_the_mysettings_form_buttons } from './setup_buttons'
  import { setup_email_verification_form_buttons } from './setup_buttons'
- import { setup_reset_password_form_buttons } from './setup_buttons'
+ //import { setup_reset_password_form_buttons } from './setup_buttons'
  import { setup_email_change_form_buttons} from './setup_buttons'
  export var pageScript = new PageScript()
  

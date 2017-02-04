@@ -9,7 +9,7 @@ function setup_controlls(){
 	document.getElementById("PasswordResetForm").onsubmit=function(){ pwreset.doit(); return false }
 }
 
-	if (QueryString && QueryString.secret) pwreset.secret=QueryString.secret
+	if (QueryString && QueryString.secret) pwreset.setSecret(QueryString.secret)
 
 var commonInit	
 var main = function (){
