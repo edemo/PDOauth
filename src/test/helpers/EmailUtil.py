@@ -15,7 +15,7 @@ from pdoauth.models.User import User
 
 exampleBody = """Dear abc@xyz.uw,
 This is a reset email.
-Go to https://local.sso.edemokraciagep.org:8888/static/passwordreset.html?&secret=th1s1sth4s3cret
+Go to https://local.sso.edemokraciagep.org:8888/static/passwordreset.html?secret=th1s1sth4s3cret
 you have to do it until 11 Dec 2098 12:34:56.
 
 Sincerely,

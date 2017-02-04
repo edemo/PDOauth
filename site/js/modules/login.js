@@ -2,7 +2,7 @@ import PageScript from './script'
 import { _ } from './gettext'
 import { gettext } from './gettext'
 import { setup_login_page_controlls } from './setup_buttons'
-import * as Page from './page';
+import * as Control from './control';
 export var pageScript = new PageScript()
 
 var self = pageScript
@@ -154,8 +154,8 @@ var self = pageScript
 
 	PageScript.prototype.textareaOnKeyup = function(textarea) {
 		if (textarea) {
-			if (textarea.value.length==128) Page.activateControl('code-generation-input_button',self.changeHash);
-			else Page.deactivateControl('code-generation-input_button');
+			if (textarea.value.length==128) Control.activate('code-generation-input_button',self.changeHash);
+			else Control.deactivate('code-generation-input_button');
 		}
 	}
 	
