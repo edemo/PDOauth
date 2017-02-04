@@ -6,6 +6,7 @@ HTML_FILES = user_howto.html\
 	fiokom.html\
 	assurer_howto.html\
 	deregistration.html\
+	passwordreset.html\
 	logout.html
 
 js_files := $(shell find site/js -maxdepth 1 -type f -name '*.js' -printf '%f\n')
