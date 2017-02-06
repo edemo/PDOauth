@@ -18,9 +18,11 @@ all:
 %.json: %.po
 	./tools/po2json $< >$@
 
-install: static static/locale/hu.json
+install: uris_ static static/locale/hu.json
 
-checkall: uris_ install tests integrationtests end2endtest xmldoc
+deploy: uris static static/locale/hu.json
+
+checkall: install tests integrationtests end2endtest xmldoc
 
 checkmanual: install alltests xmldoc
 
