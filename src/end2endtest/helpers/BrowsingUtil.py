@@ -20,6 +20,7 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
                     "response_type":"code", 
                     "client_id":TE.app.appid, 
                     "redirect_uri":TE.app.redirect_uri})
+        print(oauthUri)
         TE.driver.get(oauthUri)
         self.waitContentProviderLoginPage()
 
@@ -59,4 +60,4 @@ class BrowsingUtil(RandomUtil, FacebookUtil, Assertions, SimpleActions, ComplexP
         self.logOut()
         fbuser = User.getByEmail(config.facebookUser1.email)
         if fbuser:
-            fbuser.rm()
+            self.removeFbuser(config.facebookUser1)
