@@ -5,25 +5,33 @@ HTML_FILES = user_howto.html\
 	about_us.html\
 	fiokom.html\
 	assurer_howto.html\
-	deregistration.html
+	deregistration.html\
+	logout.html
 
 js_files := $(shell find site/js -maxdepth 1 -type f -name '*.js' -printf '%f\n')
 
 js_test_files := $(shell find site/test/end2endTests -maxdepth 1 -type f -name '*.js' -printf '%f\n')
 
 all:
-	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
+	docker run --cpuset-cpus=0-1 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
 
 %.json: %.po
 	./tools/po2json $< >$@
 
 install: static static/locale/hu.json
 
-checkall: install tests integrationtests end2endtest xmldoc
+deploy: uris install
+
+checkall:  uris_ install tests integrationtests end2endtest xmldoc
 
 checkmanual: install alltests xmldoc
 
 alltests: tests integrationtests end2endtest
+
+uris_:
+	PYTHONPATH=src/end2endtest python3 ./tools/adauris.py
+uris:
+	PYTHONPATH=/etc/pdoauth python3 ./tools/adauris.py
 
 static: static-base static-html static-js static-jstest
 static-base:
@@ -42,7 +50,7 @@ static-html:
 realclean:
 	rm -rf PDAnchor; git clean -fdx
 testenv:
-	docker run --cpuset-cpus=0-2 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -w /PDOauth -it magwas/edemotest:master
+	docker run --cpuset-cpus=0-1 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -w /PDOauth -it magwas/edemotest:master
 
 clean:
 	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
