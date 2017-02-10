@@ -60,6 +60,19 @@ class AssuranceIntegrationTest(IntegrationTest, CSRFMixin, UserTesting):
             self.assertEqual(200, resp.status_code)
             self.assertEqual(Assurance.getByUser(target)['test'][0]['assurer'], current_user.email)
 
+    def test_attempt_to_assure_bad_email_and_hash_will_fail(self):
+        with app.test_client() as client:
+            target = self._setupTest(client)
+            data = dict(
+                digest = "0"*128,
+                assurance = "test",
+                email = "bad@email.com",
+                csrf_token = self.getCSRF(client))
+            resp = client.post(config.BASE_URL + '/v1/add_assurance', data = data)
+            print(resp.status_code);
+            print(resp.data);
+            self.assertEqual(400, resp.status_code)
+            self.assertEqual(resp.data, b'{"errors": ["No such user"]}')
     
     def test_no_madeup_csrf_cookie(self):
         with app.test_client() as client:
