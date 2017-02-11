@@ -154,19 +154,26 @@ PageScript.prototype.main = function() {
 		self.isLoggedIn=true
 		self.refreshTheNavbar()
 		self.ajaxget('/v1/getmyapps', self.myappsCallback)
+		
 		if (data.assurances.hashgiven && data.assurances.emailverification) {
 			self.ajaxget("assurers.json", self.callback(self.fillAssurersTable), true)
 		}
+		
+		Control.innerHTML( "me_Data", self.parseUserdata( data ) )	
+		$("#change-hash-form_digest-code").text( data.hash || "-- nincs megadva --" )
+		
 		if (data.assurances) {
-			document.getElementById("me_Data").innerHTML=self.parseUserdata(data);
-			document.getElementById("me_Settings").innerHTML=self.parseSettings(data);
-			document.getElementById("assurance-giving_assurance_selector").innerHTML=self.parseAssurances(data);
 			if (!(data.assurances.assurer)) self.isAssurer=false;
 			else {
 				self.isAssurer=true;
+				Control.innerHTML( "assurance-giving_assurance_selector", self.parseAssurances( data ) )
 			}
 		}
-		console.log(self.QueryString.section)
+		
+		if (data.credentials) {
+			self.parseCredentials( data ) 
+		}
+		
 		if (self.QueryString.section) {
 			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
 			else return;
@@ -245,7 +252,7 @@ PageScript.prototype.main = function() {
 		    	digest: document.getElementById("assurancing_digest_input").value,
 		    	assurance: document.getElementById("assurance-giving_assurance_selector").value,
 		    	email: self.mailRepair(document.getElementById("ByEmailForm_email_input").value),
-	  		  	csrf_token: self.getCookie('csrf')
+	  		  	csrf_token: Cookie.get('csrf')
 		    }
 	    self.ajaxpost("/v1/add_assurance", data, self.callback(self.myCallback))
 	}
@@ -267,9 +274,9 @@ PageScript.prototype.main = function() {
 	}
 	
 	PageScript.prototype.addPasswordCredential = function(){
-		var identifier=document.getElementById("AddPasswordCredentialForm_username_input").value,
-			secret=document.getElementById("AddPasswordCredentialForm_password_input").value;
-		self.addCredential("password", identifier, secret);
+		var identifier = Control.getValue( "AddPasswordCredentialForm_username_input" ),
+			secret = Control.getValue( "AddPasswordCredentialForm_password_input" )
+		self.addCredential( "password", identifier, secret );
 	}
 	
 	PageScript.prototype.add_facebook_credential = function( FbUserId, FbAccessToken) {
@@ -296,7 +303,7 @@ PageScript.prototype.main = function() {
 
 	PageScript.prototype.changeHash = function() {
 	    var digest = document.getElementById("change-hash-form_digest_input").value,
-			csrf_token = self.getCookie('csrf'),
+			csrf_token = Cookie.get('csrf'),
 			data= {
 				digest: digest,
 				csrf_token: csrf_token
@@ -343,22 +350,20 @@ PageScript.prototype.main = function() {
 ********************************
 
 /***** Settings tab *****/
-	PageScript.prototype.parseSettings = function(data) {
-		$("#ChangeEmailAddressForm_email_input").val(data.email)	
-		$("#change-hash-form_digest-code").text(data.hash||"-- nincs megadva --")
-		var result = '<h4><b>'+_("My credentials")+'</b></h4>\
-		<table class="multiheader">';
-		var c={	pw:[_("Password"),"password","document.getElementById('change-email_form').style.display='table-row'",true],
-				fb:["Facebook","facebook","facebook.add_fb_credential()",false]}
-/*				,
+	PageScript.prototype.parseCredentials = function(data) {
+		Control.setValue( "ChangeEmailAddressForm_email_input", data.email )
+		var div = $( '#myCredentials' ).empty(),
+			table = $( '<table class="multiheader"></table>' ),
+			c={	pw:[_("Password"), "password", function(){document.getElementById('AddPasswordCredentialForm').style.display='table-row'}, true],
+				fb:["Facebook", "facebook", facebook.add_fb_credential, false]
+/*
 				git:["Github","github","pageScript.addGithubCredential()",false],
 				tw:["Twitter","twitter","pageScript.addTwitterCredential()",false],
 				go:["Google+","google","pageScript.addGoogleCredential()",false]
-				};*/
-		var credential_list = ""
-		for( var i in c) {
-			credential_list=(i=='pw')?'\
-			<tr id="change-email_form">\
+*/
+				},
+			addPasswordCredentialForm='\
+			<tr id="AddPasswordCredentialForm" style="display:none">\
 				<td>\
 					<div class="form-level">\
 					<input class="input-block" name="username" type="text" autocapitalize="off" placeholder="Felhasználónév" id="AddPasswordCredentialForm_username_input">\
@@ -370,41 +375,54 @@ PageScript.prototype.main = function() {
 					</div>\
 				</td>\
 				<td class="button-container">\
-					<a onclick="javascript:pageScript.addPasswordCredential()" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
-					<a onclick="javascript:document.getElementById(\'change-email_form\').style.display=\'none\'" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
+					<a id="AddPasswordCredentialForm_doit-button" class="btn btn_ fa fa-save" title="'+_("save")+'"></a>\
+					<a id="AddPasswordCredentialForm_cancel-button" class="btn btn_ fa fa-times" title="'+_("cancel")+'"></a>\
 				</td>\
 			</tr>\
-			':"";
-			for(var j=0; j<data.credentials.length; j++) {
+			',
+			PlusButton = '<a class="btn fa fa-plus"></a>',
+			TrashButton = '<a class="btn btn_ fa fa-trash"></a>',
+			th = '<th></th>',
+			tr = '<tr></tr>'
+			
+		$( div ).append( $( '<h4><b>' + _( "My credentials" ) + '</b></h4>' ) )
+		
+		for( var i in c ) {
+			// credential header
+			var credential_header = $( tr ),
+				headerButtonContainer = $('<th></th>')
+			$( credential_header ).id = i + '-credential-list'
+			$( credential_header ).append( $('<th>'+c[i][0]+'</th>') )
+			if (c[i][3]){
+				var theAddButton = $( PlusButton )
+				$( theAddButton ).on( "click", c[i][2] )
+				$( headerButtonContainer ).append( $( theAddButton ) )
+				
+			}
+			$( credential_header ).append( $( headerButtonContainer ) )
+			$( table ).append( credential_header ) 
+			if (i=='pw') $( table ).append( $( addPasswordCredentialForm ) )
+				
+			// credential list
+			for( var j=0; j<data.credentials.length; j++ ) {
 				if (data.credentials[j].credentialType==c[i][1]) {
-				credential_list += '\
-			<tr>\
-				<td><pre class="credential-item" id="Credential-Item-'+j+'_identifier">'+data.credentials[j].identifier+'</pre></td>\
-				<td class="button-container">\
-					<a onclick="javascript:pageScript.RemoveCredential(\'Credential-Item-'+j+'\').doRemove(\''+c[i][1]+'\')" class="btn btn_ fa fa-trash"></a>\
-				</td>\
-			</tr>'
+					var theCredential = $( tr ),
+						theDeleteButton = $( TrashButton )
+					$( theCredential ).append( $( '<td><pre class="credential-item" id="Credential-Item-' + j + '_identifier">' + data.credentials[j].identifier + '</pre></td>' ) )
+					$( theDeleteButton ).attr( 'identifier', data.credentials[j].identifier )
+					$( theDeleteButton ).attr( 'cr-type', c[i][1] )
+					$( theDeleteButton ).on( "click", function(){ self.RemoveCredential( this ) } )
+					$( theCredential ).append( $( '<td class="button-container"></td>' ).append( $( theDeleteButton ) ) )
+					$( table ).append( theCredential ) 
 				}
 			}
-			var credential_header='\
-			<tr id="'+i+'-credential-list">\
-				<th>'+c[i][0]+'</th>\
-				<th>'
-			if (c[i][3] || credential_list==''  ) {
-				credential_header +='\
-					<a onclick="javascript:'+c[i][2]+'" class="btn fa fa-plus"></a>';
-			}
-			credential_header +='\
-				</th>\
-			</tr>'
-			result+=credential_header+credential_list
 		}
-		result +='\
-		</table>'
-		return result;		
+		$( div ).append( $( table ) ) 
+		document.getElementById("AddPasswordCredentialForm_doit-button").onclick = self.addPasswordCredential
+		document.getElementById("AddPasswordCredentialForm_cancel-button").onclick = function(){ Control.hide( 'AddPasswordCredentialForm' ) }	
 	}	
 
-	PageScript.prototype.callSetAppCanEmailMe=function(app){
+	PageScript.prototype.callSetAppCanEmailMe = function(app){
 		var value=document.getElementById("application-allow-email-me-"+app).checked
 		self.setAppCanEmailMe(app,value,self.myCallback)
 	}
@@ -464,12 +482,12 @@ PageScript.prototype.main = function() {
 	    var email = self.mailRepair(document.getElementById("ChangeEmailAddressForm_email_input").value);
 		if (email=="") Msg.display({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
 		else {
-			var csrf_token = self.getCookie('csrf'),
+			var csrf_token = Cookie.get('csrf'),
 				data= {
 				newemail: email,
 				csrf_token: csrf_token
 			}
-			self.ajaxpost('/v1/emailchange',data, self.callback(self.changeEmailCallback) )
+			Ajax.post( '/v1/emailchange', data, { next: self.changeEmailCallback } )
 		}	
 	}
 	
@@ -502,6 +520,6 @@ PageScript.prototype.main = function() {
 	}
 	
 	PageScript.prototype.initiateDeregister = function() {
-		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
+		self.ajaxpost( "/v1/deregister", { csrf_token: Cookie.get("csrf") }, self.callback()  )
 	}
 

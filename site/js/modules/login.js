@@ -4,6 +4,7 @@ import { gettext } from './gettext'
 import { setup_login_page_controlls } from './setup_buttons'
 import * as Control from './control'
 import * as Msg from './messaging'
+import * as Cookie from './cookie'
 export var pageScript = new PageScript()
 
 var self = pageScript
@@ -157,8 +158,8 @@ PageScript.prototype.textareaOnKeyup = function(textarea) {
 
 PageScript.prototype.changeHash = function() {
 	var data= {
-		digest: document.getElementById("login_digest_input").value,
-		csrf_token: self.getCookie('csrf')
+		digest: Control.getValue("login_digest_input"),
+		csrf_token: Cookie.get('csrf')
 	}
 	self.ajaxpost( "/v1/users/me/update_hash", data, self.callback(self.hashIsUpdated) )
 }	

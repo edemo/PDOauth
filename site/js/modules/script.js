@@ -193,7 +193,9 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				<td><b>'+_("User identifier")+'</b></td>\
 				<td>'+data.userid+'</td>\
 			</tr>\
-		</table>\
+		</table>'
+		if (data.assurances){
+			result += '\
 		<h4><b>'+_("Assurances")+'</b></h4>\
 		<table>\
 			<thead>\
@@ -203,24 +205,26 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 					<th>'+_("Date of assurance")+'</th>\
 					<th>'+_("Valid until")+'</th>\
 				</tr>\
+			</thead>\
 			<tbody>'
-		for( var assurance in data.assurances) {
-			for( var i=0; i<data.assurances[assurance].length; i++){
-				result += '\
-				<tr>\
-					<td>'+_(data.assurances[assurance][i].name)+'</td>\
-					<td>'+data.assurances[assurance][i].assurer+'</td>\
-					<td>'+self.timestampToString(data.assurances[assurance][i].timestamp)+'</td>\
-					<td>'+
-//					self.timestampToString(data.assurances[assurance][i].valid)+
-					_("unlimited")+
-					'</td>\
-				</tr>'
+			for( var assurance in data.assurances) {
+				for( var i=0; i<data.assurances[assurance].length; i++){
+					result += '\
+					<tr>\
+						<td>'+_(data.assurances[assurance][i].name)+'</td>\
+						<td>'+data.assurances[assurance][i].assurer+'</td>\
+						<td>'+self.timestampToString(data.assurances[assurance][i].timestamp)+'</td>\
+						<td>'+
+	//					self.timestampToString(data.assurances[assurance][i].valid)+
+						_("unlimited")+
+						'</td>\
+					</tr>'
+				}
 			}
-		}
-		result += '\
+			result += '\
 			</tbody>\
 		</table>'
+		}
 		return result
 	}
 	
@@ -341,23 +345,15 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		console.log(self.QueryString)
 	    self.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
 	}
-	
 
-
-	PageScript.prototype.RemoveCredential = function(formName) {
-		self.formName = formName
-		this.doRemove = function(type) {
-			var credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML,
-				identifier = document.getElementById(this.formName+"_identifier").innerHTML,
-				text = {
-					csrf_token: Cookie.get("csrf") || "",
-					credentialType: credentialType,
-					identifier: identifier
-				}
-			console.log("text")
-			this.ajaxpost("/v1/remove_credential", text, self.callback(self.meCallback));
-		}
-		return self
+	PageScript.prototype.RemoveCredential = function( element ) {
+		var text = {
+				csrf_token: Cookie.get("csrf") || "",
+				credentialType: $( element ).attr( 'cr-type' ),
+				identifier: $( element ).attr( 'identifier' )
+			}
+		console.log(text)
+		Ajax.post( "/v1/remove_credential", text, { next: self.meCallback } );
 	}
 	
 	PageScript.prototype.GoogleLogin = function(){

@@ -29,8 +29,8 @@ export function setTarget( theTarget ){
 }
 
 export function display( msg ) {
-	switch (target) {
-		case "popoup":
+	switch ( target ) {
+		case "popup":
 			displayInPopup (msg );
 			break;
 		case "div":
@@ -48,5 +48,3 @@ export function closePopup(popupCallback) {
 	window.traces.push("popup closed")
 	return "closePopup";
 }
-	
-//login	
