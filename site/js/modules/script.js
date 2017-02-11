@@ -1,6 +1,9 @@
-import { _ } from './gettext'
-import Ajax from './ajax.js'
-import { setup_the_navbar_buttons_onclick } from './setup_buttons'
+import { _ } from './gettext';
+import * as ajax from './ajax.js';
+import { setup_the_navbar_buttons_onclick } from './setup_buttons';
+import { uris } from './adauris';
+import * as Cookie from './cookie';
+import * as Control from './control';
 
 window.traces = new Array();
 
@@ -15,7 +18,6 @@ function PageScript(test) {
 	self.registrationMethode="pw";
 	self.isFBsdkLoaded=false;
 	self.isFBconnected=false;
-	self.ajax=Ajax({})
 	
 	PageScript.prototype.displayTheSection=function(section) {
 		self.hideAllSection();
@@ -85,19 +87,12 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		self.displayMsg({title:_("Server error occured"),error: text})
 	}
 	
-	PageScript.prototype.callback = self.ajax.callback
+	PageScript.prototype.callback = ajax.callback
 	
-	PageScript.prototype.commonInit=function( response ) {
+	PageScript.prototype.commonInit=function() {
 		// initialising variables
 		if (self.page!='login') setup_the_navbar_buttons_onclick(self);
-		var temp = self.validateServerMessage( response )
-		if ( typeof temp.errors == "undefined" ) self.QueryString.uris = temp;
-		else {
-			self.displayMsg( self.processErrors( temp ))
-			window.traces.push( 'adauris failed' )
-			return
-		}
-		self.ajax.uribase = self.QueryString.uris.BACKEND_PATH;
+		self.QueryString.uris = uris;
 		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
 
 		// filling hrefs of anchors
@@ -106,17 +101,17 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		window.traces.push('initialized')
 	}
 	
-	PageScript.prototype.ajaxBase = self.ajax.ajaxBase
+	PageScript.prototype.ajaxBase = ajax.ajaxBase
 
-	PageScript.prototype.ajaxpost = self.ajax.ajaxpost
+	PageScript.prototype.ajaxpost = ajax.ajaxpost
 
-	PageScript.prototype.ajaxget = self.ajax.ajaxget
+	PageScript.prototype.ajaxget = ajax.ajaxget
 		
 	PageScript.prototype.displayServerResponse = function( response, callbacks ){
 		self.displayMsg( self.processErrors( self.validateServerMessage( response ), callbacks ) )
 	}
 	
-	PageScript.prototype.validateServerMessage = self.ajax.validateServerMessage
+	PageScript.prototype.validateServerMessage = ajax.validateServerMessage
 	
 	PageScript.prototype.processErrors = function(data, callbacks) {
 		console.log(data)
@@ -186,7 +181,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 			var	data= {
 				canemail: value,
 				appname: self.aps[appId].name,
-				csrf_token: self.getCookie('csrf')
+				csrf_token: Cookie.get('csrf') || ""
 				}
 			self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
 		}
@@ -349,18 +344,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	    self.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
 	}
 	
-	PageScript.prototype.getCookie = function(cname) {
-	    var name = cname + "=";
-	    var ca = win.document.cookie.split(';');
-	    for(var i=0; i<ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0)==' ') c = c.substring(1);
-	        if (c.indexOf(name) == 0) {
-				return c.substring(name.length,c.length);
-			}
-	    }
-	    return "";
-	} 
+
 
 	PageScript.prototype.RemoveCredential = function(formName) {
 		self.formName = formName
@@ -368,7 +352,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 			var credentialType = (type)?type:document.getElementById(this.formName+"_credentialType").innerHTML,
 				identifier = document.getElementById(this.formName+"_identifier").innerHTML,
 				text = {
-					csrf_token: self.getCookie("csrf"),
+					csrf_token: Cookie.get("csrf") || "",
 					credentialType: credentialType,
 					identifier: identifier
 				}
@@ -405,136 +389,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		}
 	}
 
-//Getdigest functions	
-	PageScript.prototype.normalizeString = function(val) {
-		var   accented="öüóőúéáűíÖÜÓŐÚÉÁŰÍ",
-			unaccented="ouooueauiouooueaui",
-			s = "",
-			c;
-		
-		for (var i = 0, len = val.length; i < len; i++) {
-		  c = val[i];
-		  if(c.match('[abcdefghijklmnopqrstuvwxyz]')) {
-		    s=s+c;
-		  } else if(c.match('[ABCDEFGHIJKLMNOPQRSTUVXYZ]')) {
-		    s=s+c.toLowerCase();
-		  } else if(c.match('['+accented+']')) {
-		    for (var j = 0, alen = accented.length; j <alen; j++) {
-		      if(c.match(accented[j])) {
-		        s=s+unaccented[j];
-		      }
-		    }
-		  }
-		}
-		return s;
-	}
-	
-	// removing all non numeric characters
-	PageScript.prototype.normalizeId = function(val) {
-		return val.replace(/[^0-9]/g,"");
-	}
-	
-	PageScript.prototype.digestGetter = function(formName) {
-		var formName=formName,
-		digestCallback = function(status,text,xml) {
-			var diegestInput=document.getElementById(formName + "_digest_input")
-			if (status==200) {
-				window.traces.push("digest cb")
-				diegestInput.value = xml.getElementsByTagName('hash')[0].childNodes[0].nodeValue;
-				console.log(diegestInput.value)
-				$("#"+formName + "_digest-input").trigger('keyup');
-				document.getElementById(formName + "_predigest_input").value = "";
-				switch (formName) {
-					case "assurancing":
-						var messageBox=document.getElementById("assurance-giving_message")
-						messageBox.innerHTML=_("The Secret Hash is given for assuring")
-						messageBox.className="given"
-						document.getElementById("assurance-giving_submit-button").className=""
-						break;
-					case "login":
-					case "change-hash-form":
-						self.changeHash()
-						break;
-					case "registration-form":
-						console.log("formname is " + formName)
-						var style = document.getElementById(formName+"_code-generation-input").style;
-						console.log("style:" + formName)
-						style.display="none"
-						document.getElementById(formName+"_digest_input").style.display="block"
-						self.activateButton( formName+"_make-here", function(){self.digestGetter(formName).methodChooser('here')})
-						break;
-					default:
-						style.display="none"
-				}
-				window.traces.push("gotDigest")
-			}
-			else {
-				self.displayMsg({title:_("Error message"),error: text});
-				diegestInput.value =""
-				if (formName=="assurancing") {
-					var messageBox=document.getElementById("assurance-giving_message")
-					messageBox.innerHTML=_("The Secret Hash isn't given yet")
-					messageBox.className="missing"
-					document.getElementById("assurance-giving_submit-button").className="inactive"
-				}
-			}
-		}
 
-		this.methodChooser = function(method) {
-			var selfButton = formName+"_make-self"
-			var hereButton = formName+"_make-here"
-			switch (method) {
-				case "here":
-					document.getElementById(formName+"_code-generation-input").style.display="block"
-					document.getElementById(formName+"_digest-input").style.display="none"
-					self.activateButton( selfButton, function(){self.digestGetter(formName).methodChooser('self')} )
-					self.deactivateButton( hereButton )
-					break;
-				case "self":
-					document.getElementById(formName+"_code-generation-input").style.display="none"
-					document.getElementById(formName+"_digest-input").style.display="block"
-					self.activateButton( hereButton, function(){self.digestGetter(formName).methodChooser('here')} )
-					self.deactivateButton( selfButton )
-					break;
-				default:
-			}
-		}
-		
-		this.getDigest = function() {
-			var text = createXmlForAnchor(formName)
-			if (text == null) return;
-			var http = self.ajaxBase(digestCallback);
-			http.open("POST",self.QueryString.uris.ANCHOR_URL+"anchor",true);
-			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		  	http.setRequestHeader("Content-length", text.length);
-		  	http.setRequestHeader("Connection", "close");
-			http.send(text);
-		}
-	
-		function createXmlForAnchor(formName) {
-			console.log(formName)
-			var personalId = self.normalizeId(document.getElementById(formName+"_predigest_input").value),
-				motherValue = document.getElementById(formName+"_predigest_mothername").value,
-				mothername = self.normalizeString(motherValue);
-			if ( personalId == "") {
-				self.displayMsg({title:_('Missing data'), error:_("Personal identifier is missing")})
-				return;
-			}
-			if ( mothername == "") {
-				self.displayMsg({title:_('Missing data'), error:_("Mother's name is missing")})
-				return;
-			}
-			return ("<request><id>"+personalId+"</id><mothername>"+mothername+"</mothername></request>");
-		}
-		
-		return this
-	}
-	
-	PageScript.prototype.convert_mothername = function(formName) {
-		var inputElement = document.getElementById( formName+"_mothername");
-		var outputElement = document.getElementById( formName+"_monitor");
-		outputElement.innerHTML = self.normalizeId(document.getElementById( formName+"_input").value) +' - '+ self.normalizeString(inputElement.value);
-	}
 	
 	PageScript.prototype.setRegistrationMethode=function(methode){
 		self.registrationMethode=methode;
@@ -599,60 +454,10 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		}
 		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
 	}
-	
-	PageScript.prototype.deactivateButton = function(buttonId) {
-		var b=document.getElementById(buttonId)
-		if (b) {
-			b.className+=" inactive";
-			b.onclick=function(){return}
-		}		
-	}
-	
-	PageScript.prototype.activateButton = function(buttonId, onclickFunc) {
-		var b=document.getElementById(buttonId),
-			c
-		if (b) {
-			b.className=b.className.slice(0,b.className.indexOf("inactive"))
-			b.onclick = onclickFunc 
-		}
-	}
-
-	PageScript.prototype.passwordChanged = function(formName) {
-		var strength = document.getElementById(formName+"_pw-strength-meter");
-		var strongRegex = new RegExp("^(?=.{10,})((?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^a-zA-Z0-9_])).*$", "g");
-		var mediumRegex = new RegExp("^(?=.{8,})((?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])).*$", "g");
-		var enoughRegex = new RegExp("(?=.{8,}).*", "g");
-		var pwd = document.getElementById(formName+"_secret_input");
-		if (pwd.value.length==0) {
-			strength.innerHTML = _('Type Password');
-		} 
-		else if (false == enoughRegex.test(pwd.value)) {
-				strength.innerHTML = _("More Characters");
-			} 
-			else if (strongRegex.test(pwd.value)) {
-					strength.innerHTML = '<span style="color:green">'+_("Strong!")+'</span>';
-				} 
-				else if (mediumRegex.test(pwd.value)) {
-						strength.innerHTML = '<span style="color:orange">'+_("Medium!")+'</span>';
-					} 
-					else {
-						strength.innerHTML = '<span style="color:red">'+_("Weak!")+'</span>';	
-					}
-		self.pwEqual(formName)
-	}
-	
-	PageScript.prototype.pwEqual = function(formName) {
-		var pwInput=document.getElementById(formName+"_secret_input")
-		var pwBackup=document.getElementById(formName+"_secret_backup")
-		var pwEqual=document.getElementById(formName+"_pw-equal")
-		if (pwInput.value==pwBackup.value) pwEqual.innerHTML = '<span style="color:green">'+_("OK.")+'</span>';	
-		else pwEqual.innerHTML = '<span style="color:red">'+_("Passwords are not equal.")+'</span>';	
-	}
-
-	self.ajax.displayServerResponse= self.displayServerResponse
-	self.ajax.reportServerFailure= self.reportServerFailure
 
 
+	ajax.set_displayServerResponse( self.displayServerResponse )
+	ajax.set_reportServerFailure( self.reportServerFailure )
 }
 
 export {facebook}

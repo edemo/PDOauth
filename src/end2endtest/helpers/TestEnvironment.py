@@ -60,6 +60,7 @@ loginPagePath = "/static/fiokom.html"
 loginSSLUrl = sslBaseUrl + loginPagePath
 loginUrl = baseUrl + loginPagePath
 testUrl = baseUrl + "/static/test/test.html"
+pwresetUrl = baseUrl + "/static/passwordreset.html"
 driver = getDriver()
 app = getApplication()
 assurerUser = getAssurerUser()

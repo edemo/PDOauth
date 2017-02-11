@@ -1,20 +1,23 @@
-export function setup_the_navbar_buttons_onclick(ps){
-	console.log(ps)
-	if (ps.page=="account") {
-		document.getElementById("nav-bar-login_a").onclick=function(){ps.displayTheSection('login')}
-		document.getElementById("nav-bar-register_a").onclick=function(){ps.displayTheSection('register')}
-		document.getElementById("nav-bar-my_account_a").onclick=function(){ps.displayTheSection('my_account')}	
-	}
-	else {
-		document.getElementById("nav-bar-login_a").onclick=function(){ps.doRedirect('fiokom.html')}
-		document.getElementById("nav-bar-register_a").onclick=function(){ps.doRedirect('fiokom.html?section=register')}
-		document.getElementById("nav-bar-my_account_a").onclick=function(){ps.doRedirect('fiokom.html')}	
-	}
+import * as password from './password'
+
+export function setup_the_navbar_buttons_onclick_account(ps){
+	document.getElementById("nav-bar-login_a").onclick=function(){ps.displayTheSection('login')}
+	document.getElementById("nav-bar-register_a").onclick=function(){ps.displayTheSection('register')}
+	document.getElementById("nav-bar-my_account_a").onclick=function(){ps.displayTheSection('my_account')}	
 	document.getElementById("logout_button").onclick=ps.logout	
 }
+
+export function	setup_the_navbar_buttons_onclick(ps) {
+	document.getElementById("nav-bar-login_a").onclick=function(){ window.location='fiokom.html' }
+	document.getElementById("nav-bar-register_a").onclick=function(){ window.location='fiokom.html?section=register' }
+	document.getElementById("nav-bar-my_account_a").onclick=function(){ window.location='fiokom.html' }	
+	document.getElementById("logout_button").onclick=ps.logout	
+}
+
 export function setup_the_deregister_form_buttons(ps){
 	document.getElementById("deregistration-form_submit-button").onclick=ps.doDeregister
 }
+
 export function setup_the_registration_form_buttons(ps){
 	document.getElementById("registration-form_submitButton").onclick=ps.doRegister
 	document.getElementById("registration-form-method-selector-pw").onclick=function(){ps.setRegistrationMethode('pw')}
@@ -28,8 +31,8 @@ export function setup_the_registration_form_buttons(ps){
 	document.getElementById("make_here").onclick=function() {
 		document.getElementById('registration-form_code-generation-input').style.display='block'
 	}
-	document.getElementById("registration-form_secret_input").onkeyup=function(){ps.passwordChanged('registration-form')}
-	document.getElementById("registration-form_secret_backup").onkeyup=function(){ps.pwEqual('registration-form')}
+	document.getElementById("registration-form_secret_input").onkeyup=function(){password.changed('registration-form')}
+	document.getElementById("registration-form_secret_backup").onkeyup=function(){password.equal('registration-form')}
 }
 export function setup_the_login_form_buttons(ps){
 	document.getElementById("loginform").onsubmit=function(){ps.login(); return false}
@@ -63,6 +66,8 @@ export function setup_the_mysettings_form_buttons(ps){
 	document.getElementById("create_hash_here").onclick=ps.showHashChanger
 	document.getElementById("initiate-deregister_button").onclick=function(){ps.initiateDeregister('userdata_editform')}
 	document.getElementById("initiate-resendemail_button").onclick=ps.InitiateResendRegistrationEmail
+	document.getElementById("allow_app_sso_autologout").onclick=ps.setAutologoutCookie
+	if (ps.sso_no_app_logout!="") document.getElementById("allow_app_sso_autologout").checked=ps.sso_no_app_logout=='true'
 }
 export function setup_login_page_controlls(ps){
 	document.getElementById("PopupWindow_CloseButton").onclick=ps.closePopup
@@ -86,8 +91,8 @@ export function setup_login_page_controlls(ps){
 	document.getElementById("section_changer_login").onclick=function(){ps.showSection('login_section')}
 	document.getElementById("registration-form-method-selector-pw").onclick=function(){ps.setRegistrationMethode('pw')}
 	document.getElementById("registration-form-method-selector-fb").onclick=function(){ps.setRegistrationMethode('fb')}
-	document.getElementById("registration-form_secret_input").onkeyup=function(){ps.passwordChanged('registration-form')}
-	document.getElementById("registration-form_secret_backup").onkeyup=function(){ps.pwEqual('registration-form')}
+	document.getElementById("registration-form_secret_input").onkeyup=function(){password.changed('registration-form')}
+	document.getElementById("registration-form_secret_backup").onkeyup=function(){password.equal('registration-form')}
 	document.getElementById("registration-form_make-self").onclick=function(){ps.digestGetter('registration-form').methodChooser('self')}
 	document.getElementById("registration-form_predigest_mothername").onkeyup=function(){ps.convert_mothername('registration-form_predigest')}
 	document.getElementById("registration-form_predigest_input").onkeyup=function(){ps.convert_mothername('registration-form_predigest')}
@@ -99,9 +104,7 @@ export function setup_login_page_controlls(ps){
 export function setup_email_verification_form_buttons(ps){
 	document.getElementById("email_verification_button").onclick=function(){ps.doRedirect('fiokom.html')}
 }
-export function setup_reset_password_form_buttons(ps){
-	document.getElementById("PasswordResetForm").onsubmit=function(){ps.doPasswordReset(); return false}
-}
+
 export function setup_email_change_form_buttons(ps){
 	document.getElementById("change-email-form_ok").onclick=function(){ps.changeEmail(true)}
 	document.getElementById("change-email-form_cancel").onclick=function(){ps.changeEmail(false)}

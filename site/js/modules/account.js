@@ -1,69 +1,74 @@
  import PageScript from './script'
  import { _ } from './gettext'
  import { gettext } from './gettext'
+ import { setup_the_navbar_buttons_onclick_account } from './setup_buttons'
  import { setup_the_registration_form_buttons } from './setup_buttons'
  import { setup_the_login_form_buttons } from './setup_buttons'
  import { setup_the_assurancing_form_buttons } from './setup_buttons'
  import { setup_the_mysettings_form_buttons } from './setup_buttons'
  import { setup_email_verification_form_buttons } from './setup_buttons'
- import { setup_reset_password_form_buttons } from './setup_buttons'
+ //import { setup_reset_password_form_buttons } from './setup_buttons'
  import { setup_email_change_form_buttons} from './setup_buttons'
+ import * as Control from './control'
+ 
  export var pageScript = new PageScript()
+ 
  var self = pageScript
 
- PageScript.prototype.page = "account";
-	PageScript.prototype.main = function() {
-		self.ajaxget("/adauris", self.callback(self.commonInit), true)
-		setup_the_registration_form_buttons(self)
-		setup_the_login_form_buttons(self)
-		setup_the_assurancing_form_buttons(self)
-		setup_the_mysettings_form_buttons(self)
-		setup_email_verification_form_buttons(self)
-		setup_reset_password_form_buttons(self)
-		setup_email_change_form_buttons(self)
-		var section = self.QueryString.section
-			switch (section) {
-				case "all" :
-				[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
-					break;
-				case "registration" :
-					self.QueryString.section="register"
-					self.unhideSection(self.QueryString.section+"_section")
-					break;
-				case "account" :
-					self.QueryString.section="my_account"
-					self.unhideSection(self.QueryString.section+"_section")
-					break;
-				case "pwreset" :
-					self.QueryString.section="password_reset"
-					self.unhideSection(self.QueryString.section+"_section")
-					if (self.QueryString.secret) {
-						document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
-					}
-					break;
-				case "deregistration" :
-					self.QueryString.section="deregistration"
-					self.unhideSection(self.QueryString.section+"_section")
-					break;
-				case "emailcheck" :
-					self.QueryString.section="email_verification"
-					self.unhideSection(self.QueryString.section+"_section")
-					break;
-				case "cancelemailchange" :
-					self.QueryString.section="cancelemailchange"
-					self.unhideSection(self.QueryString.section+"_section")
-					break;
-				case "emailchange" :
-					self.QueryString.section="emailchange"
-					self.unhideSection(self.QueryString.section+"_section")
-					break;
-				case "login" :
-					self.unhideSection(section+"_section")
-					break;
-				default:
+PageScript.prototype.page = "account";
+PageScript.prototype.sso_no_app_logout = self.getCookie("sso_no_app_logout");
+PageScript.prototype.main = function() {
+	self.commonInit()
+	setup_the_registration_form_buttons(self)
+	setup_the_login_form_buttons(self)
+	setup_the_assurancing_form_buttons(self)
+	setup_the_mysettings_form_buttons(self)
+	setup_email_verification_form_buttons(self)
+	setup_reset_password_form_buttons(self)
+	setup_email_change_form_buttons(self)
+	var section = self.QueryString.section
+	switch (section) {
+		case "all" :
+		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
+			break;
+		case "registration" :
+			self.QueryString.section="register"
+			self.unhideSection(self.QueryString.section+"_section")
+			break;
+		case "account" :
+			self.QueryString.section="my_account"
+			self.unhideSection(self.QueryString.section+"_section")
+			break;
+		case "pwreset" :
+			self.QueryString.section="password_reset"
+			self.unhideSection(self.QueryString.section+"_section")
+			if (self.QueryString.secret) {
+				document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 			}
-		window.traces.push("main end")
+			break;
+		case "deregistration" :
+			self.QueryString.section="deregistration"
+			self.unhideSection(self.QueryString.section+"_section")
+			break;
+		case "emailcheck" :
+			self.QueryString.section="email_verification"
+			self.unhideSection(self.QueryString.section+"_section")
+			break;
+		case "cancelemailchange" :
+			self.QueryString.section="cancelemailchange"
+			self.unhideSection(self.QueryString.section+"_section")
+			break;
+		case "emailchange" :
+			self.QueryString.section="emailchange"
+			self.unhideSection(self.QueryString.section+"_section")
+			break;
+		case "login" :
+			self.unhideSection(section+"_section")
+			break;
+		default:
 	}
+	window.traces.push("main end")
+}
 	
 	PageScript.prototype.fillAssurersTable = function(txt, xml){
 		try { 
@@ -511,9 +516,9 @@
 		var rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
 		var inputField = document.getElementById("ChangeEmailAddressForm_email_input")
 		if (rgx_email.exec(inputField.value)) {
-			self.activateButton("changeEmil_saveButton", self.changeEmailAddress)
+			Control.activate("changeEmil_saveButton", self.changeEmailAddress)
 		}
-		else self.deactivateButton("changeEmil_saveButton")
+		else Control.deactivate("changeEmil_saveButton")
 	}
 	
 // User actions	
@@ -524,5 +529,7 @@
 	PageScript.prototype.initiateDeregister = function() {
 		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
 	}
-
 	
+	PageScript.prototype.setAutologoutCookie = function() {
+		self.setCookie("sso_no_app_logout", this.checked.toString(), 2000 )
+	}
