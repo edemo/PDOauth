@@ -40,15 +40,15 @@ export function removeClass( element, clName ){
 
 export function saveHandler( element, hName ){
 	if ( element && element[hName] ) {
-		element.tmp[hname] = element[hName]
+		element.tmp[hName] = element[hName]
 		element[hName]=function(){return}
 	}
 }
 
 export function restoreHandler( element, hName ){
-	if ( element && element.tmp[hName] ) {
-		element[hname] = element.tmp[hName]
-		element.tmp[hName]=function(){return}
+	if ( element && element.tmp && element.tmp[hName] ) {
+		element[hName] = element.tmp[hName]
+		element.tmp[hName] = null
 	}
 }
 
