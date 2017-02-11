@@ -10,7 +10,7 @@ import * as Control from './control'
 import * as Ajax from './ajax'
 import * as Msg from './messaging'
  
-export function getter(formName) {
+export function getter( formName, callback ) {
 	var $this={},
 	createXmlForAnchor = function(formName) {
 		console.log(formName)
@@ -45,7 +45,7 @@ export function getter(formName) {
 					break;
 				case "login":
 				case "change-hash-form":
-					self.changeHash()
+					callback()
 					break;
 				case "registration-form":
 					Control.hide( $this.formName + "_code-generation-input")

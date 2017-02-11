@@ -59,7 +59,7 @@ export function setup_the_mysettings_form_buttons(ps){
 	document.getElementById("deleteHashButton").onclick=ps.deleteHash
 	document.getElementById("change-hash-form_view-container").onclick=ps.viewChangeHashContainer
 	document.getElementById("changeHash").onclick=ps.changeHash
-	document.getElementById("change-hash-form_getDigestButton").onclick=Digest.getter('change-hash-form').getDigest	
+	document.getElementById("change-hash-form_getDigestButton").onclick=Digest.getter('change-hash-form', ps.changeHash).getDigest	
 	document.getElementById("change-hash-form_predigest_mothername").onkeyup=function(){Digest.refreshMonitor('change-hash-form_predigest')}
 	document.getElementById("change-hash-form_predigest_input").onkeyup=function(){Digest.refreshMonitor('change-hash-form_predigest')}
 	document.getElementById("create_hash_myself").onclick=ps.hideHashChanger
