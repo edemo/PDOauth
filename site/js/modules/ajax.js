@@ -24,8 +24,8 @@ export function getStack(){
 }
 
 export function callback( next, error ){
-		var next  = next || $this.displayServerResponse,
-			error = error || $this.displayServerResponse;
+		var next  = next || displayServerResponse,
+			error = error || displayServerResponse;
 		return function( status, response, xml ) {
 			switch (status){
 				case 200:
@@ -33,7 +33,7 @@ export function callback( next, error ){
 					break;
 				case 500:
 				case 405:
-					$this.reportServerFailure( response )
+					reportServerFailure( response )
 					break;
 				default:
 					console.log("error ág")
@@ -42,7 +42,7 @@ export function callback( next, error ){
 		}
 	}
     
-export function ajaxBase( callback, uri ) {
+export function base( callback, uri ) {
 		var xmlhttp;
 		if (win.XMLHttpRequest) {   // code for IE7+, Firefox, Chrome, Opera, Safari
             xmlhttp = new win.XMLHttpRequest();
@@ -72,31 +72,31 @@ export function valaidateCallbackArgs( args ){
     }
     
 export function post( uri, data, callbacks ){
-        var cb=$this.valaidateCallbackArgs( callbacks )
-        $this.ajaxpost( uri, data, $this.callback( cb.next, cb.error ) )
+        var cb=valaidateCallbackArgs( callbacks )
+        ajaxpost( uri, data, callback( cb.next, cb.error ) )
     }
     
 export function ajaxpost( uri, data, callback ) {         //for old style compatibility
-		var xmlhttp = $this.ajaxBase( callback, uri ),
+		var xmlhttp = base( callback, uri ),
 			l = []
-		xmlhttp.open( "POST", $this.uribase + uri, true );
+		xmlhttp.open( "POST", uribase + uri, true );
 		xmlhttp.setRequestHeader( "Content-type","application/x-www-form-urlencoded" );
 		for (var key in data) l.push( key + "=" + encodeURIComponent( data[key] ) ); 
 		xmlhttp.send( l.join("&") );
-        $this.stack[uri]="GET"
+        stack[uri]="GET"
 	}
     
 export function get( uri, callbacks, direct){
-        var cb=$this.valaidateCallbackArgs( callbacks )
-        $this.ajaxget(uri, callback( cb.next, cb.error ), direct || null)
+        var cb=valaidateCallbackArgs( callbacks )
+        ajaxget(uri, callback( cb.next, cb.error ), direct || null)
     }
     
 export function ajaxget( uri, callback, direct) {       //for old style compatibility
-		var xmlhttp = $this.ajaxBase( callback, uri ),
-			theUri = direct ? uri : $this.uribase + uri
+		var xmlhttp = base( callback, uri ),
+			theUri = direct ? uri : uribase + uri
 		xmlhttp.open( "GET", theUri , true);
 		xmlhttp.send();
-        $this.stack[uri]="GET"
+        stack[uri]="GET"
 	}
 	
 export function validateServerMessage(response) {

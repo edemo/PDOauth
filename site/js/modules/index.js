@@ -1,5 +1,6 @@
 import PageScript from './script'
 import { setup_the_navbar_buttons_onclick } from './setup_buttons'
+import * as Ajax from  './ajax'
 export var pageScript = new PageScript();
 	
 	var self=pageScript
@@ -11,7 +12,7 @@ export var pageScript = new PageScript();
 	}
 
 	PageScript.prototype.initialise = function() {
-		self.ajaxget("/v1/users/me", self.initCallback)
+		Ajax.ajaxget("/v1/users/me", self.initCallback)
 		if (document.getElementById("counter_area")) self.getStatistics()
 	}
 	
@@ -21,7 +22,7 @@ export var pageScript = new PageScript();
 	}
 	
 	PageScript.prototype.getStatistics=function(){
-		this.ajaxget("/v1/statistics", self.callback(self.statCallback))
+		Ajax.ajaxget("/v1/statistics", self.callback(self.statCallback))
 	}
 	
 	PageScript.prototype.statCallback=function(text) {

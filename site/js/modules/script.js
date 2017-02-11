@@ -1,9 +1,10 @@
-import { _ } from './gettext';
-import * as ajax from './ajax.js';
-import { setup_the_navbar_buttons_onclick } from './setup_buttons';
-import { uris } from './adauris';
-import * as Cookie from './cookie';
-import * as Control from './control';
+import { _ } from './gettext'
+import * as Ajax from './ajax.js'
+import { setup_the_navbar_buttons_onclick } from './setup_buttons'
+import { uris } from './adauris'
+import * as Cookie from './cookie'
+import * as Control from './control'
+import * as Msg from './messaging'
 
 window.traces = new Array();
 
@@ -84,10 +85,10 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	}
 	
 	PageScript.prototype.reportServerFailure = function(text){
-		self.displayMsg({title:_("Server error occured"),error: text})
+		Msg.display({title:_("Server error occured"),error: text})
 	}
 	
-	PageScript.prototype.callback = ajax.callback
+	PageScript.prototype.callback = Ajax.callback
 	
 	PageScript.prototype.commonInit=function() {
 		// initialising variables
@@ -101,17 +102,17 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		window.traces.push('initialized')
 	}
 	
-	PageScript.prototype.ajaxBase = ajax.ajaxBase
+	PageScript.prototype.ajaxBase = Ajax.base
 
-	PageScript.prototype.ajaxpost = ajax.ajaxpost
+	PageScript.prototype.ajaxpost = Ajax.ajaxpost
 
-	PageScript.prototype.ajaxget = ajax.ajaxget
+	PageScript.prototype.ajaxget = Ajax.ajaxget
 		
 	PageScript.prototype.displayServerResponse = function( response, callbacks ){
-		self.displayMsg( self.processErrors( self.validateServerMessage( response ), callbacks ) )
+		Msg.display( self.processErrors( self.validateServerMessage( response ), callbacks ) )
 	}
 	
-	PageScript.prototype.validateServerMessage = ajax.validateServerMessage
+	PageScript.prototype.validateServerMessage = Ajax.validateServerMessage
 	
 	PageScript.prototype.processErrors = function(data, callbacks) {
 		console.log(data)
@@ -185,7 +186,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				}
 			self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
 		}
-		else self.displayMsg({title:_("Error message"),error:_("The application does not exist.")})
+		else Msg.display({title:_("Error message"),error:_("The application does not exist.")})
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {
@@ -253,7 +254,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				title:_("Congratulation!"),
 				error:_("You have succesfully registered and logged in. </br> Please click the link inside the email we sent you to validate your email address, otherwise your account will be destroyed in one week.")
 				}
-			self.displayMsg(msg)
+			Msg.display(msg)
 			self.userIsLoggedIn (text)
 		}
 		if( self.page=="login"){
@@ -318,7 +319,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 			errorMsg+=_("Password is missing. ");
 			onerror=true; 
 		}
-		if (onerror==true) self.displayMsg({error:errorMsg, title:_("Missing data")});
+		if (onerror==true) Msg.display({error:errorMsg, title:_("Missing data")});
 		else {
 			var data = {
 				credentialType: "password", 
@@ -363,15 +364,15 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	}
 	
 	PageScript.prototype.GoogleLogin = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+		Msg.display({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
 	PageScript.prototype.GoogleRegister = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+		Msg.display({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
 	PageScript.prototype.TwitterLogin = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+		Msg.display({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
 	PageScript.prototype.refreshTheNavbar=function(){
@@ -443,7 +444,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 					console.log('pw')
 					var pwInput=document.getElementById("registration-form_secret_input")
 					var pwBackup=document.getElementById("registration-form_secret_backup")
-					if (pwInput.value!=pwBackup.value) self.displayMsg({title:_("Error message"),error:_("The passwords are not identical")})
+					if (pwInput.value!=pwBackup.value) Msg.display({title:_("Error message"),error:_("The passwords are not identical")})
 					else self.register("password")
 					break;
 				case "fb":
@@ -452,12 +453,12 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 					break;
 			}
 		}
-		else self.displayMsg({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
+		else Msg.display({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
 	}
 
 
-	ajax.set_displayServerResponse( self.displayServerResponse )
-	ajax.set_reportServerFailure( self.reportServerFailure )
+	Ajax.set_displayServerResponse( self.displayServerResponse )
+	Ajax.set_reportServerFailure( self.reportServerFailure )
 }
 
 export {facebook}

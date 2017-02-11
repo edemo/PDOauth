@@ -2,7 +2,7 @@ import x from './modules/back_to_top' //back to top button
 import { _ } from './modules/gettext'		// gettext interface
 import { gettext } from './modules/gettext' // gettext init class
 import { setup_the_navbar_buttons_onclick } from './modules/setup_buttons'
-import * as ajax from './modules/ajax'
+import * as Ajax from './modules/ajax'
 import * as pwreset from './modules/pwreset'
 
 function setup_controlls(){
@@ -13,7 +13,7 @@ function setup_controlls(){
 
 var commonInit	
 var main = function (){
-	ajax.get("/adauris", {next: commonInit}, true)
+	Ajax.get("/adauris", {next: commonInit}, true)
 	setup_the_navbar_buttons_onclick(self)
 	window.traces.push("main end")
 }

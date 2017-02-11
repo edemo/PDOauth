@@ -3,14 +3,18 @@ import { _ } from './modules/gettext'
 import { gettext } from './modules/gettext'
 import PageScript from './modules/script.js'
 import { setup_the_deregister_form_buttons } from './modules/setup_buttons'
-
+import * as Ajax from './modules/ajax'
+import * as Msg from './modules/messaging'
+import * as Control from './modules/control'
+import { gettext } from './gettext'
+ 
 var pageScript = new PageScript(),
 	$this=pageScript
 	
 PageScript.prototype.page = "deregistration";
 
 PageScript.prototype.main = function() {
-	$this.ajaxget("/adauris", $this.callback($this.commonInit), true)
+	$this.commonInit()
 	setup_the_deregister_form_buttons($this)
 	window.traces.push("main end")
 }
@@ -24,12 +28,12 @@ PageScript.prototype.initialise = function(text) {
 			gettext.mockGettext()
 			$this.displayServerResponse(response, {ok: $this.init_})
 	}	
-	$this.ajaxget("locale/hu.json",$this.callback( dictionaryLoadedCallback, dictionaryFailureCallback ),true)
+	Ajax.get("locale/hu.json", {next: dictionaryLoadedCallback, error: dictionaryFailureCallback ), true)
 	window.traces.push("initialise")
 }
 
 PageScript.prototype.init_=function(){
-	$this.ajaxget("/v1/users/me", $this.callback($this.userIsLoggedIn, $this.userNotLoggedIn))	
+	Ajax.get("/v1/users/me", {next: $this.userIsLoggedIn, error:$this.userNotLoggedIn})	
 	window.traces.push("init_")		
 }
 
@@ -41,39 +45,10 @@ PageScript.prototype.userIsLoggedIn = function( response ) {
 	
 PageScript.prototype.userNotLoggedIn = function( response ) {
 	var data = $this.validateServerMessage( response );
-	if (data.errors && data.errors[0]!="no authorization") $this.displayMsg($this.processErrors(data));
+	if (data.errors && data.errors[0]!="no authorization") Msg.display($this.processErrors(data));
 	$this.refreshTheNavbar()
 }
 	
-PageScript.prototype.displayMsg = function( msg ) {
-	if (!(msg.title || msg.error || msg.message || msg.success)) return
-	$("#myModal").modal();
-	if (!msg.callback) msg.callback="";
-	$this.msgCallback=msg.callback; //only for testing
-	document.getElementById("PopupWindow_CloseButton1").onclick = function() {$this.closePopup(msg.callback)}
-	document.getElementById("PopupWindow_CloseButton2").onclick = function() {$this.closePopup(msg.callback)}
-	document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
-	document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
-	document.getElementById("PopupWindow_MessageDiv").innerHTML = "";
-	document.getElementById("PopupWindow_SuccessDiv").innerHTML = ""		
-	if (msg.title) document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
-	if (msg.error) document.getElementById("PopupWindow_ErrorDiv").innerHTML     = "<p class='warning'>"+msg.error+"</p>";
-	if (msg.message) document.getElementById("PopupWindow_MessageDiv").innerHTML = "<p class='message'>"+msg.message+"</p>";
-	if (msg.success)document.getElementById("PopupWindow_SuccessDiv").innerHTML  = "<p class='success'>"+msg.success+"</p>";
-	window.traces.push("MSGbox ready")
-}
-
-PageScript.prototype.closePopup = function(popupCallback) {
-	$this.popupCallback=popupCallback //only for testing
-	document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
-	document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
-	document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
-	document.getElementById("PopupWindow_SuccessDiv").innerHTML = "";
-	if (popupCallback) popupCallback();
-	window.traces.push("popup closed")
-	return "closePopup";
-}
-
 PageScript.prototype.doDeregister = function() {
 		
 	var deregisterCallback = function( response ) {
@@ -88,14 +63,14 @@ PageScript.prototype.doDeregister = function() {
 				csrf_token: $this.getCookie("csrf"),
 				deregister_secret: $this.QueryString.secret
 			}
-			$this.ajaxpost( "/v1/deregister_doit", post, $this.callback( deregisterCallback ) )
+			Ajax.post( "/v1/deregister_doit", post, { next: deregisterCallback } )
 		}
-		else $this.displayMsg({
+		else Msg.display({
 				title:_("Error message"),
 				error:_("The secret is missing")
 		})
 	}
-	else $this.displayMsg({
+	else Msg.display({
 		title:_("Error message"),
 		error:_("To accept the terms please mark the checkbox!")
 	})			

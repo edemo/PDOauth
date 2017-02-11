@@ -1,4 +1,6 @@
 import { _ } from './gettext'
+import * as Control from './control'
+
 var FaceBook = function(pageScript) {
 	var $this=this
 	$this.pageScript = pageScript;
@@ -23,7 +25,7 @@ var FaceBook = function(pageScript) {
 			console.log($this.getMeCallback)
 			FB.api('/me?fields=email', {fields:"email"}, function(r){ $this.getMeCallback(r)} );
 		} else {
-		  $this.pageScript.displayMsg({ title:_("Facebook error"), error:_("Connection to facebook was unsuccesfull") })
+		  Msg.message({ title:_("Facebook error"), error:_("Connection to facebook was unsuccesfull") })
 		} 
 		window.traces.push("registerCallBack end")
 	}
@@ -41,8 +43,8 @@ var FaceBook = function(pageScript) {
 					version	: 'v2.3' // use version 2.2
 				});
 				$this.pageScript.isFBsdkLoaded=true
-				pageScript.activateButton("Facebook_login_button", facebook.fblogin)
-				pageScript.activateButton("registration-form-method-selector-fb", function(){pageScript.setRegistrationMethode('fb')})
+				Control.activate("Facebook_login_button", facebook.fblogin)
+				Control.activate("registration-form-method-selector-fb", function(){pageScript.setRegistrationMethode('fb')})
 				window.traces.push("fbAsyncInit")
 			};
 
@@ -97,7 +99,7 @@ var FaceBook = function(pageScript) {
 	    	$this.loggedIn = response;
 	    	$this.pageScript.login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
 	    } else {
-	    	$this.pageScript.displayMsg({title:_("Facebook error"),error:_('Can not login with your Facebook account')});
+	    	Msg.display({title:_("Facebook error"),error:_('Can not login with your Facebook account')});
 	    } 
 	  }
 
@@ -124,14 +126,14 @@ var FaceBook = function(pageScript) {
 		     		if (e != '') {
 		     			email = e;
 		     		} else {
-			     		$this.pageScript.displayMsg({ title:"Facebook",message:"please give us an email in the registration form" })
+			     		Msg.display({ title:"Facebook",message:"please give us an email in the registration form" })
 			     		return;
 			     	};
 		     	};
 				$this.pageScript.register_with_facebook(response.authResponse.userID, response.authResponse.accessToken, email)
 		    });
 		} else {
-		  $this.pageScript.displayMsg({ title:_("Facebook error"), error:'Facebook login is unsuccessful' })
+		  Msg.display({ title:_("Facebook error"), error:'Facebook login is unsuccessful' })
 		} 
 	}
 

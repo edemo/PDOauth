@@ -10,13 +10,14 @@
  //import { setup_reset_password_form_buttons } from './setup_buttons'
  import { setup_email_change_form_buttons} from './setup_buttons'
  import * as Control from './control'
+ import * as Cookie from './cookie'
+ import * as Msg from './messaging'
  
  export var pageScript = new PageScript()
  
  var self = pageScript
 
 PageScript.prototype.page = "account";
-PageScript.prototype.sso_no_app_logout = self.getCookie("sso_no_app_logout");
 PageScript.prototype.main = function() {
 	self.commonInit()
 	setup_the_registration_form_buttons(self)
@@ -24,7 +25,7 @@ PageScript.prototype.main = function() {
 	setup_the_assurancing_form_buttons(self)
 	setup_the_mysettings_form_buttons(self)
 	setup_email_verification_form_buttons(self)
-	setup_reset_password_form_buttons(self)
+//	setup_reset_password_form_buttons(self)
 	setup_email_change_form_buttons(self)
 	var section = self.QueryString.section
 	switch (section) {
@@ -136,7 +137,7 @@ PageScript.prototype.main = function() {
 	
 	PageScript.prototype.userNotLoggedIn = function( response ) {
 		var data = self.validateServerMessage( response );
-		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		if (data.errors && data.errors[0]!="no authorization") Msg.display(self.processErrors(data));
 		self.refreshTheNavbar()
 		if (self.QueryString.section) {
 			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
@@ -174,35 +175,6 @@ PageScript.prototype.main = function() {
 	
 	PageScript.prototype.modNavbarItem=function(){
 		document.getElementById("")
-	}
-
-	PageScript.prototype.displayMsg = function( msg ) {
-		if (!(msg.title || msg.error || msg.message || msg.success)) return
-		$("#myModal").modal();
-		if (!msg.callback) msg.callback="";
-		self.msgCallback=msg.callback; //only for testing
-		document.getElementById("PopupWindow_CloseButton1").onclick = function() {self.closePopup(msg.callback)}
-		document.getElementById("PopupWindow_CloseButton2").onclick = function() {self.closePopup(msg.callback)}
-		document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
-		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
-		document.getElementById("PopupWindow_MessageDiv").innerHTML = "";
-		document.getElementById("PopupWindow_SuccessDiv").innerHTML = ""		
-		if (msg.title) document.getElementById("PopupWindow_TitleDiv").innerHTML = msg.title;
-		if (msg.error) document.getElementById("PopupWindow_ErrorDiv").innerHTML     = "<p class='warning'>"+msg.error+"</p>";
-		if (msg.message) document.getElementById("PopupWindow_MessageDiv").innerHTML = "<p class='message'>"+msg.message+"</p>";
-		if (msg.success)document.getElementById("PopupWindow_SuccessDiv").innerHTML  = "<p class='success'>"+msg.success+"</p>";
-		window.traces.push("MSGbox ready")
-	}
-
-	PageScript.prototype.closePopup = function(popupCallback) {
-		self.popupCallback=popupCallback //only for testing
-		document.getElementById("PopupWindow_TitleDiv").innerHTML   = "";
-		document.getElementById("PopupWindow_ErrorDiv").innerHTML   = "";
-		document.getElementById("PopupWindow_MessageDiv").innerHTML    = "";
-		document.getElementById("PopupWindow_SuccessDiv").innerHTML = "";
-		if (popupCallback) popupCallback();
-		window.traces.push("popup closed")
-		return "closePopup";
 	}
 
 	PageScript.prototype.init_=function(){
@@ -257,7 +229,7 @@ PageScript.prototype.main = function() {
 
 	PageScript.prototype.byEmail = function() {
 	    var email = self.mailRepair(document.getElementById("ByEmailForm_email_input").value);
-		if (email=="") { self.displayMsg({title:"Hiba",error:"nem adtad meg az email címet"})}
+		if (email=="") { Msg.display({title:"Hiba",error:"nem adtad meg az email címet"})}
 		else {
 			email = encodeURIComponent(email)
 			self.ajaxget("/v1/user_by_email/"+email, self.callback(self.myCallback))
@@ -302,15 +274,15 @@ PageScript.prototype.main = function() {
 	}
 /*	
 	PageScript.prototype.addGoogleCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+		Msg.display({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
 	PageScript.prototype.addGithubCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+		Msg.display({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
 	PageScript.prototype.addTwitterCredential = function(){
-		self.displayMsg({title:_("Under construction"), error:_("This function is not working yet.")});	
+		Msg.display({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 */	
 /*
@@ -335,7 +307,7 @@ PageScript.prototype.main = function() {
 			self.get_me()
 			self.viewChangeHashContainer()
 			}
-		self.displayMsg(msg)
+		Msg.display(msg)
 	}
 	
 	PageScript.prototype.viewChangeHashForm = function() {
@@ -487,7 +459,7 @@ PageScript.prototype.main = function() {
 	
 	PageScript.prototype.changeEmailAddress = function() {
 	    var email = self.mailRepair(document.getElementById("ChangeEmailAddressForm_email_input").value);
-		if (email=="") self.displayMsg({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
+		if (email=="") Msg.display({error:"<p class='warning'>Nincs megadva érvényes e-mail cím</p>"});
 		else {
 			var csrf_token = self.getCookie('csrf'),
 				data= {
@@ -499,7 +471,7 @@ PageScript.prototype.main = function() {
 	}
 	
 	PageScript.prototype.changeEmailCallback = function(text) {
-		self.displayMsg(self.processErrors(JSON.parse(text)))
+		Msg.display(self.processErrors(JSON.parse(text)))
 	}
 	
 	PageScript.prototype.deleteHash = function() {
@@ -529,7 +501,4 @@ PageScript.prototype.main = function() {
 	PageScript.prototype.initiateDeregister = function() {
 		self.ajaxpost( "/v1/deregister", { csrf_token: self.getCookie("csrf") }, self.callback()  )
 	}
-	
-	PageScript.prototype.setAutologoutCookie = function() {
-		self.setCookie("sso_no_app_logout", this.checked.toString(), 2000 )
-	}
+

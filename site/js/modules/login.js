@@ -2,7 +2,8 @@ import PageScript from './script'
 import { _ } from './gettext'
 import { gettext } from './gettext'
 import { setup_login_page_controlls } from './setup_buttons'
-import * as Control from './control';
+import * as Control from './control'
+import * as Msg from './messaging'
 export var pageScript = new PageScript()
 
 var self = pageScript
@@ -49,7 +50,7 @@ var self = pageScript
 	
 	PageScript.prototype.userNotLoggedIn = function(text) {
 		var data = JSON.parse(text);
-		if (data.errors && data.errors[0]!="no authorization") self.displayMsg(self.processErrors(data));
+		if (data.errors && data.errors[0]!="no authorization") Msg.displayMsg(self.processErrors(data));
 		else {
 			self.greating("The %s application needs to sign in with your ADA account")
 			if (self.QueryString.section && self.QueryString.section=="registration") self.unhideSection("register_section")
@@ -127,12 +128,6 @@ var self = pageScript
 		if (self.appDomain) {
 			document.getElementById("greatings").innerHTML=_(message, '<b>'+self.appDomain+'</b>')
 		}
-	}
-	
-	PageScript.prototype.displayMsg = function( msg ) {
-		var text=(msg.error)?msg.error:""+(msg.success)?msg.success:""
-		document.getElementById("message-container").innerHTML=text
-		self.unhideSection("message-container")
 	}
 	
 	PageScript.prototype.showSection=function(section) {
