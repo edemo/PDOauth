@@ -6,10 +6,11 @@ import { setup_the_deregister_form_buttons } from './modules/setup_buttons'
 import * as Ajax from './modules/ajax'
 import * as Msg from './modules/messaging'
 import * as Control from './modules/control'
-import { gettext } from './gettext'
  
 var pageScript = new PageScript(),
 	$this=pageScript
+
+Msg.setTarget('popup')
 	
 PageScript.prototype.page = "deregistration";
 
@@ -26,9 +27,9 @@ PageScript.prototype.initialise = function(text) {
 		},
 		dictionaryFailureCallback = function(response){
 			gettext.mockGettext()
-			$this.displayServerResponse(response, {ok: $this.init_})
+			$this.displayServerResponse( response, {ok: $this.init_} )
 	}	
-	Ajax.get("locale/hu.json", {next: dictionaryLoadedCallback, error: dictionaryFailureCallback ), true)
+	Ajax.get("locale/hu.json", { next: dictionaryLoadedCallback, error: dictionaryFailureCallback }, true)
 	window.traces.push("initialise")
 }
 

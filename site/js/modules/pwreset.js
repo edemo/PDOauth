@@ -3,6 +3,8 @@ import * as Ajax from './ajax'
 import * as Msg from './messaging'
 import * as Control from './control'
 
+Msg.setTarget('popup')
+
 var secret
 
 export function setSecret(theSecret){

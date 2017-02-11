@@ -1,7 +1,10 @@
 import PageScript from './script'
 import { setup_the_navbar_buttons_onclick } from './setup_buttons'
 import * as Ajax from  './ajax'
+import * as Msg from './messaging'
 export var pageScript = new PageScript();
+
+Msg.setTarget('popup')
 	
 	var self=pageScript
 	

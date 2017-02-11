@@ -27,6 +27,7 @@ function PageScript(test) {
 		console.log(section)
 		if (!section){
 			if (self.isLoggedIn){
+				console.log("display the section is logged in")
 				Control.show("my_account_section")
 				document.getElementById("nav-bar-my_account").className="active"
 				console.log(self.isAssurer)

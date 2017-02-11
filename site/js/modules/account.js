@@ -1,21 +1,24 @@
- import PageScript from './script'
- import { _ } from './gettext'
- import { gettext } from './gettext'
- import { setup_the_navbar_buttons_onclick_account } from './setup_buttons'
- import { setup_the_registration_form_buttons } from './setup_buttons'
- import { setup_the_login_form_buttons } from './setup_buttons'
- import { setup_the_assurancing_form_buttons } from './setup_buttons'
- import { setup_the_mysettings_form_buttons } from './setup_buttons'
- import { setup_email_verification_form_buttons } from './setup_buttons'
- //import { setup_reset_password_form_buttons } from './setup_buttons'
- import { setup_email_change_form_buttons} from './setup_buttons'
- import * as Control from './control'
- import * as Cookie from './cookie'
- import * as Msg from './messaging'
+import PageScript from './script'
+import { _ } from './gettext'
+import { gettext } from './gettext'
+import { setup_the_navbar_buttons_onclick_account } from './setup_buttons'
+import { setup_the_registration_form_buttons } from './setup_buttons'
+import { setup_the_login_form_buttons } from './setup_buttons'
+import { setup_the_assurancing_form_buttons } from './setup_buttons'
+import { setup_the_mysettings_form_buttons } from './setup_buttons'
+import { setup_email_verification_form_buttons } from './setup_buttons'
+//import { setup_reset_password_form_buttons } from './setup_buttons'
+import { setup_email_change_form_buttons} from './setup_buttons'
+import * as Control from './control'
+import * as Cookie from './cookie'
+import * as Msg from './messaging'
+import * as Digest from './digest'
+
+export var pageScript = new PageScript()
+
+var self = pageScript
  
- export var pageScript = new PageScript()
- 
- var self = pageScript
+Msg.setTarget('popup')
 
 PageScript.prototype.page = "account";
 PageScript.prototype.main = function() {

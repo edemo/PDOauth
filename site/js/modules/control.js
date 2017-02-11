@@ -65,7 +65,7 @@ export function hide_( element ) {
 
 export function show( Id ) {
 	var element = document.getElementById( Id )
-	if ( element ) hide_( element )
+	if ( element ) show_( element )
 	else console.error( "show: no element with the given Id" )
 }
 	

@@ -25,7 +25,7 @@ export function setup_the_deregister_form_buttons(ps){
 export function setup_the_registration_form_buttons(ps){
 	document.getElementById("registration-form_submitButton").onclick=ps.doRegister
 	document.getElementById("registration-form-method-selector-pw").onclick=function(){ps.setRegistrationMethode('pw')}
-	document.getElementById("registration-form_getDigestButton").onclick=Digest.digestGetter('registration-form').getDigest
+	document.getElementById("registration-form_getDigestButton").onclick=Digest.getter('registration-form').getDigest
 	document.getElementById("registration-form_predigest_mothername").onkeyup=function(){Digest.refreshMonitor('registration-form_predigest')}
 	document.getElementById("registration-form_predigest_input").onkeyup=function(){Digest.refreshMonitor('registration-form_predigest')}
 	document.getElementById("registration-form-method-selector-pw").onclick=function(){ps.setRegistrationMethode('pw')}
@@ -45,7 +45,7 @@ export function setup_the_login_form_buttons(ps){
 export function setup_the_assurancing_form_buttons(ps){
 	document.getElementById("ByEmailForm_submitButton").onclick=ps.byEmail
 	document.getElementById("assurance-giving_submit-button").onclick=ps.addAssurance
-	document.getElementById("assurancing_getDigestButton").onclick=Digest.digestGetter('assurancing').getDigest
+	document.getElementById("assurancing_getDigestButton").onclick=Digest.getter('assurancing').getDigest
 	document.getElementById("assurancing_predigest_mothername").onkeyup=function(){Digest.refreshMonitor('assurancing_predigest')}
 	document.getElementById("assurancing_predigest_input").onkeyup=function(){Digest.refreshMonitor('assurancing_predigest')}
 	document.getElementById("create_myself").onclick=function() {Control.hide('registration-form_code-generation-input')} 
@@ -59,7 +59,7 @@ export function setup_the_mysettings_form_buttons(ps){
 	document.getElementById("deleteHashButton").onclick=ps.deleteHash
 	document.getElementById("change-hash-form_view-container").onclick=ps.viewChangeHashContainer
 	document.getElementById("changeHash").onclick=ps.changeHash
-	document.getElementById("change-hash-form_getDigestButton").onclick=Digest.digestGetter('change-hash-form').getDigest	
+	document.getElementById("change-hash-form_getDigestButton").onclick=Digest.getter('change-hash-form').getDigest	
 	document.getElementById("change-hash-form_predigest_mothername").onkeyup=function(){Digest.refreshMonitor('change-hash-form_predigest')}
 	document.getElementById("change-hash-form_predigest_input").onkeyup=function(){Digest.refreshMonitor('change-hash-form_predigest')}
 	document.getElementById("create_hash_myself").onclick=ps.hideHashChanger
@@ -76,10 +76,10 @@ export function setup_login_page_controlls(ps){
 	document.getElementById("emailverification-input_button").onclick=ps.init_
 	document.getElementById("emailverification-cancel_button").onclick=function(){ps.hideForm('emailverification')}
 	document.getElementById("hashgiven_button").onclick=function(){ps.showForm('hashgiven')}
-	document.getElementById("login_make-self").onclick=function(){Digest.digestGetter('login').methodChooser('self')}
+	document.getElementById("login_make-self").onclick=function(){Digest.getter('login').methodChooser('self')}
 	document.getElementById("login_predigest_mothername").onkeyup=function(){Digest.refreshMonitor('login_predigest')}
 	document.getElementById("login_predigest_input").onkeyup=function(){Digest.refreshMonitor('login_predigest')}
-	document.getElementById("login_getDigestButton").onclick=Digest.digestGetter('login').getDigest
+	document.getElementById("login_getDigestButton").onclick=Digest.getter('login').getDigest
 	document.getElementById("code-generation-cancel_button").onclick=function(){ps.hideForm('hashgiven')}
 	document.getElementById("code-generation-cancel_button_").onclick=function(){ps.hideForm('hashgiven')}
 	var field=document.getElementById("login_digest_input")
@@ -91,10 +91,10 @@ export function setup_login_page_controlls(ps){
 	document.getElementById("registration-form-method-selector-fb").onclick=function(){ps.setRegistrationMethode('fb')}
 	document.getElementById("registration-form_secret_input").onkeyup=function(){Password.changed('registration-form')}
 	document.getElementById("registration-form_secret_backup").onkeyup=function(){Password.equal('registration-form')}
-	document.getElementById("registration-form_make-self").onclick=function(){Digest.digestGetter('registration-form').methodChooser('self')}
+	document.getElementById("registration-form_make-self").onclick=function(){Digest.getter('registration-form').methodChooser('self')}
 	document.getElementById("registration-form_predigest_mothername").onkeyup=function(){Digest.refreshMonitor('registration-form_predigest')}
 	document.getElementById("registration-form_predigest_input").onkeyup=function(){Digest.refreshMonitor('registration-form_predigest')}
-	document.getElementById("registration-form_getDigestButton").onclick=Digest.digestGetter('registration-form').getDigest
+	document.getElementById("registration-form_getDigestButton").onclick=Digest.getter('registration-form').getDigest
 	var field_=document.getElementById("registration-form_digest_input")
 	field_.onclick=function(){ps.textareaOnKeyup(field_)}
 	document.getElementById("registration-form_submitButton").onclick=ps.doRegister

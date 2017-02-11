@@ -18,7 +18,7 @@ var target,
 		Control.innerHTML( "PopupWindow_SuccessDiv", msg.success || "" )
 		window.traces.push ("MSGbox ready" )
 	},
-	displayInDiv( msg ) {
+	displayInDiv = function( msg ) {
 		var text=(msg.error)?msg.error:""+(msg.success)?msg.success:""
 		Control.innerHTML("message-container", text)
 		Control.show("message-container")
@@ -29,7 +29,7 @@ export function setTarget( theTarget ){
 }
 
 export function display( msg ) {
-	switch target {
+	switch (target) {
 		case "popoup":
 			displayInPopup (msg );
 			break;
