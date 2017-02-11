@@ -27,23 +27,23 @@ function PageScript(test) {
 		console.log(section)
 		if (!section){
 			if (self.isLoggedIn){
-				self.unhideSection("my_account_section")
+				Control.show("my_account_section")
 				document.getElementById("nav-bar-my_account").className="active"
 				console.log(self.isAssurer)
-				if (self.isAssurer) self.unhideSection("assurer_section")
+				if (self.isAssurer) Control.show("assurer_section")
 			}
 			else {
-				self.unhideSection("login_section")
+				Control.show("login_section")
 				document.getElementById("nav-bar-login").className="active"
 			}
 		}
 		else { 
 			if (self.isLoggedIn && (section=="registration")) {
-				self.unhideSection("my_account_section")
+				Control.show("my_account_section")
 			}
 			else {
-				self.unhideSection(section+"_section")
-				if (self.isAssurer && section=='my_account') self.unhideSection("assurer_section")
+				Control.show(section+"_section")
+				if (self.isAssurer && section=='my_account') Control.show("assurer_section")
 			}
 			var navbar=document.getElementById("nav-bar-"+section)
 			if (navbar) navbar.className="active";
@@ -53,10 +53,6 @@ function PageScript(test) {
 		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
 	}
 	
-	PageScript.prototype.unhideSection=function(section) {
-		document.getElementById(section).style.display="block";
-	}
-
 PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
   var query_string = {};
   var query = search.substring(1);

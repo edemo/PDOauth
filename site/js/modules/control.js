@@ -57,7 +57,7 @@ export function hide( Id ) {
 	if ( element ) hide_( element )
 	else console.error( "hide: no element with the given Id" )
 }
-	
+
 export function hide_( element ) {
 	if ( typeof element == "object" && typeof element.style != "undefined") element.style.display = "none"
 	else console.error( "hide: element is not an HTMLobject" )

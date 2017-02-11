@@ -34,37 +34,37 @@ PageScript.prototype.main = function() {
 			break;
 		case "registration" :
 			self.QueryString.section="register"
-			self.unhideSection(self.QueryString.section+"_section")
+			Control.show(self.QueryString.section+"_section")
 			break;
 		case "account" :
 			self.QueryString.section="my_account"
-			self.unhideSection(self.QueryString.section+"_section")
+			Control.show(self.QueryString.section+"_section")
 			break;
 		case "pwreset" :
 			self.QueryString.section="password_reset"
-			self.unhideSection(self.QueryString.section+"_section")
+			Control.show(self.QueryString.section+"_section")
 			if (self.QueryString.secret) {
 				document.getElementById("PasswordResetForm_secret_input").value=self.QueryString.secret
 			}
 			break;
 		case "deregistration" :
 			self.QueryString.section="deregistration"
-			self.unhideSection(self.QueryString.section+"_section")
+			Control.show(self.QueryString.section+"_section")
 			break;
 		case "emailcheck" :
 			self.QueryString.section="email_verification"
-			self.unhideSection(self.QueryString.section+"_section")
+			Control.show(self.QueryString.section+"_section")
 			break;
 		case "cancelemailchange" :
 			self.QueryString.section="cancelemailchange"
-			self.unhideSection(self.QueryString.section+"_section")
+			Control.show(self.QueryString.section+"_section")
 			break;
 		case "emailchange" :
 			self.QueryString.section="emailchange"
-			self.unhideSection(self.QueryString.section+"_section")
+			Control.show(self.QueryString.section+"_section")
 			break;
 		case "login" :
-			self.unhideSection(section+"_section")
+			Control.show(section+"_section")
 			break;
 		default:
 	}

@@ -21,16 +21,22 @@ var target,
 	displayInDiv( msg ) {
 		var text=(msg.error)?msg.error:""+(msg.success)?msg.success:""
 		Control.innerHTML("message-container", text)
-		self.unhideSection("message-container")
+		Control.show("message-container")
 	}
 
-export function setTarget(theTarget){
+export function setTarget( theTarget ){
 	target=theTarget
 }
 
 export function display( msg ) {
-	swit 
-
+	switch target {
+		case "popoup":
+			displayInPopup (msg );
+			break;
+		case "div":
+			displayInDiv( msg );
+			break;
+	} 
 }
 
 export function closePopup(popupCallback) {
@@ -38,7 +44,7 @@ export function closePopup(popupCallback) {
 	Control.innerHTML("PopupWindow_ErrorDiv","")
 	Control.innerHTML("PopupWindow_MessageDiv","")
 	Control.innerHTML("PopupWindow_SuccessDiv","")
-	if (popupCallback) popupCallback();
+	if ( popupCallback ) popupCallback();
 	window.traces.push("popup closed")
 	return "closePopup";
 }

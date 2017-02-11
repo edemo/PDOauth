@@ -53,8 +53,8 @@ var self = pageScript
 		if (data.errors && data.errors[0]!="no authorization") Msg.displayMsg(self.processErrors(data));
 		else {
 			self.greating("The %s application needs to sign in with your ADA account")
-			if (self.QueryString.section && self.QueryString.section=="registration") self.unhideSection("register_section")
-			else self.unhideSection("login_section")
+			if (self.QueryString.section && self.QueryString.section=="registration") Control.show("register_section")
+			else Control.show("login_section")
 		}
 		window.traces.push('loginpage')
 	}
@@ -121,7 +121,7 @@ var self = pageScript
 		document.getElementById(assurance+"_button").style.display=(given)?"none":"block"
 		document.getElementById(assurance+"_header").style.display="block"
 		document.getElementById(assurance+"_input").style.display="none"
-		self.unhideSection(assurance+"_section")
+		Control.show(assurance+"_section")
 	}
 				
 	PageScript.prototype.greating = function (message){
@@ -132,8 +132,8 @@ var self = pageScript
 	
 	PageScript.prototype.showSection=function(section) {
 		self.hideAllSection()
-		self.unhideSection(section)
-		if (section=="register_section" && self.neededAssurances && self.neededAssurances.indexOf('hashgiven')!=-1) self.unhideSection("registration-form-getdigest_input")
+		Control.show(section)
+		if (section=="register_section" && self.neededAssurances && self.neededAssurances.indexOf('hashgiven')!=-1) Control.show("registration-form-getdigest_input")
 	}
 	
 	PageScript.prototype.acceptGivingTheData=function(flag){
