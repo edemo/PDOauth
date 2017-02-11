@@ -66,6 +66,8 @@ export function setup_the_mysettings_form_buttons(ps){
 	document.getElementById("create_hash_here").onclick=ps.showHashChanger
 	document.getElementById("allow_app_sso_autologout").onclick=function(){Cookie.set("sso_no_app_logout", this.checked.toString(), 2000 )}
 	document.getElementById("allow_app_sso_autologout").checked=Cookie.get("sso_no_app_logout")!="false"
+	document.getElementById("initiate-deregister_button").onclick=function(){ps.initiateDeregister('userdata_editform')}
+	document.getElementById("initiate-resendemail_button").onclick=ps.InitiateResendRegistrationEmail
 }
 export function setup_login_page_controlls(ps){
 	document.getElementById("PopupWindow_CloseButton").onclick=Msg.closePopup

@@ -21,7 +21,9 @@ all:
 
 install: static static/locale/hu.json
 
-checkall: uris_ install tests integrationtests end2endtest xmldoc
+deploy: uris install
+
+checkall:  uris_ install tests integrationtests end2endtest xmldoc
 
 checkmanual: install alltests xmldoc
 
