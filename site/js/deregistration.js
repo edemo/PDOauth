@@ -21,19 +21,12 @@ PageScript.prototype.main = function() {
 }
 	
 PageScript.prototype.initialise = function(text) {
-	var dictionaryLoadedCallback = function(response){
-			gettext.initGettext(response)
-			$this.init_()
-		},
-		dictionaryFailureCallback = function(response){
-			gettext.mockGettext()
-			$this.displayServerResponse( response, {ok: $this.init_} )
-	}	
-	Ajax.get("locale/hu.json", { next: dictionaryLoadedCallback, error: dictionaryFailureCallback }, true)
+	gettext.loadPo( 'hu', $this.init_ )
 	window.traces.push("initialise")
 }
 
-PageScript.prototype.init_=function(){
+PageScript.prototype.init_=function( success, response ){
+	if (!success) $this.displayServerResponse( response )
 	Ajax.get("/v1/users/me", {next: $this.userIsLoggedIn, error:$this.userNotLoggedIn})	
 	window.traces.push("init_")		
 }

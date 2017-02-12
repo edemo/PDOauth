@@ -24,6 +24,7 @@ export function getStack(){
 }
 
 export function callback( next, error ){
+		console.log(next)
 		var next  = next || displayServerResponse,
 			error = error || displayServerResponse;
 		return function( status, response, xml ) {
@@ -31,12 +32,13 @@ export function callback( next, error ){
 				case 200:
 					next( response, xml )
 					break;
+				case 0:
+					response = _("The server is not responding")
 				case 500:
 				case 405:
 					reportServerFailure( response )
 					break;
 				default:
-					console.log("error ág")
 					error( response, xml )
 			}
 		}
@@ -62,14 +64,15 @@ export function base( callback, uri ) {
 	}
     
 export function valaidateCallbackArgs( args ){
-        var next=null,
-            error=null;
-        if (typeof args != "undefined") {
-            next = args.next || null;
-            error = args.error || null
-        }
-        return { next: next, error: error }
-    }
+	console.log(args)
+	var next=null,
+		error=null;
+	if (typeof args != "undefined") {
+		next = args.next || null;
+		error = args.error || null
+	}
+	return { next: next, error: error }
+}
     
 export function post( uri, data, callbacks ){
         var cb=valaidateCallbackArgs( callbacks )

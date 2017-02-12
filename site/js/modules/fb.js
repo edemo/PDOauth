@@ -10,7 +10,6 @@ var FaceBook = function(pageScript) {
 
 	
 	FaceBook.prototype.getMeCallback = function(response){
-		console.log(response)
 		if (response.email) document.getElementById("registration-form_email_input").value=response.email;
 		else document.getElementById("registration-form_email_input").placeholder=_("Type here your email address");
 		window.traces.push("getMecallback")		
@@ -18,11 +17,9 @@ var FaceBook = function(pageScript) {
 	
 	FaceBook.prototype.registerCallBack = function(response) {
 		window.traces.push("registerCallBack begin")
-		console.log($this)
 		if (response.status == 'connected' && response.authResponse.userID && response.authResponse.userID!="" && response.authResponse.accessToken && response.authResponse.accessToken!="" ) {
 			document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
 			document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
-			console.log($this.getMeCallback)
 			FB.api('/me?fields=email', {fields:"email"}, function(r){ $this.getMeCallback(r)} );
 		} else {
 		  Msg.message({ title:_("Facebook error"), error:_("Connection to facebook was unsuccesfull") })
@@ -82,14 +79,11 @@ var FaceBook = function(pageScript) {
 	}
 	
 	FaceBook.prototype.statusChangeCallback = function(response,callback) {
-		console.log(response)
 		if (response.status === 'connected') {
 			callback(response)
 		} else if (response.status === 'not_authorized') {
-			console.log('not_authorised')
 			FB.login(function(resp){callback(resp)},{scope: 'email'})
 		} else {
-			console.log('login')
 			FB.login(function(resp){callback(resp)},{scope: 'email'})
 		}
 	}
@@ -97,18 +91,16 @@ var FaceBook = function(pageScript) {
 	FaceBook.prototype.loginCallBack = function(response) {
 	    if (response.status === 'connected' && response.authResponse.userID && response.authResponse.userID!="" && response.authResponse.accessToken && response.authResponse.accessToken!="") {
 	    	$this.loggedIn = response;
-	    	$this.pageScript.login_with_facebook(response.authResponse.userID, response.authResponse.accessToken)
+	    	$this.pageScript.login( 'facebook', response.authResponse.userID, response.authResponse.accessToken)
 	    } else {
 	    	Msg.display({title:_("Facebook error"),error:_('Can not login with your Facebook account')});
 	    } 
 	  }
 
 	FaceBook.prototype.fblogin = function() {
-		console.log('fb_login')
 		if (! $this.loggedIn ) {
 			$this.getFbUser($this.loginCallBack)
 //			FB.login(function(response) {
-//				console.log(response)
 //			    $this.loginCallBack(response);
 //			});
 		}
@@ -164,7 +156,6 @@ var FaceBook = function(pageScript) {
 
   function testAPI() {
     FB.api('/me?fields=email', function(response) {
-      console.log('response: ' + DumpObjectIndented(response,' '));
       document.getElementById('status').innerHTML =
         'Thanks for logging in, ' + response.name + '!';
     });

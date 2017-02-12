@@ -42,12 +42,12 @@ PageScript.prototype.parseAppCallbackUrl = function() {
 PageScript.prototype.initialise = function() {
 	// redirect to official account page if callback uri is missing
 	if (!self.appDomain) self.doRedirect(self.QueryString.uris.START_URL)
-	self.ajaxget("locale/hu.json",self.callback(self.gettextCallback),true)
+	Ajax.get( "locale/hu.json", { next: self.gettextCallback } ,true)
 }
 
 PageScript.prototype.init_=function(){
 	console.log("init_ called")
-	self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))		
+	Ajax.get( "/v1/users/me", { next: self.userIsLoggedIn, error: self.userNotLoggedIn } )		
 }
 
 PageScript.prototype.userNotLoggedIn = function(text) {
@@ -80,10 +80,10 @@ PageScript.prototype.userIsLoggedIn = function(text) {
 			return
 		}
 	}
-	self.ajaxget('/v1/getmyapps',self.callback(self.myappsCallback))
+	Ajax.get( '/v1/getmyapps', { next: self.myappsCallback } )
 	if ( self.dataGivingAccepted ) {
 		if( self.QueryString.next) {
-			self.doRedirect(decodeURIComponent(self.QueryString.next))
+			self.doRedirect( decodeURIComponent(self.QueryString.next) )
 		}
 	}
 	window.traces.push('userIsLoggedIn')
@@ -94,7 +94,7 @@ PageScript.prototype.finishRegistration = function (text) {
 	self.myappsCallback(text)
 	self.dataGivingAccepted=true
 	var value=document.getElementById("registration-form_allowEmailToMe").checked
-	self.setAppCanEmailMe(self.currentAppId, value, self.init_)
+	self.setAppCanEmailMe( self.currentAppId, value, self.init_ )
 }
 
 PageScript.prototype.myappsCallback= function (text) {
@@ -161,7 +161,7 @@ PageScript.prototype.changeHash = function() {
 		digest: Control.getValue("login_digest_input"),
 		csrf_token: Cookie.get('csrf')
 	}
-	self.ajaxpost( "/v1/users/me/update_hash", data, self.callback(self.hashIsUpdated) )
+	Ajax.post( "/v1/users/me/update_hash", data, { next: self.hashIsUpdated } )
 }	
 
 PageScript.prototype.hashIsUpdated = function(text) {

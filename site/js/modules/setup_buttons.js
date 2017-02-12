@@ -39,7 +39,7 @@ export function setup_the_registration_form_buttons(ps){
 	document.getElementById("registration-form_secret_backup").onkeyup=function(){Password.equal('registration-form')}
 }
 export function setup_the_login_form_buttons(ps){
-	document.getElementById("loginform").onsubmit=function(){ps.login(); return false}
+	document.getElementById("loginform").onsubmit=function(){ps.pwLogin(); return false}
 	document.getElementById("InitiatePasswordReset").onclick=function(){ps.InitiatePasswordReset('LoginForm')}
 }
 export function setup_the_assurancing_form_buttons(ps){
@@ -72,7 +72,7 @@ export function setup_the_mysettings_form_buttons(ps){
 export function setup_login_page_controlls(ps){
 	document.getElementById("PopupWindow_CloseButton").onclick=Msg.closePopup
 	document.getElementById("section_changer_register").onclick=function(){ps.showSection('register_section')}
-	document.getElementById("loginform").onsubmit=function(){ps.login(); return false}
+	document.getElementById("loginform").onsubmit=function(){ps.pwLogin(); return false}
 	document.getElementById("InitiatePasswordReset").onclick=function(){ps.InitiatePasswordReset('LoginForm')}
 	document.getElementById("emailverification_button").onclick=function(){ps.showForm('emailverification')}
 	document.getElementById("emailverification-input_button").onclick=ps.init_

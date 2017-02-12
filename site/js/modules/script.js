@@ -24,13 +24,10 @@ function PageScript(test) {
 		self.hideAllSection();
 		var lis=document.getElementsByClassName("navbar-nav")[0].getElementsByTagName("li");
 		[].forEach.call( lis, function (e) { e.className=""; } );
-		console.log(section)
 		if (!section){
 			if (self.isLoggedIn){
-				console.log("display the section is logged in")
 				Control.show("my_account_section")
 				document.getElementById("nav-bar-my_account").className="active"
-				console.log(self.isAssurer)
 				if (self.isAssurer) Control.show("assurer_section")
 			}
 			else {
@@ -112,10 +109,8 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	PageScript.prototype.validateServerMessage = Ajax.validateServerMessage
 	
 	PageScript.prototype.processErrors = function(data, callbacks) {
-		console.log(data)
 			var msg = {}, 
 				translateError = function(e){
-					console.log(e)
 					var a=e.split(': ');
 					for(var i=0; i<a.length; i++){
 						a[i]=_(a[i])
@@ -136,7 +131,6 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
                     a+="</ul>";
                     msg.message=a;
                 }
-                console.log("message out: %o", msg.message)
 			}
 			
 			if (data.assurances) {
@@ -157,7 +151,6 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				}
 				msg.error += "</ul>";
 			}
-			console.log(msg)
 			return msg;
 	}
 	
@@ -174,16 +167,16 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		return a
 	}
 	
-	PageScript.prototype.setAppCanEmailMe=function(appId, value, callback){
+	PageScript.prototype.setAppCanEmailMe=function( appId, value, callback ){
 		if (self.aps && self.aps[appId]) {
 			var	data= {
 				canemail: value,
 				appname: self.aps[appId].name,
 				csrf_token: Cookie.get('csrf') || ""
 				}
-			self.ajaxpost("/v1/setappcanemail", data, self.callback(callback))
+			Ajax.post( "/v1/setappcanemail", data, { next: callback } )
 		}
-		else Msg.display({title:_("Error message"),error:_("The application does not exist.")})
+		else Msg.display( { title:_("Error message"), error:_("The application does not exist.") } )
 	}
 	
 	PageScript.prototype.parseUserdata = function(data) {
@@ -259,7 +252,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 			self.userIsLoggedIn (text)
 		}
 		if( self.page=="login"){
-			self.ajaxget('/v1/getmyapps',self.callback(self.finishRegistration))
+			Ajax.get( '/v1/getmyapps', { next:self.finishRegistration } )
 		}
 		window.traces.push("registerCallback")
 	}	
@@ -268,16 +261,20 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		self.displayServerResponse(response, {ok:self.doLoadHome})
 	}
 	
-	PageScript.prototype.doRedirect = function(href){ 
-		win.location=href	
+	PageScript.prototype.doRedirect = function( href ){ 
+		win.location = href	
+	}
+	
+	PageScript.prototype.doReload = function( ){ 
+		win.location.reload()	
 	}
 	
 	PageScript.prototype.doLoadHome = function() {
-		self.doRedirect(self.QueryString.uris.START_URL);
+		self.doRedirect( self.QueryString.uris.START_URL );
 	}
 	
 	PageScript.prototype.get_me = function() {
-		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))
+		Ajax.get( "/v1/users/me", { next:self.userIsLoggedIn, error:self.userNotLoggedIn } )
 	}
 	
 // Button actions
@@ -285,16 +282,16 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	PageScript.prototype.doPasswordReset = function() {
 		var secret = document.getElementById("PasswordResetForm_secret_input").value,
 			password = document.getElementById("PasswordResetForm_password_input").value;
-	    this.ajaxpost("/v1/password_reset", {secret: secret, password: password}, self.callback(self.reloadCallback))
+	    Ajax.post( "/v1/password_reset", { secret: secret, password: password }, { next: self.reloadCallback })
 	}
 	
-	PageScript.prototype.InitiatePasswordReset = function(myForm) {
-		var emailInput=document.getElementById(myForm+"_email_input")
-		if (emailInput!="")
-			self.ajaxget("/v1/users/"+self.mailRepair(emailInput.value)+"/passwordreset", self.callback(self.myCallback));
+	PageScript.prototype.InitiatePasswordReset = function( myForm ) {
+		var emailInput = document.getElementById( myForm+"_email_input" )
+		if ( emailInput != "" )
+			Ajax.get( "/v1/users/" + self.mailRepair( emailInput.value ) + "/passwordreset", { next: self.myCallback } );
 		else {
-			emailInput.className="missing";
-			this.displayMsg({"title":"Hiba","error":"Nem adtál meg email címet"})
+			emailInput.className = "missing";
+			Msg.display( { title: _("Data error"), error: _("Email address is missing")} )
 		}
 	}
 	
@@ -303,47 +300,42 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	}
 	
 	PageScript.prototype.justLoggedIn = function(response){
-		self.QueryString.section='my_account'
-		self.userIsLoggedIn(response)
+		self.QueryString.section = 'my_account'
+		self.userIsLoggedIn( response )
 	}
 	
-	PageScript.prototype.login = function() {
-	    var username = document.getElementById("LoginForm_email_input").value,
-			onerror=false,
-			errorMsg="",
-			password = document.getElementById("LoginForm_password_input").value;
-		if (username=="") {
-			errorMsg+=_("User name is missing. ");
-			onerror=true;
+	PageScript.prototype.pwLogin = function() {
+	    var username = Control.getValue("LoginForm_email_input"),
+			onerror  = false,
+			errorMsg = "",
+			password = Control.getValue("LoginForm_password_input")
+		if ( username == "" ) {
+			errorMsg += _("User name is missing. ");
+			onerror = true;
 		}
 	    if (password=="") {
 			errorMsg+=_("Password is missing. ");
 			onerror=true; 
 		}
-		if (onerror==true) Msg.display({error:errorMsg, title:_("Missing data")});
-		else {
-			var data = {
-				credentialType: "password", 
-				identifier: username, 
-				password: password
-				}
-			self.ajaxpost( "/v1/login", data, self.callback(self.justLoggedIn) )
-		}
+		if ( onerror ) Msg.display( { error:errorMsg, title: _("Missing data") } );
+		else self.login( 'password', username, password )
 	}
 
-	PageScript.prototype.login_with_facebook = function(userId, accessToken) {
-		console.log("facebook login")
-	    var data = {
-				credentialType: 'facebook',
-				identifier: userId,
-				password: encodeURIComponent(accessToken)
-			}
-	    self.ajaxpost("/v1/login", data , self.callback(self.justLoggedIn) )
+	PageScript.prototype.fbLogin = function( userId, accessToken) {
+		self.login( 'facebook', userId, encodeURIComponent( accessToken ) )
 	}
 	
+	PageScript.prototype.login = function( crendentialType, identifier, secret ) {
+	    var data = {
+				credentialType: crendentialType,
+				identifier: identifier,
+				password: secret
+			}
+	    Ajax.post( "/v1/login", data , { next: self.justLoggedIn } )
+	}
+		
 	PageScript.prototype.logout = function() {
-		console.log(self.QueryString)
-	    self.ajaxget("/v1/logout", self.callback( function(){self.doRedirect( self.QueryString.uris.START_URL)} ))
+	    Ajax.get( "/v1/logout", { next: self.doReload } )
 	}
 
 	PageScript.prototype.RemoveCredential = function( element ) {
@@ -352,7 +344,6 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				credentialType: $( element ).attr( 'cr-type' ),
 				identifier: $( element ).attr( 'identifier' )
 			}
-		console.log(text)
 		Ajax.post( "/v1/remove_credential", text, { next: self.meCallback } );
 	}
 	
@@ -368,85 +359,79 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		Msg.display({title:_("Under construction"), error:_("This function is not working yet.")});	
 	}
 	
-	PageScript.prototype.refreshTheNavbar=function(){
-		if (self.isLoggedIn) {
-			document.getElementById("nav-bar-login").style.display="none";
-			document.getElementById("nav-bar-register").style.display="none";
-			document.getElementById("nav-bar-my_account").style.display="block";
-			document.getElementById("nav-bar-logout").style.display="block";
+	PageScript.prototype.refreshTheNavbar = function(){
+		if ( self.isLoggedIn ) {
+			Control.hide("nav-bar-login")
+			Control.hide("nav-bar-register")
+			Control.show("nav-bar-my_account")
+			Control.show("nav-bar-logout")
 		}
 		else {
-			document.getElementById("nav-bar-my_account").style.display="none";
-			document.getElementById("nav-bar-logout").style.display="none";
-			document.getElementById("nav-bar-login").style.display="block";
-			document.getElementById("nav-bar-register").style.display="block";
+			Control.hide("nav-bar-my_account")
+			Control.hide("nav-bar-logout")
+			Control.show("nav-bar-login")
+			Control.show("nav-bar-register")
 		}
 	}
 
-
-	
 	PageScript.prototype.setRegistrationMethode=function(methode){
 		self.registrationMethode=methode;
 		[].forEach.call( document.getElementById("registration-form-method-selector").getElementsByClassName("social"), function (e) { e.className=e.className.replace(" active",""); } );
-		document.getElementById("registration-form-method-selector-"+methode).className+=" active"
+		document.getElementById( "registration-form-method-selector-" + methode ).className += " active"
 		var heading
-		switch (methode) {
+		switch ( methode ) {
 			case "pw":
-				heading=_("email address and/or username / password")
-				document.getElementById("registration-form-password-container").style.display="block";
-				document.getElementById("registration-form-username-container").style.display="block";
-				document.getElementById("registration-form_secret_input").value="";
-				document.getElementById("registration-form_identifier_input").value="";
+				heading = _("email address and/or username / password")
+				Control.show("registration-form-password-container")
+				Control.show("registration-form-username-container")
+				Control.setValue("registration-form_secret_input","")
+				Control.setValue("registration-form_identifier_input")
 			break;
 			case "fb":
-				heading=_("my facebook account")
-				document.getElementById("registration-form-password-container").style.display="none";
-				document.getElementById("registration-form-username-container").style.display="none";
+				heading = _("my facebook account")
+				Control.hide("registration-form-password-container")
+				Control.hide("registration-form-username-container")
 				facebook.fbregister()
 			break;
 		}
-		document.getElementById("registration-form-method-heading").innerHTML=_("Registration with %s ",heading);
+		Control.innerHTML( "registration-form-method-heading", _("Registration with %s ",heading) )
 	}
 
 	PageScript.prototype.register = function(credentialType) {
 		//
-	    var identifier = (document.getElementById("registration-form_identifier_input").value=="")?
-			document.getElementById("registration-form_email_input").value:
-			document.getElementById("registration-form_identifier_input").value,
-			secret = document.getElementById("registration-form_secret_input").value,
-			email = self.mailRepair(document.getElementById("registration-form_email_input").value),
-			d=document.getElementById("registration-form_digest_input"),
-			digest =(d)?d.value:"",
+	    var identifier = ( Control.getValue( "registration-form_identifier_input" ) == "" )?
+				Control.getValue( "registration-form_email_input" ):
+				Control.getValue( "registration-form_identifier_input" ),
 			data= {
 	    	credentialType: credentialType,
 	    	identifier: identifier,
-	    	email: email,
-	    	digest: digest,
-			password: secret
+	    	email: self.mailRepair( Control.getValue( "registration-form_email_input" ) ),
+	    	digest: Control.getValue("registration-form_digest_input"),
+			password: Control.getValue( "registration-form_secret_input" )
 	    }
 		window.traces.push(data)
 		window.traces.push("register")
-	    self.ajaxpost("/v1/register", data, self.callback(self.registerCallback))
+	    Ajax.post( "/v1/register", data, { next: self.registerCallback } )
 	}
 
 	PageScript.prototype.doRegister=function() {
 		if ( document.getElementById("registration-form_confirmField").checked ) {
-			console.log(self.registrationMethode)
-			switch (self.registrationMethode) {
+			switch ( self.registrationMethode ) {
 				case "pw":
-					console.log('pw')
-					var pwInput=document.getElementById("registration-form_secret_input")
-					var pwBackup=document.getElementById("registration-form_secret_backup")
+					var pwInput=document.getElementById("registration-form_secret_input"),
+						pwBackup=document.getElementById("registration-form_secret_backup")
 					if (pwInput.value!=pwBackup.value) Msg.display({title:_("Error message"),error:_("The passwords are not identical")})
 					else self.register("password")
 					break;
 				case "fb":
-					console.log('fb')
 					self.register("facebook")
 					break;
 			}
 		}
-		else Msg.display({title:_("Acceptance is missing"),error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")})
+		else Msg.display( {
+				title:_("Acceptance is missing"),
+				error:_("For the registration you have to accept the terms of use. To accept the terms of use please mark the checkbox!")
+			} )
 	}
 
 

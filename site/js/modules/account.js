@@ -127,10 +127,13 @@ PageScript.prototype.main = function() {
 	}
 	
 	PageScript.prototype.initialise = function(text) {
-		self.ajaxget("locale/hu.json",self.callback(self.gettextCallback, function(response){
-			gettext.mockGettext()
-			self.displayServerResponse(response, {ok: self.init_})
-		} ),true)
+		Ajax.get( "locale/hu.json", { 
+			next: self.gettextCallback,
+			error: function(response){
+					gettext.mockGettext()
+					self.displayServerResponse(response, {ok: self.init_})
+				}
+			}, true )
 		window.traces.push("initialise")
 	}
 	
@@ -154,10 +157,10 @@ PageScript.prototype.main = function() {
 		var data = JSON.parse(text);
 		self.isLoggedIn=true
 		self.refreshTheNavbar()
-		self.ajaxget('/v1/getmyapps', self.myappsCallback)
+		Ajax.ajaxget( '/v1/getmyapps', self.myappsCallback)
 		
 		if (data.assurances.hashgiven && data.assurances.emailverification) {
-			self.ajaxget("assurers.json", self.callback(self.fillAssurersTable), true)
+			Ajax.get( "assurers.json", { next: self.fillAssurersTable }, true)
 		}
 		
 		Control.innerHTML( "me_Data", self.parseUserdata( data ) )	
@@ -204,7 +207,7 @@ PageScript.prototype.main = function() {
 					break;
 			}
 		}
-		self.ajaxget("/v1/users/me", self.callback(self.userIsLoggedIn, self.userNotLoggedIn))	
+		Ajax.get( "/v1/users/me", { next: self.userIsLoggedIn, error: self.userNotLoggedIn } )	
 		window.traces.push("init_")		
 	}
 	
@@ -217,7 +220,7 @@ PageScript.prototype.main = function() {
 				var data=JSON.parse(text);
 				target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
 			}
-		self.ajaxget( "/v1/verify_email/" + self.QueryString.secret, self.callback(onsucces,onerror) )
+		Ajax.get( "/v1/verify_email/" + self.QueryString.secret, { next: onsucces, error: onerror } )
 	}
 
 	PageScript.prototype.changeEmail=function(confirm) {
@@ -225,7 +228,7 @@ PageScript.prototype.main = function() {
 				confirm: confirm,
 				secret: self.QueryString.secret
 			}
-		self.ajaxpost( "/v1/confirmemailchange", data, self.callback() )
+		Ajax.post( "/v1/confirmemailchange", data, {} )
 	}	
 	
 	jQuery.each(jQuery('textarea[data-autoresize]'), function() {
@@ -239,11 +242,16 @@ PageScript.prototype.main = function() {
 // assuring functions
 
 	PageScript.prototype.byEmail = function() {
-	    var email = self.mailRepair(document.getElementById("ByEmailForm_email_input").value);
-		if (email=="") { Msg.display({title:"Hiba",error:"nem adtad meg az email címet"})}
+	    var email = self.mailRepair( Control.getValue( "ByEmailForm_email_input" ) );
+		if (email=="") { 
+			Msg.display( {
+				title:"Hiba",
+				error:"nem adtad meg az email címet" 
+			} )
+		}
 		else {
 			email = encodeURIComponent(email)
-			self.ajaxget("/v1/user_by_email/"+email, self.callback(self.myCallback))
+			Ajax.get( "/v1/user_by_email/"+email, { next: self.myCallback } )
 		}
 	}
 	
@@ -255,7 +263,7 @@ PageScript.prototype.main = function() {
 		    	email: self.mailRepair(document.getElementById("ByEmailForm_email_input").value),
 	  		  	csrf_token: Cookie.get('csrf')
 		    }
-	    self.ajaxpost("/v1/add_assurance", data, self.callback(self.myCallback))
+	    Ajax.post( "/v1/add_assurance", data, { next: self.myCallback } )
 	}
 
 /*
@@ -264,14 +272,13 @@ PageScript.prototype.main = function() {
 ********************************
 */	
 
-	PageScript.prototype.addCredential = function(credentialType, identifier, secret) {
-		console.log("addCredential:"+credentialType)
+	PageScript.prototype.addCredential = function( credentialType, identifier, secret ) {
 		var data = {
 			credentialType: credentialType,
 			identifier: identifier,
 			password: secret
 		}
-		self.ajaxpost("/v1/add_credential", data, self.callback(self.userIsLoggedIn))
+		Ajax.post( "/v1/add_credential", data, { next: self.userIsLoggedIn } )
 	}
 	
 	PageScript.prototype.addPasswordCredential = function(){
@@ -281,7 +288,7 @@ PageScript.prototype.main = function() {
 	}
 	
 	PageScript.prototype.add_facebook_credential = function( FbUserId, FbAccessToken) {
-		self.addCredential("facebook", FbUserId, FbAccessToken);
+		self.addCredential( "facebook", FbUserId, FbAccessToken );
 	}
 /*	
 	PageScript.prototype.addGoogleCredential = function(){
@@ -508,25 +515,24 @@ PageScript.prototype.main = function() {
 	}
 	
 	PageScript.prototype.emailChangeEditButton_onclick = function() {
-		document.getElementById("ChangeEmailAddressForm_email_input").value=""
+		Control.setValue( "ChangeEmailAddressForm_email_input", "" )
 		document.getElementById("ChangeEmailAddressForm_email_input").placeholder=_("Type your new email address here")
 	}
 	
 	PageScript.prototype.emailChangeInput_onkeyup = function(){
-		var rgx_email   = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
-		var inputField = document.getElementById("ChangeEmailAddressForm_email_input")
-		if (rgx_email.exec(inputField.value)) {
-			Control.activate("changeEmil_saveButton", self.changeEmailAddress)
+		var rgx_email = new RegExp(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
+		if ( rgx_email.exec( Control.getValue( "ChangeEmailAddressForm_email_input" ) ) ) {
+			Control.activate( "changeEmil_saveButton", self.changeEmailAddress )
 		}
-		else Control.deactivate("changeEmil_saveButton")
+		else Control.deactivate( "changeEmil_saveButton" )
 	}
 	
 // User actions	
 	PageScript.prototype.InitiateResendRegistrationEmail = function() {
-		self.ajaxget( "/v1/send_verify_email", self.callback() )
+		Ajax.get( "/v1/send_verify_email", {} )
 	}
 	
 	PageScript.prototype.initiateDeregister = function() {
-		self.ajaxpost( "/v1/deregister", { csrf_token: Cookie.get("csrf") }, self.callback()  )
+		Ajax.post( "/v1/deregister", { csrf_token: Cookie.get("csrf") }, {}  )
 	}
 

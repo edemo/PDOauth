@@ -24,7 +24,6 @@ import x from './modules/back_to_top' //back to top button
     return this.each(function(){
 
         // Store the object
-			console.log($(this))
         var $this = $(this);
         var $settings = settings;
 		var $triggered = false

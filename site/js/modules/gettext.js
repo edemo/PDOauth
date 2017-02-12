@@ -1,4 +1,5 @@
 // gettext functions
+import * as Ajax from './ajax'
 export var _
 export var gettext = new (function() {
 	var $this={}
@@ -90,6 +91,19 @@ export var gettext = new (function() {
 	
 	$this.mockGettext = function(){
 		_= function(str) { return str }
+	}
+	
+	$this.loadPo = function( locale, next ) {
+		var dictLoaded = function(response){
+				$this.initGettext(response)
+				next( true )
+			},
+			dictFailed = function(response){
+				$this.mockGettext()
+				next( false, response )
+			}	
+		Ajax.get("locale/" + locale + ".json", { next: dictLoaded, error: dictFailed }, true)
+		window.traces.push("initialise")
 	}
 	
 	return $this

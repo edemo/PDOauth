@@ -25,7 +25,7 @@ Msg.setTarget('popup')
 	}
 	
 	PageScript.prototype.getStatistics=function(){
-		Ajax.ajaxget("/v1/statistics", self.callback(self.statCallback))
+		Ajax.get("/v1/statistics", { next: self.statCallback } )
 	}
 	
 	PageScript.prototype.statCallback=function(text) {

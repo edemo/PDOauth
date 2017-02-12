@@ -13,7 +13,6 @@ import * as Msg from './messaging'
 export function getter( formName, callback ) {
 	var $this={},
 	createXmlForAnchor = function(formName) {
-		console.log(formName)
 		var personalId = normalizeId( Control.getValue( formName + "_predigest_input" ) ),
 			mothername = normalizeString( Control.getValue( formName + "_predigest_mothername" ) );
 		if ( personalId == "") {
