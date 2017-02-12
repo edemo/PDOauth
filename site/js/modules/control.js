@@ -62,7 +62,7 @@ export function hide( Id ) {
 
 export function hide_( element ) {
 	if ( typeof element == "object" && typeof element.style != "undefined") {
-		element.style.display = "none"
+		$( element ).hide()
 		return element
 	}
 	else console.error( "hide: element is not an HTMLobject" )
@@ -76,7 +76,7 @@ export function show( Id ) {
 	
 export function show_( element ) {
 	if ( typeof element == "object" && typeof element.style != "undefined") {
-		element.style.display = "block"
+		$( element ).show()
 		return element
 	}
 	else console.error( "show: element is not an HTMLobject" )

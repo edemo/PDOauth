@@ -496,8 +496,13 @@ PageScript.prototype.main = function() {
 	}
 	
 	PageScript.prototype.deleteHash = function() {
-		document.getElementById("change-hash-form_digest_input").value=""
-		self.changeHash();
+		Msg.display({ 	title: _("Caution!!"),
+						message: _("Do you want realy delete your secret code? Your assurances will be deleted as well!!"),
+						ok: function() {
+								Control.setValue( "change-hash-form_digest_input", "" )
+								self.changeHash();
+							}
+					})
 	}
 	
 	PageScript.prototype.emailChangeEditButton_onclick = function() {
