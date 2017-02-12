@@ -6,7 +6,7 @@
 	
 export function deactivate( Id ) {
 	var element = document.getElementById( Id )
-	if ( element ) deactivate_( element )
+	if ( element ) return deactivate_( element )
 	else console.error( "deactivate: no element with the given Id" )		
 }
 	
@@ -14,13 +14,14 @@ export function deactivate_( element ) {
 	if ( typeof element == "object" && element.className) {
 		element.className += " inactive";
 		saveHandler( element, "onclick" )
+		return element
 	}
 	else console.error( "deactivate: element is not an htmlobject" )		
 }
 	
 export function activate( Id, onclickFunc ) {
 	var element = document.getElementById( Id )
-	if ( element ) activate_( element, onclickFunc )
+	if ( element ) return activate_( element, onclickFunc )
 	else console.error( "activate: no element with the given Id" )
 }
 	
@@ -29,6 +30,7 @@ export function activate_( element, onclickFunc ) {
 		removeClass( element, "inactive" )
 		if ( onclickFunc ) element.onclick = onclickFunc 
 		else restoreHandler( element, "onclick" )
+		return element
 	}
 	else console.error( "activate: element is not an object" )
 }
@@ -54,23 +56,29 @@ export function restoreHandler( element, hName ){
 
 export function hide( Id ) {
 	var element = document.getElementById( Id )
-	if ( element ) hide_( element )
+	if ( element ) return hide_( element )
 	else console.error( "hide: no element with the given Id" )
 }
 
 export function hide_( element ) {
-	if ( typeof element == "object" && typeof element.style != "undefined") element.style.display = "none"
+	if ( typeof element == "object" && typeof element.style != "undefined") {
+		element.style.display = "none"
+		return element
+	}
 	else console.error( "hide: element is not an HTMLobject" )
 }
 
 export function show( Id ) {
 	var element = document.getElementById( Id )
-	if ( element ) show_( element )
+	if ( element ) return show_( element )
 	else console.error( "show: no element with the given Id" )
 }
 	
 export function show_( element ) {
-	if ( typeof element == "object" && typeof element.style != "undefined") element.style.display = "block"
+	if ( typeof element == "object" && typeof element.style != "undefined") {
+		element.style.display = "block"
+		return element
+	}
 	else console.error( "show: element is not an HTMLobject" )
 }
 

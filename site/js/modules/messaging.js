@@ -11,7 +11,14 @@ var target,
 		$("#myModal").modal();
 		var close = function(){ closePopup( msg.callback || null ) }
 		Control.activate( "PopupWindow_CloseButton1", close )
-		Control.activate( "PopupWindow_CloseButton2", close )
+		if ( msg.ok ) {
+			var okClose = function(){ closePopup( msg.ok ) } 
+			Control.show_( Control.activate( "PopupWindow_OkButton", okClose ) )
+			Control.show_( Control.activate( "PopupWindow_CancelButton", close ) )
+		}
+		else {
+			Control.show_( Control.activate( "PopupWindow_CloseButton2", close ) )
+		}
 		Control.innerHTML( "PopupWindow_TitleDiv", msg.title || "" )
 		Control.innerHTML( "PopupWindow_ErrorDiv", msg.error || "" )
 		Control.innerHTML( "PopupWindow_MessageDiv", msg.message || "" )
@@ -40,6 +47,9 @@ export function display( msg ) {
 }
 
 export function closePopup(popupCallback) {
+	Control.hide( "PopupWindow_CloseButton2" )
+	Control.hide( "PopupWindow_CancelButton" )
+	Control.hide( "PopupWindow_OkButton" )
 	Control.innerHTML("PopupWindow_TitleDiv","")
 	Control.innerHTML("PopupWindow_ErrorDiv","")
 	Control.innerHTML("PopupWindow_MessageDiv","")
