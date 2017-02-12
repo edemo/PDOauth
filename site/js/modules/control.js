@@ -34,7 +34,7 @@ export function activate_( element, onclickFunc ) {
 }
 	
 export function removeClass( element, clName ){
-	if ( element.className ) element.className=element.className.replace( ' '+clName, "" )
+	if ( element.className ) element.className=element.className.replace( clName, "" )
 	else console.error( "removeClass: element is not a HTMLobject" )
 }
 
