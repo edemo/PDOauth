@@ -13,6 +13,7 @@ import * as Control from './control'
 import * as Cookie from './cookie'
 import * as Msg from './messaging'
 import * as Digest from './digest'
+import * as Ajax from './ajax.js'
 
 export var pageScript = new PageScript()
 
@@ -301,14 +302,13 @@ PageScript.prototype.main = function() {
 ********************************
 */
 
-	PageScript.prototype.changeHash = function() {
-	    var digest = document.getElementById("change-hash-form_digest_input").value,
-			csrf_token = Cookie.get('csrf'),
+	PageScript.prototype.changeHash = function( noMessage ) {
+		var next = noMessage ? function(){} : self.changeHashCallback,
 			data= {
-				digest: digest,
-				csrf_token: csrf_token
+				digest: Control.getValue("change-hash-form_digest_input"),
+				csrf_token: Cookie.get('csrf')
 			}
-	    self.ajaxpost("/v1/users/me/update_hash", data, self.callback(self.changeHashCallback))
+	    Ajax.post( "/v1/users/me/update_hash", data, { next:next } )
 	}	
 	
 	PageScript.prototype.changeHashCallback = function(text) {
@@ -499,8 +499,10 @@ PageScript.prototype.main = function() {
 		Msg.display({ 	title: _("Caution!!"),
 						message: _("Do you want realy delete your secret code? Your assurances will be deleted as well!!"),
 						ok: function() {
-								Control.setValue( "change-hash-form_digest_input", "" )
-								self.changeHash();
+								$('#myModal').on('hidden.bs.modal', function() {
+									Control.setValue( "change-hash-form_digest_input", "" )
+									self.changeHash( true );
+								})
 							}
 					})
 	}

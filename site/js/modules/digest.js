@@ -58,9 +58,10 @@ export function getter( formName, callback ) {
 			window.traces.push("gotDigest")
 		}
 		else {
-			Msg.display({title:_("Error message"),error: text});
-			diegestInput.value =""
-			if ($this.formName=="assurancing") {
+			var message = (status==0) ? _("The anchor server is not responding") : text
+			Msg.display( { title:_("Error message"), error: message } );
+			Control.setValue( $this.formName + "_digest_input", "" )
+			if ( $this.formName=="assurancing" ) {
 				var messageBox=document.getElementById("assurance-giving_message")
 				messageBox.innerHTML=_("The Secret Hash isn't given yet")
 				messageBox.className="missing"
