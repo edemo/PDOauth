@@ -393,11 +393,12 @@ PageScript.prototype.main = function() {
 			tr = '<tr></tr>'
 			
 		$( div ).append( $( '<h4><b>' + _( "My credentials" ) + '</b></h4>' ) )
-		
+		console.log(data.credentials)
 		for( var i in c ) {
 			// credential header
+			console.log(i)
 			var credential_header = $( tr ),
-				headerButtonContainer = $('<th></th>')
+				headerButtonContainer = $( th )
 			$( credential_header ).id = i + '-credential-list'
 			$( credential_header ).append( $('<th>'+c[i][0]+'</th>') )
 			if (c[i][3]){
@@ -413,6 +414,7 @@ PageScript.prototype.main = function() {
 			// credential list
 			for( var j=0; j<data.credentials.length; j++ ) {
 				if (data.credentials[j].credentialType==c[i][1]) {
+					
 					var theCredential = $( tr ),
 						theDeleteButton = $( TrashButton )
 					$( theCredential ).append( $( '<td><pre class="credential-item" id="Credential-Item-' + j + '_identifier">' + data.credentials[j].identifier + '</pre></td>' ) )

@@ -11,6 +11,7 @@ function setup_controlls(){
 	if (QueryString && QueryString.secret) pwreset.setSecret(QueryString.secret)
 
 var main = function (){
+	gettext.loadPo( 'hu' )
 	setup_the_navbar_buttons_onclick(self)
 	window.traces.push("main end")
 }
