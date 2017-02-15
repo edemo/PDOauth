@@ -8,7 +8,7 @@ class Procedures(object):
         self.goToLoginPage()
         element = TE.driver.find_element_by_id("nav-bar-logout")
         displayed=element.value_of_css_property('display')
-        if displayed=="block":
+        if displayed=="list-item":
             self.click("logout_button")
         self.endProcess("logout")
 
