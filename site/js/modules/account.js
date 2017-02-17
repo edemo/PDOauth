@@ -151,6 +151,7 @@ PageScript.prototype.main = function() {
 			else return;
 		}
 		else self.displayTheSection();
+		window.traces.push('userIsNotLoggedIn')
 	}
 	
 	PageScript.prototype.userIsLoggedIn = function(text) {
