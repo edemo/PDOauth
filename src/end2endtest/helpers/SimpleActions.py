@@ -230,6 +230,10 @@ class SimpleActions(object):
         TE.driver.get(TE.loginUrl)
         self.waitLoginPage()
 
+    def goToRegisterPage(self):
+        TE.driver.get("{0}?section=register".format(TE.loginUrl))
+        self.waitLoginPage()
+
     def goToTestPage(self):
         TE.driver.get(TE.testUrl)
         self.waitUntilElementEnabled("e2e")
