@@ -207,7 +207,7 @@ class SimpleActions(object):
         return self.waitUntilElementEnabled("greatings")
 
     def switchToTab(self,tab):
-        self.click("nav-bar-{0}".format(tab))
+        self.click("nav-bar-{0}_a".format(tab))
         self.waitUntilElementEnabled("{0}_section".format(tab))
 
     def switchToSection(self,tab):
