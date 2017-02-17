@@ -35,8 +35,8 @@ class Decorators(WebInterface, Responses):
     def getRaisePoint():
         exc_type, exc_value, exc_traceback = sys.exc_info() # @UnusedVariable
         l = traceback.extract_tb(exc_traceback)[-1]
-        raisedAt = traceback.format_list([l])[0]
-        return raisedAt
+        stackList = traceback.format_list([l])
+        return stackList[0]
 
     def errorReport(self, e):
         raisedAt = self.getRaisePoint()

@@ -80,6 +80,6 @@ class FacebookUtil(object):
             count += 1
             time.sleep(1)
 
-    def pushFbButtonWhenready(self):
+    def pushFbButtonWhenready(self, buttonId="registration-form-method-selector-fb"):
         self.waitForJsState('fbAsyncInit')
-        return self.click("registration-form-method-selector-fb")
+        return self.click(buttonId)
