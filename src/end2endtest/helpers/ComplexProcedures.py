@@ -12,7 +12,7 @@ class ComplexProcedures(Procedures):
         self.clickPasswordResetLink(password, passwordResetLink)
 
     def registerFreshUser(self):
-        self.goToLoginPage()
+        self.goToRegisterPage()
         self.registerUser()
         self.closeMessage()
 
