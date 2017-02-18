@@ -244,12 +244,14 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	PageScript.prototype.registerCallback = function(text) {
 		self.isLoggedIn=true
 		if( self.page=="account"){
+			self.QueryString.section = null
 			var msg={
 				title:_("Congratulation!"),
 				error:_("You have succesfully registered and logged in. </br> Please click the link inside the email we sent you to validate your email address, otherwise your account will be destroyed in one week.")
 				}
+			msg.callback=function(){ self.userIsLoggedIn (text) }
 			Msg.display(msg)
-			self.userIsLoggedIn (text)
+			
 		}
 		if( self.page=="login"){
 			Ajax.get( '/v1/getmyapps', { next:self.finishRegistration } )
