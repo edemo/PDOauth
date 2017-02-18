@@ -58,7 +58,8 @@ PageScript.prototype.userNotLoggedIn = function(text) {
 		self.greating("The %s application needs to sign in with your ADA account")
 		if (self.QueryString.section && self.QueryString.section=="registration") Control.show("register_section")
 		else Control.show("login_section")
-	}
+	}	
+	window.traces.push('userIsNotLoggedIn')
 	window.traces.push('loginpage')
 }
 
