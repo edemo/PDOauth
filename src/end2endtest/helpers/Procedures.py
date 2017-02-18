@@ -67,6 +67,9 @@ class Procedures(object):
     def registerUser(self, digest=None, buttonId="nav-bar-register_a", personalId=None, motherName=None):
         self.beginProcess("register with password")
         self.click(buttonId)
+        self.waitForTraces(["userIsNotLoggedIn"])
+        self.waitUntilElementEnabled("registration-form_identifier_input")
+        time.sleep(3)
         self.setupUserCreationData()
         self.fillInField("registration-form_identifier_input", self.userCreationUserid)
         self.fillInField("registration-form_secret_input", self.usercreationPassword)
