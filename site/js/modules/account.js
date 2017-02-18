@@ -394,7 +394,6 @@ PageScript.prototype.main = function() {
 			tr = '<tr></tr>'
 			
 		$( div ).append( $( '<h4><b>' + _( "My credentials" ) + '</b></h4>' ) )
-		console.log(data.credentials)
 		for( var i in c ) {
 			// credential header
 			console.log(i)

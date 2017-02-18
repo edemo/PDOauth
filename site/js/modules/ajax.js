@@ -1,5 +1,6 @@
 // module ajax
 import { uris } from './adauris';
+import { _ } from './gettext'
 
 var uribase = uris.BACKEND_PATH,
 	stack = {},			//tacking asyncronous calls
@@ -12,7 +13,7 @@ export function set_displayServerResponse(func){
 }
 
 export function set_reportServerFailure(func){
-	displayServerResponse = func
+	reportServerFailure = func
 }
 
 export function setUribase(theUribase){
@@ -24,7 +25,6 @@ export function getStack(){
 }
 
 export function callback( next, error ){
-		console.log(next)
 		var next  = next || displayServerResponse,
 			error = error || displayServerResponse;
 		return function( status, response, xml ) {
@@ -38,6 +38,7 @@ export function callback( next, error ){
 				case 405:
 					reportServerFailure( response )
 					break;
+				case 403:
 				default:
 					error( response, xml )
 			}
@@ -64,7 +65,6 @@ export function base( callback, uri ) {
 	}
     
 export function valaidateCallbackArgs( args ){
-	console.log(args)
 	var next=null,
 		error=null;
 	if (typeof args != "undefined") {
@@ -105,16 +105,16 @@ export function ajaxget( uri, callback, direct) {       //for old style compatib
 export function validateServerMessage(response) {
 		if (!response) return {
 			errors: [
-				"Something went wrong",
-				"An empty message is arrived from the server" 
+				_("Something went wrong"),
+				_("An empty message is arrived from the server") 
 			]
 		}
 		try { return JSON.parse(response) }
 		catch(err) {
 			return { 
 				errors: [
-					"Something went wrong",
-					"Unexpected server message:",
+					_("Something went wrong"),
+					_("Unexpected server message:"),
                     response
 				]
 			}
