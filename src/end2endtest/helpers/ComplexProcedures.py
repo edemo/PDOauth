@@ -14,6 +14,7 @@ class ComplexProcedures(Procedures):
     def registerFreshUser(self):
         self.registerUser()
         self.closeMessage()
+        self.waitForTraces(["myappsCallback"])
 
     def registerAndGiveHash(self):
         self.registerFreshUser()
