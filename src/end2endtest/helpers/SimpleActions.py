@@ -21,10 +21,13 @@ class element_to_be_useable(object):
         if element:
             try:
                 displayValue=element.value_of_css_property('display')
-                displayok = displayValue in ('block', 'inline','inline-block')
+                visibilityValue=element.value_of_css_property('visibility')
+                displayok = displayValue != 'none'
+                visibilityok = visibilityValue != 'hidden'
                 displayed = element.is_displayed()
                 enabled = element.is_enabled()
-                if displayed and enabled and displayok:
+                isnotanymatingbyquery = TE.driver.execute_script('return $("#{0}").is(":animated")'.format(*self.locator))
+                if displayed and enabled and displayok and visibilityok and isnotanymatingbyquery:
                     return element
             except StaleElementReferenceException:
                 pass
@@ -234,7 +237,7 @@ class SimpleActions(object):
         TE.driver.get("{0}?section=register".format(TE.loginUrl))
         self.waitForTraces(["userIsNotLoggedIn"])
         self.waitUntilElementEnabled("registration-form_identifier_input")
-        time.sleep(1)
+        time.sleep(3)
 
     def goToTestPage(self):
         TE.driver.get(TE.testUrl)
