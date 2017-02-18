@@ -26,7 +26,6 @@ class element_to_be_useable(object):
                 visibilityok = visibilityValue != 'hidden'
                 displayed = element.is_displayed()
                 enabled = element.is_enabled()
-                isnotanymatingbyquery = TE.driver.execute_script('return $("#{0}").is(":animated")'.format(*self.locator))
                 if displayed and enabled and displayok:
                     return element
             except StaleElementReferenceException:
