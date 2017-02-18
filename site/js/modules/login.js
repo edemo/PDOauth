@@ -1,4 +1,5 @@
 import PageScript from './script'
+import * as Ajax from './ajax'
 import { _ } from './gettext'
 import { gettext } from './gettext'
 import { setup_login_page_controlls } from './setup_buttons'
