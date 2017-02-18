@@ -10,6 +10,7 @@ class Procedures(object):
         displayed=element.value_of_css_property('display')
         if displayed=="list-item":
             self.click("logout_button")
+        self.waitLoginPage()
         self.endProcess("logout")
 
     def loginWithPasswordAs(self, user):

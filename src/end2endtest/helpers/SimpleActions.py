@@ -234,6 +234,7 @@ class SimpleActions(object):
         TE.driver.get("{0}?section=register".format(TE.loginUrl))
         self.waitForTraces(["userIsNotLoggedIn"])
         self.waitUntilElementEnabled("registration-form_identifier_input")
+		time.sleep(1)
 
     def goToTestPage(self):
         TE.driver.get(TE.testUrl)
