@@ -94,11 +94,12 @@ export var gettext = new (function() {
 	}
 	
 	$this.loadPo = function( locale, next ) {
-		var dictLoaded = function(response){
-				$this.initGettext(response)
+		var next = next || function(){},
+			dictLoaded = function( response ){
+				$this.initGettext( response )
 				next( true )
 			},
-			dictFailed = function(response){
+			dictFailed = function( response ){
 				$this.mockGettext()
 				next( false, response )
 			}	
