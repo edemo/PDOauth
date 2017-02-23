@@ -6,7 +6,7 @@ class AssurerTest(TestCase,BrowsingUtil,CryptoTestUtil):
         
     
     def test_an_assurer_can_add_assurance_to_other_users_using_the_assurance_form(self):
-        self.goToLoginPage()
+        self.goToRegisterPage()
         personalId = "11111111110"
         motherName = self.mkRandomString(10)
         self.registerUser(personalId=personalId, motherName=motherName)
@@ -19,7 +19,7 @@ class AssurerTest(TestCase,BrowsingUtil,CryptoTestUtil):
 
     
     def test_an_assurer_can_get_user_information_using_the_users_email(self):
-        self.goToLoginPage()
+        self.goToRegisterPage()
         self.registerUser()
         self.logOut()
         self.loginWithPasswordAs(TE.assurerUser)

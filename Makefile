@@ -6,6 +6,7 @@ HTML_FILES = user_howto.html\
 	fiokom.html\
 	assurer_howto.html\
 	deregistration.html\
+	passwordreset.html\
 	logout.html
 
 js_files := $(shell find site/js -maxdepth 1 -type f -name '*.js' -printf '%f\n')
@@ -36,7 +37,8 @@ uris:
 static: static-base static-html static-js static-jstest
 static-base:
 	mkdir -p static/js
-	cp -r site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
+	cp -r site/js/vendor site/css site/favicon.ico site/docbook.css site/fonts site/docs site/assurers.json site/images site/locale site/test static
+	cp -r site/js/vendor static/js
 
 static-js:
 	for js in $(js_files); do rollup --format=iife --output=static/js/$$js -- site/js/$$js; done
