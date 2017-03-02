@@ -1,0 +1,36 @@
+{% extends "tmpl/page.html" %}
+
+{% set title = 'fiók törlése' %}
+
+{% set additionalJavascripts = ["js/deregistration.js"] %}
+
+{% set additionalCss = ["css/ada_acc.css"] %}
+
+{% block contents %}
+	<!-- content -->
+	<div id="top" style="margin-top:50px"></div>
+	<div class="wrapper">
+
+{% include 'tmpl/message_box.html' %}
+
+<!-- Delete account -->
+		<div class="container" id="deregistration_section">
+			<section class="container_">
+				<h3 class="title">Fiók törlése</h3>
+				<p>Az gombra kattintva a felhasználói fiókodat <b>visszavonhatatlanul</b> töröljük.
+				Ezután már nem fogsz tudni bejelentkezni sem ide, sem más webes vagy mobilos alkalmazásokba, ahova eddig az ADA szolgáltatásal jelentkeztél be.
+				Az <b>igazolásaid</b> is <b>törlődnek</b> a rendszerből.</p>
+				<p>Az alábbi jelölőnégyzet kipipálásával megerősíted, hogy tisztában vagy a döntésed következményeivel. A fiók törlése esetén az adataid <b>visszaállítására nincs lehetőség</b>.</p>
+				<div>
+					<input type="checkbox" id="accept_deregister" name="accept" value="accept">
+					<label class="label-inline" for="confirmField"> megértettem és elfogadom.</label>
+				</div>
+				<button id="deregistration-form_submit-button" type="button">Törlöm a fiókom</button>
+			</section>
+		</div>
+<!-- End delete account section -->
+
+
+	</div><!-- End wrapper -->
+
+{% endblock %}

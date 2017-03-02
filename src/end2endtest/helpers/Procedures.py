@@ -1,5 +1,6 @@
 import end2endtest.helpers.TestEnvironment as TE
 from selenium.webdriver.common.by import By
+import time
 
 class Procedures(object):
 
@@ -8,8 +9,9 @@ class Procedures(object):
         self.goToLoginPage()
         element = TE.driver.find_element_by_id("nav-bar-logout")
         displayed=element.value_of_css_property('display')
-        if displayed=="block":
+        if displayed=="list-item":
             self.click("logout_button")
+        self.waitLoginPage()
         self.endProcess("logout")
 
     def loginWithPasswordAs(self, user):
@@ -20,6 +22,15 @@ class Procedures(object):
         self.fillInField("LoginForm_password_input",user.password)
         self.click("LoginForm_submitButton")
         self.endProcess("login with password")
+
+    def loginWithPasswordAndSubmitAs(self, user):
+        self.beginProcess("login with password and submit")
+        self.goToLoginPage()
+        self.switchToTab('login')
+        self.fillInField("LoginForm_email_input", user.userName)
+        self.fillInField("LoginForm_password_input", user.password)
+        self.sendEnter("LoginForm_password_input")
+        self.endProcess("login with password and submit")
 
     def assignAssurance(self, clientEmail, personalId, motherName):
         self.beginProcess("assign assurance to customer")
@@ -54,9 +65,12 @@ class Procedures(object):
         self.closeMessage(closeWait=False)
         self.endProcess("click password reset link")
 
-    def registerUser(self, digest=None, buttonId="nav-bar-register", personalId=None, motherName=None):
+    def registerUser(self, digest=None, buttonId="nav-bar-register_a", personalId=None, motherName=None):
         self.beginProcess("register with password")
         self.click(buttonId)
+        self.waitForTraces(["userIsNotLoggedIn"])
+        self.waitUntilElementEnabled("registration-form_identifier_input")
+        time.sleep(3)
         self.setupUserCreationData()
         self.fillInField("registration-form_identifier_input", self.userCreationUserid)
         self.fillInField("registration-form_secret_input", self.usercreationPassword)
@@ -73,8 +87,6 @@ class Procedures(object):
             self.click("registration-form_getDigestButton")
             self.waitUntilElementHasText("registration-form_digest_input")
         self.click("registration-form_submitButton")
-        if buttonId=="nav-bar-register":
-            self.waitForTraces(["myappsCallback"])
         self.endProcess("register with password")
 
     def changeMyHash(self, digest=None):
@@ -108,4 +120,3 @@ class Procedures(object):
         self.click(formName + "_getDigestButton")
         self.waitForTraces(["gotDigest"])
         self.endProcess("obtain hash")
-

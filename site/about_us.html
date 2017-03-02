@@ -1,0 +1,160 @@
+{% extends "tmpl/page.html" %}
+
+{% set title = 'rólunk' %}
+
+{% set additionalJavascripts = ["js/vendor/owl.carousel.min.js", "js/about_us.js"] %}
+
+{% set additionalCss = ["css/owl.carousel.css", "css/owl.theme.css", "css/ada_blog.css"] %}
+
+{% block contents %}
+<!-- Heading -->
+		<section id="heading" class="container">
+			<h1>Rólunk</h1>
+		</section>
+<!-- Heading end -->
+	
+    <section id="blog-single wrapper">
+        <div class="container">
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                 <div class="blog-desc">
+					<div id="sort">
+						<p>
+ Az Anonim Digitális Azonosító szolgáltatás (ADA) a Közösségi Digitális Eszközök Alapítvány 
+ támogatott projektje. A projektet közösségi munkában és finanszírozással hozták létre 
+ informatikusok, közgazdászok,  szociológusok, média szakemberek és még sokan mások.
+						</p>
+						<h4>Az ADA projekt alapelvei:</h3>
+						<ul class="disced">
+							<li>átláthatóság a fejlesztésben, működésben és döntés hozatalban,</li>
+							<li>közösségi gondolkodás és cselekvés a működtetésben,</li>
+							<li>non profit  projekt, de gazdálkodása fenntartható legyen,</li>
+							<li>mindenki számára hozzáférhető legyen,</li>
+							<li>a Felhasználók ingyen használhatják. </li>
+						</ul>
+						<h4>Az ADA küldetése és célja:</h3>
+						<ul class="disced">
+							<li>egy közösségi, hiteles kommunikációs  infrastruktúra megteremtése;</li>
+							<li>a hitelesség és az anonimitás egyidejű biztosítása a felhasználók és alkalmazások számára;</li>
+							<li>hogy valamennyi állampolgár használja.</li>
+						</ul>
+					</div>
+                <div class="clearfix"></div>
+				</div>  <!-- blog footer end -->
+			</div>
+           
+    <!-- left blog part end -->
+
+    <!-- Right Blog part row start -->
+ {% include 'tmpl/right-sidebar.html' %}
+        </div>
+</section>
+
+<section id="team">
+    <div class="us container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="feature_header text-center">
+                    <h3 class="feature_title">Munkatársak</h3>
+                </div>
+            </div>  <!-- Col-md-12 End -->
+
+            <div id="owl-demo" class="owl-carousel owl-theme team-items">
+                <div class="item text-center">
+                    <div class="single-member">
+                        <div class="overlay-hover">
+                            <img src="images/team/PengGyorgy.jpg" alt="" class="img-responsive">
+                            <div class="overlay-effect">
+                                <ul class="social list-inline">
+                                    <li><a href="https://www.facebook.com/claymanus"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="https://plus.google.com/103027190788103881287"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/in/gy%C3%B6rgy-peng-1b150530"><i class="fa fa-linkedin-square"></i></a></li>
+                                    <li><a href="https://github.com/Claymanus"><i class="fa fa-github"></i></a></li>
+                                    <li><a href="mailto:gypeng@adatom.hu"><i class="fa fa-envelope"></i></a></li>
+                                </ul>
+                                <p>Azonnal visszatérünk a normális állapotokhoz, mihelyst bizonyosak leszünk abban, hogy mi is a normális</p>
+                            </div>
+                        </div>
+                        <h3>Peng György</h3>
+                        <h5>Mérnök informatikus,<br>az irányító testület tagja</h5>
+                    </div>
+                </div>  <!-- item wrapper end -->
+                <div class="item text-center">
+                    <div class="single-member">
+                        <div class="overlay-hover">
+                            <img src="images/team/Karoly.jpg" alt="" class="img-responsive">
+                            <div class="overlay-effect">
+                                <ul class="social list-inline">
+                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href=""><i class="fa fa-github"></i></a></li>
+                                    <li><a href=""><i class="fa fa-skype"></i></a></li>
+                                </ul>
+                                <p>"Foied vinom pipafo, cra carefo" Ma bort iszom és holnap nem lesz </p>
+                            </div>
+                        </div>
+                        <h3>Szabó Károly</h3>
+                        <h5>Szociológus<br>az irányító testület tagja</h5> 
+                    </div>
+                </div>  <!-- item wrapper end -->
+                <div class="item text-center">
+                    <div class="single-member">
+                        <div class="overlay-hover">
+                            <img src="images/team/magkicsi.jpg" alt="" class="img-responsive">
+                            <div class="overlay-effect">
+                                <ul class="social list-inline">
+                                    <li><a href="https://www.facebook.com/arpad.magosanyi"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="https://github.com/magwas"><i class="fa fa-github"></i></a></li>
+                                    <li><a href="mailto:mag@magwas.rulez.org"><i class="fa fa-envelope"></i></a></li>
+                                </ul>
+                                <p>Egyszer gyíkká változtattak, de már elmúlt.</p>
+                            </div>
+                        </div>
+                        <h3>Magosányi Árpád</h3>
+                        <h5>Szoftver architekt<br>az irányító testület tagja</h5>
+                    </div>
+                </div>  <!-- item wrapper end -->
+                <div class="item text-center">
+                    <div class="single-member">
+                        <div class="overlay-hover">
+                            <img src="images/team/madarasz.jpg" alt="" class="img-responsive">
+                            <div class="overlay-effect">
+                                <ul class="social list-inline">
+                                    <li><a href="https://www.facebook.com/csabam"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="www.twitter.com/nyiltkormanyzas"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="https://hu.linkedin.com/in/madaraszcsaba"><i class="fa fa-linkedin-square"></i></a></li>
+                                    <li><a href="mailto: csaba@opengovernment.hu"><i class="fa fa-envelope"></i></a></li>
+                                </ul>
+                                <p>Madár lakozik a földigilisztában és a nagy szellem pihen mindegyik fűszálban!</p>
+                            </div>
+                        </div>
+                        <h3>Madarász Csaba</h3>
+                        <h5>Kommunikáció<br>Marketing</h5>
+                    </div>
+                </div>  <!-- item wrapper end -->
+            </div>
+        </div>
+    </div> <!-- Conatiner Team end -->
+    <!-- </div> -->
+
+</section> 
+<!-- Footer Area Start -->
+<section class="container">
+					<div id="registration">
+						<h3 class="feature_title">Hogy működünk?</h3>
+						<ul class="disced">
+							<li>Fejlesztés:  nyílt forrás kódú szoftverek és megoldások alkalmazása</li>
+							<li>Működés: közösségi feladat vállalás, önkéntes munka és közösségi finanszírozás. </li>
+							<li>
+Döntéshozatal: Az  ADA projekt felelőse és irányítója az ADA 
+<a href="https://edemo.gitbooks.io/ada-iranyito-testulet-ugyrendje/content/">Irányító Testülete</a> 
+A testület nyitott ( az ADA létrehozásában és működtetésében szerepet vállalók meghatározott 
+feltételek mellett a tagjai lehetnek), ülései nyilvánosak, független és önszabályozó. 
+							</li>
+						</ul>
+					</div>
+</section>
+{% endblock %}

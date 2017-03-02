@@ -1,0 +1,37 @@
+{% import 'tmpl/head.html' as head %}
+ <!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+{{ head.head(title, additionalCss) }}
+	<body data-spy="scroll" data-target=".navbar-fixed-top">
+
+{% include 'tmpl/header.html' %}
+{% block contents %}contents{% endblock %}
+{% include 'tmpl/footer.html' %}
+		<!-- Back To Top Button -->
+		<div id="back-top" style="display:none;">
+			<a href="#slider_part" class="scroll" data-scroll>
+				<button class="btn btn-primary" title="Back to Top"><i class="fa fa-angle-up"></i></button>
+			</a>
+		</div>
+		<!-- End Back To Top Button -->
+
+	<!-- Javascript Files -->
+        <!-- Main jquery -->
+		<script
+			src="https://code.jquery.com/jquery-3.1.1.min.js"
+			integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+			crossorigin="anonymous"></script>
+        <!-- Bootstrap jQuery -->
+		<script 
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+			integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" 
+			crossorigin="anonymous"></script>
+		<!-- pagescript -->
+{% for script in additionalJavascripts %}
+		<script type="text/javascript" src="{{script}}"></script>
+{% endfor %}		
+    </body>
+</html>

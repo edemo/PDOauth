@@ -26,13 +26,13 @@ class Config(object):
     SSL_LOGOUT_URL = "https://local.sso.edemokraciagep.org:8889/ssl_logout/"
     START_URL = "{0}/static/fiokom.html".format(BASE_URL)
     LOGIN_URL = "{0}/static/login.html".format(BASE_URL)
-    PASSWORD_RESET_FORM_URL = START_URL
+    PASSWORD_RESET_FORM_URL = "{0}/static/passwordreset.html".format(BASE_URL)
     FACEBOOK_APP_ID = "1632759003625536"
     FACEBOOK_APP_SECRET = "2698fa37973500db2ae740f6c0005601"
     CA_CERTIFICATE_FILE = absolutePathForEnd2EndResource("server.crt")
     CA_KEY_FILE = absolutePathForEnd2EndResource("server.key")
     SERVICE_NAME = "eDemokrácia SSO"
-    DEREGISTRATION_URL = LOGIN_URL
+    DEREGISTRATION_URL = "{0}/static/deregistration.html".format(BASE_URL)
     EMAIL_DOMAIN = "local.sso.edemokraciagep.org"
 #    ANCHOR_URL = "https://anchor.edemokraciagep.org/"
     ANCHOR_URL = "https://local.sso.edemokraciagep.org:8890/"
@@ -67,7 +67,7 @@ The Test machine
     PASSWORD_RESET_EMAIL_SUBJECT = "password reset"
     PASSWORD_RESET_EMAIL_BODY_TEXT = """Dear {0.name},
 This is a reset email.
-Go to https://local.sso.edemokraciagep.org:8888/static/login.html?section=pwreset&secret={0.secret}
+Go to https://local.sso.edemokraciagep.org:8888/static/passwordreset.html?secret={0.secret}
 you have to do it until {0.expiry}.
 
 Sincerely,
@@ -76,7 +76,7 @@ The Test machine
     PASSWORD_RESET_EMAIL_BODY_HTML = """<html><head></head><body>
 Dear {0.name},<br>
 This is a reset email.<br/>
-Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?section=pwreset&secret={0.secret}">Click</a><br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/passwordreset.html?secret={0.secret}">Click</a><br/>
 you have to do it until {0.expiry}.<br/>
 <br/>
 Sincerely,<br/>
@@ -87,7 +87,7 @@ The Test machine
     DEREGISTRATION_EMAIL_SUBJECT = "deregistration email"
     DEREGISTRATION_EMAIL_BODY_TEXT = """Dear {0.name},
 This is a deregistration email.
-Go to https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}
+Go to https://local.sso.edemokraciagep.org:8888/static/deregistration.html?deregistration_secret={0.secret}
 you have to do it until {0.expiry}.
 
 Sincerely,
@@ -96,7 +96,7 @@ The Test machine
     DEREGISTRATION_EMAIL_BODY_HTML = """<html><head></head><body>
 Dear {0.name},<br>
 This is a deregistration email.<br/>
-Click <a href="https://local.sso.edemokraciagep.org:8888/static/login.html?deregistration_secret={0.secret}">here</a><br/>
+Click <a href="https://local.sso.edemokraciagep.org:8888/static/deregistration.html?deregistration_secret={0.secret}">here</a><br/>
 you have to do it until {0.expiry}.<br/>
 <br/>
 Sincerely,<br/>

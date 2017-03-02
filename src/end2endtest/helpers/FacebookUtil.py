@@ -54,7 +54,7 @@ class FacebookUtil(object):
         self.click("registration-form_submitButton")
 
     def handleFbRegistrationAppLogin(self, user=None, useEmail=True):
-        self.click("register")
+        self.click("section_changer_register")
         self.pushFbButtonWhenready()
         self.handleFbLoginPage(user)
         self.waitForJsState('getMecallback')
@@ -80,6 +80,6 @@ class FacebookUtil(object):
             count += 1
             time.sleep(1)
 
-    def pushFbButtonWhenready(self):
+    def pushFbButtonWhenready(self, buttonId="registration-form-method-selector-fb"):
         self.waitForJsState('fbAsyncInit')
-        return self.click("registration-form-method-selector-fb")
+        return self.click(buttonId)

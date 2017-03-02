@@ -21,7 +21,7 @@ class TokenTest(TestCase,BrowsingUtil):
     def obtainAccessToken(self):
         app = TE.app
         self.callOauthUri()
-        self.registerUser(buttonId="register")
+        self.registerUser(buttonId="section_changer_register")
         self.waitFortestAppRedirectUri()
         self.assertTrue(TE.driver.current_url.startswith(app.redirect_uri))
         answer = self.getOauthToken(app)

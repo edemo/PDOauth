@@ -86,6 +86,8 @@ USAGE
         args = parser.parse_args()
 
         verbose = args.verbose
+        if verbose == None:
+                verbose=0
         email = args.email[0]
         assurer_email = args.assurer[0]
         assurances = args.assurance
@@ -94,12 +96,11 @@ USAGE
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###
         return 0
-    except Exception, e:
-        if DEBUG or TESTRUN:
-            raise(e)
+    except Exception as e:
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
+        raise(e)
         return 2
 
 def do_main(verbose, email, assurer_email, assurances):
@@ -107,14 +108,14 @@ def do_main(verbose, email, assurer_email, assurances):
         print("Setting assurances {0} for user {1} by {2}".format(assurances, email, assurer_email))
     user = User.getByEmail(email)
     if user is None:
-        print "no such user: {0}".format(email)
+        print ("no such user: {0}".format(email))
         return 2
     if assurer_email == 'self':
         assurer = user
     else:
         assurer = User.getByEmail(assurer_email)
     if user is None:
-        print "no such assurer: {0}".format(assurer_email)
+        print ("no such assurer: {0}".format(assurer_email))
         return 2
     for ass in assurances:
         if verbose > 1:

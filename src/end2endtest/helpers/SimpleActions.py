@@ -21,7 +21,9 @@ class element_to_be_useable(object):
         if element:
             try:
                 displayValue=element.value_of_css_property('display')
-                displayok = displayValue in ('block', 'inline','inline-block')
+                visibilityValue=element.value_of_css_property('visibility')
+                displayok = displayValue != 'none'
+                visibilityok = visibilityValue != 'hidden'
                 displayed = element.is_displayed()
                 enabled = element.is_enabled()
                 if displayed and enabled and displayok:
@@ -66,7 +68,7 @@ class SimpleActions(object):
         print(element)
         TE.logfile.write(element)
         TE.logfile.write("\n")
-    
+
     def beginProcess(self, name):
         self.logAction('<process name="{0}">'.format(name))
         self.currentProcess.append(name)
@@ -96,19 +98,32 @@ class SimpleActions(object):
         element.clear()
         element.send_keys(value)
 
+    def sendEnter(self, fieldId):
+        self.logAction('<sendEnter fieldid="{0}">'.format(fieldId))
+        element = TE.driver.find_element_by_id(fieldId)
+        element.send_keys(Keys.ENTER)
+
     def selectOptionValue(self, fieldId, value):
         self.logAction('<selectOptionValue fieldid="{0}" value="{1}">'.format(fieldId, value))
         element = TE.driver.find_element_by_xpath("//select[@id='{0}']/option[@value='{1}']".format(fieldId, value))
         element.click()
 
-    def tickCheckbox(self, elementId):
+    def clickCheckbox(self, elementId):
         self.logAction('<tickCheckbox fieldid="{0}">'.format(elementId))
         element = TE.driver.find_element_by_id(elementId)
         if type(TE.driver) == FIREFOXDRIVER:
             element.send_keys(Keys.SPACE)
         else:
             element.click()
+        return element
+
+    def tickCheckbox(self, elementId):
+        element = self.clickCheckbox(elementId)
         self.assertTrue(element.is_selected())
+
+    def untickCheckbox(self, elementId):
+        element = self.clickCheckbox(elementId)
+        self.assertFalse(element.is_selected())
 
     def click(self, fieldId):
         self.logAction('<click fieldid="{0}">'.format(fieldId))
@@ -194,7 +209,7 @@ class SimpleActions(object):
         return self.waitUntilElementEnabled("greatings")
 
     def switchToTab(self,tab):
-        self.click("nav-bar-{0}".format(tab))
+        self.click("nav-bar-{0}_a".format(tab))
         self.waitUntilElementEnabled("{0}_section".format(tab))
 
     def switchToSection(self,tab):
@@ -216,6 +231,12 @@ class SimpleActions(object):
     def goToLoginPage(self):
         TE.driver.get(TE.loginUrl)
         self.waitLoginPage()
+
+    def goToRegisterPage(self):
+        TE.driver.get("{0}?section=register".format(TE.loginUrl))
+        self.waitForTraces(["userIsNotLoggedIn"])
+        self.waitUntilElementEnabled("registration-form_identifier_input")
+        time.sleep(3)
 
     def goToTestPage(self):
         TE.driver.get(TE.testUrl)
