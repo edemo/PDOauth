@@ -9,8 +9,8 @@ import x from './modules/back_to_top' //back to top button
 *
 * Date: Nov 26, 2013
 */
+
 (function( $ ){
-  "use strict";
 
   $.fn.counterUp = function( options ) {
 
@@ -19,6 +19,7 @@ import x from './modules/back_to_top' //back to top button
         'time': 400,
         'delay': 10
     }, options);
+
 
     return this.each(function(){
 
@@ -86,6 +87,6 @@ import x from './modules/back_to_top' //back to top button
 
   };
 
-})( jQuery );
+})( window.jQuery );
 
 $(document).ready(pageScript.main);
