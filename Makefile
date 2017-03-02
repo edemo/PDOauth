@@ -13,6 +13,8 @@ js_files := $(shell find site/js -maxdepth 1 -type f -name '*.js' -printf '%f\n'
 
 js_test_files := $(shell find site/test/end2endTests -maxdepth 1 -type f -name '*.js' -printf '%f\n')
 
+js_unittest_files := $(shell find site/js/unittests -maxdepth 1 -type f -name '*.js' -printf '%f\n')
+
 all:
 	docker run --cpuset-cpus=0-1 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -it magwas/edemotest:master /PDOauth/tools/script_from_outside
 
@@ -20,6 +22,11 @@ all:
 	./tools/po2json $< >$@
 
 install: static static/locale/hu.json
+
+jsunittests: static-jsunittests
+	for test in jsunit/*.js; do \
+	/usr/local/lib/node_modules/qunit-cli/bin/qunit-cli $$test ;\
+	done
 
 deploy: uris install
 
@@ -46,6 +53,9 @@ static-js:
 static-jstest:
 	for js in $(js_test_files); do rollup --format=iife --output=static/test/end2endTests/$$js -- site/test/end2endTests/$$js; done
 
+static-jsunittests:
+	for js in $(js_unittest_files); do rollup --format=iife --output=jsunit/$$js -- site/js/unittests/$$js; done
+
 static-html:
 	for page in $(HTML_FILES); do ./tools/compilehtml $$page; done
 
@@ -55,7 +65,7 @@ testenv:
 	docker run --cpuset-cpus=0-1 --memory=2G --rm -p 5900:5900 -p 5432:5432 -p 8888:8888 -v /var/run/postgresql:/var/run/postgresql -v $$(pwd):/PDOauth -w /PDOauth -it magwas/edemotest:master
 
 clean:
-	rm -rf doc lib tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
+	rm -rf doc lib jsunit tmp static/qunit-1.18.0.css static/qunit-1.18.0.js static/qunit-reporter-junit.js PDAnchor
 
 prepare2e: install testsetup runanchor runserver runemail
 
@@ -94,7 +104,7 @@ killemail:
 integrationtests: testsetup
 	PYTHONPATH=src python3-coverage run -m unittest discover -v -f -s src/integrationtest -p "*.py"
 
-tests: testsetup
+tests: testsetup jsunittests
 	PYTHONPATH=src python3-coverage run -m unittest discover -v -f -s src/test -p "*.py"
 
 testsetup:
