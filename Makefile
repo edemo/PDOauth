@@ -21,6 +21,9 @@ all:
 
 install: static static/locale/hu.json
 
+jsunittests:
+	/usr/local/lib/node_modules/qunit-cli/bin/qunit-cli site/test/unitTests/test.js
+
 deploy: uris install
 
 checkall:  uris_ install tests integrationtests end2endtest xmldoc
@@ -94,7 +97,7 @@ killemail:
 integrationtests: testsetup
 	PYTHONPATH=src python3-coverage run -m unittest discover -v -f -s src/integrationtest -p "*.py"
 
-tests: testsetup
+tests: testsetup jsunittests
 	PYTHONPATH=src python3-coverage run -m unittest discover -v -f -s src/test -p "*.py"
 
 testsetup:
