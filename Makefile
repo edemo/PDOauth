@@ -25,7 +25,7 @@ install: static static/locale/hu.json
 
 jsunittests: static-jsunittests
 	for test in jsunit/*.js; do \
-	/usr/local/lib/node_modules/qunit-cli/bin/qunit-cli $$test ;\
+	node $$test ;\
 	done
 
 deploy: uris install
