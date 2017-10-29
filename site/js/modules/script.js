@@ -289,11 +289,11 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.InitiatePasswordReset = function( myForm ) {
 		var emailInput = document.getElementById( myForm+"_email_input" )
-		if ( emailInput != "" )
+		if ( emailInput.value != "" )
 			Ajax.get( "/v1/users/" + self.mailRepair( emailInput.value ) + "/passwordreset", { next: self.myCallback } );
 		else {
 			emailInput.className = "missing";
-			Msg.display( { title: _("Data error"), error: _("Email address is missing")} )
+			Msg.display( { title: _("Adathiba"), error: _("Nem adtad meg az email címed.")} )
 		}
 	}
 	
