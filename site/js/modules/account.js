@@ -160,7 +160,7 @@ PageScript.prototype.main = function() {
 		self.refreshTheNavbar()
 		Ajax.ajaxget( '/v1/getmyapps', self.myappsCallback)
 		
-		if (data.assurances.hashgiven && data.assurances.emailverification) {
+		if (data.assurances.hashgiven /* && data.assurances.emailverification*/) {
 			Ajax.get( "assurers.json", { next: self.fillAssurersTable }, true)
 		}
 		
@@ -183,7 +183,21 @@ PageScript.prototype.main = function() {
 			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
 			else return;
 		}
-		else self.displayTheSection();
+		else {
+			self.displayTheSection();
+			if (!(data.assurances.magyar)) {
+				var the_message="Válassz egy Tanúsítót, akinél azonosítani tudod magad! Kattints a tanúsítás fülre!";
+				if (!(data.assurances.hashgiven)){
+					the_message="Készítsd el a Titkos Kódodat! Kattints a beállítások fülre!";
+					if (!(data.assurances.emailverification)){
+						the_message="Az email címed még nincs visszaigazolva. Nézd meg az email fiókod! (Ha nem találod a visszaigazoló levelet, a spam-ben is nézd meg, vagy a 'beállítások' fül 'egyebek' részében újra küldheted magadnak.)";
+					}
+				}
+				Msg.display({
+					title: "",
+					success: the_message})
+			}
+		}	
 		window.traces.push('userIsLoggedIn')
 	}
 
@@ -215,13 +229,14 @@ PageScript.prototype.main = function() {
 	PageScript.prototype.verifyEmail=function() {
 		var target   = document.getElementById("email_verification_message").innerHTML,
 			onsuccess = function(text){
-				target=_("Your email validation was succesfull.")
+				Msg.display({
+					title: "Szerverüzenet:",
+					success: _("Your email validation was succesfull.")})
 			},
 			onerror   = function(text){
-				var data=JSON.parse(text);
-				target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
+				Msg.display(self.processErrors(JSON.parse(text)))
 			}
-		Ajax.get( "/v1/verify_email/" + self.QueryString.secret, { next: onsucces, error: onerror } )
+		Ajax.get( "/v1/verify_email/" + self.QueryString.secret, { next: onsuccess, error: onerror } )
 	}
 
 	PageScript.prototype.changeEmail=function(confirm) {

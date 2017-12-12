@@ -289,11 +289,11 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.InitiatePasswordReset = function( myForm ) {
 		var emailInput = document.getElementById( myForm+"_email_input" )
-		if ( emailInput != "" )
+		if ( emailInput.value != "" )
 			Ajax.get( "/v1/users/" + self.mailRepair( emailInput.value ) + "/passwordreset", { next: self.myCallback } );
 		else {
 			emailInput.className = "missing";
-			Msg.display( { title: _("Data error"), error: _("Email address is missing")} )
+			Msg.display( { title: _("Adathiba"), error: _("Nem adtad meg az email címed.")} )
 		}
 	}
 	
@@ -387,7 +387,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				Control.show("registration-form-password-container")
 				Control.show("registration-form-username-container")
 				Control.setValue("registration-form_secret_input","")
-				Control.setValue("registration-form_identifier_input")
+				Control.setValue("registration-form_identifier_input","")
 			break;
 			case "fb":
 				heading = _("my facebook account")
