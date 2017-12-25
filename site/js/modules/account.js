@@ -446,9 +446,11 @@ PageScript.prototype.main = function() {
 		document.getElementById("AddPasswordCredentialForm_cancel-button").onclick = function(){ Control.hide( 'AddPasswordCredentialForm' ) }	
 	}	
 
-	PageScript.prototype.callSetAppCanEmailMe = function(app){
-		var value=document.getElementById("application-allow-email-me-"+app).checked
-		self.setAppCanEmailMe(app,value,self.myCallback)
+	function callSetAppCanEmailMe(app) {
+		return function () {
+			var value=document.getElementById("application-allow-email-me-"+app).checked
+			self.setAppCanEmailMe(app,value,self.myCallback)
+		}
 	}
 	
 	PageScript.prototype.myappsCallback = function(status,text){
@@ -474,7 +476,6 @@ PageScript.prototype.main = function() {
 				<td>\
 					<input type="checkbox" id="application-allow-email-me-'+app+'"\
 					'+((self.aps[app].email_enabled)?'checked':'')+'\
-					onclick="javascript: pageScript.callSetAppCanEmailMe('+app+')">\
 				</td>\
 			</tr>'
 			}	
@@ -482,6 +483,11 @@ PageScript.prototype.main = function() {
 		applist +='\
 		</table>';
 		document.getElementById("me_Applications").innerHTML=applist;
+		for( var app in self.aps){ 
+			if (self.aps[app].username) { 
+				document.getElementById('application-allow-email-me-'+app).addEventListener("click",callSetAppCanEmailMe(app));
+			}
+		}
 		window.traces.push("myappsCallback")
 	}
 
