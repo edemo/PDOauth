@@ -8,7 +8,6 @@ export var gettext = new (function() {
 	$this.gettext = function() {
 		if (!arguments || arguments.length < 1 || !RegExp) return; // called without arguments
 		var args=$.map(arguments, function(value, index){return [value]})
-        console.log(args)
         if (typeof args[0] != "string") {
                 args=args[0]
                 var str=args.shift()
