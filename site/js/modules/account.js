@@ -32,6 +32,13 @@ PageScript.prototype.main = function() {
 //	setup_reset_password_form_buttons(self)
 	setup_email_change_form_buttons(self)
 	var section = self.QueryString.section
+	var tab = self.QueryString.tab
+	if (tab == 'tanusitas') {
+		var b = document.getElementById('assurers_section_link');
+		if(b) {
+			b.click();
+		}
+	}
 	switch (section) {
 		case "all" :
 		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
@@ -190,7 +197,7 @@ PageScript.prototype.main = function() {
 				if (!(data.assurances.hashgiven)){
 					the_message="Készítsd el a Titkos Kódodat! Kattints a beállítások fülre!";
 					if (!(data.assurances.emailverification)){
-						the_message="Az email címed még nincs visszaigazolva. Nézd meg az email fiókod! (Ha nem találod a visszaigazoló levelet, a spam-ben is nézd meg, vagy a 'beállítások' fül 'egyebek' részében újra küldheted magadnak.)";
+						the_message="Az email címed még nincs visszaigazolva. Nézd meg az email fiókod! (Ha nem találod a visszaigazoló levelet, akkor várj egy kicsit, mert 10 perc is eltelhet a kézbesitéséig. A spam-ben is nézd meg. Ha ott találtad, nyomj rá a 'nem spam' gombra, hogy a link kattinthatóvá váljék. Ha mindezek nem sikerültek, a 'beállítások' fül 'egyebek' részében újra küldheted magadnak.)";
 					}
 				}
 				Msg.display({
