@@ -1,6 +1,5 @@
 from helpers.BrowsingUtil import BrowsingUtil, TE
 from unittest.case import TestCase
-import pdb
 
 class LogoutE2ETest(TestCase,BrowsingUtil):
 
@@ -12,12 +11,12 @@ class LogoutE2ETest(TestCase,BrowsingUtil):
         self.untickCheckbox("allow_app_sso_autologout")
         TE.driver.get(baseUrl + "/static/logout.html")
         self.waitUntilElementEnabled("flag")
-        TE.driver.get(baseUrl + "/static/fiokom.html")
+        self.goToLoginPage()
         self.waitUntilElementEnabled("nav-bar-my_account")
         self.switchToSection("settings")
         self.tickCheckbox("allow_app_sso_autologout")
         TE.driver.get(baseUrl + "/static/logout.html")
         self.waitUntilElementEnabled("flag")
-        TE.driver.get(baseUrl + "/static/fiokom.html")
+        self.goToLoginPage()
         self.waitUntilElementEnabled("nav-bar-login")
         self.logOut()

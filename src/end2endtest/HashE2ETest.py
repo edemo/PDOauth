@@ -46,7 +46,7 @@ class HashTest(TestCase,BrowsingUtil, UserUtil, CryptoTestUtil):
         self.click("viewChangeHashForm")
         self.click("create_hash_here")
         self.obtainHash("11111111110", mothername, "change-hash-form")
-        self.closeMessage()
+        self.closeTwoMessages()
         self.assertElementMatchesRe("change-hash-form_digest-pre", "[0-9a-f]{10}")
         self.switchToSection("account")
         self.assertElementMatchesRe("me_Data", "van Titkos K\xf3d")
