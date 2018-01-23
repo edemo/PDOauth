@@ -14,12 +14,20 @@ Msg.setTarget('div')
 PageScript.prototype.page = "login";
 
 PageScript.prototype.main = function() {
+	Cookie.set("teszt","valami")
+	if (Cookie.get("teszt")) {
+		console.log("allow_cookie")
 	self.parseAppCallbackUrl();
 	self.dataGivingAccepted=false;
 	console.log(self.neededAssurances)
 	console.log(self.appDomain)
 	self.commonInit()
 	setup_login_page_controlls(self)
+	}
+	else {
+		console.log("don't allow_cookie")
+		parent.postMessage("blank","*");
+	}
 }
 
 PageScript.prototype.gettextCallback = function(response){
@@ -82,6 +90,7 @@ PageScript.prototype.userIsLoggedIn = function(text) {
 			return
 		}
 	}
+	console.log("logged in");
 	Ajax.get( '/v1/getmyapps', { next: self.myappsCallback } )
 	if ( self.dataGivingAccepted ) {
 		if( self.QueryString.next) {

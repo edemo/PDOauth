@@ -8,7 +8,6 @@ export var gettext = new (function() {
 	$this.gettext = function() {
 		if (!arguments || arguments.length < 1 || !RegExp) return; // called without arguments
 		var args=$.map(arguments, function(value, index){return [value]})
-        console.log(args)
         if (typeof args[0] != "string") {
                 args=args[0]
                 var str=args.shift()
@@ -94,12 +93,12 @@ export var gettext = new (function() {
 	}
 	
 	$this.loadPo = function( locale, next ) {
-		var next = next || function(){},
-			dictLoaded = function( response ){
+		var next = next || function(){};
+		var	dictLoaded = function( response ){
 				$this.initGettext( response )
 				next( true )
-			},
-			dictFailed = function( response ){
+			};
+		var	dictFailed = function( response ){
 				$this.mockGettext()
 				next( false, response )
 			}	

@@ -10,6 +10,7 @@ messages.pot
 tmp/
 lib/
 doc/static
+static
 static/qunit-1.18.0.css
 static/qunit-1.18.0.js
 static/qunit-reporter-junit.js

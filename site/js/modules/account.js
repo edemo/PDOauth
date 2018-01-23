@@ -32,6 +32,13 @@ PageScript.prototype.main = function() {
 //	setup_reset_password_form_buttons(self)
 	setup_email_change_form_buttons(self)
 	var section = self.QueryString.section
+	var tab = self.QueryString.tab
+	if (tab == 'tanusitas') {
+		var b = document.getElementById('assurers_section_link');
+		if(b) {
+			b.click();
+		}
+	}
 	switch (section) {
 		case "all" :
 		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="block"; } );
@@ -160,7 +167,7 @@ PageScript.prototype.main = function() {
 		self.refreshTheNavbar()
 		Ajax.ajaxget( '/v1/getmyapps', self.myappsCallback)
 		
-		if (data.assurances.hashgiven && data.assurances.emailverification) {
+		if (data.assurances.hashgiven /* && data.assurances.emailverification*/) {
 			Ajax.get( "assurers.json", { next: self.fillAssurersTable }, true)
 		}
 		
@@ -183,7 +190,21 @@ PageScript.prototype.main = function() {
 			if (self.QueryString.section!="all") self.displayTheSection(self.QueryString.section);
 			else return;
 		}
-		else self.displayTheSection();
+		else {
+			self.displayTheSection();
+			if (!(data.assurances.magyar)) {
+				var the_message="Válassz egy Tanúsítót, akinél azonosítani tudod magad! Kattints a tanúsítás fülre!";
+				if (!(data.assurances.hashgiven)){
+					the_message="Készítsd el a Titkos Kódodat! Kattints a beállítások fülre!";
+					if (!(data.assurances.emailverification)){
+						the_message="Az email címed még nincs visszaigazolva. Nézd meg az email fiókod! (Ha nem találod a visszaigazoló levelet, akkor várj egy kicsit, mert 10 perc is eltelhet a kézbesitéséig. A spam-ben is nézd meg. Ha ott találtad, nyomj rá a 'nem spam' gombra, hogy a link kattinthatóvá váljék. Ha mindezek nem sikerültek, a 'beállítások' fül 'egyebek' részében újra küldheted magadnak.)";
+					}
+				}
+				Msg.display({
+					title: "",
+					success: the_message})
+			}
+		}	
 		window.traces.push('userIsLoggedIn')
 	}
 
@@ -215,13 +236,14 @@ PageScript.prototype.main = function() {
 	PageScript.prototype.verifyEmail=function() {
 		var target   = document.getElementById("email_verification_message").innerHTML,
 			onsuccess = function(text){
-				target=_("Your email validation was succesfull.")
+				Msg.display({
+					title: "Szerverüzenet:",
+					success: _("Your email validation was succesfull.")})
 			},
 			onerror   = function(text){
-				var data=JSON.parse(text);
-				target=_("Your email validation <b>failed</b>.<br/>The servers response: ")+_(data.errors[0])
+				Msg.display(self.processErrors(JSON.parse(text)))
 			}
-		Ajax.get( "/v1/verify_email/" + self.QueryString.secret, { next: onsucces, error: onerror } )
+		Ajax.get( "/v1/verify_email/" + self.QueryString.secret, { next: onsuccess, error: onerror } )
 	}
 
 	PageScript.prototype.changeEmail=function(confirm) {
@@ -431,9 +453,11 @@ PageScript.prototype.main = function() {
 		document.getElementById("AddPasswordCredentialForm_cancel-button").onclick = function(){ Control.hide( 'AddPasswordCredentialForm' ) }	
 	}	
 
-	PageScript.prototype.callSetAppCanEmailMe = function(app){
-		var value=document.getElementById("application-allow-email-me-"+app).checked
-		self.setAppCanEmailMe(app,value,self.myCallback)
+	function callSetAppCanEmailMe(app) {
+		return function () {
+			var value=document.getElementById("application-allow-email-me-"+app).checked
+			self.setAppCanEmailMe(app,value,self.myCallback)
+		}
 	}
 	
 	PageScript.prototype.myappsCallback = function(status,text){
@@ -459,7 +483,6 @@ PageScript.prototype.main = function() {
 				<td>\
 					<input type="checkbox" id="application-allow-email-me-'+app+'"\
 					'+((self.aps[app].email_enabled)?'checked':'')+'\
-					onclick="javascript: pageScript.callSetAppCanEmailMe('+app+')">\
 				</td>\
 			</tr>'
 			}	
@@ -467,6 +490,11 @@ PageScript.prototype.main = function() {
 		applist +='\
 		</table>';
 		document.getElementById("me_Applications").innerHTML=applist;
+		for( var app in self.aps){ 
+			if (self.aps[app].username) { 
+				document.getElementById('application-allow-email-me-'+app).addEventListener("click",callSetAppCanEmailMe(app));
+			}
+		}
 		window.traces.push("myappsCallback")
 	}
 

@@ -103,7 +103,7 @@ export function getter( formName, callback ) {
 }
 	
 export function normalizeString( val ) {
-	var   accented = "������������������",
+	var   accented = "öüóőúéáűíÖÜÓŐÚÉÁŰÍ",
 		unaccented = "ouooueauiouooueaui",
 		s = "",
 		c;
@@ -114,7 +114,7 @@ export function normalizeString( val ) {
 		s=s+c;
 	  } else if(c.match('[ABCDEFGHIJKLMNOPQRSTUVXYZ]')) {
 		s=s+c.toLowerCase();
-	  } else if(c.match('['+accented+']')) {
+	  } else if(c.match(/[öüóőúéáűíÖÜÓŐÚÉÁŰÍ]/g)) {
 		for (var j = 0, alen = accented.length; j <alen; j++) {
 		  if(c.match(accented[j])) {
 			s=s+unaccented[j];

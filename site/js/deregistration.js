@@ -6,6 +6,7 @@ import { setup_the_deregister_form_buttons } from './modules/setup_buttons'
 import * as Ajax from './modules/ajax'
 import * as Msg from './modules/messaging'
 import * as Control from './modules/control'
+import * as Cookie from './modules/cookie'
  
 var pageScript = new PageScript(),
 	$this=pageScript
@@ -54,7 +55,7 @@ PageScript.prototype.doDeregister = function() {
 	if ( document.getElementById("accept_deregister").checked ) {
 		if ( $this.QueryString.secret ) {
 			var post = {
-				csrf_token: $this.getCookie("csrf"),
+				csrf_token: Cookie.get("csrf"),
 				deregister_secret: $this.QueryString.secret
 			}
 			Ajax.post( "/v1/deregister_doit", post, { next: deregisterCallback } )
