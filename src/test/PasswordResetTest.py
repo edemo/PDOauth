@@ -43,7 +43,7 @@ class PasswordResetTest(PDUnitTest, EmailUtil):
     
     def test_password_reset_email_send_for_invalid_email_fails(self):
         self.assertReportedError(self._sendPasswordResetEmail, ["invalid@email.com"],
-                400, ['Invalid email address'])
+                400, ['Invalid email address',"invalid@email.com"])
 
     
     def test_successful_password_reset_sets_the_password(self):
