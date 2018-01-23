@@ -59,6 +59,10 @@
 						"expires":"never"
 					},
 					{
+						"assurance":"emagyar",
+						"expires":"never"
+					},
+					{
 						"assurance":"assurer",
 						"expires":"never"
 					}
@@ -86,6 +90,45 @@
 			"name":"Lang András",
 			"email":"lang.andras@gmail.com",
 			"districts":["Budapest", "Szentendre"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		},
+		{
+			"name":"Barják László",
+			"email":"barjak.laszlo@gmail.com",
+			"districts":["1111 irányitószám körzete"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		},
+		{
+			"name":"Kovács Andrea",
+			"email":"kovacs.andrea.mail@gmail.com",
+			"districts":["Debrecen"],
+			"assurances":
+				[
+					{
+						"assurance":"magyar",
+						"expires":"never"
+					}
+				],
+			"availability":"yes"
+		},
+		{
+			"name":"Gallai Virág",
+			"email":"gallaivirag42@gmail.com",
+			"districts":["Székesfehérvár"],
 			"assurances":
 				[
 					{
