@@ -7,6 +7,7 @@ class Procedures(object):
     def logOut(self):
         self.beginProcess("logout")
         self.goToLoginPage()
+        self.closeModalIfThereIsOne()
         element = TE.driver.find_element_by_id("nav-bar-logout")
         displayed=element.value_of_css_property('display')
         if displayed=="list-item":
@@ -93,15 +94,15 @@ class Procedures(object):
         self.beginProcess("change your hash")
         if digest is None:
             digest = self.createHash()
+        self.closeModalIfThereIsOne()
         self.click("settings_section_link")
         print(TE.driver.execute_script("return document.getElementById('viewChangeHashForm').onclick.toString()"))
-        print(self.getTraces())
         self.click("viewChangeHashForm")
-        print(self.getTraces())
+        self.waitForTraces(['viewChangeHashForm'])
         self.fillInField("change-hash-form_digest_input", digest)
         self.click("changeHash")
+        self.closeTwoMessages()
         self.observeField("PopupWindow_SuccessDiv")
-        self.closeMessage()
         self.endProcess("change your hash")
         return digest
 

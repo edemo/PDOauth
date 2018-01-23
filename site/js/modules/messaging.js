@@ -54,6 +54,7 @@ export function closePopup(popupCallback) {
 	Control.innerHTML("PopupWindow_ErrorDiv","")
 	Control.innerHTML("PopupWindow_MessageDiv","")
 	Control.innerHTML("PopupWindow_SuccessDiv","")
+    $('.modal-backdrop').remove();
 	if ( popupCallback ) popupCallback();
 	window.traces.push("popup closed")
 	return "closePopup";

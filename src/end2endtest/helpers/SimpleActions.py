@@ -110,6 +110,12 @@ class SimpleActions(object):
 
     def clickCheckbox(self, elementId):
         self.logAction('<tickCheckbox fieldid="{0}">'.format(elementId))
+        TE.driver.execute_script("""
+            window.scrollTo(
+                0,
+                document.getElementById('{0}').getBoundingClientRect().top-
+                 document.body.getBoundingClientRect().top-
+                 100)""".format(elementId))
         element = TE.driver.find_element_by_id(elementId)
         if type(TE.driver) == FIREFOXDRIVER:
             element.send_keys(Keys.SPACE)
@@ -190,6 +196,37 @@ class SimpleActions(object):
                 return False
         return True
 
+    def waitModalDissapear(self):
+        maxCount = 3
+        count = 0
+        modal = TE.driver.find_element_by_id("myModal")
+        while not 'none' == modal.value_of_css_property('display'):
+            if count > maxCount:
+                TE.driver.save_screenshot("shippable/pageTimeout.png")
+                self.assertFalse("timeout waiting for modal dissapearance state")
+            time.sleep(1)
+            count += 1
+
+    def waitModalAppear(self):
+        maxCount = 3
+        count = 0
+        modal = TE.driver.find_element_by_id("myModal")
+        print("wait modal "+modal.value_of_css_property('display'))
+        while 'none' == modal.value_of_css_property('display'):
+            print(modal.value_of_css_property('display'))
+            if count > maxCount:
+                TE.driver.save_screenshot("shippable/pageTimeout.png")
+                self.assertFalse("timeout waiting for modal appearance state")
+            time.sleep(1)
+            count += 1
+
+
+    def closeModalIfThereIsOne(self):
+        closeButton = TE.driver.find_element_by_id("PopupWindow_CloseButton2")
+        if 'none' != closeButton.value_of_css_property('display'):
+            self.click('PopupWindow_CloseButton2')
+            self.waitModalDissapear()
+
     def waitForTraces(self, traces):
         maxCount = 40
         count = 0
@@ -199,7 +236,7 @@ class SimpleActions(object):
                 self.assertFalse("timeout waiting for javascript state")
             time.sleep(1)
             count += 1
-
+        
     def waitLoginPage(self):
         self.waitForTraces(["initialized", "main end", "fbAsyncInit"])
         return self.waitUntilElementEnabled("nav-bar-aboutus")
@@ -217,20 +254,30 @@ class SimpleActions(object):
         self.click(element)
         self.waitUntilElementEnabled("{0}_section".format(tab))
 
-    def actuallyIHaveNoClueWhyWeHaveToWaitHere(self):
-        time.sleep(1)
-
     def closeMessage(self, closeWait=True):
         self.waitForMessage2()
         self.waitForTraces(['MSGbox ready'])
+        self.waitModalAppear()
         TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
+        self.waitModalDissapear()
         if closeWait:
             self.waitForTraces(['popup closed'])
-        self.actuallyIHaveNoClueWhyWeHaveToWaitHere()
+
+    def closeTwoMessages(self, closeWait=True):
+        self.waitForMessage2()
+        self.waitForTraces(['MSGbox ready'])
+        self.waitModalAppear()
+        TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
+        time.sleep(1);
+        TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
+        self.waitModalDissapear()
+        if closeWait:
+            self.waitForTraces(['popup closed'])
 
     def goToLoginPage(self):
         TE.driver.get(TE.loginUrl)
         self.waitLoginPage()
+        self.closeModalIfThereIsOne()
 
     def goToRegisterPage(self):
         TE.driver.get("{0}?section=register".format(TE.loginUrl))

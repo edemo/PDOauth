@@ -243,7 +243,7 @@
 												<tr id="change-email-form_container">
 													<td nowrap><b>E-mail cím:</b></td>
 													<td id="email-change">
-														<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" >
+														<input type="email" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" >
 													</td>
 													<td class="button-container">
 														<a id="emailChangeEditButton" class="btn btn_ fa fa-edit"></a>
@@ -273,7 +273,7 @@
 															<div class="bordered">
 																<label for="input">Személyi azonosító:</label>
 																<input type="text" placeholder="" id="change-hash-form_predigest_input">
-																<label for="mothername">Anjya neve:</label>
+																<label for="mothername">Anyja neve:</label>
 																<input type="text" placeholder="" id="change-hash-form_predigest_mothername">
 																<button type="button" id="change-hash-form_getDigestButton">A kód előállítása</button>
 																<div class="monitor" id="change-hash-form_predigest_monitor"></div>
@@ -334,7 +334,7 @@
 											<li>az új igazolásod látszódni fog az "Adataim" fül alatt</li>
 										</ul>
 										<p></p>
-                                         <h4><b>Tanúsítók listája</b></h4>
+                                         <h4><b>Tanúsítók listája (akkor látszik, ha már csináltál titkos kódot)</b></h4>
 										 <table id="assurers_table">
 											<tr>
 												<th>Név</th>
@@ -354,7 +354,7 @@
 										<h4><b>Felhasználó adatainak lekérdezése</b></h4>
 										<div id="check-the-user" class="form">
 											<label for="email">A Felhasználó email címe</label>
-											<input name="email" type="text" id="ByEmailForm_email_input">
+											<input name="email" type="email" id="ByEmailForm_email_input">
 											<button id="ByEmailForm_submitButton" type="button">Lekérdezés</button>
 										</div>
 										<h4><b>Igazolás kiadása</b></h4>

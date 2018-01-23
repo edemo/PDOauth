@@ -192,7 +192,7 @@ msgstr "A jelszavad sikeresen megváltoztattad"
 
 #: src/pdoauth/Messages.py:47
 msgid "This user does not have that digest"
-msgstr "A Felhasználónak nincs Titkos Kódja"
+msgstr "Az igazolás kiadása nem sikerült, nem egyezik a titkos kód"
 
 #: src/pdoauth/Messages.py:48
 msgid "No user with this hash"

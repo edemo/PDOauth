@@ -14,6 +14,10 @@ class LoginTest(PDUnitTest, UserUtil):
         resp = self.controller.doLogin(form)
         self.assertTrue("csrf=" in resp.headers['Set-Cookie'])
 
+    def test_login_returns_user_credentials(self):
+        form = self.prepareLoginForm()
+        resp = self.controller.doLogin(form)
+        self.assertTrue("credentials" in self.fromJson(resp).keys())
     
     def test_inactive_user_cannot_authenticate(self):
         form = self.prepareLoginForm(inactive = True)
