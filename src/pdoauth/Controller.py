@@ -361,7 +361,7 @@ class Controller(
     def doSendPasswordResetEmail(self, email):
         user = User.getByEmail(email)
         if user is None:
-            raise ReportedError([invalidEmailAdress])
+            raise ReportedError([invalidEmailAdress,email])
         self.sendPasswordResetMail(user)
         return self.simple_response(passwordResetSent)
 

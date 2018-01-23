@@ -18,7 +18,7 @@ var FaceBook = function(pageScript) {
 	FaceBook.prototype.registerCallBack = function(response) {
 		window.traces.push("registerCallBack begin")
 		if (response.status == 'connected' && response.authResponse.userID && response.authResponse.userID!="" && response.authResponse.accessToken && response.authResponse.accessToken!="" ) {
-			document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
+			document.getElementById("registration-form_email_input").value=response.authResponse.userID;
 			document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
 			FB.api('/me?fields=email', {fields:"email"}, function(r){ $this.getMeCallback(r)} );
 		} else {
@@ -40,7 +40,7 @@ var FaceBook = function(pageScript) {
 					version	: 'v2.3' // use version 2.2
 				});
 				$this.pageScript.isFBsdkLoaded=true
-				Control.activate("Facebook_login_button", facebook.fblogin)
+				Control.activate("login_facebook_button", facebook.fblogin)
 				Control.activate("registration-form-method-selector-fb", function(){pageScript.setRegistrationMethode('fb')})
 				window.traces.push("fbAsyncInit")
 			};
