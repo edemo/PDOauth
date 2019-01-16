@@ -11,6 +11,7 @@ apt-get install -y nodejs
 npm install -g rollup
 npm install jsdom qunit-cli
 pip install j2cli
+pip3 install --upgrade enforce
 
 export DISPLAY=:0
 Xvnc -SecurityTypes=None :0&
