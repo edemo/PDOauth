@@ -11,6 +11,7 @@ npm install jsdom qunit-cli
 pip install j2cli
 
 export DISPLAY=:0
+export LC_ALL=C
 Xvnc -SecurityTypes=None :0&
 export  NSS_DEFAULT_DB_TYPE="sql"
 export  I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
