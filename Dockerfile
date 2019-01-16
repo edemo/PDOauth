@@ -9,8 +9,7 @@ RUN apt-get -y install python3 make python3-pip openjdk-9-jre\
     software-properties-common vnc4server opensc sudo \
     python3-lxml chromium-chromedriver apache2-dev \
     fvwm vim python libapache2-mod-wsgi python-crypto\
-    syslog-ng-core python-pydoctor python-sourcecodegen python-pip\
-    nodejs-legacy npm
+    syslog-ng-core python-pydoctor python-sourcecodegen python-pip
 RUN service postgresql start &&\
     sudo -u postgres createuser root &&\
     sudo -u postgres createdb root -O root&&\
@@ -30,7 +29,10 @@ RUN cd /usr/local/lib &&\
     wget -q http://downloads.sourceforge.net/project/saxon/Saxon-HE/9.4/SaxonHE9-4-0-2J.zip &&\
     unzip SaxonHE9-4-0-2J.zip &&\
     rm -f SaxonHE9-4-0-2J.zip &&
-RUN npm install -g rollup jsdom qunit-cli j2cli
+RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+RUN apt-get install -y nodejs
+
+RUN npm install -g rollup jsdom qunit-cli
 RUN mkdir -p /dependencies/javascript
 RUN curl http://code.jquery.com/qunit/qunit-1.18.0.js -o /dependencies/javascript/qunit-1.18.0.js
 RUN curl http://code.jquery.com/qunit/qunit-1.18.0.css -o /dependencies/javascript/qunit-1.18.0.css
