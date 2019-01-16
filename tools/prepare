@@ -1,5 +1,7 @@
 #!/bin/bash
 set -xe
+export LC_ALL=en_US.UTF-8
+locale-gen en_US.UTF-8
 chown postgres /var/run/postgresql/
 apt update
 #apt -y --allow-downgrades install chromium-chromedriver=49.0.2623.108-0ubuntu1.1233 chromium-browser=49.0.2623.108-0ubuntu1.1233 chromium-codecs-ffmpeg=49.0.2623.108-0ubuntu1.1233
@@ -9,10 +11,8 @@ apt-get install -y nodejs
 npm install -g rollup
 npm install jsdom qunit-cli
 pip install j2cli
-locale-gen en_US.UTF-8
 
 export DISPLAY=:0
-export LC_ALL=en_US.UTF-8
 Xvnc -SecurityTypes=None :0&
 export  NSS_DEFAULT_DB_TYPE="sql"
 export  I_DONT_MIND_IF_MY_CHROME_PKI_DATABASE_GETS_DELETED=true
