@@ -50,13 +50,13 @@ static-base:
 	cp -r site/js/vendor static/js
 
 static-js:
-	for js in $(js_files); do rollup --format=iife --output=static/js/$$js -- site/js/$$js; done
+	for js in $(js_files); do rollup --format=iife --file=static/js/$$js -- site/js/$$js; done
 
 static-jstest:
-	for js in $(js_test_files); do rollup --format=iife --output=static/test/end2endTests/$$js -- site/test/end2endTests/$$js; done
+	for js in $(js_test_files); do rollup --format=iife --file=static/test/end2endTests/$$js -- site/test/end2endTests/$$js; done
 
 static-jsunittests:
-	for js in $(js_unittest_files); do rollup --format=iife --output=jsunit/$$js -- site/js/unittests/$$js; done
+	for js in $(js_unittest_files); do rollup --format=iife --file=jsunit/$$js -- site/js/unittests/$$js; done
 
 static-html:
 	for page in $(HTML_FILES); do ./tools/compilehtml $$page; done
