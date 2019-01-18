@@ -1,4 +1,4 @@
-build_image: magwas/edemotest:master
+build_image: edemo/pdoauth:latest
 language: python
 python:
   - 2.7

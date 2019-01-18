@@ -36,7 +36,9 @@ class Responses(object):
 
     def makeJsonResponse(self, descriptor,status=200):
         ret = json.dumps(descriptor)
-        return self.make_response(ret, status)
+        response = self.make_response(ret, status)
+        response.mimetype = 'application/json'
+        return response
     
     def error_response(self,descriptor, status=400):
         return self.makeJsonResponse(dict(errors=descriptor), status)
