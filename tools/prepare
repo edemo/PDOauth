@@ -3,15 +3,13 @@ set -xe
 export LC_ALL=en_US.UTF-8
 locale-gen en_US.UTF-8
 chown postgres /var/run/postgresql/
+sed -i  "s/.*listen_addresses = .*/listen_addresses = '127.0.0.1'/" /etc/postgresql/*/main/postgresql.conf
 apt update
-#apt -y --allow-downgrades install chromium-chromedriver=49.0.2623.108-0ubuntu1.1233 chromium-browser=49.0.2623.108-0ubuntu1.1233 chromium-codecs-ffmpeg=49.0.2623.108-0ubuntu1.1233
-apt -y remove nodejs-legacy npm
+apt-get -y upgrade
 curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
 apt-get install -y nodejs
 npm install -g rollup
 npm install jsdom qunit-cli
-pip install j2cli
-pip3 install --upgrade enforce
 
 export DISPLAY=:0
 Xvnc -SecurityTypes=None :0&
