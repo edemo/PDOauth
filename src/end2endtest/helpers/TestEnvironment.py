@@ -1,4 +1,6 @@
 import os
+import traceback
+import sys
 import logging
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
@@ -13,22 +15,28 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 print("setting up test environment")
 
 def getDriver():
-    if os.environ.get("WEBDRIVER", None) == "chrome":
-        os.environ['PATH'] += ":/usr/lib/chromium-browser"
-        options = Options()
-        options.add_argument("--no-sandbox")
-        d = DesiredCapabilities.CHROME
-        d['loggingPrefs'] = { 'browser':'ALL' }
-        theDriver = webdriver.Chrome(chrome_options = options, desired_capabilities=d)
-    else:
-        d = DesiredCapabilities.FIREFOX
-        d['marionette'] = True
-        d['loggingPrefs'] = { 'browser':'ALL' }
-        profile_directory = os.path.join(os.path.dirname(__file__),"..", "firefox-client-nossl-profile")
-        profile = FirefoxProfile(profile_directory)
-        profile.set_preference('webdriver.log.file', '/tmp/firefox_console')
-        profile.set_preference("security.default_personal_cert", "Select Automatically")
-        theDriver = webdriver.Firefox(firefox_profile=profile, capabilities=d)
+    try:
+        if os.environ.get("WEBDRIVER", None) == "chrome":
+            os.environ['PATH'] += ":/usr/lib/chromium-browser"
+            options = Options()
+            options.add_argument("--no-sandbox")
+            d = DesiredCapabilities.CHROME
+            d['loggingPrefs'] = { 'browser':'ALL' }
+            theDriver = webdriver.Chrome(chrome_options = options, desired_capabilities=d)
+        else:
+            d = DesiredCapabilities.FIREFOX
+            d['marionette'] = True
+            d['loggingPrefs'] = { 'browser':'ALL' }
+            profile_directory = os.path.join(os.path.dirname(__file__),"..", "firefox-client-nossl-profile")
+            profile = FirefoxProfile(profile_directory)
+            profile.set_preference('webdriver.log.file', '/tmp/firefox_console')
+            profile.set_preference("security.default_personal_cert", "Select Automatically")
+            theDriver = webdriver.Firefox(firefox_profile=profile, capabilities=d)
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        traceback.print_exc()
+        sys.exit(1)
+    print("driver is {0}".format(theDriver))
     return theDriver
 
 def getApplication():

@@ -21,7 +21,7 @@ RUN pip install vnc2flv j2cli
 
 RUN ln -s /usr/local/lib/python3.5/dist-packages/mod_wsgi/server/mod_wsgi-*.so /usr/lib/apache2/modules/mod_wsgi_py3.so
 
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.11.1/geckodriver-v0.11.1-linux64.tar.gz -O /tmp/geckodriver.tar.gz&&\
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz -O /tmp/geckodriver.tar.gz &&\
     cd /usr/local/bin&&\
     tar xvzf /tmp/geckodriver.tar.gz &&\
     rm -f /tmp/geckodriver.tar.gz
