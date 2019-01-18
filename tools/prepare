@@ -10,6 +10,13 @@ curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
 apt-get install -y nodejs
 npm install -g rollup
 npm install jsdom qunit-cli
+ln -sf /usr/local/lib/python3.*/dist-packages/mod_wsgi/server/mod_wsgi-*-x86_64-linux-gnu.so /usr/lib/apache2/modules/mod_wsgi.so
+wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz -O /tmp/geckodriver.tar.gz
+cd /usr/local/bin
+tar xvzf /tmp/geckodriver.tar.gz 
+rm -f /tmp/geckodriver.tar.gz
+cd /PDOauth
+
 
 export DISPLAY=:0
 Xvnc -SecurityTypes=None :0&
