@@ -7,7 +7,7 @@ sed -i  "s/.*listen_addresses = .*/listen_addresses = '127.0.0.1'/" /etc/postgre
 apt update
 apt-get -y upgrade
 curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
-apt-get install -y nodejs
+apt-get install -y nodejs rsync
 npm install -g rollup
 npm install jsdom qunit-cli
 ln -sf /usr/local/lib/python3.*/dist-packages/mod_wsgi/server/mod_wsgi-*-x86_64-linux-gnu.so /usr/lib/apache2/modules/mod_wsgi.so
