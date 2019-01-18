@@ -15,7 +15,7 @@ wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodrive
 cd /usr/local/bin
 tar xvzf /tmp/geckodriver.tar.gz 
 rm -f /tmp/geckodriver.tar.gz
-cd /PDOauth
+cd -
 
 
 export DISPLAY=:0
