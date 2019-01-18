@@ -1,23 +1,23 @@
-FROM ubuntu:xenial
-RUN apt-get update
-RUN apt-get -y upgrade
-RUN apt-get -y install python3 make python3-pip openjdk-9-jre\
+FROM ubuntu:bionic
+RUN apt-get -y update
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y upgrade
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y install python3 make python3-pip openjdk-11-jre\
     curl docbook-xsl apache2 swig libffi-dev\
     libnss3-tools unzip\
     git python3-dev libssl-dev xvfb postgresql python3-psycopg2\
-    python3-pykcs11 libsofthsm python3-coverage wget firefox \
+    python3-pykcs11 libsofthsm2 python3-coverage wget firefox \
     software-properties-common vnc4server opensc sudo \
     python3-lxml chromium-chromedriver apache2-dev \
     fvwm vim python libapache2-mod-wsgi python-crypto\
-    syslog-ng-core python-pydoctor python-sourcecodegen python-pip\
-    nodejs-legacy npm
+    syslog-ng-core python-pydoctor python-sourcecodegen python-pip
 RUN service postgresql start &&\
     sudo -u postgres createuser root &&\
     sudo -u postgres createdb root -O root&&\
     service postgresql stop
 RUN pip3 install Flask Flask-Login Flask-Mail Flask-Migrate Flask-SQLAlchemy Flask-Script \
     Flask-WTF SQLAlchemy beautifulsoup4 pyoauth2-shift selenium pyOpenSSL uritools \
-    mod_wsgi enforce polib install vnc2flv j2cli
+    mod_wsgi enforce polib
+RUN pip install vnc2flv j2cli
 
 RUN ln -s /usr/local/lib/python3.5/dist-packages/mod_wsgi/server/mod_wsgi-*.so /usr/lib/apache2/modules/mod_wsgi_py3.so
 
@@ -29,8 +29,11 @@ RUN sed -i 's/peer/trust/' /etc/postgresql/*/main/pg_hba.conf
 RUN cd /usr/local/lib &&\
     wget -q http://downloads.sourceforge.net/project/saxon/Saxon-HE/9.4/SaxonHE9-4-0-2J.zip &&\
     unzip SaxonHE9-4-0-2J.zip &&\
-    rm -f SaxonHE9-4-0-2J.zip &&
-RUN npm install -g rollup jsdom qunit-cli j2cli
+    rm -f SaxonHE9-4-0-2J.zip 
+RUN curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+RUN apt-get -y install nodejs
+
+RUN npm install -g rollup jsdom qunit-cli
 RUN mkdir -p /dependencies/javascript
 RUN curl http://code.jquery.com/qunit/qunit-1.18.0.js -o /dependencies/javascript/qunit-1.18.0.js
 RUN curl http://code.jquery.com/qunit/qunit-1.18.0.css -o /dependencies/javascript/qunit-1.18.0.css
