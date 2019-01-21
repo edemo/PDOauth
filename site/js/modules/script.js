@@ -400,7 +400,7 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	PageScript.prototype.register = function(credentialType) {
 		//
 	    var identifier = Control.getValue( "registration-form_email_input" );
-	    if ( credentialType = "facebook" ) {
+	    if ( credentialType == "facebook" ) {
 		    identifier = Control.getValue( "registration-form_identifier_input");
 	    }
 
