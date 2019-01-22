@@ -224,8 +224,11 @@ class SimpleActions(object):
     def closeModalIfThereIsOne(self):
         closeButton = TE.driver.find_element_by_id("PopupWindow_CloseButton2")
         if 'none' != closeButton.value_of_css_property('display'):
-            self.click('PopupWindow_CloseButton2')
-            self.waitModalDissapear()
+            try:
+                self.click('PopupWindow_CloseButton2')
+                self.waitModalDissapear()
+            except:
+                print("expected modal did not appear")
 
     def waitForTraces(self, traces):
         maxCount = 40
@@ -268,8 +271,11 @@ class SimpleActions(object):
         self.waitForTraces(['MSGbox ready'])
         self.waitModalAppear()
         TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
-        time.sleep(1);
-        TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
+        time.sleep(2);
+        try:
+            TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
+        except:
+                print("second expected modal did not appear")
         self.waitModalDissapear()
         if closeWait:
             self.waitForTraces(['popup closed'])
