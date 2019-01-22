@@ -267,12 +267,12 @@ class SimpleActions(object):
             self.waitForTraces(['popup closed'])
 
     def closeTwoMessages(self, closeWait=True):
+        self.waitForMessage2()
+        self.waitForTraces(['MSGbox ready'])
+        self.waitModalAppear()
+        TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
+        time.sleep(2);
         try:
-            self.waitForMessage2()
-            self.waitForTraces(['MSGbox ready'])
-            self.waitModalAppear()
-            TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
-            time.sleep(2);
             TE.driver.find_element_by_id("PopupWindow_CloseButton2").click()
         except:
                 print("second expected modal did not appear")
