@@ -18,7 +18,7 @@ var FaceBook = function(pageScript) {
 	FaceBook.prototype.registerCallBack = function(response) {
 		window.traces.push("registerCallBack begin")
 		if (response.status == 'connected' && response.authResponse.userID && response.authResponse.userID!="" && response.authResponse.accessToken && response.authResponse.accessToken!="" ) {
-			document.getElementById("registration-form_email_input").value=response.authResponse.userID;
+			document.getElementById("registration-form_identifier_input").value=response.authResponse.userID;
 			document.getElementById("registration-form_secret_input").value=response.authResponse.accessToken;
 			FB.api('/me?fields=email', {fields:"email"}, function(r){ $this.getMeCallback(r)} );
 		} else {

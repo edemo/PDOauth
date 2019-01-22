@@ -99,7 +99,10 @@ class Procedures(object):
         self.waitForTraces(['viewChangeHashForm'])
         self.fillInField("change-hash-form_digest_input", digest)
         self.click("changeHash")
-        self.closeTwoMessages()
+        if digest == None:
+            self.closeMessage()
+        else:
+            self.closeTwoMessages()
         self.observeField("PopupWindow_SuccessDiv")
         self.endProcess("change your hash")
         return digest
