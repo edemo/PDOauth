@@ -7,6 +7,7 @@ class Procedures(object):
     def logOut(self):
         self.beginProcess("logout")
         self.goToLoginPage()
+        self.closeModalIfThereIsOne()
         element = TE.driver.find_element_by_id("nav-bar-logout")
         displayed=element.value_of_css_property('display')
         if displayed=="list-item":
@@ -69,10 +70,8 @@ class Procedures(object):
         self.beginProcess("register with password")
         self.click(buttonId)
         self.waitForTraces(["userIsNotLoggedIn"])
-        self.waitUntilElementEnabled("registration-form_identifier_input")
         time.sleep(3)
         self.setupUserCreationData()
-        self.fillInField("registration-form_identifier_input", self.userCreationUserid)
         self.fillInField("registration-form_secret_input", self.usercreationPassword)
         self.fillInField("registration-form_secret_backup", self.usercreationPassword)
         self.fillInField("registration-form_email_input", self.userCreationEmail)
@@ -93,15 +92,18 @@ class Procedures(object):
         self.beginProcess("change your hash")
         if digest is None:
             digest = self.createHash()
+        self.closeModalIfThereIsOne()
         self.click("settings_section_link")
         print(TE.driver.execute_script("return document.getElementById('viewChangeHashForm').onclick.toString()"))
-        print(self.getTraces())
         self.click("viewChangeHashForm")
-        print(self.getTraces())
+        self.waitForTraces(['viewChangeHashForm'])
         self.fillInField("change-hash-form_digest_input", digest)
         self.click("changeHash")
+        if digest == None:
+            self.closeMessage()
+        else:
+            self.closeTwoMessages()
         self.observeField("PopupWindow_SuccessDiv")
-        self.closeMessage()
         self.endProcess("change your hash")
         return digest
 

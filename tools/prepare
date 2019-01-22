@@ -1,10 +1,22 @@
 #!/bin/bash
 set -xe
+export LC_ALL=en_US.UTF-8
+locale-gen en_US.UTF-8
 chown postgres /var/run/postgresql/
-#apt -y --allow-downgrades install chromium-chromedriver=49.0.2623.108-0ubuntu1.1233 chromium-browser=49.0.2623.108-0ubuntu1.1233 chromium-codecs-ffmpeg=49.0.2623.108-0ubuntu1.1233
-apt -y install nodejs-legacy npm
+sed -i  "s/.*listen_addresses = .*/listen_addresses = '127.0.0.1'/" /etc/postgresql/*/main/postgresql.conf
+apt update
+apt-get -y upgrade
+curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+apt-get install -y nodejs rsync
 npm install -g rollup
-pip install j2cli
+npm install jsdom qunit-cli
+ln -sf /usr/local/lib/python3.*/dist-packages/mod_wsgi/server/mod_wsgi-*-x86_64-linux-gnu.so /usr/lib/apache2/modules/mod_wsgi.so
+wget https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz -O /tmp/geckodriver.tar.gz
+cd /usr/local/bin
+tar xvzf /tmp/geckodriver.tar.gz 
+rm -f /tmp/geckodriver.tar.gz
+cd -
+
 
 export DISPLAY=:0
 Xvnc -SecurityTypes=None :0&

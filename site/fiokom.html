@@ -18,7 +18,7 @@
 				<h3 class="title">Bejelentkezés</h3>
 			</section>
 			<section class="container_ form ">
-				<button id="Facebook_login_button" class="social fb-button inactive" title="Facebook bejelentkezés" type="button">
+				<button id="login_facebook_button" class="social fb-button inactive" title="Facebook bejelentkezés" type="button">
 					<i class="fa fa-facebook"></i>
 				</button>
 <!--
@@ -96,11 +96,12 @@
 							<input class="input-block" name="email" type="email" placeholder="Email cím" id="registration-form_email_input">
 							<span class="form-icon_"><i class=" fa fa-envelope"></i></span>
 						</div>
-						<div id="registration-form-username-container" class="form-level">
-							<input class="input-block" name="username" type="text" autocapitalize="off" placeholder="Felhasználónév (nem kötelező)" id="registration-form_identifier_input">
-							<span class="form-icon_"><i class=" fa fa-user"></i></span>
-							<p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
-						</div>
+                                               <div id="registration-form-username-container" class="form-level" style="display:none;">
+                                                       <input class="input-block" name="username" type="text" autocapitalize="off" placeholder="Felhasználónévv (nem kötelező)" id="registration-form_identifier_input">
+                                                       <span class="form-icon_"><i class=" fa fa-user"></i></span>
+                                                       <p>A felhasználónév minimum 4 max 255 karakter hosszú</p>
+                                               </div>
+
 						<div id="registration-form-password-container">
 						<div class="form-level">
 							<input class="input-block" type="password" placeholder="Jelszó" id="registration-form_secret_input">
@@ -127,7 +128,7 @@
 				</div>
 						<button class="button" id="make_here" type="button">Készítsük el itt</button>
 						<a class="digest_self_made_button" target="_blank">
-							<button class="button" id="create_myself" type="button" >Elkészítem magam</button>
+							<button class="button" id="create_myself" type="button" >Elkészítem magam (paranoidoknak)</button>
 						</a>
 						<div id="registration-form_code-generation-input" class="form" style="display: none">
 							<div class="bordered">
@@ -243,7 +244,7 @@
 												<tr id="change-email-form_container">
 													<td nowrap><b>E-mail cím:</b></td>
 													<td id="email-change">
-														<input type="text" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" >
+														<input type="email" value="'+data.email+'" id="ChangeEmailAddressForm_email_input" autocapitalize="off" >
 													</td>
 													<td class="button-container">
 														<a id="emailChangeEditButton" class="btn btn_ fa fa-edit"></a>
@@ -259,8 +260,8 @@
 														</pre>
 													</td>
 													<td class="button-container">
-														<a id="viewChangeHashForm" class="btn btn_ fa fa-edit"></a>
-														<a id="deleteHashButton" class="btn btn_ fa fa-trash"></a>
+														<a id="viewChangeHashForm" title="Másik kódot kérek" class="btn btn_ fa fa-edit"></a>
+														<a id="deleteHashButton" title="Törlöm a kódomat" class="btn btn_ fa fa-trash"></a>
 													</td>
 												</tr>
 
@@ -273,7 +274,7 @@
 															<div class="bordered">
 																<label for="input">Személyi azonosító:</label>
 																<input type="text" placeholder="" id="change-hash-form_predigest_input">
-																<label for="mothername">Anjya neve:</label>
+																<label for="mothername">Anyja neve:</label>
 																<input type="text" placeholder="" id="change-hash-form_predigest_mothername">
 																<button type="button" id="change-hash-form_getDigestButton">A kód előállítása</button>
 																<div class="monitor" id="change-hash-form_predigest_monitor"></div>
@@ -288,7 +289,7 @@
 												<tr id="change-hash-form_hash-changer-buttons" style="display: none;">
 													<td colspan="3" style="text-align:center">
 														<button class="button" type="button" id="create_hash_here">Készítsük el itt</button>
-														<button class="button" type="button" id="create_hash_myself">Elkészítem magam</button>
+														<button class="button" type="button" id="create_hash_myself">Elkészítem magam (paranoidoknak)</button>
 													</td>
 												</tr>
 											</table>
@@ -323,18 +324,18 @@
                           <div role="tabpanel" class="tab-pane" id="4">
                                 <div class="col-md-12 col-sm-12">
                                     <div class="c-tab">
-										<p><b>Ha szeretnél "magyar" igazolást csináltatni magadnak, az alábbiakat kell tenned:</b></p>
+										<p><b>Ha szeretnél "magyar" vagy "emagyar" igazolást csináltatni magadnak, az alábbiakat kell tenned:</b></p>
 										<ul class="disced">
 											<li>ha még nem tetted volna meg, készítsd el a Titkos Kódod</li>
 											<li>válassz az alábbi listából egy Tanúsítót</li>
 											<li>a neve melletti gombra kattintva felveheted vele a kapcsolatot</li>
-											<li>beszéljetek meg egy személyes találkozót</li>
-											<li>a találkozóra vidd magaddal a lakcímkártyád és egy személy azonosító igazolványt</li>
+											<li>"magyar" igazolás esetén beszéljetek meg egy személyes találkozót, "emagyar igazolás esetén egy videobeszélgetést"</li>
+											<li>a találkozóra vidd magaddal/a videochat idején legyen kéznél a lakcímkártyád és egy személy azonosító igazolványt</li>
 											<li>a Tanúsító leellenőrzi a Titkos Kódodat, és kiállítja az igazolásodat</li>
 											<li>az új igazolásod látszódni fog az "Adataim" fül alatt</li>
 										</ul>
 										<p></p>
-                                         <h4><b>Tanúsítók listája</b></h4>
+                                         <h4><b>Tanúsítók listája (akkor látszik, ha már csináltál titkos kódot)</b></h4>
 										 <table id="assurers_table">
 											<tr>
 												<th>Név</th>
@@ -354,7 +355,7 @@
 										<h4><b>Felhasználó adatainak lekérdezése</b></h4>
 										<div id="check-the-user" class="form">
 											<label for="email">A Felhasználó email címe</label>
-											<input name="email" type="text" id="ByEmailForm_email_input">
+											<input name="email" type="email" id="ByEmailForm_email_input">
 											<button id="ByEmailForm_submitButton" type="button">Lekérdezés</button>
 										</div>
 										<h4><b>Igazolás kiadása</b></h4>

@@ -12,6 +12,7 @@ class ComplexProcedures(Procedures):
         self.clickPasswordResetLink(password, passwordResetLink)
 
     def registerFreshUser(self):
+        self.goToLoginPage()
         self.registerUser()
         self.closeMessage()
         self.waitForTraces(["myappsCallback"])

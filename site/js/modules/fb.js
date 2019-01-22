@@ -37,10 +37,10 @@ var FaceBook = function(pageScript) {
 								// the session
 					xfbml	: true,  // parse social plugins on this page
 					status	: true,
-					version	: 'v2.3' // use version 2.2
+					version	: 'v2.12' // use version 2.2
 				});
 				$this.pageScript.isFBsdkLoaded=true
-				Control.activate("Facebook_login_button", facebook.fblogin)
+				Control.activate("login_facebook_button", facebook.fblogin)
 				Control.activate("registration-form-method-selector-fb", function(){pageScript.setRegistrationMethode('fb')})
 				window.traces.push("fbAsyncInit")
 			};

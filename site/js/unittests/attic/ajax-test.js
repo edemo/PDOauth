@@ -1,5 +1,6 @@
 
-import ajax from '../modules/ajax.js'
+import { ajaxget } from '../modules/ajax.js';
+
 export function ajax_test(){
 	
 	QUnit.module( "AJAX" ); 

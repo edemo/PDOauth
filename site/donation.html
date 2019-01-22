@@ -1,0 +1,43 @@
+{% extends "tmpl/page.html" %}
+
+{% set title = 'hogyan működik' %}
+
+{% set additionalJavascripts = ["js/basic.js"] %}
+
+{% set additionalCss = ["css/ada_blog.css"] %}
+
+{% block contents %}
+<!-- Portfolio works Start -->
+
+<!-- Heading -->
+		<section id="heading" class="container">
+			<h1>Támogatás</h1>
+		</section>
+<!-- Heading end -->
+	
+    <section id="blog-single wrapper">
+        <div class="container">
+                <!-- Portfolio item slider start -->
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <div class="blog-desc">
+					<div id="donation">
+						<p>Támogatni az alábbi számlára küldött adománnyal tudsz minket:</p>
+						<p>Közösségi Digitális Eszközök Alapítvány</p>
+						<p>Magnetbank: <b>16200106-11581208</b></p>
+						<p>IBAN: <b>HU89 1620 0106 1158 1208 0000 0000</b></p>
+						<p>SWIFT: <b>HBWEHUHB</b></p>
+						<p>Közlemény: <b>ADA_Adomány</b></p>
+					</div>
+                </div>
+                <div class="clearfix"></div>
+
+			</div>  <!-- blog footer end -->
+           
+    <!-- left blog part end -->
+
+    <!-- Right Blog part row start -->
+{% include 'tmpl/right-sidebar.html' %}
+        </div>
+	</section> 
+
+{% endblock %}

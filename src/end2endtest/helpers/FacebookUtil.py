@@ -14,7 +14,7 @@ class FacebookUtil(object):
         self.wait_on_element(By.ID,"forgot-password-link")
         self.fillInField("pass",user.password)
         self.fillInField("email",user.email)
-        self.click("u_0_2")
+        self.click("u_0_0")
 
     def removeFbuser(self,user=None):
         if user is None:
