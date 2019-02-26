@@ -441,5 +441,4 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 	Ajax.set_reportServerFailure( self.reportServerFailure )
 }
 
-export {facebook}
 export default PageScript

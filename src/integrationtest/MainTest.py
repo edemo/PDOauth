@@ -14,13 +14,6 @@ class MainTest(IntegrationTest, UserTesting):
         resp = app.test_client().get("/")
         self.assertEqual(resp.status_code, 404,)
 
-    
-    def test_static_files_are_served(self):
-        with app.test_client() as client:
-            resp = client.get(config.BASE_URL + "/static/login.html")
-            self.assertEqual(resp.status_code,200)
-
-    
     def test_stats_are_available(self):
         with app.test_client() as client:
             resp = client.get(config.BASE_URL + "/v1/statistics")

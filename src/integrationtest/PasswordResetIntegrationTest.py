@@ -21,14 +21,6 @@ class PasswordResetIntegrationTest(IntegrationTest, PDUnitTest, EmailUtil):
         with app.test_client() as client:
             resp = client.get("/v1/users/{0}/passwordreset".format(self.userCreationEmail))
             self.assertEqual(resp.status_code, 200)
-
-    
-    def test_password_reset_link_leads_to_password_reset_form(self):
-        passwordResetLink = self.the_reset_link_is_in_the_reset_email()
-        with app.test_client() as client:
-            resp = client.get(passwordResetLink)
-            self.assertEqual(resp.status_code, 200)
-
     
     def test_password_reset_needs_password(self):
         secret = uuid4().hex
