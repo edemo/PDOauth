@@ -9,6 +9,7 @@ from pdoauth.ReportedError import ReportedError
 from pdoauth.models.User import User
 from test import config
 from pdoauth.EmailHandling import EmailData
+from test.helpers.RandomUtil import RandomUtil
 
 class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
 
@@ -23,8 +24,12 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
             Assurance.new(user, 'assurer', user)
         if not noTestAdderAssurance:
             Assurance.new(user, 'assurer.test', user)
+        if email is False:
+            addemail=None
+        else:
+            addemail = email
 
-        self.targetUser = self.createUserWithCredentials().user
+        self.targetUser = self.createUserWithCredentials(email=addemail).user
         self.targetUser.hash = self.createHash()
         self.digest = self.targetUser.hash
         self.data = dict(
@@ -74,7 +79,6 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
         form = self.prepareLoginForm(email = False)
         self.controller.doAddAssurance(form)
         self.assertEqual(Assurance.listByUser(self.targetUser)[0].name, 'test')
-
     
     def test_assurers_need_assurer_assurance(self):
         form = self.prepareLoginForm(noAssurerAssurance=True)
@@ -180,3 +184,9 @@ class AssuranceTest(PDUnitTest, UserUtil, CryptoTestUtil):
             self.controller.doAddAssurance,[form],
             400, ['This user does not have that digest'])
         self.assertFalse('test' in Assurance.getByUser(self.targetUser))
+
+    def test_adding_assurance_for_the_digitally_challenged_adds_offline_postfix_to_the_assurance_name(self):
+        addEmail = 'u_{0}@digitallychallenged.adatom.hu'.format(RandomUtil.mkRandomString(8))
+        form = self.prepareLoginForm(email = addEmail)
+        self.controller.doAddAssurance(form)
+        self.assertEqual(Assurance.listByUser(self.targetUser)[0].name, 'test_offline')

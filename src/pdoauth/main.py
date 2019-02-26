@@ -1,12 +1,10 @@
 from pdoauth.app import app, login_manager, mail
 from pdoauth.AuthProvider import AuthProvider
 from pdoauth.Controller import Controller
-from flask.helpers import send_from_directory
 from pdoauth.models.User import User
 import os
 from pdoauth.forms.LoginForm import LoginForm
 from pdoauth.Decorators import Decorators
-from pdoauth.forms.KeygenForm import KeygenForm
 from pdoauth.forms.DeregisterForm import DeregisterForm
 from pdoauth.forms.PasswordChangeForm import PasswordChangeForm
 from pdoauth.forms.DigestUpdateForm import DigestUpdateForm

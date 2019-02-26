@@ -258,6 +258,8 @@ class Controller(
         self.assureUserHaveTheGivingAssurancesFor(neededAssurance)
         user = self.getUserForEmailAndOrHash(
                 form.digest.data, form.email.data)
+        if "digitallychallenged.adatom.hu" in user.email:
+            neededAssurance = neededAssurance + "_offline"
         numOfOthers = self.deleteDigestFromOtherUsers(user)
         Assurance.new(user, neededAssurance, self.getCurrentUser())
         msg = [[addedAssurance, neededAssurance, user.email]]
