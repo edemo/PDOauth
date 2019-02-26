@@ -54,10 +54,6 @@ def authorization_code():
     "see http://tech.shift.com/post/39516330935/implementing-a-python-oauth-2-0-provider-part-1"
     return AUTHPROVIDER.auth_interface()
 
-@DECORATOR.interfaceFunc("/v1/ca/signreq", methods=["POST"], formClass=KeygenForm)
-def signreq(form):
-    return CONTROLLER.signRequest(form)
-
 @DECORATOR.interfaceFunc("/v1/deregister", methods=["POST"], formClass=DeregisterForm, checkLoginFunction=CONTROLLER.jsonErrorIfNotLoggedIn)
 def deregister(form):
     return CONTROLLER.doDeregister(form)

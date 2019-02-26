@@ -82,25 +82,3 @@ class CertificateHandling(CryptoUtils):
         resp.headers['Access-Control-Allow-Origin']="*"
         return resp
 
-    def createCertFromReq(self, reqstring, email):
-        req = crypto.load_certificate_request(crypto.FILETYPE_PEM, reqstring)
-        cacert = CertificateAuthority.getInstance(self)
-        cert = cacert.signRequest(req, email)
-        return cert
-
-    def createCertResponse(self, cert):
-        resp = self.make_response(crypto.dump_certificate(crypto.FILETYPE_ASN1,cert), 200)
-        self.addHeadersToCertResponse(resp)
-        return resp
-
-    def signRequest(self,form):
-        try:
-            cert = self.createCertFromReq(form.pubkey.data, form.email.data)
-        except Exception:
-            raise ReportedError(errorInCert)
-        user = self.getCurrentUser()
-        if user.is_authenticated:
-            self.addCertCredentialToUser(cert, user)
-        else:
-            self.registerAndLoginCertUser(form, cert)
-        return self.createCertResponse(cert)
