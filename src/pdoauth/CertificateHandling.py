@@ -6,7 +6,6 @@ from pdoauth.CryptoUtils import CryptoUtils
 from pdoauth.Messages import noCertificateGiven, errorInCert
 from pdoauth.LoginHandling import youHaveToRegisterFirst
 from OpenSSL import crypto
-from pdoauth.CertificateAuthority import CertificateAuthority
 import uritools
 
 class CertificateHandling(CryptoUtils):
