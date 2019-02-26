@@ -153,7 +153,3 @@ def remove_credential(form):
 @DECORATOR.interfaceFunc("/v1/statistics", methods=["GET"])
 def statisticsService():
     return CONTROLLER.getStatsAsJson()
-
-@DECORATOR.interfaceFunc("/static/<path:path>", methods=["GET"])
-def send_static(path):
-    return send_from_directory(STATIC_PATH, path)
